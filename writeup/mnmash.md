@@ -2,6 +2,7 @@
 title: "M&M ASH model and implementation"
 date: "August 18, 2016"
 output: pdf_document
+geometry: margin=0.8in
 ---
 ## Notations
 | Notation   | Definition    |
@@ -29,112 +30,115 @@ This is the `mash` model (Urbut *et al* 2016).
 
 ## M&M ASH model
 `m&mash` is a multiple regression extension of `mash` via variational inference. 
-Without loss of generality we choose $\Sigma = I_J$. This is because our model is 
+Without loss of generality we choose $\Sigma = I_J$. This is because under the assumption 
+of independent $Y$, our model is 
 \begin{eqnarray}
 Y &=& X\beta + E \\
-E  &\sim & N_{N \times J} (0, I , \Sigma) 
+E  &\sim & N_{N \times J} (0, I_N, \Sigma_J) 
 \end{eqnarray}
-where we focus on $\beta \Sigma^{-\frac{1}{2}}$, so we can consider the model:
+If we scale $\beta$ by $\Sigma^{-\frac{1}{2}}$ we can consider the equivalent model:
 \begin{eqnarray}
-Y\Sigma^{-\frac{1}{2}} &=& X \beta \Sigma^{-\frac{1}{2}} + \tilde{E} \\
-\tilde{E} &=& E \Sigma^{-\frac{1}{2}} \sim  N_{N \times J} (0, I , I) 
+Y\Sigma^{-\frac{1}{2}} &=& X \beta \Sigma^{-\frac{1}{2}} + E\Sigma^{-\frac{1}{2}} \\
+E \Sigma^{-\frac{1}{2}} \sim  N_{N \times J} (0, I_N, I_J) 
 \end{eqnarray}
-We assume that $\Sigma$ is known, so we move to a simpler model
+Assuming $\Sigma$ is known, here we solve this equivalent model:
 \begin{eqnarray}
 Y &=& X\beta + E \\
-E  &\sim & N_{N \times J} (0, I , I) 
+E  &\sim & N_{N \times J} (0, I_N, I_J) 
 \end{eqnarray}
 
-For the prior of $\beta$, we assume that 
+For the prior of effect size $\beta$, we assume a multivariate normal prior
+(the `mash` prior) on each SNP:
 \begin{eqnarray}
-\beta_j \sim \sum_t \pi_t N(0,V_t)
+\beta_P \sim \sum_t \pi_t N_J(0,V_t)
 \end{eqnarray}
-where $$V_t=\omega_k U_l$$ and 
+where $$V_t=\omega_k U_l$$
+Here we consider all $\beta_p$ jointly in our inference,
+thus the name `m&m` for multivariate multiple regression:
 \[\beta=\left\{\begin{array}{c}
 \beta_1^T\\
 \beta_2^T\\
 ... \\
 \beta_P^T \end{array}\right\} \]
-So in this case we consider that $V_t$ with single index $t$.
 
-Our goal is to minimize the K-L divergence:
+## Variational inference
+The objective function to minimize is the K-L divergence:
 
 \begin{eqnarray}
 F &=& E_q log\frac{q(\beta)}{p(\beta)p(Y|X,\beta)} \\
   &=& E_q log q(\beta) - E_q log p(\beta) - E_q log p(Y | X, \beta)
 \end{eqnarray}
 
-We assume that:
+We take a variational approach assuming that:
 
 \begin{eqnarray}
-q(\beta) = \prod_j q(\beta_j)
+q(\beta) = \prod_p q(\beta_p)
 \end{eqnarray}
-and 
+where
 \begin{eqnarray}
-q(\beta_j) = \sum_t \alpha_{tj} N(\mu_{tj},S_{tj})
+q(\beta_p) = \sum_t \alpha_{pt} N(\mu_{pt},S_{pt})
 \end{eqnarray}
 
 We denote that 
 \begin{eqnarray}
-r_j = E_q \beta_j = \sum_t \alpha_{tj}\mu_{tj}
+r_p = E_q \beta_p = \sum_t \alpha_{pt}\mu_{pt}
 \end{eqnarray}
- and $X^TY = [\phi_1,\cdots, \phi_P]^T$, i.e.
-\[ X^TY=\left\{\begin{array}{c}
-\phi_1^T\\
-\phi_2^T\\
+ and 
+\[ Y^TX=\left\{\begin{array}{c}
+\phi_1\\
+\phi_2\\
 ... \\
-\phi_P^T \end{array}\right\} \]
+\phi_P \end{array}\right\} \]
+We work out the K-L divergence
 \begin{eqnarray} 
-E_q logp(Y|X,\beta) &=& -\frac{NJ}{2} log2\pi -\frac{1}{2} E_q \{ tr[(Y-X\beta)^T(Y-X\beta)]\}\\
- &=& -\frac{NJ}{2} log2\pi -\frac{1}{2} E_q \{ tr[Y^TY - Y^TX\beta - \beta^T X^T Y + \beta^T X^T X \beta]\}\\
- &=& c_1 + tr[E_q(\beta^T) X^TY] - \frac{1}{2} E_q[tr(\sum_{i = 1}^P \sum_{j = 1}^P \sum_{k =1}^N 
- \beta_i X_{ki} X_{kj} \beta_j^T) ]\\
- &=& c_1 + tr(\sum_j r_j \phi_j^T) - \frac{1}{2} tr[\sum_{i = 1}^P \sum_{j = 1}^P \sum_{k =1}^N 
-  X_{ki} X_{kj}E_q(\beta_i \beta_j^T)] \\
- &= & c_1 + tr(\sum_j r_j \phi_j^T)  - \frac{1}{2} tr(\sum_{i = 1}^P \sum_{j = 1}^P \sum_{k =1}^N 
- X_{ki} X_{kj} r_i r_j^T) \nonumber\\
- &+& \frac{1}{2} tr(\sum_{i = 1}^P \sum_{k =1}^N X_{ki} X_{ki} r_i r_i^T) - \frac{1}{2} tr[\sum_{i = 1}^P
- \sum_{k =1}^N X_{ki} X_{ki} E_q(\beta_i \beta_i^T)]\\
- & = & c_1 + tr(\sum_j r_j \phi_j^T)  - \frac{1}{2} tr(\sum_{i = 1}^P \sum_{j = 1}^P \sum_{k =1}^N 
- X_{ki} X_{kj} r_i r_j^T) + \frac{1}{2} tr(\sum_{i = 1}^P \sum_{k =1}^N X_{ki} X_{ki} r_i r_i^T) \nonumber\\
- &-& \frac{1}{2} tr[\sum_{i = 1}^P \sum_{k =1}^N X_{ki} X_{ki} \sum_t \alpha_{it}(\mu_{it} \mu_{it}^T + S_{it})]
+E_q logp(Y|X,\beta) &=& -\frac{NP}{2} log2\pi -\frac{1}{2} E_q \{ tr[(Y-X\beta)^T(Y-X\beta)]\}\\
+ &=& -\frac{NP}{2} log2\pi -\frac{1}{2} E_q \{ tr[Y^TY - Y^TX\beta - \beta^T X^T Y + \beta^T X^T X \beta]\}\\
+ &=& c_1 + tr[E_q(\beta^T) X^TY] - \frac{1}{2} E_q[tr(\sum_{i = 1}^P \sum_{p = 1}^P \sum_{k =1}^N 
+ \beta_i X_{ki} X_{kp} \beta_p^T) ]\\
+ &=& c_1 + tr(\sum_p r_p \phi_p^T) - \frac{1}{2} tr[\sum_{i = 1}^P \sum_{p = 1}^P \sum_{k =1}^N 
+  X_{ki} X_{kp}E_q(\beta_i \beta_p^T)] \\
+ &= & c_1 + tr(\sum_p r_p \phi_p^T)  - \frac{1}{2} tr(\sum_{i = 1}^P \sum_{p = 1}^P \sum_{k =1}^N 
+ X_{ki} X_{kp} r_i r_p^T) \nonumber\\
+ &+& \frac{1}{2} tr(\sum_{p = 1}^P \sum_{k =1}^N X_{kp} X_{kp} r_p r_p^T) - \frac{1}{2} tr[\sum_{p = 1}^P
+ \sum_{k =1}^N X_{kp} X_{kp} E_q(\beta_p \beta_p^T)]\\
+ & = & c_1 + tr(\sum_p r_p \phi_p^T)  - \frac{1}{2} tr(\sum_{i = 1}^P \sum_{p = 1}^P \sum_{k =1}^N 
+ X_{ki} X_{kp} r_i r_p^T) + \frac{1}{2} tr(\sum_{p = 1}^P \sum_{k =1}^N X_{kp} X_{kp} r_p r_p^T) \nonumber\\
+ &-& \frac{1}{2} tr[\sum_{p = 1}^P \sum_{k =1}^N X_{kp} X_{kp} \sum_t \alpha_{pt}(\mu_{pt} \mu_{pt}^T + S_{pt})]
 \end{eqnarray}
 
 \begin{eqnarray}
-E_q log p(\beta) &=& \sum_j \sum_t \alpha_{tj} \{log\pi_t - \frac{J}{2}log2\pi -\frac{1}{2}log|V_t| -\frac{1}{2}
-tr[V_t^{-1} (\mu_{tj} \mu_{tj^T}+ S_{tj})]\}
+E_q log p(\beta) &=& \sum_p \sum_t \alpha_{pt} \{log\pi_t - \frac{P}{2}log2\pi -\frac{1}{2}log|V_t| -\frac{1}{2}
+tr[V_t^{-1} (\mu_{pt} \mu_{pt}^T+ S_{pt})]\}
 \end{eqnarray}
 
 \begin{eqnarray}
-E_q log q(\beta) = \sum_j \sum_t \alpha_{tj}(log\alpha_{tj} - \frac{J}{2}log2\pi -\frac{1}{2}log|S_{tj}| - 
-\frac{J}{2})
+E_q log q(\beta) = \sum_p \sum_t \alpha_{pt}(log\alpha_{pt} - \frac{P}{2}log2\pi -\frac{1}{2}log|S_{pt}| - 
+\frac{P}{2})
 \end{eqnarray}
 
-So we can get that
+to optimize:
 \begin{eqnarray}
-\frac{\partial F}{ \partial S_{tj}} &=& \frac{1}{2}\alpha_{tj}(d_jI - S_{tj}^{-1} + V_t^{-1}) \\
-\frac{\partial F}{ \partial \mu_{tj}} &=& \alpha_{tj}(-\phi_j +\sum_i\sum_k X_{ki}X_{kj}r_i - d_j
-r_j + d_j \mu_{tj} + V_t^{-1}\mu_{tj})\\
-\frac{\partial F}{ \partial \alpha_{tj}} &=& - \mu_{tj}^T\phi_j + \sum_i\sum_k X_{ki}X_{kj}\mu_{tj}^Tr_i - d_j
-\mu_{tj}^T r_j + \frac{1}{2} d_j tr(\mu_{tj}\mu_{tj}^T + S_{tj}) \nonumber\\
-&+& log\frac{\alpha_{tj}}{\pi_t} -\frac{1}{2} log\frac{|S_{tj}|}{|V_t|} + \frac{1}{2} tr[V_t^{-1}(\mu_{tj}\mu_{tj}^T + S_{tj})] - \frac{J}{2} +1
+\frac{\partial F}{ \partial S_{pt}} &=& \frac{1}{2}\alpha_{pt}(d_pI - S_{pt}^{-1} + V_t^{-1}) \\
+\frac{\partial F}{ \partial \mu_{pt}} &=& \alpha_{pt}(-\phi_p +\sum_i\sum_k X_{ki}X_{kp}r_i - d_p
+r_p + d_p \mu_{pt} + V_t^{-1}\mu_{pt})\\
+\frac{\partial F}{ \partial \alpha_{pt}} &=& - \mu_{pt}^T\phi_p + \sum_i\sum_k X_{ki}X_{kp}\mu_{pt}^Tr_i - d_p
+\mu_{pt}^T r_p + \frac{1}{2} d_p tr(\mu_{pt}\mu_{pt}^T + S_{pt}) \nonumber\\
+&+& log\frac{\alpha_{pt}}{\pi_t} -\frac{1}{2} log\frac{|S_{pt}|}{|V_t|} + \frac{1}{2} tr[V_t^{-1}(\mu_{pt}\mu_{pt}^T + S_{pt})] - \frac{P}{2} +1
 \end{eqnarray}
-where $d_j = \sum_k X_{kj}X_{kj}$.
+where $d_p = \sum_k X_{kp}X_{kp}$.
 
 To solve this first order derivative conditions:
 \begin{eqnarray}
-S_{tj} &=& (d_jI + V_t^{-1})^{-1} \\
-\mu_{tj} &=& S_{tj} (\phi_j - \sum_i [X^TX]_{ij} r_i + [X^TX]_{jj}r_j)\\
-\alpha_{tj} & \propto & \pi_t \sqrt{\frac{|S_{tj}|}{|V_t|}}\exp \{\frac{1}{2}\mu_{tj}^T S_{tj}^{-1}\mu_{tj}\}\\
-\sum_t \alpha_{tj} &=& 1 \nonumber
+S_{pt} &=& (d_pI + V_t^{-1})^{-1} \\
+\mu_{pt} &=& S_{pt} (\phi_p - \sum_i [X^TX]_{ip} r_i + [X^TX]_{pp}r_p)\\
+\alpha_{pt} & \propto & \pi_t \sqrt{\frac{|S_{pt}|}{|V_t|}}\exp \{\frac{1}{2}\mu_{pt}^T S_{pt}^{-1}\mu_{pt}\}\\
+\sum_t \alpha_{pt} &=& 1 \nonumber
 \end{eqnarray}
-or you can also use
+or in another notation:
 \begin{eqnarray}
-S_{tj} &=& ([X^TX]_{jj}I + V_t^{-1})^{-1} \\
-\mu_{tj} &=& S_{tj} ([Y^TX]_j - \sum_{i \neq j} [X^TX]_{ij} r_i )\\
-\alpha_{tj} & \propto & \pi_t \sqrt{\frac{|S_{tj}|}{|V_t|}}\exp \{\frac{1}{2}\mu_{tj}^T S_{tj}^{-1}\mu_{tj}\}\\
-\sum_t \alpha_{tj} &=& 1 \nonumber
+S_{pt} &=& ([X^TX]_{pp}I + V_t^{-1})^{-1} \\
+\mu_{pt} &=& S_{pt} ([Y^TX]_p - \sum_{i \neq p} [X^TX]_{ip} r_i )\\
+\alpha_{pt} & \propto & \pi_t \sqrt{\frac{|S_{pt}|}{|V_t|}}\exp \{\frac{1}{2}\mu_{pt}^T S_{pt}^{-1}\mu_{pt}\}\\
+\sum_t \alpha_{pt} &=& 1 \nonumber
 \end{eqnarray}
-So, the equation (24)-(26) or (27)-(29) are the iteration scheme.
-
-
+So, the equation (24)-(26) or (27)-(29) are the iteration scheme. We iterate the procedure until the K-L distance convergences to a constant.
