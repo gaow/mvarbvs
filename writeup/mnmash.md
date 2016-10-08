@@ -32,11 +32,11 @@ We use a unimodal mixture prior (`ash` prior) for $B$
 \begin{eqnarray} \label{eq:prior}
 B \mid \pi, U, \omega \sim \sum_{k}\sum_{l} \pi_{k,l}\mathcal{MN}(0, I_p, \omega_lU_k)
 \end{eqnarray}
-where $\omega_l$ are given grid values, $U_k$ are given matrices and the mixture components $\pi_{k,l}$ are learned from data.
+where $\omega_l$ are given grid values, $U_k$ are given matrices and the mixture components $\pi_{k,l}$ are learned from data. When $U_k = U_0 = 0$ the corresponding $\pi_0$ is the probability of having no effect.
 This is the multivariate + multiple regression extension of the `ash` model (Stephens 2016).
 
 ## Variational inference
-We use variational inference to solve the model. The objective function to minimize is the K-L divergence:
+We use variational inference to solve the model. The objective function to minimize is the K-L divergence
 
 \begin{eqnarray} \label{eq:kl}
 F &=& E_q \log\frac{q(B)}{p(B)p(Y|X,B)} \\
@@ -64,7 +64,7 @@ We then minimize $F$ and estimate model parameters.
 
 ### Known $\Sigma$
 For starters we assume $\Sigma$ is known; thus without loss of generality we set $\Sigma = I_J$. 
-This is because if we scale $B$ by $\Sigma^{-\frac{1}{2}}$ we can consider the equivalent model:
+This is because if we scale $B$ by $\Sigma^{-\frac{1}{2}}$ we can consider the equivalent model
 \begin{eqnarray*}
 Y\Sigma^{-\frac{1}{2}} &=& XB\Sigma^{-\frac{1}{2}} + E\Sigma^{-\frac{1}{2}} \\
 E \Sigma^{-\frac{1}{2}} &\sim&  \mathcal{MN}(0, I_N, I_J) 
@@ -75,7 +75,7 @@ Y \mid X, B, \Sigma \sim \mathcal{MN}(XB, I_N, I_J)
 \end{eqnarray}
 For (\ref{eq:prior}), let $$V_t=\omega_l U_k$$ we re-parameterize the prior
 \begin{eqnarray} \label{eq:prior2}
-B \mid \pi, W \sim \sum_t \pi_{t}\mathcal{MN}(0, I_p, V_t)
+B \mid \pi, V \sim \sum_t \pi_{t}\mathcal{MN}(0, I_p, V_t)
 \end{eqnarray}
 
 We denote that 
@@ -123,7 +123,7 @@ r_p + d_p \mu_{pt} + V_t^{-1}\mu_{pt})\\
 &+& \log\frac{\alpha_{pt}}{\pi_t} -\frac{1}{2} \log\frac{|S_{pt}|}{|V_t|} + \frac{1}{2} tr[V_t^{-1}(\mu_{pt}\mu_{pt}^T + S_{pt})] - \frac{J}{2} +1
 \end{eqnarray}
 where $d_p = \sum_k X_{kp}X_{kp}$.
-The solutions are
+The solutions are therefor
 \begin{eqnarray}
 S_{pt} &=& (d_pI + V_t^{-1})^{-1} \\
 \mu_{pt} &=& S_{pt} (\phi_p - \sum_i [X^TX]_{ip} r_i + [X^TX]_{pp}r_p)\\
