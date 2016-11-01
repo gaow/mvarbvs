@@ -770,20 +770,41 @@ take $\bs{V}_t$ to be low rank. From what I recall, I think a lot of
 these $\bs{V}_t$'s are derived by empirical covariances. We can take
 the first $10$, $20$, or $50$ eigenvectors of these empirical
 covariances and set these as the $\bs{V}_t$'s. We would then use
-Woodbury at every iteration. That is, we assume that
+Woodbury at every iteration. Though, if $\bs{V}_t$ is low-rank, then
+its inverse does not exist. Even its density does not exist (with
+respect to Lebesgue measure in $\mathbb{R}^M$). Sarah re-writes
+\begin{align}
+\left[\bs{V}_t^{-1} + \|\bs{x}_k\|^2\bs{\Lambda}\right]^{-1} &=\left[\bs{V}_t^{-1}\left(\bs{I}_M + \bs{V}_t\|\bs{x}_k\|^2\bs{\Lambda}\right)\right]^{-1}\\
+\label{equation:new.sum.inv}&=\left[\bs{I}_M + \bs{V}_t\|\bs{x}_k\|^2\bs{\Lambda}\right]^{-1}\bs{V}_t,
+\end{align}
+then just uses \eqref{equation:new.sum.inv} as the posterior
+covariance. After thinking about it, I think this is correct, but the
+derivation is very incorrect because you can't even write the inverse
+of a low-rank matrix. Thus, you would need to make some limiting
+argument where you begin with a full rank matrix then take the limit
+to a low-rank matrix and use the continuity of the matrix inverse. To
+make computation much faster, we assume that
 \begin{align}
 \bs{V}_t = \bs{U}_t\bs{U}_t^{\intercal},
 \end{align}
 where $\bs{U}_t \in \mathbb{R}^{M \times L}$, where $L \ll M$. Then
 \begin{align}
-\left(\bs{V}_t^{-1} + \|\bs{x}_k\|^2\bs{\Lambda}\right)^{-1} = \|\bs{x}_k\|^{-2}\bs{\Lambda}^{-1} - \|\bs{x}_k\|^{-2}\bs{\Lambda}^{-1}\bs{U}_t\left(\bs{I}_L + \|\bs{x}_k\|^{-2}\bs{U}_t^{\intercal}\bs{\Lambda}^{-1}\bs{U}_t\right)^{-1}\bs{U}_t^{\intercal}\bs{\Lambda}^{-1}\|\bs{x}_k\|^{-2}.
+\eqref{equation:new.sum.inv} &= \|\bs{x}_k\|^{-2}\bs{\Lambda}^{-1}\left[\|\bs{x}_k\|^{-2}\bs{\Lambda}^{-1} + \bs{V}_t\right]^{-1}\bs{V}_t\\
+&= \|\bs{x}_k\|^{-2}\bs{\Lambda}^{-1}\left[\|\bs{x}_k\|^{-2}\bs{\Lambda}^{-1} + \bs{U}_t\bs{U}_t^{\intercal}\right]^{-1}\bs{U}_t\bs{U}_t^{\intercal}\\
+&= \|\bs{x}_k\|^{-2}\bs{\Lambda}^{-1}\left[\|\bs{x}_k\|^2\bs{\Lambda} - \|\bs{x}_k\|^2\bs{\Lambda}\bs{U}_t\left(\bs{I}_L + \bs{U}_t^{\intercal}\|\bs{x}_k\|^2\bs{\Lambda}\bs{U}_t\right)^{-1}\bs{U}_t^{\intercal}\|\bs{x}_k\|^2\bs{\Lambda}\right]\bs{U}_t\bs{U}_t^{\intercal}\\
+&= \left[\bs{I}_M - \bs{U}_t\left(\bs{I}_L + \bs{U}_t^{\intercal}\|\bs{x}_k\|^2\bs{\Lambda}\bs{U}_t\right)^{-1}\bs{U}_t^{\intercal}\|\bs{x}_k\|^2\bs{\Lambda}\right]\bs{U}_t\bs{U}_t^{\intercal}\\
+&= \bs{U}_t\bs{U}_t^{\intercal} - \bs{U}_t\left(\bs{I}_L + \bs{U}_t^{\intercal}\|\bs{x}_k\|^2\bs{\Lambda}\bs{U}_t\right)^{-1}\bs{U}_t^{\intercal}\|\bs{x}_k\|^2\bs{\Lambda}\bs{U}_t\bs{U}_t^{\intercal}\\
+&= \bs{V}_t - \bs{U}_t\left(\bs{I}_L + \bs{Q}_t\right)^{-1}\bs{Q}_t\bs{U}_t^{\intercal},
+%% &= \bs{U}_t\bs{U}_t^{\intercal} - \bs{U}_t\left(\left[\bs{U}_t^{\intercal}\|\bs{x}_k\|^2\bs{\Lambda}\bs{U}_t\right]^{-1} + \bs{I}_L\right)^{-1}\bs{U}_t^{\intercal}
 \end{align}
-Since $\bs{\Lambda}$ is diagonal, this requires much less computation
-than calculating $\left(\bs{V}_t^{-1} +
-  \|\bs{x}_k\|^2\bs{\Lambda}\right)^{-1}$ directly. To get these low
-rank $\bs{V}_t$'s, you can use the \texttt{irlba} R package to
-efficiently calculate the top SV's without having to calculate all of
-the SV's.
+where $\bs{Q}_t :=
+\bs{U}_t^{\intercal}\|\bs{x}_k\|^2\bs{\Lambda}\bs{U}_t$. This requires
+much less computation than calculating $\left[\bs{I}_M +
+  \bs{V}_t\|\bs{x}_k\|^2\bs{\Lambda}\right]^{-1}\bs{V}_t$ directly. To
+get these low rank $\bs{V}_t$'s, you can use the \texttt{irlba} R
+package to efficiently calculate the top SV's without having to
+calculate all of the SV's, though you should only need to do this
+once.
 
 In calculating $\bs{\delta}$, we note that
 $\diag\left\{(\bs{Y}-\bs{X}\bs{\mu}_{\bs{B}} -
