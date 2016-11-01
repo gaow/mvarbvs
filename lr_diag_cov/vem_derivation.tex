@@ -783,10 +783,16 @@ As a final step for the initialization of $\bs{\Lambda}$, we can apply
 $(\lambda_1^{(init)},\ldots,\lambda_m^{(init)})$ to initialize
 them. This way, none of them will be too small.
 
+The intuition with multiplying $\bs{U}_{[, 1:K]}$ by $\sqrt{n}$ is so
+that the initial value is on a similar order to that of a normal
+random variate, but it shouldn't really matter.
+
+We can also use the residuals to estimate $R$ by using, for example, parallel factor
+
 Finally, we initialize $\bs{\pi}$ using the same approach as in ASH.
 
 The rest of the parameters do not need to be initalized because we can
-estimate them using just the current initialization with one pass of
+estimate them using just the current initializations with one pass of
 Algorithm \ref{algorithm:vem}.
 
 In the case of missing data, we can first use the \texttt{softImpute}
