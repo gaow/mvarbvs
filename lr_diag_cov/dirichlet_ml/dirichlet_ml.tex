@@ -1,0 +1,94 @@
+\documentclass[11pt,authoryear]{article}
+\pdfoutput = 1
+\usepackage{fullpage,amsthm,amsmath,natbib,algorithm,algorithmic,enumitem,afterpage,amssymb,setspace,graphicx,amsfonts,array,verbatim,commath}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows,matrix,positioning, fit, shapes.geometric}
+\usepackage[hang,flushmargin]{footmisc}
+\usepackage[colorlinks=TRUE,citecolor=Blue,linkcolor=BrickRed,urlcolor=PineGreen]{hyperref}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{claim}{Claim}
+\newtheorem{definition}{Definition}
+\newtheorem{exmp}{Example}[section]
+\allowdisplaybreaks
+\renewcommand{\baselinestretch}{1.5}
+\DeclareMathOperator*{\diag}{diag}
+\DeclareMathOperator*{\cov}{cov}
+\DeclareMathOperator*{\rank}{rank}
+\DeclareMathOperator*{\var}{var}
+\DeclareMathOperator*{\tr}{tr}
+\DeclareMathOperator*{\veco}{vec}
+\DeclareMathOperator*{\uniform}{\mathcal{U}niform}
+\DeclareMathOperator*{\argmin}{arg\ min}
+\DeclareMathOperator*{\argmax}{arg\ max}
+\DeclareMathOperator*{\N}{N}
+\DeclareMathOperator*{\gm}{Gamma}
+\DeclareMathOperator*{\dir}{Dirichlet}
+\bibliographystyle{plainnat}
+\newcommand*{\doi}[1]{\href{http://dx.doi.org/#1}{doi: #1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+
+\begin{document}
+\singlespacing
+\title{Pooling estimates of $\bs{\pi}$ in M\&MASH}
+\author{David Gerard}
+\maketitle
+
+\begin{abstract}
+  Here, I discuss pooling information across multiple genes in
+  estimating the mixing proportions of the prior density. I do this in
+  a multi-step process.
+\end{abstract}
+
+\section{Setup}
+From my M\&MASH write-up, our response variables are the
+gene-expression levels of \emph{one} gene from multiple tissues. The
+idea is that we perform M\&MASH on thousands of genes. This results in
+many estimates of $\bs{\pi} \in \mathbb{R}^T$, the mixing proportions
+such that $\sum_{t = 1}^T\pi_{t} = 1$. Estimating $\bs{\pi}$ over and
+over again seems inefficient. However, performing an overall analysis
+of jointly estimating $\bs{\pi}$ and every regression coefficient
+seems infeasible. Instead, we are going to suggest a multi-step procedure:
+\begin{enumerate}
+\item Estimate $\bs{\pi}_1,\ldots,\bs{\pi}_N$ for the $N$ genes using M\&MASH.
+\item Either shrink these $\hat{\bs{\pi}}_n$'s or estimate the mean of these
+  $\hat{\bs{\pi}}_n$'s assuming they come from a common distribution.
+\item Re-run M\&MASH assuming that the $\bs{\pi}_n$'s are known.
+\end{enumerate}
+This third step is an easy modification of M\&MASH. In this write-up, we focus on the second step.
+
+\section{Case 1: Common Distribution}
+We assume that
+\begin{align}
+\hat{\bs{\pi}}_1,\ldots,\hat{\bs{\pi}}_N \overset{iid}{\sim} \dir(\alpha_1,\ldots,\alpha_T).
+\end{align}
+We could then just estimate $(\alpha_1,\ldots,\alpha_T)$ by maximum
+likelihood. Algorithms to do this are described in
+\citet{minka2000estimating}. However, since N is likely to be huge
+($\approx 10000$) it is probably good enough to do method of moments
+estimators. This could be something I work on.
+
+After obtaining $(\hat{\alpha}_1,\ldots,\hat{\alpha}_T)$, we then use
+new mixing proportions $\bs{\pi} = (\pi_1,\ldots,\pi_t)$ where $\pi_t
+= \frac{\hat{\alpha}_{t}}{\sum_{t = 1}^T\hat{\alpha}_t}$ for M\&MASH
+for each gene.
+
+\section{Case 2: Empirical Bayes}
+Instead, we assume that each $\bs{\pi}_n$ actually does come from its
+own Dirichlet, but that these Dirichlet's are linked.
+\begin{align}
+\hat{\bs{\pi}}_n &\sim \dir(\bs{\alpha}_n)\\
+\bs{\alpha}_n &\overset{iid}{\sim} G,
+\end{align}
+where $G$ is some suitably non-parametric family of distributions. We
+could then get an estimate of $G$ and estimate each $\bs{\alpha}_n$ by
+their posterior means. We then run M\&M ash using $\bs{\pi}_n =
+\frac{\bs{\alpha}_n}{\bs{\alpha}_n^{\intercal}\bs{1}_T}$ as the known
+mixing proportions.
+
+\bibliography{dirichlet_bib}
+
+\end{document}
