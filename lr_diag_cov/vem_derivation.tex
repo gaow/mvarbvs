@@ -654,14 +654,11 @@ into the $\bs{Y}$ matrix and using $\tau_{nm}^2 = 1 / \lambda_m$.
 \begin{algorithmic}
   \STATE Initialize parameters:
   \begin{description}[noitemsep, nolistsep]
-  \item $\bs{\mu}_{\bs{Z}} \in \mathbb{R}^{N \times R}$, $\bs{\Sigma}_{\bs{Z}} \in \mathbb{R}^{R \times R}$
-  \item $\bs{\mu}_{kt}\in\mathbb{R}^{M}$, $\bs{\Sigma}_{kt} \in \mathbb{R}^{M \times M}$ for $k = 1,\ldots,K, t = 1,\ldots, T$.
-  \item $\gamma_{kt} \in [0, 1]$ s.t. $\sum_{t = 0}^T\gamma_{kt} = 1$ for $k = 1,\ldots,K$.
-  \item $\bs{\Lambda} = \diag(\lambda_1,\ldots,\lambda_M)$, $\lambda_m > 0$ for $m = 1,\ldots,M$
-  \item $\bs{A} \in \mathbb{R}^{R \times M}$ full rank.
+  \item $\bs{\mu}_{\bs{B}} = E[\bs{B}]$ by multivariate multiple regression of $\bs{Y}$ on $\bs{X}$
+  \item $\bs{\mu}_{\bs{Z}} \in \mathbb{R}^{N \times R}$ and $\bs{A}$ by a low-rank SVD on $\bs{Y} - E[\bs{B}]$.
+  \item $\bs{\Lambda}$ by residual sums squares of $\bs{Y} - \bs{\mu}_{\bs{B}}\bs{X} - \bs{\mu}_{\bs{Z}}\bs{A}$ divided by $N - K - R$. Optionally limma-shrink these variances.
   \item $\pi_t \in [0, 1]$ s.t. $\sum_{t = 0}^T\pi_t = 1$
   \end{description}
-  \STATE Set $\bs{\mu}_{\bs{B}} = E[\bs{B}]$
   \REPEAT
   \STATE Update $q(\bs{B},\bs{W})$:
   \FOR {$k = 1,\ldots,K$}
@@ -707,14 +704,12 @@ into the $\bs{Y}$ matrix and using $\tau_{nm}^2 = 1 / \lambda_m$.
 \begin{algorithmic}
   \STATE Initialize parameters:
   \begin{description}[noitemsep, nolistsep]
-  \item $\bs{\mu}_{\bs{Z}} \in \mathbb{R}^{N \times R}$, $\bs{\Sigma}_{\bs{Z}} \in \mathbb{R}^{R \times R}$
-  \item $\bs{\mu}_{kt}\in\mathbb{R}^{M}$, $\bs{\Sigma}_{kt} \in \mathbb{R}^{M \times M}$ for $k = 1,\ldots,K, t = 1,\ldots, T$.
-  \item $\gamma_{kt} \in [0, 1]$ s.t. $\sum_{t = 0}^T\gamma_{kt} = 1$ for $k = 1,\ldots,K$.
-  \item $\bs{\Lambda} = \diag(\lambda_1,\ldots,\lambda_M)$, $\lambda_m > 0$ for $m = 1,\ldots,M$
-  \item $\bs{A} \in \mathbb{R}^{R \times M}$ full rank.
+  \item Set $\bs{Y}_{\mathcal{C}}$ to either be the overall mean of the observed $y_{nm}$'s or use \texttt{softImpute} to impute missing values.
+  \item $\bs{\mu}_{\bs{B}} = E[\bs{B}]$ by multivariate multiple regression of $\bs{Y}$ on $\bs{X}$
+  \item $\bs{\mu}_{\bs{Z}} \in \mathbb{R}^{N \times R}$ and $\bs{A}$ by a low-rank SVD on $\bs{Y} - E[\bs{B}]$.
+  \item $\bs{\Lambda}$ by residual sums squares of $\bs{Y} - \bs{\mu}_{\bs{B}}\bs{X} - \bs{\mu}_{\bs{Z}}\bs{A}$ divided by $N - K - R$. Optionally limma-shrink these variances.
   \item $\pi_t \in [0, 1]$ s.t. $\sum_{t = 0}^T\pi_t = 1$
   \end{description}
-  \STATE Set $\bs{\mu}_{\bs{B}} = E[\bs{B}]$
   \STATE Set $\bs{Y}_{\mathcal{C}} = \left[\bs{X}\bs{\mu}_{\bs{B}} + \bs{\mu}_{\bs{Z}}\bs{A}\right]_{\mathcal{C}}$
   \STATE Set $\bs{g} = \left[\sum_{n: (n, m) \in \mathcal{C}} 1 / \lambda_m\right]_{m = 1}^M$
   \REPEAT
@@ -761,6 +756,46 @@ into the $\bs{Y}$ matrix and using $\tau_{nm}^2 = 1 / \lambda_m$.
 \caption{Variational EM algorithm for M\&MASH when assuming low-rank column covariance and some missing data.}
 \label{algorithm:vem.missing}
 \end{algorithm}
+
+
+\section{Initialization of Parameters}
+Since the VEM is only gauranteed to converge to a local optimum, it's
+important to choose good starting locations. In conjunction with Gao,
+we decided on the following path to deciding the initial values.
+
+We first estimate $\bs{\mu}_{\bs{B}}$ by multivariate multiple regression of $\bs{Y}$ on $\bs{X}$. That is,
+\begin{align}
+\bs{\mu}_{\bs{B}}^{(init)} = (\bs{X}^{\intercal}\bs{X})^{-1}\bs{X}^{\intercal}\bs{Y}.
+\end{align}
+
+We then initialize $\bs{\mu}_{\bs{Z}}$, $\bs{A}$, and $\bs{\Lambda}$ using the residuals of this regression.
+\begin{align}
+\bs{E} := (\bs{I}_{K} - \bs{X}(\bs{X}^{\intercal}\bs{X})^{-1}\bs{X}^{\intercal})\bs{Y}.
+\end{align}
+Let $\bs{E} = \bs{U}\bs{D}\bs{V}^{\intercal}$ be the singular value decomposition of $\bs{E}$. Then we initialize
+\begin{align}
+\bs{\mu}_{\bs{Z}}^{(init)} &= \sqrt{N}\bs{U}_{[, 1:K]}\\
+\bs{A}^{(init)} &= \bs{D}_{[1:K, 1:K]}\bs{V}_{[, 1:K]}^{\intercal}/\sqrt{N}\\
+(\lambda_1^{(init)},\ldots,\lambda_m^{(init)}) &= \text{colSums}\left[(\bs{E} - \bs{\mu}_{\bs{Z}}^{(init)}\bs{A}^{(init)})^2\right] / (N - K - R).
+\end{align}
+As a final step for the initialization of $\bs{\Lambda}$, we can apply
+\texttt{squeezeVar} from the \texttt{limma} package to these
+$(\lambda_1^{(init)},\ldots,\lambda_m^{(init)})$ to initialize
+them. This way, none of them will be too small.
+
+Finally, we initialize $\bs{\pi}$ using the same approach as in ASH.
+
+The rest of the parameters do not need to be initalized because we can
+estimate them using just the current initialization with one pass of
+Algorithm \ref{algorithm:vem}.
+
+In the case of missing data, we can first use the \texttt{softImpute}
+R package to impute the missing data, initialize $\bs{\mu}_{\bs{B}}$,
+$\bs{\mu}_{\bs{Z}}$, $\bs{A}$, and $\bs{\Lambda}$, then set
+$\bs{Y}_{\mathcal{C}} = \left[\bs{X}\bs{\mu}_{\bs{B}} +
+  \bs{\mu}_{\bs{Z}}\bs{A}\right]_{\mathcal{C}}$ before starting the
+optimization program.
+
 
 \section{Ideas to speed up VEM}
 The slowest part of the VEM will be calculating the inverse of
