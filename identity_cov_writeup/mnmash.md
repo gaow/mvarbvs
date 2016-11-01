@@ -1,6 +1,6 @@
 ---
 title: "M&M ASH model and inference"
-date: "October 8, 2016"
+date: "October 24, 2016"
 output: pdf_document
 geometry: margin=0.8in
 ---
@@ -32,11 +32,15 @@ We use a unimodal mixture prior (`ash` prior) for $B$
 \begin{eqnarray} \label{eq:prior}
 B \mid \pi, U, \omega \sim \sum_{k}\sum_{l} \pi_{k,l}\mathcal{MN}(0, I_p, \omega_lU_k)
 \end{eqnarray}
-where $\omega_l$ are given grid values, $U_k$ are given matrices and the mixture components $\pi_{k,l}$ are learned from data. When $U_k = U_0 = 0$ the corresponding $\pi_0$ is the probability of having no effect.
+where $\omega_l$ are given grid values, 
+$U_k$ are given matrices 
+and the mixture components $\pi_{k,l}$ are learned from data. 
+When $U_k = U_0 = 0$ the corresponding $\pi_0$ is the probability of having no effect.
 This is the multivariate + multiple regression extension of the `ash` model (Stephens 2016).
 
 ## Variational inference
-We use variational inference to solve the model. The objective function to minimize is the K-L divergence
+We use variational inference to solve the model. 
+The objective function to minimize is the K-L divergence
 
 \begin{eqnarray} \label{eq:kl}
 F &=& E_q \log\frac{q(B)}{p(B)p(Y|X,B)} \\
@@ -63,7 +67,8 @@ q(\beta_p) = \sum_t \alpha_{pt} N(\mu_{pt},S_{pt})
 We then minimize $F$ and estimate model parameters.
 
 ### Known $\Sigma$
-For starters we assume $\Sigma$ is known; thus without loss of generality we set $\Sigma = I_J$. 
+For starters we assume $\Sigma$ is known; 
+thus without loss of generality we set $\Sigma = I_J$. 
 This is because if we scale $B$ by $\Sigma^{-\frac{1}{2}}$ we can consider the equivalent model
 \begin{eqnarray*}
 Y\Sigma^{-\frac{1}{2}} &=& XB\Sigma^{-\frac{1}{2}} + E\Sigma^{-\frac{1}{2}} \\
@@ -86,7 +91,8 @@ We denote that
 \phi_2\\
 ... \\
 \phi_P \end{array}\right\} \]
-We work out terms in (\ref{eq:kl})
+We work out terms in (\ref{eq:kl}). 
+The details mostly follows along the lines of the `mvash` model due to W. Wang & M. Stephens.
 \begin{eqnarray} 
 E_q \log p(Y|X,B) &=& -\frac{NJ}{2} \log2\pi -\frac{1}{2} E_q \{ tr[(Y-XB)^T(Y-XB)]\}\\
  &=& -\frac{NJ}{2} \log2\pi -\frac{1}{2} E_q \{ tr[Y^T Y - Y^T X B - B^T X^T Y + B^T X^T X B]\}\\
@@ -123,7 +129,7 @@ r_p + d_p \mu_{pt} + V_t^{-1}\mu_{pt})\\
 &+& \log\frac{\alpha_{pt}}{\pi_t} -\frac{1}{2} \log\frac{|S_{pt}|}{|V_t|} + \frac{1}{2} tr[V_t^{-1}(\mu_{pt}\mu_{pt}^T + S_{pt})] - \frac{J}{2} +1
 \end{eqnarray}
 where $d_p = \sum_k X_{kp}X_{kp}$.
-The solutions are therefor
+The solutions are therefore
 \begin{eqnarray}
 S_{pt} &=& (d_pI + V_t^{-1})^{-1} \\
 \mu_{pt} &=& S_{pt} (\phi_p - \sum_i [X^TX]_{ip} r_i + [X^TX]_{pp}r_p)\\
@@ -140,15 +146,35 @@ S_{pt} &=& ([X^TX]_{pp}I + V_t^{-1})^{-1} \\
 We iterate this procedure until $F$ converges.
 
 ### Unknown $\Sigma$
-We now treat $\Sigma_{J \times J}$ unknown and estimate it in the VB procedure. When $J$ is large, for example $J = 50$, we will have an additional 2,500 parameters to estimate at each iteration; this is likely problematic. There are two simplifications to this: 1) Assuming $\Sigma$ is diagonal, or 2) Assuming $\Sigma$ is low rank.
+We now treat $\Sigma_{J \times J}$ unknown and estimate it in the VB procedure. 
+When $J$ is large, for example $J = 50$, 
+we will have an additional 2,500 parameters to estimate at each iteration; this is likely problematic. 
+Simplifications might be made if we assume some structure on $\Sigma$:
 
-#### When $\Sigma$ is Low rank 
-Let 
+* $\Sigma$ is diagonal
+* $\Sigma$ is low rank
+
+#### When $\Sigma$ is diagonal
+Similar to the `mvash` model, updating $\Sigma$ in VB would boil down 
+to finding the inverse and determinant of diagonal matrix 
+which is computationally feasible. 
+However, we suspect this simplification is good in practice,
+because residual variance are very much likely correlated for genes from
+the same subject in different tissues, either due to other genes or due to
+unmeasured confounders.
+
+#### When $\Sigma$ is low rank 
+This is a more realistic assumption. Let 
 \begin{eqnarray}
 \Sigma &=& \sigma^2 I + WW^T 
 \end{eqnarray}
-where $W$ is low rank. Then removing genetic effect the model equivalent to (\ref{eq:model}) is
+where $W$ is low rank. Then we have an augmented regression
+\begin{eqnarray}
+Y = XB + ZW + E
+\end{eqnarray}
+Removing genetic effect the model equivalent to (\ref{eq:model}) is
 \begin{eqnarray} \label{eq:model3}
 Z = Y - XB \sim \mathcal{MN}(0, I_N, \sigma^2 I + WW^T )
 \end{eqnarray}
-Using plug-in estimate of $B$, (\ref{eq:model3}) may be solved in the VB procedure along the lines of Tipping and Bishop (1999) (their EM updates with respect to $W$).
+$W$ in (\ref{eq:model3}) may be solved via VB 
+which fits in the current framework.
