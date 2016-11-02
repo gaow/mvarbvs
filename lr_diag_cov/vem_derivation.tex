@@ -1,6 +1,6 @@
 \documentclass[11pt,authoryear]{article}
 \pdfoutput = 1
-\usepackage{fullpage,amsthm,amsmath,natbib,algorithm,algorithmic,enumitem,afterpage,amssymb,setspace,graphicx,amsfonts,array,verbatim,commath}
+\usepackage{fullpage,amsthm,amsmath,natbib,algorithm,algorithmic,enumitem,afterpage,amssymb,setspace,graphicx,amsfonts,array,verbatim,commath,mathrsfs}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{arrows,matrix,positioning, fit, shapes.geometric}
@@ -42,6 +42,7 @@
 \end{abstract}
 
 \section{Setup}
+\label{section:setup}
 
 I now describe the notation used in this text. I denote matrices by
 boldface uppercase letters ($\bs{A}$), vectors are denoted by boldface
@@ -641,6 +642,79 @@ Hence, we have that this term in the ELBO is equal to
 \end{split}
 \end{align}
 
+
+
+
+\section{Initialization of Parameters}
+Since the VEM is only gauranteed to converge to a local optimum, it's
+important to choose good starting locations. In conjunction with Gao,
+we decided on the following path to deciding the initial values.
+
+We first estimate $\bs{\mu}_{\bs{B}}$ by multivariate multiple regression of $\bs{Y}$ on $\bs{X}$. That is,
+\begin{align}
+\bs{\mu}_{\bs{B}}^{(init)} = (\bs{X}^{\intercal}\bs{X})^{-1}\bs{X}^{\intercal}\bs{Y}.
+\end{align}
+
+We then initialize $\bs{\mu}_{\bs{Z}}$, $\bs{A}$, and $\bs{\Lambda}$ using the residuals of this regression.
+\begin{align}
+\bs{E} := (\bs{I}_{K} - \bs{X}(\bs{X}^{\intercal}\bs{X})^{-1}\bs{X}^{\intercal})\bs{Y}.
+\end{align}
+Let $\bs{E} = \bs{U}\bs{D}\bs{V}^{\intercal}$ be the singular value decomposition of $\bs{E}$. Then we initialize
+\begin{align}
+\bs{\mu}_{\bs{Z}}^{(init)} &= \sqrt{N}\bs{U}_{[, 1:K]}\\
+\bs{A}^{(init)} &= \bs{D}_{[1:K, 1:K]}\bs{V}_{[, 1:K]}^{\intercal}/\sqrt{N}\\
+(\lambda_1^{(init)},\ldots,\lambda_m^{(init)}) &= \text{colSums}\left[(\bs{E} - \bs{\mu}_{\bs{Z}}^{(init)}\bs{A}^{(init)})^2\right] / (N - K - R).
+\end{align}
+As a final step for the initialization of $\bs{\Lambda}$, we can apply
+\texttt{squeezeVar} from the \texttt{limma} package to these
+$(\lambda_1^{(init)},\ldots,\lambda_m^{(init)})$ to initialize
+them. This way, none of them will be too small.
+
+The intuition with multiplying $\bs{U}_{[, 1:K]}$ by $\sqrt{n}$ is so
+that the initial value is on a similar order to that of a normal
+random variate, but it shouldn't really matter.
+
+We can also use the residuals to estimate $R$ by using, for example, parallel factor
+
+Finally, we initialize $\bs{\pi}$ using the same approach as in ASH.
+
+The rest of the parameters do not need to be initalized because we can
+estimate them using just the current initializations with one pass of
+Algorithm \ref{algorithm:vem}.
+
+In the case of missing data, we can first use the \texttt{softImpute}
+R package to impute the missing data, initialize $\bs{\mu}_{\bs{B}}$,
+$\bs{\mu}_{\bs{Z}}$, $\bs{A}$, and $\bs{\Lambda}$, then set
+$\bs{Y}_{\mathcal{C}} = \left[\bs{X}\bs{\mu}_{\bs{B}} +
+  \bs{\mu}_{\bs{Z}}\bs{A}\right]_{\mathcal{C}}$ before starting the
+optimization program.
+
+
+\section{Penalize $\bs{\pi}$}
+Suppose we want to include the same penalization on $\bs{\pi}$ as in
+ASH. Let $\eta_t \geq 1$ for $t = 1,\ldots, T$. Let
+\begin{align}
+h(\bs{\pi}|\bs{\eta}) = \prod_{t = 0}^T \pi_t^{\eta_t - 1}.
+\end{align}
+Then the objective that we wish to maximize is
+\begin{align}
+\mathcal{L}(q, \bs{\pi}, \bs{A}) + \log h(\bs{\pi}|\bs{\eta}).
+\end{align}
+The updates for all parameters except $\bs{\pi}$ are the exact same as before. To update $\bs{\pi}$ we need to maximize over $\bs{\pi}$
+\begin{align}
+&E\left\{\log p(\bs{Y},\bs{B},\bs{W},\bs{Z},\bs{\Lambda}|\bs{\pi},\bs{A})\right\} + \log h(\bs{\pi}|\bs{\eta})\\
+&= \argmax_{\bs{\pi}}\left( E\left\{\log p(\bs{w}_k|\bs{\pi})\right\} + \log h(\bs{\pi}|\bs{\eta})\right)\\
+&= \argmax_{\bs{\pi}} \left(E\left\{\sum_{k = 1}^K\sum_{t = 0}^Tw_{kt}\log(\pi_t)\right\} + \sum_{t = 0}^T (\eta_t - 1)\log(\pi_t)\right)\\
+&= \argmax_{\bs{\pi}} \sum_{t = 0}^T\left\{\left(\sum_{k = 1}^KE[w_{kt}]\right) + \eta_t - 1 \right\}\log(\pi_t)\\
+&= \argmax_{\bs{\pi}} \sum_{t = 0}^T\left\{\left(\sum_{k = 1}^K\gamma_{kt}\right) + \eta_t - 1 \right\}\log(\pi_t).
+\end{align}
+We have
+\begin{align}
+\pi_t = \frac{\left(\sum_{k = 1}^K\gamma_{kt}\right) + \eta_t - 1}{\sum_{t = 0}^T\sum_{k = 1}^K\gamma_{kt} + \sum_{t = 0}^T\eta_t - T}.
+\end{align}
+We use the same default penalty as in ASH with $\eta_0 = 10$ and $\eta_t = 1$ for all $t \neq 0$.
+
+
 \section{The VEM Algorithm}
 The full VEM algorithm is presented in Algorithm
 \ref{algorithm:vem}. I present the details there assuming that we are
@@ -677,7 +751,7 @@ into the $\bs{Y}$ matrix and using $\tau_{nm}^2 = 1 / \lambda_m$.
   \STATE Recalculate $\bs{h} = \left[\sum_{k = 1}^K\|\bs{x}_k\|^2\sum_{t = 0}^T\gamma_{kt}\left[\left(\mu_{ktm} - E[b_{km}]\right)^2 + \bs{\Sigma}_{kt[m, m]}\right]\right]_{m = 1}^{M}$
   \STATE Update $\bs{\pi}$:
   \begin{description}[noitemsep, nolistsep]
-  \item Set $\pi_t = \frac{\sum_{k = 1}^K\gamma_{kt}}{\sum_{t = 0}^T\sum_{k = 1}^K\gamma_{kt}}$ for $t = 1,\ldots, T$
+  \item Set $\pi_t = \frac{\left(\sum_{k = 1}^K\gamma_{kt}\right) + \eta_t - 1}{\sum_{t = 0}^T\sum_{k = 1}^K\gamma_{kt} + \sum_{t = 0}^T\eta_t - T}$ for $t = 1,\ldots, T$
   \end{description}
   \STATE Update $q(\bs{Z})$:
   \begin{description}[noitemsep, nolistsep]
@@ -730,7 +804,7 @@ into the $\bs{Y}$ matrix and using $\tau_{nm}^2 = 1 / \lambda_m$.
   \STATE Recalculate $\bs{h} = \left[\sum_{k = 1}^K\|\bs{x}_k\|^2\sum_{t = 0}^T\gamma_{kt}\left[\left(\mu_{ktm} - E[b_{km}]\right)^2 + \bs{\Sigma}_{kt[m, m]}\right]\right]_{m = 1}^{M}$
   \STATE Update $\bs{\pi}$:
   \begin{description}[noitemsep, nolistsep]
-  \item Set $\pi_t = \frac{\sum_{k = 1}^K\gamma_{kt}}{\sum_{t = 0}^T\sum_{k = 1}^K\gamma_{kt}}$ for $t = 1,\ldots, T$
+  \item Set $\pi_t = \frac{\left(\sum_{k = 1}^K\gamma_{kt}\right) + \eta_t - 1}{\sum_{t = 0}^T\sum_{k = 1}^K\gamma_{kt} + \sum_{t = 0}^T\eta_t - T}$ for $t = 1,\ldots, T$
   \end{description}
   \STATE Update $q(\bs{Z})$:
   \begin{description}[noitemsep, nolistsep]
@@ -756,51 +830,6 @@ into the $\bs{Y}$ matrix and using $\tau_{nm}^2 = 1 / \lambda_m$.
 \caption{Variational EM algorithm for M\&MASH when assuming low-rank column covariance and some missing data.}
 \label{algorithm:vem.missing}
 \end{algorithm}
-
-
-\section{Initialization of Parameters}
-Since the VEM is only gauranteed to converge to a local optimum, it's
-important to choose good starting locations. In conjunction with Gao,
-we decided on the following path to deciding the initial values.
-
-We first estimate $\bs{\mu}_{\bs{B}}$ by multivariate multiple regression of $\bs{Y}$ on $\bs{X}$. That is,
-\begin{align}
-\bs{\mu}_{\bs{B}}^{(init)} = (\bs{X}^{\intercal}\bs{X})^{-1}\bs{X}^{\intercal}\bs{Y}.
-\end{align}
-
-We then initialize $\bs{\mu}_{\bs{Z}}$, $\bs{A}$, and $\bs{\Lambda}$ using the residuals of this regression.
-\begin{align}
-\bs{E} := (\bs{I}_{K} - \bs{X}(\bs{X}^{\intercal}\bs{X})^{-1}\bs{X}^{\intercal})\bs{Y}.
-\end{align}
-Let $\bs{E} = \bs{U}\bs{D}\bs{V}^{\intercal}$ be the singular value decomposition of $\bs{E}$. Then we initialize
-\begin{align}
-\bs{\mu}_{\bs{Z}}^{(init)} &= \sqrt{N}\bs{U}_{[, 1:K]}\\
-\bs{A}^{(init)} &= \bs{D}_{[1:K, 1:K]}\bs{V}_{[, 1:K]}^{\intercal}/\sqrt{N}\\
-(\lambda_1^{(init)},\ldots,\lambda_m^{(init)}) &= \text{colSums}\left[(\bs{E} - \bs{\mu}_{\bs{Z}}^{(init)}\bs{A}^{(init)})^2\right] / (N - K - R).
-\end{align}
-As a final step for the initialization of $\bs{\Lambda}$, we can apply
-\texttt{squeezeVar} from the \texttt{limma} package to these
-$(\lambda_1^{(init)},\ldots,\lambda_m^{(init)})$ to initialize
-them. This way, none of them will be too small.
-
-The intuition with multiplying $\bs{U}_{[, 1:K]}$ by $\sqrt{n}$ is so
-that the initial value is on a similar order to that of a normal
-random variate, but it shouldn't really matter.
-
-We can also use the residuals to estimate $R$ by using, for example, parallel factor
-
-Finally, we initialize $\bs{\pi}$ using the same approach as in ASH.
-
-The rest of the parameters do not need to be initalized because we can
-estimate them using just the current initializations with one pass of
-Algorithm \ref{algorithm:vem}.
-
-In the case of missing data, we can first use the \texttt{softImpute}
-R package to impute the missing data, initialize $\bs{\mu}_{\bs{B}}$,
-$\bs{\mu}_{\bs{Z}}$, $\bs{A}$, and $\bs{\Lambda}$, then set
-$\bs{Y}_{\mathcal{C}} = \left[\bs{X}\bs{\mu}_{\bs{B}} +
-  \bs{\mu}_{\bs{Z}}\bs{A}\right]_{\mathcal{C}}$ before starting the
-optimization program.
 
 
 \section{Ideas to speed up VEM}
@@ -859,6 +888,60 @@ to calculate it. Choose a different stopping criterion. Just use the
 ELBO as an implementation check on small datasets.
 
 
+\section{All genes at once}
+All of these derivations assume that we are only operating on one gene. However, we are going to assume that all genes share the same $\bs{\pi}$. Suppose we have $P$ genes. Then the model becomes
+\begin{align}
+{\bs{Y}_p}_{N_p\times M_p} = {\bs{X}_p}_{N_p \times K_p}{\bs{B}_p}_{K_p \times M_p} + {\bs{Z}_p}_{N_p \times R_p}{\bs{A}_p}_{R_p \times M_p} + {\bs{E}_p}_{N_p \times M_p},
+\end{align}
+where
+\begin{align}
+\bs{E}_p &\sim \N_{N_p \times M_p}(\bs{0}, \bs{\Lambda}_p^{-1} \otimes \bs{I}_{N_p}),\\
+\bs{\Lambda}_p &= \diag(\lambda_{1p},\ldots,\lambda_{M_pp}),\\
+\bs{Z}_p &\sim \N_{N_p\times R_p}(\bs{0}, \bs{I}_{R_p} \otimes \bs{I}_{N_p}).
+\end{align}
+Again, we place iid mixtures of normals prior on the rows of $\bs{B}_p$.
+\begin{align}
+\bs{B}_p &=
+\left(
+\begin{array}{c}
+\bs{b}_{1p}^\intercal\\
+\vdots\\
+\bs{b}_{K_p}^\intercal\\
+\end{array}
+\right),\\
+\bs{b}_{kp} &\text{ i.i.d. s.t. } p(\bs{b}_{kp}) = \sum_{t = 0}^T\pi_t\N_M(\bs{b}_{kp} | \bs{0}, \bs{V}_t).
+\end{align}
+Notice that we have the same $\pi_t$'s and the same $\bs{V}_t$'s for all $p$. We use the same augmented parameterization as in Section \ref{section:setup}. Let
+\begin{align}
+\mathcal{Y} &= \{\bs{Y}_1,\ldots,\bs{Y}_p\},\\
+\mathcal{X} &= \{\bs{X}_1,\ldots,\bs{X}_p\},\\
+\mathcal{B} &= \{\bs{B}_1,\ldots,\bs{B}_p\},\\
+\mathcal{W} &= \{\bs{W}_1,\ldots,\bs{W}_p\},\\
+\mathcal{Z} &= \{\bs{Z}_1,\ldots,\bs{Z}_p\},\\
+\mathscr{L} &= \{\bs{\Lambda}_1,\ldots,\bs{\Lambda}_p\}, \text{ and}\\
+\mathcal{A} &= \{\bs{A}_1,\ldots,\bs{A}_p\}.
+\end{align}
+We assume all genes are independent, hence we have that
+\begin{align}
+p(\mathcal{Y}, \mathcal{B}, \mathcal{W}, \mathcal{Z} | \mathscr{L}, \mathcal{A}, \bs{\pi}) =  \prod_{p = 1}^P p(\bs{Y}_p,\bs{B}_p,\bs{W}_p,\bs{Z}_p|\bs{\Lambda}_p,\bs{\pi},\bs{A}_p).
+\end{align}
+
+We perform variational Bayes and try to optimize the following lower bounds on the marginal log-likelihood over $q$, $\bs{\pi}$, $\mathcal{A}$, and $\mathscr{L}$:
+\begin{align}
+\mathcal{L}(q, \bs{\pi}, \mathcal{A}, \mathscr{L}) = \int q(\mathcal{B}, \mathcal{W}, \mathcal{Z} ) \log\left\{\frac{p(\mathcal{Y},\mathcal{B},\mathcal{W},\mathcal{Z}|\mathscr{\Lambda},\bs{\pi},\mathcal{A})}{q(\mathcal{B}, \mathcal{W}, \mathcal{Z})}\right\}\dif\mathcal{B}\dif\mathcal{W}\dif\mathcal{Z}.
+\end{align}
+Here, we assume a separable $q$, thus performing mean-field variational inference:
+\begin{align}
+q(\mathcal{B}, \mathcal{W}, \mathcal{Z}) = \prod_{p = 1}^P\left(q(\bs{Z}_p)\prod_{k = 1}^{K}q(\bs{b}_{kp},\bs{w}_{kp})\right).
+\end{align}
+It turns out that all of the updates for $q$, $\bs{\Lambda}$, and
+$\bs{A}$ are the exact same as in the case of one gene. That is, one looks individually at each gene. The only change then is the update for $\bs{\pi}$. In this case, we use all of the current values of $\gamma_{kpt}$ and the update becomes
+\begin{align}
+\pi_t = \frac{\left(\sum_{p = 1}^P\sum_{k = 1}^K\gamma_{ktp}\right) + \eta_t - 1}{\sum_{t = 0}^T\sum_{p = 1}^P\sum_{k = 1}^K\gamma_{ktp} + \sum_{t = 0}^T\eta_t - T}.
+\end{align}
+To do this on real data, we would probably need to parallelize the
+updates for all parameters except $\bs{\pi}$ then update $\bs{\pi}$
+then repeat.
 
 \bibliography{vem_bib.bib}
 
