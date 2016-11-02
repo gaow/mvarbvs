@@ -934,14 +934,30 @@ Here, we assume a separable $q$, thus performing mean-field variational inferenc
 \begin{align}
 q(\mathcal{B}, \mathcal{W}, \mathcal{Z}) = \prod_{p = 1}^P\left(q(\bs{Z}_p)\prod_{k = 1}^{K}q(\bs{b}_{kp},\bs{w}_{kp})\right).
 \end{align}
-It turns out that all of the updates for $q$, $\bs{\Lambda}$, and
-$\bs{A}$ are the exact same as in the case of one gene. That is, one looks individually at each gene. The only change then is the update for $\bs{\pi}$. In this case, we use all of the current values of $\gamma_{kpt}$ and the update becomes
+It turns out that all of the updates for $q$, the $\bs{\Lambda}_p$'s,
+and the $\bs{A}_p$'s are the exact same as in the case of one
+gene. That is, one looks individually at each gene. The only change
+then is the update for $\bs{\pi}$. In this case, we use all of the
+current values of $\gamma_{kpt}$ and the update becomes
 \begin{align}
 \pi_t = \frac{\left(\sum_{p = 1}^P\sum_{k = 1}^K\gamma_{ktp}\right) + \eta_t - 1}{\sum_{t = 0}^T\sum_{p = 1}^P\sum_{k = 1}^K\gamma_{ktp} + \sum_{t = 0}^T\eta_t - T}.
 \end{align}
 To do this on real data, we would probably need to parallelize the
 updates for all parameters except $\bs{\pi}$ then update $\bs{\pi}$
 then repeat.
+
+\begin{center}
+\begin{tikzpicture}
+\tikzstyle{every path}=[very thick];
+\path (0, 2) node (pi)[rounded corners, draw] {$\bs{\pi}$}
+(-4, 0) node (node1)[rounded corners, draw] {$\bs{B}_1$ $\bs{Z}_1$ $\bs{A}_1$ $\bs{W}_1$ $\bs{\Lambda}_1$}
+(0, 0) node (zero) {$\bs{\cdots}$}
+(4, 0) node (nodep)[rounded corners, draw] {$\bs{B}_p$ $\bs{Z}_p$ $\bs{A}_p$ $\bs{W}_p$ $\bs{\Lambda}_p$};
+\draw[dashed, <->] (pi) -- (node1);
+\draw[dashed, <->] (pi) -- (zero);
+\draw[dashed, <->] (pi) -- (nodep);
+\end{tikzpicture}
+\end{center}
 
 \bibliography{vem_bib.bib}
 
