@@ -71,9 +71,9 @@ where
 \bs{Z} &\sim \N_{N\times R}(\bs{0}, \bs{I}_R \otimes \bs{I}_N).
 \end{align}
 That is, the overall covariance of the columns of $\bs{Y}$ is
-$\bs{A}^{\intercal} \bs{A} + \bs{\Lambda}$, a diagonal plus low rank
-matrix. We place iid mixtures of normals prior on the rows of $\bs{B}$
-and gamma priors on $\bs{\Lambda}$.
+$\bs{A}^{\intercal} \bs{A} + \bs{\Lambda}^{-1}$, a diagonal plus low
+rank matrix. We place iid mixtures of normals prior on the rows of
+$\bs{B}$ and gamma priors on $\bs{\Lambda}$.
 \begin{align}
 \lambda_m &\overset{iid}{\sim} \gm(\alpha, \beta),\\
 \bs{B} &=
@@ -575,9 +575,9 @@ gamma function and $\psi(\cdot)$ is the di-gamma function.
 &- \frac{1}{2} \tr(\bs{\mu}_{\bs{Z}}^{\intercal}\bs{\mu}_{\bs{Z}}) - \frac{R}{2}\tr(\bs{\Sigma}_{\bs{Z}})\\
 &+ \sum_{m = 1}^M (\alpha - 1)[\psi(\alpha_m) - \log(\beta_m)] - \sum_{m = 1}^M\beta \alpha_m/\beta_m\\
 &+\sum_{k = 1}^K \sum_{t = 0}^T \gamma_{kt}\left(\log(\pi_t) - \frac{M}{2}\log(2\pi) - \frac{1}{2}\log\det(\bs{V}_t) - \frac{1}{2}\tr\left[\bs{V}_t^{-1}(\bs{\mu}_{kt}\bs{\mu}_{kt}^{\intercal} + \bs{\Sigma}_{kt})\right]\right)\\
-&+\sum_{k = 1}^K \sum_{t = 0}^T \gamma_{kt}\left(\log(\gamma_{kt}) - \frac{M}{2}\log(2\pi) - \frac{1}{2}\log\det(\bs{\Sigma}_{kt}) - \frac{M}{2}\right)\\
-&-\frac{N}{2}\log\det(\bs{\Sigma}_{\bs{Z}})\\
-&+\sum_{m = 1}^M \left( \alpha_m - \log(\beta_m) + \log(\Gamma(\alpha_m)) + (1 - \alpha_m)\psi(\alpha_m)\right)
+&-\sum_{k = 1}^K \sum_{t = 0}^T \gamma_{kt}\left(\log(\gamma_{kt}) - \frac{M}{2}\log(2\pi) - \frac{1}{2}\log\det(\bs{\Sigma}_{kt}) - \frac{M}{2}\right)\\
+&+\frac{N}{2}\log\det(\bs{\Sigma}_{\bs{Z}})\\
+&-\sum_{m = 1}^M \left( \alpha_m - \log(\beta_m) + \log(\Gamma(\alpha_m)) + (1 - \alpha_m)\psi(\alpha_m)\right)
 \end{split}
 \end{align}
 
