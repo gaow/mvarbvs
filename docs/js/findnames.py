@@ -57,7 +57,7 @@ docString=docString.rstrip().rstrip(',') + ']'
 
 docFile=open("./docs/js/docs.js","w")
 fileDict(docFile,"notebook", path='analysis/')
-fileDict(docFile,"writeup", path='analysis')
+fileDict(docFile,"writeup", path='analysis/')
 findImages(docFile)
 
 docFile.write(docString+"\n")
