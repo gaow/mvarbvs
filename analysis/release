@@ -1,0 +1,67 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+parameter: web_url = 'http://gaow.github.io/mvarbvs'
+
+[convert-pipeline]
+input:  './pipeline/*.sos', group_by=1
+output: _input[0].replace('/pipeline/', 'docs/doc/pipeline/').replace('.sos', '.pipeline.html')
+
+run:
+	sos convert ${_input} ${_output} --raw ${_input!b}
+
+[convert-documentation]
+input:  './analysis/notebook/*.ipynb', group_by=1
+depends: './analysis/notebook/toc_doc.tpl'
+output: _input[0].replace('/analysis/notebook/', '/docs/doc/documentation/').replace('.ipynb', '.html')
+
+run:	
+	sos convert ${_input!a} ${_output!a} --template analysis/notebook/toc_doc.tpl
+  perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output!a}
+
+[convert-writeup]
+input:  './analysis/writeup/*.ipynb', group_by=1
+depends: './analysis/writeup/toc_wrt.tpl'
+output: _input[0].replace('/analysis/writeup/', '/docs/doc/writeup/').replace('.ipynb', '.html')
+
+run: 
+	sos convert ${_input!a} ${_output!a}  --template analysis/writeup/toc_wrt.tpl
+  perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output!a}
+
+[convert-homepage]
+input:  './analysis/homepage/*.ipynb', group_by=1
+depends: './analysis/homepage/homepage.tpl'
+output: "./docs/${_input!bn}.html"
+
+run: 
+	sos convert ${_input!a} ${_output!a} --template analysis/homepage/homepage.tpl
+
+
+[getFileNames]
+run:
+	python docs/js/findnames.py
+
+[update-website]
+
+# convert ipynb to HTML
+sos_run('getFileNames')
+sos_run('convert-documentation')
+sos_run('convert-writeup')
+if len(glob.glob('pipeline/*.sos')) > 0:
+   sos_run('convert-pipeline')
+sos_run('convert-homepage')
+
+# push changes to website
+parameter: msg = "Update website"
+
+run: workdir='.'
+	git add --all docs/doc/* docs/*.html
+	git commit docs/*.html docs/doc/* --no-verify -m '${msg}'
+	git push --no-verify
+
+[check-link]
+run:
+    linkchecker ${web_url}
+
+[default]
+sos_run('update-website')
