@@ -150,16 +150,28 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h2><p>eQTL discovery and fine mapping problem
-M&amp;M ASH model, m&amp;m for short.</p>
-<p>Stephens lab resources
-At the same time, Stephens lab has</p>
-<p>Hyperparameter for eQTL effects and feed to fine mapping methods (Wen)</p>
-<h2 id="Stage-one:-deconvoluted-effect-size-estimation">Stage one: deconvoluted effect size estimation<a class="anchor-link" href="#Stage-one:-deconvoluted-effect-size-estimation">&#182;</a></h2><h2 id="Stage-two:-multivariate-effect-size-estimation">Stage two: multivariate effect size estimation<a class="anchor-link" href="#Stage-two:-multivariate-effect-size-estimation">&#182;</a></h2><p>typical patterns of sparsity, sharing and correlations
-among effects</p>
-<h2 id="Stage-three:-fine-mapping-for-eQTL-discovery">Stage three: fine-mapping for eQTL discovery<a class="anchor-link" href="#Stage-three:-fine-mapping-for-eQTL-discovery">&#182;</a></h2>
+<h2 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h2><p>In genetic association studies there is great interest in finding multiple causal variants (eQTL or GWAS hits). Several methods for fine mapping in univariate association problems (eg, eQTL discovery with single tissues) have been developed, but for multi-condition analysis this problem is more difficult to address. <a href="http://dx.doi.org/10.1016/j.ajhg.2016.03.029">DAP (Wen 2016)</a> uses an MCMC based method (DAP) for fine mapping but it lacks a principled approach to combine genome-wide information to estimate hyper-parameters required by the algorithm, due to computational limitations.</p>
+<p>On the other side of the coin, linkage Disequilibrium (LD) can impact effect estimates in multivariate association problems. LD causes effect size estimates not of the true effect of each SNP, but the "LD-convolved" effect that essentially is the combined effect of all SNPs in LD with the SNP of interest. So not only are these estimates correlated but more fundamentally they are inaccurate. In <a href="http://dx.doi.org/10.1101/096552">mash (Urbut 2016)</a> we do not distinguish causal eQTLs from SNPs that are in LD with them; rather it makes inference only for the top SNP in each gene. Yet we have observed in GTEx data that effect size estimated for the top eQTL can be opposite in sign in brain vs non-brain tissues. This is likely due to multiple eQTLs in negative LD, rather than true effects being negative.</p>
+<p>So we attempt to fix both problems with the M&amp;M ASH model, or m&amp;m for short hereafter. We have developed with <a href="https://github.com/gaow/mvarbvs/tree/master/analysis/writeup/identity_cov">m&amp;m assuming identity covariance</a> and <a href="https://github.com/gaow/mvarbvs/tree/master/analysis/writeup/lr_diag_cov">m&amp;m assuming diagonal plus low rank covariance</a>, along with a very first draft <a href="https://github.com/gaow/mnmashr">implementation</a>, based on the variational inference framework similar to <a href="http://stephenslab.uchicago.edu/assets/papers/Carbonetto2012.pdf">varbvs (Carbonatto 2012)</a> and <a href="https://github.com/stephenslab/mvash">mrash</a> to hand issues with LD, yet in the multivariate notation that fits into the mash framework at least in setting up the mixture model. At the same time there are other potentially connected work in the lab including <a href="http://dx.doi.org/10.1101/042457">rss (Zhu 2016)</a>, which can be extended to the summary statistics version of mrash, and BMASS (Turchin), which can be considered a special case of mash (if we are willing to use known residual covariance matrix). Building m&amp;m from scratch already involves implementing varbvs / mrash and mash as special cases; adding other special cases to m&amp;m seems overly ambitious, and may result in a monster (rather than master!) algorithm / software that claims to do everything yet excels in nothing (in terms of performance) compared to existing individual pieces that have already been carefully designed, well engineered, extensively tested and properly documented<code>*</code>. Therefore we want to adopt a modular design to m&amp;m that harnesses, rather than reinvent, all related Stephens lab work.</p>
+<p><code>*</code> <em>one aspect the monster algorithm is surely to suffer is that the mixture components has to be initialized up-front, that means it has to be computed with LD-convoluted effect size estimates. But the modular approach will not have the problem.</em></p>
+<h2 id="Step-one:-deconvoluted-effect-size-estimation">Step one: deconvoluted effect size estimation<a class="anchor-link" href="#Step-one:-deconvoluted-effect-size-estimation">&#182;</a></h2><p>The key is to verify that the hyper-parameters $\mathbf{\pi}$ obtained via running ash on effect size estimates from mr-ash agrees with those estimated from mr-ash. We can then generalize that running mash on mr-ash estimate is equivalent to running the monster version of m&amp;m.</p>
+<h2 id="Step-two:-multivariate-analysis-on-deconvoluted-effect-size-estimates">Step two: multivariate analysis on deconvoluted effect size estimates<a class="anchor-link" href="#Step-two:-multivariate-analysis-on-deconvoluted-effect-size-estimates">&#182;</a></h2><p>Learns typical patterns of sparsity, sharing and correlations among effects from</p>
+<h2 id="Step-three:-fine-mapping-for-eQTL-discovery">Step three: fine-mapping for eQTL discovery<a class="anchor-link" href="#Step-three:-fine-mapping-for-eQTL-discovery">&#182;</a></h2>
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
     </div>
   </div>
