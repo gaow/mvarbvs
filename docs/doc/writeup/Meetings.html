@@ -150,7 +150,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="2017/03/30">2017/03/30<a class="anchor-link" href="#2017/03/30">&#182;</a></h2><p>Meeting with Matthew and Wei, to revive the project, by looking at what we have and what to be done.</p>
+<h2 id="Project-meeting-20170330">Project meeting 20170330<a class="anchor-link" href="#Project-meeting-20170330">&#182;</a></h2><p>Meeting with Matthew and Wei, to revive the project, by looking at what we have and what to be done.</p>
 <h3 id="Tentative-agenda">Tentative agenda<a class="anchor-link" href="#Tentative-agenda">&#182;</a></h3><h4 id="Connected-work">Connected work<a class="anchor-link" href="#Connected-work">&#182;</a></h4><ul>
 <li>varbvs</li>
 <li>rss</li>
@@ -171,6 +171,45 @@ $( document ).ready(function(){
 <p>Implementation-wise, shall we not write any code until we finalize on how the generalized framework is formulated? We should think "modularly" and we make contributions directly to other modules whenever possible, then build m&amp;m ash with these modules.</p>
 <h3 id="What-to-do-with-mrash-as-a-standalone-work?">What to do with <code>mrash</code> as a standalone work?<a class="anchor-link" href="#What-to-do-with-mrash-as-a-standalone-work?">&#182;</a></h3><p>If we start from full data then finalizing <code>mrash</code> is a natural first step. It is then just a discussion of whether to create a separate package or to make it part of varbvs.</p>
 <h3 id="Minutes">Minutes<a class="anchor-link" href="#Minutes">&#182;</a></h3><p>The meeting has outlined the approach we take towards a modularized m&amp;m. Most items on the agenda has been covered. See <a href="Modular_MNMASH.html">this document</a> for details.</p>
+<h2 id="Project-meeting-20161103">Project meeting 20161103<a class="anchor-link" href="#Project-meeting-20161103">&#182;</a></h2><p>Meeting with Matthew. We started from recap on the motivation of project, then discussed the M&amp;M ASH model with practical considerations.</p>
+<h3 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h3><p>M&amp;M ASH model is motivated by what we have noticed in the MASH project. We have observed effect of a SNP (eQTL) positive in one tissue yet negative in another tissue. This bothers us. We suspect this type of observation is most likely due to negative LD between two causal SNPs both having positive effect in two separate tissues yet if we make the one eQTL per gene assumption as made in MASH we will observe opposite effects. So if we assume SNPs are independent in association analysis we obtain $\hat{\beta}$ convoluted by LD of all SNPs.</p>
+<p>Let's consider univariate association analysis for a moment. Because of LD, $g(.)$, the distribution of $\beta$ we estimate via univariate methods, would have long tails. In other words $g(.)$ is inflated by LD with other SNPs. Estimates of $g(.)$ from multiple regression with ASH prior via variantional EM (currently called MVASH) will not have this problem. However when we want to make inference on $\beta$ the effect size, there will be identifiability issue with MVASH because VEM can reach local optima and the effect size it reports for the SNP identified may not be the SNP that in fact has an effect. The solution to this problem is to use MCMC for fine mapping on selected regions via VEM. A hybrid approach is to estimate hyper-parameters via VEM and use MCMC to sample the posterior.</p>
+<p>Now to solve the same issue in the context of multivariate regression, we propose the M&amp;M ASH model, which applies multiple regression using ASH prior on multiple responses. David Gerard has derived a VEM procedure for the M&amp;M model. Assumptions in David's derivations are:</p>
+<ul>
+<li>The residual variance of genes (after regressing out eQTL effect) is structured low rank + diagonal</li>
+<li>There will be missing data in the response matrix</li>
+<li>The mixture proportion can be estimated per test, or be estimated jointly for all tests</li>
+</ul>
+<h3 id="M&amp;M-ASH-with-diagonal-residual-covariance-structure">M&amp;M ASH with diagonal residual covariance structure<a class="anchor-link" href="#M&amp;M-ASH-with-diagonal-residual-covariance-structure">&#182;</a></h3><p>Matthew suggests we make this model simpler and make sure it works. For starters we should ignore correlation among tissues. That is, we assume residual variance a diagonal matrix. Here are a few points why we should start with diagonal and why at least as a first pass we should not make non-diagonal assumption in M&amp;M ASH:</p>
+<ul>
+<li>We are not sure yet if correlated residual will cause a problem to our inference -- unless we can show it empirically: we should find real data examples when correlation between tissues are due to correlation between genes, not due to similarity of tissues. This would raise a red flag that we should model such correlations.</li>
+<li>Even if the problem is confirmed we should use MASH model to show we can solve it, before incorporating the solution to M&amp;M ASH. As MASH model is simpler, it will get us assessment from real data quickly and we'll decide if it worth to pursue the fix in M&amp;M ASH.</li>
+<li>To do it in MASH we should assume this residual correlation is the same as the tissues' correlations (eQTL effect is relatively small) and we estimate the 44 by 44 matrix of covariance directly from expression data. This is not a trivial problem; many methods get estimates that shrink the structure to diagonal. But sparse factor analysis methods can be a good technique to do this, as shown by Wei's work. We then plug this estimate to MASH model<ul>
+<li>The advantage of this approach (over making inference jointly as what David has done for M&amp;M ASH) is that this approach is modular and we can choose a good method (such as SFA, FLASH) to make this step of inference. The method may be biased (ignoring impact of eQTL) but has better variance</li>
+</ul>
+</li>
+<li>The problem with this approach is that if eQTL induces correlation we'll wrongfully believe there is residual covariance when in fact there is not. That is, after removing effect from eQTL the residual covariance is diagonal. This observation would favor the joint approach over the modular approach. To assess if this is a problem, we can choose genes with large covariance matrix, and remove the effect of top eQTL then see if the residual covariance matrix still retains correlations or is mostly diagonal.</li>
+</ul>
+<h3 id="Next-steps">Next steps<a class="anchor-link" href="#Next-steps">&#182;</a></h3><p>We should start with the simplest version (that residual covariance is diagonal) and make it work. The hard part is computation. Using summary data whenever possible may help with computation. Additionally in updating mixture components we can use noiser estimates, that is, estimates from randomly sampled \beta{hat} instead of 20K genes <em> 1000 SNPs </em> 50 conditions data points. We will have our next meeting (David and Gao with Matthew) after we get this simple version to work in practice.</p>
+<h2 id="Project-meeting-20160921">Project meeting 20160921<a class="anchor-link" href="#Project-meeting-20160921">&#182;</a></h2><h3 id="Tentative-schedule">Tentative schedule<a class="anchor-link" href="#Tentative-schedule">&#182;</a></h3><p>Status</p>
+<ul>
+<li>The <code>m&amp;m ash</code> <a href="http://www.bioinformatics.org/labnotes/mnmash/mnmash-model.html">model</a> and <a href="https://github.com/gaow/mnmashr">implementation</a>.</li>
+<li>Implementation is not working on data due to <a href="https://github.com/gaow/mnmashr/blob/master/src/mnmash.hpp#L41">data structure design</a><ul>
+<li>When J is 40, P 2000, K 50 and L 20, the S and SI matrices will be of size 3.2G * 2 = 6.4G. Looping over such data is very slow.</li>
+</ul>
+</li>
+<li>Correctness of implementation not tested</li>
+</ul>
+<p>Next steps</p>
+<ul>
+<li>Get implementation working</li>
+<li>Run simulations</li>
+<li>Put into OmicsBMA framework and do real data anlaysis</li>
+</ul>
+<h3 id="Minutes">Minutes<a class="anchor-link" href="#Minutes">&#182;</a></h3><ul>
+<li>We should conceptually distinguish a model using original data from the one using summary data, though in the VB algorithm they are very similar.</li>
+<li>Currently the model assumes $\Sigma_{J \times J}$ known. This is not easy to estimate because it would involve a non-trivial multiple regression. We should try to model $\Sigma_{J \times J}$ as unknown diagonal matrix and estimate it in the VB framework. For starters, write up the J = 1 case.</li>
+</ul>
 
 </div>
 </div>
