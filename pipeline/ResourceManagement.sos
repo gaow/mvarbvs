@@ -1,0 +1,25 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+# This script provides routines to prepare resource for analysis
+# Such as downloading data / code, compile software
+
+[plink: provides = executable('plink')]
+# Download and extract plink2
+parameter: workdir = None
+output: os.path.join(workdir, "plink")
+task: workdir = workdir
+download:
+  https://www.cog-genomics.org/static/bin/plink170330/plink_linux_x86_64.zip
+run:
+  unzip -o plink_linux_x86_64.zip plink
+  rm -f plink_linux_x86_64.zip
+
+[impute2: provides = executable('impute2')]
+# Download and extract impute2
+
+[impute_reference: provides = ['1.vcf.gz']]
+# Download resource data sets for impute2
+
+[peer: provides = executable('peer')]
+# Download and extract PEER
