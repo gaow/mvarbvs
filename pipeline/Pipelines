@@ -1,0 +1,20 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+%include ResourceManagement as RM
+%include Misc as MC
+%include DataWrestling as DW
+[global]
+
+#
+# Auxiliary steps
+#
+
+[download]
+# Resource preparation
+sos_run('RM.plink', workdir = CONFIG['wd'])
+sos_run('RM.impute2', workdir = CONFIG['wd'])
+sos_run('RM.peer', workdir = CONFIG['wd'])
+sos_run('RM.impute_reference', workdir = CONFIG['wd'])
+
+
