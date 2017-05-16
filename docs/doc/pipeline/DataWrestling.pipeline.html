@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/DataWrestling.sos
       <span class="file-info-divider"></span>
-    762 B
+    800 B
   </div>
   <div class="file-actions">
   </div>
@@ -513,7 +513,7 @@ body {
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">parameter:</span> <span class="n">chrom</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">22</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">chrom</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">22</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="c1"># there is in fact no Y chrom</span>
 <span class="kn">input:</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s2">&quot;{name}.vcf.gz&quot;</span><span class="p">,</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chrom&#39;</span><span class="p">]</span>
 <span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{name}.chr{_chrom}.vcf.gz&quot;</span><span class="p">)</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
