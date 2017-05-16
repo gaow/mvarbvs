@@ -25,3 +25,19 @@ task: workdir = workdir
 run: 
   vcftools --gzvcf ${input} --out ${output[0]!n} --missing-indv
   vcftools --gzvcf ${input} --out ${output[1]!n} --missing-site
+
+[genotype_stats_2]
+# making genotype summary statistics plot
+parameter: workdir = None
+depends: Py_Module("seaborn")
+input: group_by = 1, pattern = "{name}.{ext}"
+output: expand_pattern("{_name}.{_ext}.pdf")
+task: workdir = workdir
+python:
+import matplotlib.pyplot as plt, seaborn as sns, pandas as pd
+fig, axs = plt.subplots(ncols=2)
+data = pd.read_csv(${_input!r}, sep = '\t')
+sns.distplot(data["F_MISS"], ax = axs[0], kde = False)
+sns.violinplot(data["F_MISS"], ax = axs[1])
+axs[0].set_title(${_input!br}.split('.')[-1])
+fig.savefig(${_output!r})
