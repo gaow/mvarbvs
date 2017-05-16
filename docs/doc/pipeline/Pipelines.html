@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>Pipelines</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/toc2.js"></script>
+<script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+$( document ).ready(function(){
+
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+            var file=notebookDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+
+
+            $('<li id="indexHome"><a href="../../documentation.html"><b>Analysis Home<b></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+            $("#toc-header").hide();
+
+    });
+</script>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="GTEx-pipeline-execution-interface">GTEx pipeline execution interface<a class="anchor-link" href="#GTEx-pipeline-execution-interface">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Preprocessing">Preprocessing<a class="anchor-link" href="#Preprocessing">&#182;</a></h2><p>See <a href="https://gaow.github.io/mvarbvs/doc/writeup/GTEx7_Analysis_Plan.html#Preprocessing">this page</a> for details. The imputation step was done with <a href="https://imputationserver.sph.umich.edu">Michigan Imputation Server</a> because it uses Haplotype Reference Consortium (32,914 samples) reference panel which is not publicly available otherwise. So the genotype input would be genotype after imputation. Here is how to <a href="https://imputationserver.sph.umich.edu/start.html#!pages/help">prepare data</a> for this service.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sossave</span> <span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">f</span> <span class="o">-</span><span class="n">x</span>
+<span class="c1">#!/usr/bin/env sos-runner</span>
+<span class="c1">#fileformat=SOS1.0</span>
+
+<span class="c1"># Usage:</span>
+<span class="c1"># ./prep.sos download</span>
+<span class="c1"># ./prep.sos </span>
+
+<span class="o">%</span><span class="n">include</span> <span class="n">ResourceManagement</span> <span class="k">as</span> <span class="n">RM</span>
+<span class="o">%</span><span class="n">include</span> <span class="n">Misc</span> <span class="k">as</span> <span class="n">MC</span>
+<span class="o">%</span><span class="n">include</span> <span class="n">DataWrestling</span> <span class="k">as</span> <span class="n">DW</span>
+
+<span class="p">[</span><span class="k">global</span><span class="p">]</span>
+
+<span class="c1">#</span>
+<span class="c1"># Auxiliary steps</span>
+<span class="c1">#</span>
+
+<span class="p">[</span><span class="kp">download</span><span class="p">]</span>
+<span class="c1"># Resource preparation</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.plink&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.minimac3&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.vcftools&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+
+<span class="p">[</span><span class="n">data_summary</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.genotype_stats&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+
+<span class="p">[</span><span class="n">genotype_preprocessing</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.vcf_by_chrom&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Workflow saved to prep.sos
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Prepare-computational-resource">Prepare computational resource<a class="anchor-link" href="#Prepare-computational-resource">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="kp">download</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span> <span class="o">-</span><span class="n">J</span> <span class="mi">8</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Data-summary">Data summary<a class="anchor-link" href="#Data-summary">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">data_summary</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span> <span class="o">-</span><span class="n">J</span> <span class="mi">8</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Genotype-QC-/-imputation">Genotype QC / imputation<a class="anchor-link" href="#Genotype-QC-/-imputation">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">genotype_preprocessing</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span> <span class="o">-</span><span class="n">J</span> <span class="mi">8</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="https://gaow.github.io/mvarbvs/img/UMichImputation.png">Here is configuration</a> of imputation job on UMich server.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>
