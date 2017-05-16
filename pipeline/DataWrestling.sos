@@ -24,3 +24,36 @@ output: expand_pattern("{name}.chr{_chrom}.vcf.gz")
 task: workdir = workdir
 run:
   tabix ${input} ${_chrom} --print-header | bgzip > ${_output}
+
+[RNASeq_to_HDF5]
+# Convert RNASeq data to HDF5
+parameter: workdir = None
+parameter: dtype = 'np.unit32'
+output: "${input[0]!n}.hdf5"
+task: workdir = workdir
+python:
+import pandas as pd
+import numpy as np
+import re, os
+def load_data(fdata, fsample, dtype = np.float32):
+    '''First col of expression data is ENCODE gene name, 2nd col is HUGO name'''
+    head = pd.read_csv(fdata, skiprows = 2, sep = '\t', nrows = 1)
+    dt = {'Description': str, 'Name': str}
+    dt.update({x: dtype for x in head.columns if x not in dt})
+    data = pd.read_csv(fdata, compression='gzip', skiprows=2, 
+                       index_col=0, header=0, dtype = dt, sep='\t').drop('Description', 1)
+    samples = pd.read_csv(fsample, dtype=str, delimiter='\t', header=0)
+    sample_dict = {}
+    for row in samples[['SAMPID', 'SMTSD']].values:
+        if row[1] not in sample_dict:
+            sample_dict[row[1]] = []
+        if row[0] in data.columns:
+            sample_dict[row[1]].append(row[0])
+    return data, dict((re.sub("[\W\d]+", "_", k.strip()).strip('_'), v) for k, v in sample_dict.items() if len(v))
+
+data, sample = load_data(${input[0]!r}, ${input[1]!r}, fsample, dtype = ${dtype})
+data = {k: data.loc[:, sample[k]] for k in sample}
+if os.path.isfile(${output!r}):
+    os.remove(${output!r})
+for k in data:
+    data[k].to_hdf(${output!r}, k, mode = 'a', complevel = 9, complib = 'zlib')

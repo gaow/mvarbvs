@@ -28,3 +28,7 @@ sos_run("MC.genotype_stats", workdir = CONFIG['wd'])
 input: CONFIG['genotype']
 sos_run("DW.vcf_by_chrom", workdir = CONFIG['wd'])
 
+[rna_preprocessing]
+input: CONFIG['rna_cnts'], CONFIG['sample_attr']
+sos_run("DW.RNASeq_to_HDF5", workdir =  CONFIG['wd'])
+
