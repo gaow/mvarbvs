@@ -14,3 +14,13 @@
 # Select genotype data based on position ranges and sample lists
 # Output in PLINK PED format
 # This is like a data provider unit to association analysis
+
+[vcf_by_chrom]
+# split vcf by chroms
+parameter: workdir = None
+parameter: chrom = [x + 1 for x in range(22)] + ['X'] # there is in fact no Y chrom
+input: pattern = "{name}.vcf.gz", for_each = ['chrom']
+output: expand_pattern("{name}.chr{_chrom}.vcf.gz")
+task: workdir = workdir
+run:
+  tabix ${input} ${_chrom} --print-header | bgzip > ${_output}

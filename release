@@ -5,10 +5,18 @@ parameter: web_url = 'http://gaow.github.io/mvarbvs'
 
 [convert-pipeline]
 input:  './pipeline/*.sos', group_by=1
-output: _input[0].replace('/pipeline/', 'docs/doc/pipeline/').replace('.sos', '.pipeline.html')
+output: _input[0].replace('/pipeline/', '/docs/doc/pipeline/').replace('.sos', '.pipeline.html')
 
 run:
-	sos convert ${_input} ${_output} --raw ${_input!b}
+	sos convert ${_input} ${_output}
+
+[convert-pipeline-notebook]
+input:  './pipeline/*.ipynb', group_by=1
+output: _input[0].replace('/pipeline/', '/docs/doc/pipeline/').replace('.ipynb', '.html')
+
+run:
+	sos convert ${_input!a} ${_output!a} --template analysis/notebook/toc_doc.tpl
+  perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output!a}
 
 [convert-documentation]
 input:  './analysis/notebook/*.ipynb', group_by=1
@@ -51,6 +59,8 @@ if len(glob.glob('analysis/writeup/*.ipynb')) > 0:
    sos_run('convert-writeup')
 if len(glob.glob('pipeline/*.sos')) > 0:
    sos_run('convert-pipeline')
+if len(glob.glob('pipeline/*.ipynb')) > 0:
+   sos_run('convert-pipeline-notebook')
 sos_run('convert-homepage')
 
 # push changes to website

@@ -15,3 +15,13 @@
 
 [covariate_regression]
 # Remove covariate from expression data
+
+[genotype_stats_1]
+# making genotype summary statistics via vcftools
+parameter: workdir = None
+input: pattern = "{name}.vcf.gz"
+output: expand_pattern("{name}.imiss"), expand_pattern("{name}.lmiss")
+task: workdir = workdir
+run: 
+  vcftools --gzvcf ${input} --out ${output[0]!n} --missing-indv
+  vcftools --gzvcf ${input} --out ${output[1]!n} --missing-site

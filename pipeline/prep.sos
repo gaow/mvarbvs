@@ -13,10 +13,14 @@
 [download]
 # Resource preparation
 sos_run('RM.plink', workdir = CONFIG['wd'])
-sos_run('RM.impute2', workdir = CONFIG['wd'])
-sos_run('RM.peer', workdir = CONFIG['wd'])
-sos_run('RM.impute_reference', workdir = CONFIG['wd'])
+sos_run('RM.minimac3', workdir = CONFIG['wd'])
+sos_run('RM.vcftools', workdir = CONFIG['wd'])
 
+[data_summary]
+input: CONFIG['genotype']
+sos_run("MC.genotype_stats", workdir = CONFIG['wd'])
 
-
+[genotype_preprocessing]
+input: CONFIG['genotype']
+sos_run("DW.vcf_by_chrom", workdir = CONFIG['wd'])
 
