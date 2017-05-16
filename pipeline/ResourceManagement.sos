@@ -7,12 +7,13 @@
 [plink: provides = executable('plink')]
 # Download and extract plink2
 parameter: workdir = None
-output: os.path.join(workdir, "plink")
+output: os.path.join(workdir, "bin/plink")
 task: workdir = workdir
 download:
   https://www.cog-genomics.org/static/bin/plink170509/plink_linux_x86_64.zip
 run:
   unzip -o plink_linux_x86_64.zip plink
+  mv plink bin/plink
   rm -f plink_linux_x86_64.zip
 
 [minimac3: provides = executable('Minimac3')]
@@ -20,7 +21,7 @@ run:
 # Chosen over impute2 because of results shown here
 # McCarthy, Shane, et al. "A reference panel of 64,976 haplotypes for genotype imputation." Nature genetics (2016).
 parameter: workdir = None
-output: os.path.join(workdir, "Minimac3")
+output: os.path.join(workdir, "bin/Minimac3")
 task: workdir = workdir
 download:
   https://github.com/Santy-8128/Minimac3/archive/master.zip
@@ -28,23 +29,23 @@ run:
   unzip master.zip
   cd Minimac3-master
   make
-  mv bin/* ../
+  mv bin/* ../bin
   cd ../
   rm -rf master.zip Minimac3-master
 
 [SnpSift: provides = executable("SnpSift.jar")]
 parameter: workdir = None
-output: os.path.join(workdir, "SnpSift.jar")
+output: os.path.join(workdir, "bin/SnpSift.jar")
 task: workdir = workdir
 download:
   https://downloads.sourceforge.net/project/snpeff/snpEff_latest_core.zip
 run:
-  unzip -p snpEff_latest_core.zip snpEff/SnpSift.jar > SnpSift.jar
+  unzip -p snpEff_latest_core.zip snpEff/SnpSift.jar > bin/SnpSift.jar
   rm -f snpEff_latest_core.zip
 
 [vcftools: provides = executable('vcftools')]
 parameter: workdir = None
-output: os.path.join(workdir, "vcftools")
+output: os.path.join(workdir, "bin/vcftools")
 task: workdir = workdir
 download:
   https://github.com/vcftools/vcftools/archive/master.zip
@@ -53,7 +54,7 @@ run:
   cd vcftools-master
   bash autogen.sh
   ./configure; make
-  mv src/cpp/vcftools ../
+  mv src/cpp/vcftools ../bin
   cd ../
   rm -rf master.zip vcftools-master
 

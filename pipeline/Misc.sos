@@ -4,12 +4,11 @@
 # Various calls to commands to accomplish some workflow
 # When some workflow gets complicated they will be separated into dedicated files
 
-
 [genotype_stats_1]
 # making genotype summary statistics via vcftools
 parameter: workdir = None
 input: pattern = "{name}.vcf.gz"
-output: expand_pattern("{name}.imiss"), expand_pattern("{name}.lmiss")
+output: expand_pattern("${CONFIG['wd']}/${name!b}.imiss"), expand_pattern("${CONFIG['wd']}/${name!b}.lmiss")
 task: workdir = workdir
 run: 
   vcftools --gzvcf ${input} --out ${output[0]!n} --missing-indv
@@ -31,8 +30,20 @@ sns.violinplot(data["F_MISS"], ax = axs[1])
 axs[0].set_title(${_input!br}.split('.')[-1])
 fig.savefig(${_output!r})
 
-[quantile_norm]
+[normalize_expression]
 # Quantile normalization of RNA-seq data
+# 1. expression values are quantile normalized to the average empirical distribution observed across samples
+# 2. for each gene, expression values are inverse quantile normalized to a standard normal distribution across samples
+# genes are selected based on expression thresholds of >0.1 RPKM in >10 samples and >5 reads in >10 samples
+# input are rpkm file, count file, sample annotation file and vcf file
+parameter: rpkm_cutoff = 0.1
+parameter: read_cutoff = 5
+parameter: sample_cutoff = 10
+parameter: script = os.path.abspath("../src/Aguet/normalize_expression.py")
+output: "${CONFIG['wd']}/${input[0]!nnnb}.bed.gz", "${CONFIG['wd']}/${input[0]!nnnb}.fpkm.bed.gz", "${CONFIG['wd']}/${input[0]!nnnb}.for_peer.txt"
+task: workdir = workdir
+run:
+  python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${output[0]!nn} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
 
 [peer]
 # PEER analysis

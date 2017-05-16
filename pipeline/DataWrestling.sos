@@ -20,7 +20,7 @@
 parameter: workdir = None
 parameter: chrom = [x + 1 for x in range(22)] + ['X'] # there is in fact no Y chrom
 input: pattern = "{name}.vcf.gz", for_each = ['chrom']
-output: expand_pattern("{name}.chr{_chrom}.vcf.gz")
+output: expand_pattern("${CONFIG['wd']}/${name!b}.chr{_chrom}.vcf.gz")
 task: workdir = workdir
 run:
   tabix ${input} ${_chrom} --print-header | bgzip > ${_output}
@@ -29,7 +29,7 @@ run:
 # Convert RNASeq data to HDF5
 parameter: workdir = None
 parameter: dtype = 'np.unit32'
-output: "${input[0]!n}.hdf5"
+output: "${input[0]!nb}.hdf5"
 task: workdir = workdir
 python:
 import pandas as pd
@@ -51,7 +51,7 @@ def load_data(fdata, fsample, dtype = np.float32):
             sample_dict[row[1]].append(row[0])
     return data, dict((re.sub("[\W\d]+", "_", k.strip()).strip('_'), v) for k, v in sample_dict.items() if len(v))
 
-data, sample = load_data(${input[0]!r}, ${input[1]!r}, fsample, dtype = ${dtype})
+data, sample = load_data(${input[0]!r}, ${input[1]!r}, dtype = ${dtype})
 data = {k: data.loc[:, sample[k]] for k in sample}
 if os.path.isfile(${output!r}):
     os.remove(${output!r})
