@@ -30,7 +30,7 @@ sns.violinplot(data["F_MISS"], ax = axs[1])
 axs[0].set_title(${_input!br}.split('.')[-1])
 fig.savefig(${_output!r})
 
-[normalize_expression]
+[rnaseq_1]
 # Quantile normalization of RNA-seq data
 # 1. expression values are quantile normalized to the average empirical distribution observed across samples
 # 2. for each gene, expression values are inverse quantile normalized to a standard normal distribution across samples
@@ -45,8 +45,9 @@ task: workdir = workdir
 run:
   python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${output[0]!nn} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
 
-[peer]
+[rnaseq_2]
 # PEER analysis
+
 
 [covariate_regression]
 # Remove covariate from expression data
