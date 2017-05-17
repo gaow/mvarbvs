@@ -31,6 +31,58 @@ axs[0].set_title(${_input!br}.split('.')[-1])
 fig.savefig(${_output!r})
 
 [rnaseq_1]
+# Format RNA-seq data
+# Based on https://github.com/QuackenbushLab/yarn/blob/master/R/downloadGTEx.R
+# Handle all in R
+depends: R_library("QuackenbushLab/yarn")
+R:
+  library(yarn)
+
+  message("Loading input expression data")
+  pd <- read_tsv(${input[1]!r})
+  pd <- as.matrix(pd)
+  rownames(pd) <- pd[, "SAMPID"]
+  ids <- sapply(strsplit(pd[, "SAMPID"], "-"), function(i) paste(i[1:2],  collapse = "-"))
+
+  pd2 <- read_tsv(${input[2]!r})
+  pd2 <- as.matrix(pd2)
+  rownames(pd2) <- pd2[, "SUBJID"]
+  pd2 <- pd2[which(rownames(pd2) %in% unique(ids)), ]
+  pd2 <- pd2[match(ids, rownames(pd2)), ]
+  rownames(pd2) <- colnames(counts)
+
+  pdfinal <- AnnotatedDataFrame(data.frame(cbind(pd, pd2)))
+  cnts <- suppressWarnings(read_tsv(${input[0]!r}, skip = 2))
+  genes <- unlist(cnts[, 1])
+  geneNames <- unlist(cnts[, 2])
+  counts <- cnts[, -c(1:2)]
+  counts <- as.matrix(counts)
+  rownames(counts) <- genes
+  for (i in 1:nrow(problems(cnts))) {
+    counts[problems(cnts)$row[i], problems(cnts)$col[i]] <- 1e+05
+  }
+  throwAway <- which(rowSums(counts) == 0)
+  counts <- counts[-throwAway, ]
+  genes <- sub("\\..*", "", rownames(counts))
+
+  host <- "dec2013.archive.ensembl.org"
+  biomart <- "ENSEMBL_MART_ENSEMBL"
+  dataset <- "hsapiens_gene_ensembl"
+  attributes <- c("ensembl_gene_id", "hgnc_symbol", "chromosome_name",
+                  "start_position", "end_position", "gene_biotype")
+
+  message("Creating ExpressionSet")
+  pdfinal <- pdfinal[match(colnames(counts), rownames(pdfinal)), ]
+  es <- ExpressionSet(as.matrix(counts))
+  phenoData(es) <- pdfinal
+
+  message("Annotating from biomaRt")
+  es <- annotateFromBiomart(obj = es, genes = genes, host = host,
+                            biomart = biomart, dataset = dataset, attributes = attributes)
+  message("Save processed expression data")
+  saveRDS(es, file = ${output!r})
+
+[rnaseq_2]
 # Quantile normalization of RNA-seq data
 # 1. expression values are quantile normalized to the average empirical distribution observed across samples
 # 2. for each gene, expression values are inverse quantile normalized to a standard normal distribution across samples
@@ -45,9 +97,8 @@ task: workdir = workdir
 run:
   python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${output[0]!nn} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
 
-[rnaseq_2]
+[rnaseq_3]
 # PEER analysis
-
 
 [covariate_regression]
 # Remove covariate from expression data
