@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/Misc.sos
       <span class="file-info-divider"></span>
-    1.2 KiB
+    2.8 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -483,34 +483,6 @@ body {
  
 </pre></div>
 
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">peer</span><span class="p">]</span>
-</pre></div>
-
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># PEER analysis</span>
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">impute</span><span class="p">]</span>
-</pre></div>
-
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Imputation</span>
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">quantile_norm</span><span class="p">]</span>
-</pre></div>
-
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Quantile normalization of RNA-seq data</span>
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">covariate_regression</span><span class="p">]</span>
-</pre></div>
-
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Remove covariate from expression data</span>
- 
-</pre></div>
-
 <div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">genotype_stats_1</span><span class="p">]</span>
 </pre></div>
 
@@ -518,8 +490,9 @@ body {
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s2">&quot;vcftools&quot;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s2">&quot;{name}.vcf.gz&quot;</span>
-<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{name}.imiss&quot;</span><span class="p">),</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;{name}.lmiss&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${name!b}.imiss&quot;</span><span class="p">),</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${name!b}.lmiss&quot;</span><span class="p">)</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
 
@@ -554,6 +527,60 @@ vcftools --gzvcf <span class="si">${</span><span class="nv">input</span><span cl
 <span class="n">sns</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;F_MISS&quot;</span><span class="p">],</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="err">!</span><span class="n">br</span><span class="p">}</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">rnaseq_1</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Quantile normalization of RNA-seq data</span>
+<span class="c1"># 1. expression values are quantile normalized to the average empirical distribution observed across samples</span>
+<span class="c1"># 2. for each gene, expression values are inverse quantile normalized to a standard normal distribution across samples</span>
+<span class="c1"># genes are selected based on expression thresholds of &gt;0.1 RPKM in &gt;10 samples and &gt;5 reads in &gt;10 samples</span>
+<span class="c1"># input are rpkm file (for normalization), count file (for QC) and vcf file (for removing samples that do not have genotypes)</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">rpkm_cutoff</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="kn">parameter:</span> <span class="n">read_cutoff</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="kn">parameter:</span> <span class="n">sample_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kn">parameter:</span> <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../src/normalize_expression.py&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${input[0]!nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${input[0]!nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${input[0]!nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${input[0]!nnb}.qnorm.h5&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>python <span class="si">${</span><span class="nv">script</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[1]</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[2]</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[3]</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]!nnb</span><span class="si">}</span> --expression_threshold <span class="si">${</span><span class="nv">rpkm_cutoff</span><span class="si">}</span> --count_threshold <span class="si">${</span><span class="nv">read_cutoff</span><span class="si">}</span> --min_samples <span class="si">${</span><span class="nv">sample_cutoff</span><span class="si">}</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">rnaseq_2</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># PEER analysis</span>
+<span class="c1"># There are a number of configuable parameters coded in run_PEER.R interface</span>
+<span class="c1"># That have default value. Can be changed here or not depending on the analyst</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;argparser&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">num_peer</span> <span class="o">=</span> <span class="mi">35</span>
+<span class="kn">parameter:</span> <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../src/run_PEER.R&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="s2">&quot;${input[0]!n}_PEER_covariates.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${input[0]!n}_PEER_alpha.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${input[0]!n}_PEER_residuals.txt&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>Rscript <span class="si">${</span><span class="nv">script</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]!n</span><span class="si">}</span> <span class="si">${</span><span class="nv">num_peer</span><span class="si">}</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">covariate_regression</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Remove covariate from expression data</span>
 </pre></div>
 
 </table>

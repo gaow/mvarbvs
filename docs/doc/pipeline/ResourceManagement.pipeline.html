@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/ResourceManagement.sos
       <span class="file-info-divider"></span>
-    1.8 KiB
+    2.1 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -490,7 +490,7 @@ body {
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;plink&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;bin/plink&quot;</span><span class="p">)</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
 
@@ -504,6 +504,7 @@ body {
 </pre></div>
 
 <div class="source blob-code sos-script "><pre><span></span>unzip -o plink_linux_x86_64.zip plink
+mv plink bin/plink
 rm -f plink_linux_x86_64.zip
  
 </pre></div>
@@ -517,7 +518,7 @@ rm -f plink_linux_x86_64.zip
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;Minimac3&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;bin/Minimac3&quot;</span><span class="p">)</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
 
@@ -533,7 +534,7 @@ rm -f plink_linux_x86_64.zip
 <div class="source blob-code sos-script "><pre><span></span>unzip master.zip
 <span class="nb">cd</span> Minimac3-master
 make
-mv bin/* ../
+mv bin/* ../bin
 <span class="nb">cd</span> ../
 rm -rf master.zip Minimac3-master
  
@@ -543,7 +544,7 @@ rm -rf master.zip Minimac3-master
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;SnpSift.jar&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;bin/SnpSift.jar&quot;</span><span class="p">)</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
 
@@ -556,7 +557,7 @@ rm -rf master.zip Minimac3-master
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
 </pre></div>
 
-<div class="source blob-code sos-script "><pre><span></span>unzip -p snpEff_latest_core.zip snpEff/SnpSift.jar &gt; SnpSift.jar
+<div class="source blob-code sos-script "><pre><span></span>unzip -p snpEff_latest_core.zip snpEff/SnpSift.jar &gt; bin/SnpSift.jar
 rm -f snpEff_latest_core.zip
  
 </pre></div>
@@ -565,7 +566,7 @@ rm -f snpEff_latest_core.zip
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;vcftools&quot;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;bin/vcftools&quot;</span><span class="p">)</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
 
@@ -582,9 +583,30 @@ rm -f snpEff_latest_core.zip
 <span class="nb">cd</span> vcftools-master
 bash autogen.sh
 ./configure<span class="p">;</span> make
-mv src/cpp/vcftools ../
+mv src/cpp/vcftools ../bin
 <span class="nb">cd</span> ../
 rm -rf master.zip vcftools-master
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">peer</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;R_peer_source_1.3.tgz&quot;</span><span class="p">)</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">download:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>https://github.com/downloads/PMBio/peer/R_peer_source_1.3.tgz
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>R CMD INSTALL R_peer_source_1.3.tgz
  
 </pre></div>
 
