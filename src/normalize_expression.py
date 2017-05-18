@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Adopted from Francois Aguet:
+# Adopted by Gao Wang from Francois Aguet:
 # https://github.com/broadinstitute/gtex-pipeline
 
 import numpy as np
@@ -8,7 +8,26 @@ import gzip
 import subprocess
 import scipy.stats as stats
 import argparse
-import os
+import re, os
+
+def annotate_tissue_data(data, fsample):
+    '''Save data to tissue specific tables'''
+    samples = pd.read_csv(fsample, dtype=str, delimiter='\t', header=0)
+    sample_dict = {}
+    for row in samples[['SAMPID', 'SMTSD']].values:
+        if row[1] not in sample_dict:
+            sample_dict[row[1]] = []
+        if row[0] in data.columns:
+            sample_dict[row[1]].append(row[0])
+    sample = dict((re.sub("[\W\d]+", "_", k.strip()).strip('_'), v) for k, v in sample_dict.items() if len(v))
+    data = {k: data.loc[:, sample[k]] for k in sample}
+    return data
+
+def write_per_tissue_data(data, output):
+    if os.path.isfile(output):
+        os.remove(output)
+    for k in data:
+        data[k].to_hdf(output, k, mode = 'a', complevel = 9, complib = 'zlib')
 
 def get_donors_from_vcf(vcfpath):
     """
@@ -24,6 +43,16 @@ def get_donors_from_vcf(vcfpath):
 def read_gct(gct_file, donor_ids):
     """
     Load GCT as DataFrame
+    First col of expression data is ENCODE gene name, 2nd col is HUGO name
+    ======================================================================
+    A more memory friendly version:
+
+    head = pd.read_csv(fdata, skiprows = 2, sep = '\t', nrows = 1)
+    dt = {'Description': str, 'Name': str}
+    dt.update({x: dtype for x in head.columns if x not in dt})
+    data = pd.read_csv(fdata, compression='gzip', skiprows=2,
+                       index_col=0, header=0, dtype = dt, sep='\t').drop('Description', 1)
+
     """
     df = pd.read_csv(gct_file, sep='\t', skiprows=2, index_col=0)
     df.drop('Description', axis=1, inplace=True)
@@ -92,7 +121,8 @@ def normalize_expression(expression_df, counts_df, expression_threshold=0.1, cou
       >=min_samples with >expression_threshold expression values
       >=min_samples with >count_threshold read counts
     """
-    donor_ids = ['-'.join(i.split('-')[:2]) for i in expression_df.columns]
+    # donor_ids = ['-'.join(i.split('-')[:2]) for i in expression_df.columns]
+    donor_ids = expression_df.columns
 
     # expression thresholds
     mask = ((np.sum(expression_df>expression_threshold,axis=1)>=min_samples) & (np.sum(counts_df>count_threshold,axis=1)>=min_samples)).values
@@ -110,8 +140,8 @@ if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Generate normalized expression BED files for eQTL analyses')
     parser.add_argument('expression_gct', help='GCT file with expression in normalized units, e.g., TPM or FPKM')
     parser.add_argument('counts_gct', help='GCT file with read counts')
-    parser.add_argument('annotation_gtf', help='GTF annotation')
     parser.add_argument('vcf', help='VCF file with donor IDs')
+    parser.add_argument('attributes', help='Sample attributes, corresponding to the GTF')
     parser.add_argument('prefix', help='Prefix for output file names')
     parser.add_argument('-o', '--output_dir', default='.', help='Output directory')
     parser.add_argument('--expression_threshold', type=np.double, default=0.1, help='Selects genes with > expression_threshold expression in at least min_samples')
@@ -126,28 +156,13 @@ if __name__=='__main__':
 
     quant_std_df, quant_df = normalize_expression(expression_df, counts_df,
         expression_threshold=args.expression_threshold, count_threshold=args.count_threshold, min_samples=args.min_samples)
+    print('Save to HDF5 format, full matrix and per tissue data ...', end='', flush=True)
+    prefix = os.path.join(args.output_dir, args.prefix)
+    quant_std_per_tissue = annotate_tissue_data(quant_std_df, args.attributes)
+    quant_per_tissue = annotate_tissue_data(quant_df, args.attributes)
 
-    # for consistency with v6/v6p pipeline results, write unsorted expression file for PEER factor calculation
-    quant_std_df.to_csv(os.path.join(args.output_dir, args.prefix+'.for_peer.txt'), sep='\t')
-
-    bed_df = gtf2bed(args.annotation_gtf, feature='transcript')
-    quant_std_df = pd.merge(bed_df, quant_std_df, left_index=True, right_index=True)
-    quant_df = pd.merge(bed_df, quant_df, left_index=True, right_index=True)
-
-    # sort by start position
-    chr_groups = quant_std_df.groupby('chr', sort=False, group_keys=False)
-    quant_std_df = chr_groups.apply(lambda x: x.sort_values('start'))
-    quant_df = quant_df.loc[quant_std_df.index]
-
-    # exclude chromosomes
-    chrs = subprocess.check_output('tabix --list-chroms '+args.vcf, shell=True, executable='/bin/bash')
-    chrs = chrs.decode().strip().split()
-    quant_std_df = quant_std_df[quant_std_df.chr.isin(chrs)]
-    quant_df = quant_df[quant_df.chr.isin(chrs)]
-
-    # header must be commented in BED format
-    header_str = quant_std_df.columns.values.copy()
-    header_str[0] = '#chr'
-    write_bed(quant_std_df, header_str, os.path.join(args.output_dir, args.prefix+'.bed'))
-    write_bed(quant_df, header_str, os.path.join(args.output_dir, args.prefix+'.fpkm.bed'))
+    quant_std_df.to_hdf(prefix + ".qnorm.std.flat.h5",  'GTExV7', mode = 'w', complevel = 9, complib = 'zlib')
+    quant_df.to_hdf(prefix + ".qnorm.flat.h5", 'GTExV7', mode = 'w', complevel = 9, complib = 'zlib')
+    write_per_tissue_data(quant_per_tissue, prefix + ".qnorm.h5")
+    write_per_tissue_data(quant_std_per_tissue, prefix + ".qnorm.std.h5")
     print('done.')

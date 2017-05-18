@@ -40,12 +40,12 @@ parameter: rpkm_cutoff = 0.1
 parameter: read_cutoff = 5
 parameter: sample_cutoff = 10
 parameter: script = os.path.abspath("../src/normalize_expression.py")
-output: "${CONFIG['wd']}/${input[0]!nnnb}.qnorm.hdf5", "${CONFIG['wd']}/${input[0]!nnnb}.qnorm.std.hdf5"
+output: "${CONFIG['wd']}/${input[0]!nnb}.qnorm.std.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.std.flat.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.flat.h5"
 task: workdir = workdir
 run:
   python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${output[0]!nn} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
 
-[rnaseq_3]
+[rnaseq_2]
 # PEER analysis
 
 [covariate_regression]

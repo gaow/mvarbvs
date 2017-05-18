@@ -29,6 +29,6 @@ input: CONFIG['genotype']
 sos_run("DW.vcf_by_chrom", workdir = CONFIG['wd'])
 
 [rna_preprocessing]
-input: CONFIG['rna_rpkm'], CONFIG['rna_cnts'], CONFIG['sample_attr'], CONFIG['genotype']
-sos_run("MC.normalize_expression", workdir =  CONFIG['wd'])
+input: CONFIG['rna_rpkm'], CONFIG['rna_cnts'], CONFIG['genotype'], CONFIG['sample_attr'] 
+sos_run("MC.rnaseq:1", workdir =  CONFIG['wd']) 
 
