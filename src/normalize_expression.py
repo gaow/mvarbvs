@@ -131,8 +131,8 @@ def normalize_expression(expression_df, counts_df, expression_threshold=0.1, cou
     M = normalize_quantiles(expression_df.loc[mask].values, inplace=False)
     R = inverse_quantile_normalization(M)
 
-    quant_std_df = pd.DataFrame(data=R, columns=donor_ids, index=expression_df.loc[mask].index)
-    quant_df = pd.DataFrame(data=M, columns=donor_ids, index=expression_df.loc[mask].index)
+    quant_std_df = pd.DataFrame(data=R, columns=donor_ids, index=expression_df.loc[mask].index, dtype = np.float32)
+    quant_df = pd.DataFrame(data=M, columns=donor_ids, index=expression_df.loc[mask].index, dtype = np.float32)
     return quant_std_df, quant_df
 
 
