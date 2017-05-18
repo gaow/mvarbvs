@@ -165,10 +165,10 @@ $( document ).ready(function(){
 <ul>
 <li>We do quantile normalization because it is the most robust. And our model assumes normal.<ul>
 <li>potential issue with RPKM: if some genes are extremely highly expressed they will impact other genes's RPKM</li>
-<li>Potential issue with qnorm: may over-correct but the gain in power is well worth the possible loss</li>
 </ul>
 </li>
 <li>No good answer to whether or not we adopt alternative stretagy. We should stick to one defensible strategy which easily is the <a href="https://gtexportal.org/home/documentationPage#staticTextAnalysisMethods">official GTEx guideline</a>.</li>
+<li>We can use multiple regression to remove residue first. Potential issue is that we may over-correct but the gain in power is well worth the possible loss. Just make sure we keep P &lt;&lt; N so that degree of freedom change is not that big. GTEx official procedure has some guideline on how many PEER to use.</li>
 </ul>
 <h2 id="Project-meeting-20170502">Project meeting 20170502<a class="anchor-link" href="#Project-meeting-20170502">&#182;</a></h2><p>With Matthew and Wei. We discussed mostly the fine-mapping step of m&amp;m, and some mr-ash related issues. First and foremost, we make it clear that focus of m&amp;m should be constrained to eQTL fine mapping for now because it is an important problem that has not been answered in the multivariate framework we propose.</p>
 <p>Although we are interested in fine mapping eventually, it is perhaps too premature to make very concrete plan until we see the data analysis outcome from Step 2 the mash step (this comment was made in response to my initial request to finalize the fine mapping MCMC algorithm, and instead we brainstormed on what can be possibly done to perform fine mapping).</p>
