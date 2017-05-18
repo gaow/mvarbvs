@@ -7,6 +7,7 @@
 [genotype_stats_1]
 # making genotype summary statistics via vcftools
 parameter: workdir = None
+depends: executable("vcftools")
 input: pattern = "{name}.vcf.gz"
 output: expand_pattern("${CONFIG['wd']}/${name!b}.imiss"), expand_pattern("${CONFIG['wd']}/${name!b}.lmiss")
 task: workdir = workdir
@@ -43,11 +44,19 @@ parameter: script = os.path.abspath("../src/normalize_expression.py")
 output: "${CONFIG['wd']}/${input[0]!nnb}.qnorm.std.flat.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.flat.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.std.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.h5"
 task: workdir = workdir
 run:
-  python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${output[0]!nnn} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
+  python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${input[0]!nnb} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
 
 [rnaseq_2]
 # PEER analysis
-depends: R_library('rhdf5')
+# There are a number of configuable parameters coded in run_PEER.R interface
+# That have default value. Can be changed here or not depending on the analyst
+depends: R_library('rhdf5'), R_library('peer'), R_library('argparser')
+parameter: num_peer = 35
+parameter: script = os.path.abspath("../src/run_PEER.R")
+output: "${input[0]!n}_PEER_covariates.txt", "${input[0]!n}_PEER_alpha.txt", "${input[0]!n}_PEER_residuals.txt"
+task: workdir = workdir
+run:
+Rscript ${script} ${input[0]} ${input[0]!n} ${num_peer}
 
 [covariate_regression]
 # Remove covariate from expression data

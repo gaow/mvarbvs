@@ -13,8 +13,17 @@ WriteTable <- function(data, filename, index.name) {
 	write.table(data, datafile, sep="\t", col.names=FALSE, quote=FALSE)
 }
 
+loadTable <- function(filename, group, auto_transpose = FALSE) {
+  obj <- h5read(filename, group)
+  dat <- obj$block0_values
+  rownames(dat) <- obj$axis0
+  colnames(dat) <- obj$axis1
+  if (ncol(dat) > nrow(dat) && auto_transpose) dat <- t(dat)
+  return(dat)
+}
+
 p <- arg_parser("Run PEER factor estimation")
-p <- add_argument(p, "expr.file", help="")
+p <- add_argument(p, "expr.h5", help="")
 p <- add_argument(p, "prefix", help="")
 p <- add_argument(p, "n", help="Number of hidden confounders to estimate")
 p <- add_argument(p, "--alphaprior_a", help="", default=0.001)
@@ -26,19 +35,7 @@ p <- add_argument(p, "--output_dir", short="-o", help="Output directory", defaul
 argv <- parse_args(p)
 
 cat("PEER: loading expression data ... ")
-if (grepl('.gz$', argv$expr.file)) {
-    nrows <- as.integer(system(paste0("zcat ", argv$expr.file, " | wc -l | cut -d' ' -f1 "), intern=TRUE, wait=TRUE))
-} else {
-    nrows <- as.integer(system(paste0("wc -l ", argv$expr.file, " | cut -d' ' -f1 "), intern=TRUE, wait=TRUE))
-}
-if (grepl('.bed$', argv$expr.file) || grepl('.bed.gz$', argv$expr.file)) {
-    df <- read.table(argv$expr.file, sep="\t", nrows=nrows, header=TRUE, check.names=FALSE, comment.char="")
-    row.names(df) <- df[, 4]
-    df <- df[, 5:ncol(df)]
-} else {
-    df <- read.table(argv$expr.file, sep="\t", nrows=nrows, header=TRUE, check.names=FALSE, comment.char="", row.names=1)
-}
-M <- t(as.matrix(df))
+M <- t(as.matrix(loadTable(argv$expr.h5, "/GTExV7")))
 cat("done.\n")
 
 # run PEER
