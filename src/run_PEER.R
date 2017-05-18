@@ -31,7 +31,6 @@ p <- add_argument(p, "--alphaprior_b", help="", default=0.01)
 p <- add_argument(p, "--epsprior_a", help="", default=0.1)
 p <- add_argument(p, "--epsprior_b", help="", default=10)
 p <- add_argument(p, "--max_iter", help="", default=1000)
-p <- add_argument(p, "--output_dir", short="-o", help="Output directory", default=".")
 argv <- parse_args(p)
 
 cat("PEER: loading expression data ... ")
@@ -68,7 +67,7 @@ colnames(R) <- rownames(M)
 
 # write results
 cat("PEER: writing results ... ")
-WriteTable(t(X), file.path(argv$output_dir, paste0(argv$prefix, "_PEER_covariates.txt")), "ID")  # format(X, digits=6)
-WriteTable(A, file.path(argv$output_dir, paste0(argv$prefix, "_PEER_alpha.txt")), "ID")
-WriteTable(R, file.path(argv$output_dir, paste0(argv$prefix, "_PEER_residuals.txt")), "ID")
+WriteTable(t(X), paste0(argv$prefix, "_PEER_covariates.txt"), "ID")  # format(X, digits=6)
+WriteTable(A, paste0(argv$prefix, "_PEER_alpha.txt"), "ID")
+WriteTable(R, paste0(argv$prefix, "_PEER_residuals.txt"), "ID")
 cat("done.\n")
