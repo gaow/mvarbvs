@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head><meta charset="utf-8" />
-<title>GTEx7_Analysis_Plan</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>20170518-Imputation-Summary</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
@@ -51,7 +51,6 @@
 .lev6 {margin-left: 180px}
 </style>
 
-
 <link rel="stylesheet" type="text/css" href="../../css/jt.css">
 <link rel="stylesheet" type="text/css" href="../../css/toc2.css">
 
@@ -84,7 +83,7 @@
 $( document ).ready(function(){
 
             var cfg={'threshold':3,     // depth of toc (number of levels)
-             'number_sections': false,  // sections numbering
+             'number_sections': false, 
              'toc_cell': false,          // useless here
              'toc_window_display': true, // display the toc window
              "toc_section_display": "block", // display toc contents in the window
@@ -108,27 +107,25 @@ $( document ).ready(function(){
 
             table_of_contents(cfg,st);
 
-
-            var file=writeupDict[$("h1:first").attr("id")];
+            var file=notebookDict[$("h1:first").attr("id")];
             $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
-            
-            var tuts=writeup;
-            var pos=writeup.indexOf(file);
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
         
             for (var a=pos;a>=0;a--){
-                  var name=tuts[a]
+                  var name=docs[a]
                   $('<li><a href="'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
             }
             $('a[href="'+file+'.html'+'"]').css("color","#126dce");
 
-            $('<li id="indexHome"><a href="../../writeup.html"><b>Writeup Home<b></a></li>').insertBefore("#toc-level0 li:eq(0)");
-            for (var a=pos+1;a<tuts.length;a++){
-                  var name=tuts[a]
+
+            $('<li id="indexHome"><a href="../../documentation.html"><b>Analysis Home<b></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
                   $(".toc #toc-level0").append('<li><a href="'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
             }
             $("#toc-header").hide();
-
 
     });
 </script>
@@ -141,7 +138,15 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="GTEx-V7-eQTL-data-analysis-procedure">GTEx V7 eQTL data analysis procedure<a class="anchor-link" href="#GTEx-V7-eQTL-data-analysis-procedure">&#182;</a></h1><p>See <a href="https://gtexportal.org/home/documentationPage">this page</a> for analysis outline of other releases.</p>
+<h1 id="Summary-of-imputation-outcome">Summary of imputation outcome<a class="anchor-link" href="#Summary-of-imputation-outcome">&#182;</a></h1><p><a href="../pipeline/Pipelines.html#Genotype-QC-/-imputation">Here</a> is the imputation procedure. We want to compare the imputation result with the original data to address the following questions:</p>
+<ol>
+<li>Overlap between original and imputated, and focus on why some are filtered out</li>
+<li>Filter imputated data removing all imputed sites; also filter by MAF</li>
+<li>Filter out data having &gt;5% missing in the original</li>
+<li>Are genotype prediction done for genotypes that are called?</li>
+<li>Summary of uncertainty in imputed SNPs</li>
+</ol>
+<p>I'm using <code>vtools</code> for these analysis.</p>
 
 </div>
 </div>
@@ -151,52 +156,25 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Preprocessing">Preprocessing<a class="anchor-link" href="#Preprocessing">&#182;</a></h2>
+<h2 id="1">1<a class="anchor-link" href="#1">&#182;</a></h2>
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered">
-<div class="prompt input_prompt">
-</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="What-we-have">What we have<a class="anchor-link" href="#What-we-have">&#182;</a></h3><ul>
-<li>Genotype data, filted and phased, yet not imputed</li>
-<li>RNA-Seq data of gene expression for all sample tissues, available both the counts and RPKM</li>
-<li>Sample phenotype / covariates</li>
-</ul>
-<h3 id="What-we-need-to-do">What we need to do<a class="anchor-link" href="#What-we-need-to-do">&#182;</a></h3><h4 id="Genotype-data">Genotype data<a class="anchor-link" href="#Genotype-data">&#182;</a></h4><ul>
-<li>We need to impute missing genotypes. We use UMichigen Imputation Panel <code>minimac3</code> + HRC reference data</li>
-<li>Do some PLINK QC, including<ul>
-<li>Keep variants with at least 10 samples having the minor allele (more stringent that 1% MAF filter)</li>
-</ul>
-</li>
-<li>Genotype samples have to match RNA-Seq samples by ID<ul>
-<li>Do it to RNA-Seq data when creating HDF5 matrices</li>
-</ul>
-</li>
-</ul>
-<h4 id="RNA-Seq-data">RNA-Seq data<a class="anchor-link" href="#RNA-Seq-data">&#182;</a></h4><ul>
-<li>Genes should have at least 10 samples with RPKM &gt; 0.1 and read counts &gt; 6</li>
-<li>Use quantile normalization</li>
-</ul>
-<h4 id="Covariates">Covariates<a class="anchor-link" href="#Covariates">&#182;</a></h4><ul>
-<li>3 PCs, gender, genotyping platform, and PEER factors</li>
-<li>PEER factors are generated using the top 10000 expressed genes per tissue, after normalization.<ul>
-<li>In V6P guideline it seems to vaguely imply using all genes from all tissues. But it seems PEER cannot handle data of that size (too slow to process).</li>
-<li>In <a href="https://storage.googleapis.com/gtex-public-data/Portal_Analysis_Methods_v6_08182016.pdf">V6 guideline</a> it suggests using top 10K expressed genes per tissue. Since we will remove these covariates via conventional multiple regression anyways it is Ok to correct for it this way.</li>
-</ul>
-</li>
-<li>Number of PEER depends on sample size N. <ul>
-<li>$N < 150$, use 15 PEERs, $150 \le N < 250$, use 30 PEERs, $N \ge 250$ use 35 PEERs</li>
-</ul>
-</li>
-<li>Regress out these factors separately for each tissue, save the residual to HDF5 as the Y for later analysis</li>
-</ul>
-<h4 id="FastQTL-analysis">FastQTL analysis<a class="anchor-link" href="#FastQTL-analysis">&#182;</a></h4><p>Adapted from <a href="https://github.com/francois-a/fastqtl">Broad FastQTL wrapper tool</a></p>
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span> <span class="n">mkdir</span> <span class="n">umich</span><span class="p">;</span> <span class="n">cd</span> <span class="n">umich</span><span class="p">;</span> <span class="n">vtools</span> <span class="n">init</span> <span class="n">umich</span> 
+<span class="err">!</span> <span class="n">vtools</span> <span class="kn">import</span> <span class="o">*.</span><span class="n">dose</span><span class="o">.</span><span class="n">vcf</span><span class="o">.</span><span class="n">gz</span> <span class="o">--</span><span class="n">build</span> <span class="n">hg19</span> <span class="o">--</span><span class="n">format</span> <span class="o">-</span><span class="n">j</span> <span class="mi">16</span> <span class="o">--</span><span class="n">format</span> <span class="n">gtex</span><span class="o">.</span><span class="n">fmt</span>
+<span class="err">!</span> <span class="n">cd</span> <span class="o">..</span><span class="p">;</span> <span class="n">mkdir</span> <span class="n">gtex</span><span class="p">;</span> <span class="n">cd</span> <span class="n">gtex</span>
+<span class="err">!</span> <span class="n">vtools</span> <span class="n">init</span> <span class="n">gtex</span> <span class="o">--</span><span class="n">parent</span> <span class="o">../</span><span class="n">umich</span>
+</pre></div>
 
 </div>
 </div>
+</div>
+
 </div>
     </div>
   </div>

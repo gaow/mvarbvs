@@ -566,14 +566,14 @@ vcftools --gzvcf <span class="si">${</span><span class="nv">input</span><span cl
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;argparser&#39;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="n">num_peer</span> <span class="o">=</span> <span class="mi">35</span>
 <span class="kn">parameter:</span> <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../src/run_PEER.R&quot;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="s2">&quot;${input[0]!n}_PEER_covariates.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${input[0]!n}_PEER_alpha.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${input[0]!n}_PEER_residuals.txt&quot;</span>
+<span class="kn">output:</span> <span class="s2">&quot;${input[0]!nn}_PEER_covariates.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${input[0]!nn}_PEER_alpha.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${input[0]!nn}_PEER_residuals.txt&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
 </pre></div>
 
-<div class="source blob-code sos-script "><pre><span></span>Rscript <span class="si">${</span><span class="nv">script</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]!n</span><span class="si">}</span> <span class="si">${</span><span class="nv">num_peer</span><span class="si">}</span>
+<div class="source blob-code sos-script "><pre><span></span>Rscript <span class="si">${</span><span class="nv">script</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]!nn</span><span class="si">}</span> <span class="si">${</span><span class="nv">num_peer</span><span class="si">}</span>
  
 </pre></div>
 
