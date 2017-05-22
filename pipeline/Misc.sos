@@ -45,18 +45,93 @@ output: "${CONFIG['wd']}/${input[0]!nnb}.qnorm.std.flat.h5", "${CONFIG['wd']}/${
 task: workdir = workdir
 run:
   python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${input[0]!nnb} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
+  h5ls ${output[3]} | awk '{print $1}' > ${output[3]!n}.meta
 
 [rnaseq_2]
 # PEER analysis
 # There are a number of configuable parameters coded in run_PEER.R interface
 # That have default value. Can be changed here or not depending on the analyst
-depends: R_library('rhdf5'), R_library('peer'), R_library('argparser')
-parameter: num_peer = 35
-parameter: script = os.path.abspath("../src/run_PEER.R")
-output: "${input[0]!n}_PEER_covariates.txt", "${input[0]!n}_PEER_alpha.txt", "${input[0]!n}_PEER_residuals.txt"
-task: workdir = workdir
-run:
-Rscript ${script} ${input[0]} ${input[0]!n} ${num_peer}
+depends: R_library('rhdf5'), R_library('peer')
+parameter: tissues = [x.strip() for x in open("${input[3]!n}.meta").readlines()]
+input: for_each = ['tissues']
+output: "${_tissues}_PEER_covariates.txt", "${_tissues}_PEER_alpha.txt", "${_tissues}_PEER_residuals.txt"
+task: workdir = workdir, walltime = "20:00:00", cores = 1, mem = "4G"
+R:
+
+expr.h5 = ${input[3]!r}
+prefix = ${_tissues!r}
+alphaprior_a=0.001
+alphaprior_b=0.01
+epsprior_a=0.1
+epsprior_b=10
+max_iter=1000
+
+library(peer, quietly=TRUE)  # https://github.com/PMBio/peer
+library(rhdf5, quietly=TRUE)
+
+WriteTable <- function(data, filename, index.name) {
+	datafile <- file(filename, open = "wt")
+	on.exit(close(datafile))
+	header <- c(index.name, colnames(data))
+	writeLines(paste0(header, collapse="\t"), con=datafile, sep="\n")
+	write.table(data, datafile, sep="\t", col.names=FALSE, quote=FALSE)
+}
+
+loadTable <- function(filename, group, auto_transpose = FALSE) {
+  obj <- h5read(filename, group)
+  dat <- obj$block0_values
+  rownames(dat) <- obj$axis0
+  colnames(dat) <- obj$axis1
+  if (ncol(dat) > nrow(dat) && auto_transpose) dat <- t(dat)
+  return(dat)
+}
+
+getNumPeer <- function(ss) {
+  if (ss<150) return (15)
+  else if (ss >=150 && ss < 250) return(30)
+  else return(35)
+}
+
+cat("PEER: loading expression data ... ")
+# rows are number of samples. columns are number of genes
+M <- as.matrix(loadTable(expr.h5, "/${_tissues}"))
+n = getNumPeer(nrow(M))
+cat("done.\n")
+
+# run PEER
+cat(paste0("PEER: estimating hidden confounders (", n, " for tissue ", prefix , ")\n"))
+model <- PEER()
+invisible(PEER_setNk(model, n))
+invisible(PEER_setPhenoMean(model, M))
+invisible(PEER_setPriorAlpha(model, alphaprior_a, alphaprior_b))
+invisible(PEER_setPriorEps(model,epsprior_a, epsprior_b))
+invisible(PEER_setNmax_iterations(model, max_iter))
+# if(!is.null(covs)) {
+#   invisible(PEER_setCovariates(model, covs))
+# }
+time <- system.time(PEER_update(model))
+
+X <- PEER_getX(model)  # samples x PEER factors
+A <- PEER_getAlpha(model)  # PEER factors x 1
+R <- t(PEER_getResiduals(model))  # genes x samples
+
+# add relevant row/column names
+c <- paste0("InferredCov",1:ncol(X))
+rownames(X) <- rownames(M)
+colnames(X) <- c
+rownames(A) <- c
+colnames(A) <- "Alpha"
+A <- as.data.frame(A)
+A$Relevance <- 1.0 / A$Alpha
+rownames(R) <- colnames(M)
+colnames(R) <- rownames(M)
+
+# write results
+cat("PEER: writing results ... ")
+WriteTable(t(X), paste0(prefix, "_PEER_covariates.txt"), "ID")  # format(X, digits=6)
+WriteTable(A, paste0(prefix, "_PEER_alpha.txt"), "ID")
+WriteTable(R, paste0(prefix, "_PEER_residuals.txt"), "ID")
+cat("done.\n")
 
 [covariate_regression]
 # Remove covariate from expression data
