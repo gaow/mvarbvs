@@ -45,14 +45,13 @@ output: "${CONFIG['wd']}/${input[0]!nnb}.qnorm.std.flat.h5", "${CONFIG['wd']}/${
 task: workdir = workdir
 run:
   python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${input[0]!nnb} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
-  h5ls ${output[3]} | awk '{print $1}' > ${output[3]!n}.meta
 
 [rnaseq_2]
 # PEER analysis
 # There are a number of configuable parameters coded in run_PEER.R interface
 # That have default value. Can be changed here or not depending on the analyst
 depends: R_library('rhdf5'), R_library('peer')
-parameter: tissues = [x.strip() for x in open("${input[3]!n}.meta").readlines()]
+parameter: tissues = get_output("h5ls ${input[3]} | awk '{print $1}'").strip().split('\n')
 input: for_each = ['tissues']
 output: "${_tissues}_PEER_covariates.txt", "${_tissues}_PEER_alpha.txt", "${_tissues}_PEER_residuals.txt"
 task: workdir = workdir, walltime = "20:00:00", cores = 1, mem = "4G"
