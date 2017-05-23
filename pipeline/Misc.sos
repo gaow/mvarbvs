@@ -56,8 +56,9 @@ run:
 # Using default values for now. Can be changed here or not depending on the analyst
 depends: R_library('rhdf5'), R_library('peer')
 parameter: tissues = get_output("h5ls ${input[3]} | awk '{print $1}'").strip().split('\n')
+parameter: workdir = None
 input: for_each = ['tissues']
-output: "${_tissues}_PEER_covariates.txt", "${_tissues}_PEER_alpha.txt", "${_tissues}_PEER_residuals.txt"
+output: "${workdir}/${_tissues}_PEER_covariates.txt", "${workdir}/${_tissues}_PEER_alpha.txt", "${workdir}/${_tissues}_PEER_residuals.txt"
 task: workdir = workdir, walltime = "20:00:00", cores = 1, mem = "4G"
 R:
 
@@ -138,22 +139,122 @@ cat("done.\n")
 
 [umich_to_plink_1]
 # UMich imputed VCF to plink format
+# Fix multi-allelic sites
+# By changing duplicate SNP ID
+
 parameter: filter = 1
 input: group_by = 'single'
-output: "${_input!n}.bed"
+output: "${_input!nn}.bed"
 task:
 run:
   if [[ ${filter} ]]; then
-     zcat ${_input} | awk 'if ($7 == "PASS") {print $2}' > ${_input!nn}.exclude_id
-     plink --vcf ${_input} --out ${_output!n} --exclude ${_input!nn}.exclude_id
+     zcat ${_input} | awk '{if ($7 == "PASS") {print $2}}' > ${_input!nn}.exclude_id
+     plink --vcf ${_input} --out ${_output!nn} --exclude ${_input!nn}.exclude_id --make-bed
      rm -f ${_input!nn}.exclude_id
   else
-     plink --vcf ${_input} --out ${_output!n}
+     plink --vcf ${_input} --out ${_output!nn} --make-bed
   fi
+
+python:
+
+from collections import Counter
+import numpy as np
+
+dat = np.genfromtxt('${_output!n}.bim', dtype = '<U148')
+counter = Counter()
+dup_list = dat[:,1]
+deduped = []
+for name in dup_list:
+    new = name + '_' + str(counter[name]) if counter[name] else name
+    counter.update({name: 1})
+    deduped.append(new)
+dat[:,1] = np.array(deduped)
+np.savetxt('${_output!n}.bim', dat, delimiter = '\t', fmt = '%s')
 
 [umich_to_plink_2]
 # Merge all files
-output: "${project_name}" 
+output: "${workdir}/${project_name}.bed"
+task: workdir = workdir
+run:
+  echo ${input!n} | grep -v chrX | sed 's/ /\n/g' > plink.merge-list
+  plink --bfile ${input[0]!n} --merge-list plink.merge-list --out ${output} --chr 1-22 --make-bed
+
+[variants_filter]
+# Filter by MAF, HWE etc
+parameter: maf = 0.01
+parameter: mac = 10
+output: "${input!n}.filtered.bed"
+task: workdir = workdir
+run:
+  plink --bfile ${input!n} --maf ${maf} --mac ${mac} --make-bed --out ${output!n}
+
+[LD_pruning_1]
+# Mark independent variants
+parameter: workdir = None
+parameter: pairwise_ld_param = '50 5 0.3'
+parameter: maf = 0.01
+depends: executable('plink')
+input: pattern = '{name}.{ext}'
+output: expand_pattern('{name}.prune.in')
+task: workdir = workdir 
+run:
+  plink --bfile ${input!n} \
+        --allow-no-sex \
+        --maf ${maf} \
+        --indep-pairwise ${pairwise_ld_param} \
+        --out ${output!nn}
+        
+[LD_pruning_2]
+# Select independent common variants
+parameter: workdir = None
+depends: executable('plink')
+input: pattern = '{name}.prune.in'
+output: expand_pattern('{name}.prune.bed')
+task: workdir = workdir 
+run:
+  plink --bfile ${input!nn} \
+        --extract ${input} \
+        --no-sex --no-pheno --no-parents \
+        --make-bed \
+        --out ${output!n}
+
+[global_ancestry_1]
+# global ancestry analysis via KING
+# extract top K PC
+parameter: K = 20
+parameter: workdir = None
+depends: executable('king')
+input: pattern = "{name}.{ext}"
+output: expand_pattern('{name}.pc.ped')
+task: workdir = workdir
+run:
+  king -b ${input!n}.bed --mds --prefix ${input!n}.
+
+[global_ancestry_2]
+# scatter plot for global ancestry analysis result
+# R plotly implementation
+parameter: workdir = None
+depends: R_library("plotly")
+input: pattern = "{name}.ped" 
+output: expand_pattern('{name}.html')
+task: workdir = workdir 
+R: 
+   library(plotly)
+   dat <- read.table(${input!r}, sep = ' ')
+   for (i in 1:(ncol(dat) - 6 - 1)) {
+       title <- paste(${input!bnr}, "PC", i, "vs", "PC", i + 1, sep = "_")
+       p <- plot_ly(dat, x = dat[, 6 + i], y = dat[, 7 + i], text = dat[,2], color = dat[,1],
+                    mode = "markers", type = 'scatter', visible = 'legendonly') %>% layout(title = title)
+       htmlwidgets::saveWidget(as.widget(p), paste0(title, ".html"))
+   }
+run: 
+   foo () {
+     echo '<html><body>'
+     sed 's/^.*/<a href="&">&<\/a><br\/>/'
+     echo '</body></html>'
+   }
+   mkdir -p ${input!n}; mv ${input!bn}*.html ${input!n}
+   ls ${input!n}/*.html | foo > ${output}
 
 [fastqtl_1]
 # FastQTL pipeline
