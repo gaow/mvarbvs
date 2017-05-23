@@ -160,7 +160,7 @@ python:
 from collections import Counter
 import numpy as np
 
-dat = np.genfromtxt('${_output!n}.bim', dtype = '<U148')
+dat = np.genfromtxt('${_output!n}.bim', dtype = '<U48')
 counter = Counter()
 dup_list = dat[:,1]
 deduped = []
@@ -173,11 +173,23 @@ np.savetxt('${_output!n}.bim', dat, delimiter = '\t', fmt = '%s')
 
 [umich_to_plink_2]
 # Merge all files
+# And fix family ID (replace by ancestry coding)
+parameter: phenotype = "${CONFIG['phenotype']!a}"
+depends: phenotype
 output: "${workdir}/${project_name}.bed"
 task: workdir = workdir
 run:
-  echo ${input!n} | grep -v chrX | sed 's/ /\n/g' > plink.merge-list
+  echo ${input!n} | sed 's/ /\n/g' | grep -v chrX > plink.merge-list
   plink --bfile ${input[0]!n} --merge-list plink.merge-list --out ${output} --chr 1-22 --make-bed
+
+python:
+import pandas as pd
+reference = pd.read_csv(${phenotype!r}, dtype = str, usecols = (0,5), sep = '\t')
+fam = pd.read_csv("${output!n}.fam", header = None, sep = ' ',
+                  names = ['fid', 'sid', 'pid', 'mid', 'sex', 'phen'])
+dat = pd.merge(reference, fam, left_on = 'SUBJID', right_on = "sid")                  
+dat.drop(['SUBJID', 'fid'], axis=1, inplace = True)
+dat.to_csv("${output!n}.fam", sep = ' ', header = False, index = False)
 
 [variants_filter]
 # Filter by MAF, HWE etc
