@@ -35,5 +35,5 @@ sos_run("MC.rnaseq", workdir =  CONFIG['wd'])
 
 [genotype_pca]
 input: CONFIG['imputed_genotype']
-sos_run("MC.umich_to_plink", workdir = CONFIG['wd'])
+sos_run("MC.umich_to_plink+MC.LD_pruning+MC.global_ancestry", workdir = CONFIG['wd'])
 

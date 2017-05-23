@@ -180,14 +180,15 @@ output: "${workdir}/${project_name}.bed"
 task: workdir = workdir
 run:
   echo ${input!n} | sed 's/ /\n/g' | grep -v chrX > plink.merge-list
-  plink --bfile ${input[0]!n} --merge-list plink.merge-list --out ${output} --chr 1-22 --make-bed
+  plink --bfile ${input[0]!n} --merge-list plink.merge-list --out ${output!n} --chr 1-22 --make-bed
 
 python:
 import pandas as pd
-reference = pd.read_csv(${phenotype!r}, dtype = str, usecols = (0,5), sep = '\t')
+reference = pd.read_csv(${phenotype!r}, dtype = str, usecols = (0,4), sep = '\t')
+reference['RACE'] = 'POP' + reference['RACE'].astype(str)
 fam = pd.read_csv("${output!n}.fam", header = None, sep = ' ',
                   names = ['fid', 'sid', 'pid', 'mid', 'sex', 'phen'])
-dat = pd.merge(reference, fam, left_on = 'SUBJID', right_on = "sid")                  
+dat = pd.merge(reference, fam, left_on = 'SUBJID', right_on = "sid")
 dat.drop(['SUBJID', 'fid'], axis=1, inplace = True)
 dat.to_csv("${output!n}.fam", sep = ' ', header = False, index = False)
 

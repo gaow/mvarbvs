@@ -70,3 +70,14 @@ run:
 [impute_reference: provides = ['1.vcf.gz']]
 # Download resource data sets for impute2
 # No longer needed due to use of imputation server
+
+[king: provides = executable('king')]
+# Download and extract king
+parameter: workdir = None
+output: os.path.join(workdir, "king")
+task: workdir = workdir
+download:
+  http://people.virginia.edu/~wc9c/KING/Linux-king.tar.gz
+run:
+  tar -xzf Linux-king.tar.gz
+  rm -f Linux-king.tar.gz
