@@ -4,6 +4,9 @@
 # Various calls to commands to accomplish some workflow
 # When some workflow gets complicated they will be separated into dedicated files
 
+
+parameter: project_name = "GTEx7"
+
 [genotype_stats_1]
 # making genotype summary statistics via vcftools
 parameter: workdir = None
@@ -41,15 +44,16 @@ parameter: rpkm_cutoff = 0.1
 parameter: read_cutoff = 5
 parameter: sample_cutoff = 10
 parameter: script = os.path.abspath("../src/normalize_expression.py")
-output: "${CONFIG['wd']}/${input[0]!nnb}.qnorm.std.flat.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.flat.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.std.h5", "${CONFIG['wd']}/${input[0]!nnb}.qnorm.h5"
+parameter: workdir = None
+output: "${workdir}/${input[0]!nnb}.qnorm.std.flat.h5", "${workdir}/${input[0]!nnb}.qnorm.flat.h5", "${workdir}/${input[0]!nnb}.qnorm.std.h5", "${workdir}/${input[0]!nnb}.qnorm.h5"
 task: workdir = workdir
 run:
   python ${script} ${input[0]} ${input[1]} ${input[2]} ${input[3]} ${input[0]!nnb} --expression_threshold ${rpkm_cutoff} --count_threshold ${read_cutoff} --min_samples ${sample_cutoff}
 
 [rnaseq_2]
 # PEER analysis
-# There are a number of configuable parameters coded in run_PEER.R interface
-# That have default value. Can be changed here or not depending on the analyst
+# There are a number of configuable parameters in this script
+# Using default values for now. Can be changed here or not depending on the analyst
 depends: R_library('rhdf5'), R_library('peer')
 parameter: tissues = get_output("h5ls ${input[3]} | awk '{print $1}'").strip().split('\n')
 input: for_each = ['tissues']
@@ -132,5 +136,24 @@ WriteTable(A, paste0(prefix, "_PEER_alpha.txt"), "ID")
 WriteTable(R, paste0(prefix, "_PEER_residuals.txt"), "ID")
 cat("done.\n")
 
-[covariate_regression]
-# Remove covariate from expression data
+[umich_to_plink_1]
+# UMich imputed VCF to plink format
+parameter: filter = 1
+input: group_by = 'single'
+output: "${_input!n}.bed"
+task:
+run:
+  if [[ ${filter} ]]; then
+     zcat ${_input} | awk 'if ($7 == "PASS") {print $2}' > ${_input!nn}.exclude_id
+     plink --vcf ${_input} --out ${_output!n} --exclude ${_input!nn}.exclude_id
+     rm -f ${_input!nn}.exclude_id
+  else
+     plink --vcf ${_input} --out ${_output!n}
+  fi
+
+[umich_to_plink_2]
+# Merge all files
+output: "${project_name}" 
+
+[fastqtl_1]
+# FastQTL pipeline
