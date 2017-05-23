@@ -204,8 +204,8 @@ run:
 [LD_pruning_1]
 # Mark independent variants
 parameter: workdir = None
-parameter: pairwise_ld_param = '50 5 0.3'
-parameter: maf = 0.01
+parameter: pairwise_ld_param = '50 5 0.2'
+parameter: maf = 0.1
 depends: executable('plink')
 input: pattern = '{name}.{ext}'
 output: expand_pattern('{name}.prune.in')
@@ -233,15 +233,16 @@ run:
 
 [global_ancestry_1]
 # global ancestry analysis via KING
-# extract top K PC
-parameter: K = 20
 parameter: workdir = None
 depends: executable('king')
 input: pattern = "{name}.{ext}"
 output: expand_pattern('{name}.pc.ped')
 task: workdir = workdir
 run:
-  king -b ${input!n}.bed --mds --prefix ${input!n}.
+  king -b ${input!n}.bed --pca 20 --prefix ${input!n}.
+  # Would be much faster if I use MDS
+  # But I use PCA to be more comparable to GTEx official results
+  # king -b ${input!n}.bed --mds --prefix ${input!n}.
 
 [global_ancestry_2]
 # scatter plot for global ancestry analysis result
