@@ -5,7 +5,7 @@
 # When some workflow gets complicated they will be separated into dedicated files
 
 
-parameter: project_name = None
+parameter: project_name = 'GTEx'
 
 [genotype_stats_1]
 # making genotype summary statistics via vcftools
@@ -192,6 +192,7 @@ task: workdir = workdir
 run:
   echo ${input!n} | sed 's/ /\n/g' | grep -v chrX > plink.merge-list
   plink --bfile ${input[0]!n} --merge-list plink.merge-list --out ${output!n} --chr 1-22 --make-bed
+  rm plink.merge-list
 
 [variants_filter]
 # Filter by MAF, HWE etc

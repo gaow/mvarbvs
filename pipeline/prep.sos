@@ -49,4 +49,7 @@ sos_run("DW.vcf_by_chrom+MC.broad_to_plink+MC.LD_pruning+MC.global_ancestry",
         project_name = project_name,
         filter = 0)
 
+[pca_plot_broad]
+input: '/tmp/GTExPCA.ped'
+sos_run("MC.global_ancestry:2", workdir = '/tmp')
 
