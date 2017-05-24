@@ -6,7 +6,7 @@
 
 
 
- <title>ResourceManagement.sos</title>
+ <title>FastQTL.sos</title>
 <meta http-equiv="content-type" content="text/html; charset=None">
 <style type="text/css">
 
@@ -457,7 +457,7 @@ body {
         <img src="http://vatlab.github.io/SOS/img/sos_icon.svg" alt="sos_icon">
         </a>
 
-        <span class="user-mention">ResourceManagement.sos</span>
+        <span class="user-mention">FastQTL.sos</span>
       </div>
       </div>
 
@@ -466,9 +466,9 @@ body {
   <div class="file-header">
 
   <div class="file-info">
-      ./pipeline/ResourceManagement.sos
+      ./pipeline/FastQTL.sos
       <span class="file-info-divider"></span>
-    2.3 KiB
+    77 B
   </div>
   <div class="file-actions">
   </div>
@@ -478,168 +478,12 @@ body {
 <table class="highlight tab-size js-file-line-container"><div class="source blob-code sos-comment"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
  
-<span class="c1"># This script provides routines to prepare resource for analysis</span>
-<span class="c1"># Such as downloading data / code, compile software</span>
- 
 </pre></div>
 
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">plink</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;plink&#39;</span><span class="p">)]</span>
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">fastqtl_1</span><span class="p">]</span>
 </pre></div>
 
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Download and extract plink2</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;bin/plink&quot;</span><span class="p">)</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">download:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>https://www.cog-genomics.org/static/bin/plink170509/plink_linux_x86_64.zip
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>unzip -o plink_linux_x86_64.zip plink
-mv plink bin/plink
-rm -f plink_linux_x86_64.zip
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">minimac3</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;Minimac3&#39;</span><span class="p">)]</span>
-</pre></div>
-
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Download and extract minimac3</span>
-<span class="c1"># Chosen over impute2 because of results shown here</span>
-<span class="c1"># McCarthy, Shane, et al. &quot;A reference panel of 64,976 haplotypes for genotype imputation.&quot; Nature genetics (2016).</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;bin/Minimac3&quot;</span><span class="p">)</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">download:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>https://github.com/Santy-8128/Minimac3/archive/master.zip
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>unzip master.zip
-<span class="nb">cd</span> Minimac3-master
-make
-mv bin/* ../bin
-<span class="nb">cd</span> ../
-rm -rf master.zip Minimac3-master
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">SnpSift</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">executable</span><span class="p">(</span><span class="s2">&quot;SnpSift.jar&quot;</span><span class="p">)]</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;bin/SnpSift.jar&quot;</span><span class="p">)</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">download:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>https://downloads.sourceforge.net/project/snpeff/snpEff_latest_core.zip
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>unzip -p snpEff_latest_core.zip snpEff/SnpSift.jar &gt; bin/SnpSift.jar
-rm -f snpEff_latest_core.zip
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">vcftools</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;vcftools&#39;</span><span class="p">)]</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;bin/vcftools&quot;</span><span class="p">)</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">download:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>https://github.com/vcftools/vcftools/archive/master.zip
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>unzip master.zip
-<span class="nb">cd</span> vcftools-master
-bash autogen.sh
-./configure<span class="p">;</span> make
-mv src/cpp/vcftools ../bin
-<span class="nb">cd</span> ../
-rm -rf master.zip vcftools-master
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">peer</span><span class="p">]</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;R_peer_source_1.3.tgz&quot;</span><span class="p">)</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">download:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>https://github.com/downloads/PMBio/peer/R_peer_source_1.3.tgz
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>R CMD INSTALL R_peer_source_1.3.tgz
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">impute_reference</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1.vcf.gz&#39;</span><span class="p">]]</span>
-</pre></div>
-
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Download resource data sets for impute2</span>
-<span class="c1"># No longer needed due to use of imputation server</span>
- 
-</pre></div>
-
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">king</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;king&#39;</span><span class="p">)]</span>
-</pre></div>
-
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Download and extract king</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
-<span class="kn">output:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="kp">workdir</span><span class="p">,</span> <span class="s2">&quot;king&quot;</span><span class="p">)</span>
-<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">download:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>http://people.virginia.edu/~wc9c/KING/Linux-king.tar.gz
-</pre></div>
-
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
-</pre></div>
-
-<div class="source blob-code sos-script "><pre><span></span>tar -xzf Linux-king.tar.gz
-rm -f Linux-king.tar.gz
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># FastQTL pipeline</span>
 </pre></div>
 
 </table>

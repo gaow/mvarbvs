@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/Misc.sos
       <span class="file-info-divider"></span>
-    2.8 KiB
+    9.6 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -480,6 +480,11 @@ body {
  
 <span class="c1"># Various calls to commands to accomplish some workflow</span>
 <span class="c1"># When some workflow gets complicated they will be separated into dedicated files</span>
+ 
+ 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">project_name</span> <span class="o">=</span> <span class="bp">None</span>
  
 </pre></div>
 
@@ -544,7 +549,8 @@ vcftools --gzvcf <span class="si">${</span><span class="nv">input</span><span cl
 <span class="kn">parameter:</span> <span class="n">read_cutoff</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="kn">parameter:</span> <span class="n">sample_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="kn">parameter:</span> <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../src/normalize_expression.py&quot;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${input[0]!nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${input[0]!nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${input[0]!nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]}/${input[0]!nnb}.qnorm.h5&quot;</span>
+<span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">output:</span> <span class="s2">&quot;${workdir}/${input[0]!nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${input[0]!nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${input[0]!nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${input[0]!nnb}.qnorm.h5&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
 
@@ -559,28 +565,341 @@ vcftools --gzvcf <span class="si">${</span><span class="nv">input</span><span cl
 </pre></div>
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># PEER analysis</span>
-<span class="c1"># There are a number of configuable parameters coded in run_PEER.R interface</span>
-<span class="c1"># That have default value. Can be changed here or not depending on the analyst</span>
+<span class="c1"># There are a number of configuable parameters in this script</span>
+<span class="c1"># Using default values for now. Can be changed here or not depending on the analyst</span>
 </pre></div>
 
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;argparser&#39;</span><span class="p">)</span>
-<span class="kn">parameter:</span> <span class="n">num_peer</span> <span class="o">=</span> <span class="mi">35</span>
-<span class="kn">parameter:</span> <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../src/run_PEER.R&quot;</span><span class="p">)</span>
-<span class="kn">output:</span> <span class="s2">&quot;${input[0]!nn}_PEER_covariates.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${input[0]!nn}_PEER_alpha.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${input[0]!nn}_PEER_residuals.txt&quot;</span>
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;h5ls ${input[3]} | awk &#39;{print $1}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tissues&#39;</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s2">&quot;${workdir}/${_tissues}_PEER_covariates.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${_tissues}_PEER_alpha.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${_tissues}_PEER_residuals.txt&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s2">&quot;20:00:00&quot;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s2">&quot;4G&quot;</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span> 
+expr.h5 <span class="o">=</span> <span class="o">$</span><span class="p">{</span>input<span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="o">!</span>r<span class="p">}</span>
+prefix <span class="o">=</span> <span class="o">$</span><span class="p">{</span>_tissues<span class="o">!</span>r<span class="p">}</span>
+alphaprior_a<span class="o">=</span><span class="m">0.001</span>
+alphaprior_b<span class="o">=</span><span class="m">0.01</span>
+epsprior_a<span class="o">=</span><span class="m">0.1</span>
+epsprior_b<span class="o">=</span><span class="m">10</span>
+max_iter<span class="o">=</span><span class="m">1000</span>
+ 
+<span class="kn">library</span><span class="p">(</span>peer<span class="p">,</span> quietly<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>  <span class="c1"># https://github.com/PMBio/peer</span>
+<span class="kn">library</span><span class="p">(</span>rhdf5<span class="p">,</span> quietly<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+ 
+WriteTable <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>data<span class="p">,</span> filename<span class="p">,</span> index.name<span class="p">)</span> <span class="p">{</span>
+	datafile <span class="o">&lt;-</span> <span class="kp">file</span><span class="p">(</span>filename<span class="p">,</span> open <span class="o">=</span> <span class="s">&quot;wt&quot;</span><span class="p">)</span>
+	<span class="kp">on.exit</span><span class="p">(</span><span class="kp">close</span><span class="p">(</span>datafile<span class="p">))</span>
+	header <span class="o">&lt;-</span> <span class="kt">c</span><span class="p">(</span>index.name<span class="p">,</span> <span class="kp">colnames</span><span class="p">(</span>data<span class="p">))</span>
+	<span class="kp">writeLines</span><span class="p">(</span><span class="kp">paste0</span><span class="p">(</span>header<span class="p">,</span> collapse<span class="o">=</span><span class="s">&quot;\t&quot;</span><span class="p">),</span> con<span class="o">=</span>datafile<span class="p">,</span> sep<span class="o">=</span><span class="s">&quot;\n&quot;</span><span class="p">)</span>
+	write.table<span class="p">(</span>data<span class="p">,</span> datafile<span class="p">,</span> sep<span class="o">=</span><span class="s">&quot;\t&quot;</span><span class="p">,</span> col.names<span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span> quote<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="p">}</span>
+ 
+loadTable <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>filename<span class="p">,</span> group<span class="p">,</span> auto_transpose <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span> <span class="p">{</span>
+  obj <span class="o">&lt;-</span> h5read<span class="p">(</span>filename<span class="p">,</span> group<span class="p">)</span>
+  dat <span class="o">&lt;-</span> obj<span class="o">$</span>block0_values
+  <span class="kp">rownames</span><span class="p">(</span>dat<span class="p">)</span> <span class="o">&lt;-</span> obj<span class="o">$</span>axis0
+  <span class="kp">colnames</span><span class="p">(</span>dat<span class="p">)</span> <span class="o">&lt;-</span> obj<span class="o">$</span>axis1
+  <span class="kr">if</span> <span class="p">(</span><span class="kp">ncol</span><span class="p">(</span>dat<span class="p">)</span> <span class="o">&gt;</span> <span class="kp">nrow</span><span class="p">(</span>dat<span class="p">)</span> <span class="o">&amp;&amp;</span> auto_transpose<span class="p">)</span> dat <span class="o">&lt;-</span> <span class="kp">t</span><span class="p">(</span>dat<span class="p">)</span>
+  <span class="kr">return</span><span class="p">(</span>dat<span class="p">)</span>
+<span class="p">}</span>
+ 
+getNumPeer <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>ss<span class="p">)</span> <span class="p">{</span>
+  <span class="kr">if</span> <span class="p">(</span>ss<span class="o">&lt;</span><span class="m">150</span><span class="p">)</span> <span class="kr">return</span> <span class="p">(</span><span class="m">15</span><span class="p">)</span>
+  <span class="kr">else</span> <span class="kr">if</span> <span class="p">(</span>ss <span class="o">&gt;=</span><span class="m">150</span> <span class="o">&amp;&amp;</span> ss <span class="o">&lt;</span> <span class="m">250</span><span class="p">)</span> <span class="kr">return</span><span class="p">(</span><span class="m">30</span><span class="p">)</span>
+  <span class="kr">else</span> <span class="kr">return</span><span class="p">(</span><span class="m">35</span><span class="p">)</span>
+<span class="p">}</span>
+ 
+<span class="kp">cat</span><span class="p">(</span><span class="s">&quot;PEER: loading expression data ... &quot;</span><span class="p">)</span>
+<span class="c1"># rows are number of samples. columns are number of genes</span>
+M <span class="o">&lt;-</span> <span class="kp">as.matrix</span><span class="p">(</span>loadTable<span class="p">(</span>expr.h5<span class="p">,</span> <span class="s">&quot;/${_tissues}&quot;</span><span class="p">))</span>
+n <span class="o">=</span> getNumPeer<span class="p">(</span><span class="kp">nrow</span><span class="p">(</span>M<span class="p">))</span>
+<span class="kp">cat</span><span class="p">(</span><span class="s">&quot;done.\n&quot;</span><span class="p">)</span>
+ 
+<span class="c1"># run PEER</span>
+<span class="kp">cat</span><span class="p">(</span><span class="kp">paste0</span><span class="p">(</span><span class="s">&quot;PEER: estimating hidden confounders (&quot;</span><span class="p">,</span> n<span class="p">,</span> <span class="s">&quot; for tissue &quot;</span><span class="p">,</span> prefix <span class="p">,</span> <span class="s">&quot;)\n&quot;</span><span class="p">))</span>
+model <span class="o">&lt;-</span> PEER<span class="p">()</span>
+<span class="kp">invisible</span><span class="p">(</span>PEER_setNk<span class="p">(</span>model<span class="p">,</span> n<span class="p">))</span>
+<span class="kp">invisible</span><span class="p">(</span>PEER_setPhenoMean<span class="p">(</span>model<span class="p">,</span> M<span class="p">))</span>
+<span class="kp">invisible</span><span class="p">(</span>PEER_setPriorAlpha<span class="p">(</span>model<span class="p">,</span> alphaprior_a<span class="p">,</span> alphaprior_b<span class="p">))</span>
+<span class="kp">invisible</span><span class="p">(</span>PEER_setPriorEps<span class="p">(</span>model<span class="p">,</span>epsprior_a<span class="p">,</span> epsprior_b<span class="p">))</span>
+<span class="kp">invisible</span><span class="p">(</span>PEER_setNmax_iterations<span class="p">(</span>model<span class="p">,</span> max_iter<span class="p">))</span>
+<span class="c1"># if(!is.null(covs)) {</span>
+<span class="c1">#   invisible(PEER_setCovariates(model, covs))</span>
+<span class="c1"># }</span>
+time <span class="o">&lt;-</span> <span class="kp">system.time</span><span class="p">(</span>PEER_update<span class="p">(</span>model<span class="p">))</span>
+ 
+X <span class="o">&lt;-</span> PEER_getX<span class="p">(</span>model<span class="p">)</span>  <span class="c1"># samples x PEER factors</span>
+A <span class="o">&lt;-</span> PEER_getAlpha<span class="p">(</span>model<span class="p">)</span>  <span class="c1"># PEER factors x 1</span>
+R <span class="o">&lt;-</span> <span class="kp">t</span><span class="p">(</span>PEER_getResiduals<span class="p">(</span>model<span class="p">))</span>  <span class="c1"># genes x samples</span>
+ 
+<span class="c1"># add relevant row/column names</span>
+<span class="kt">c</span> <span class="o">&lt;-</span> <span class="kp">paste0</span><span class="p">(</span><span class="s">&quot;InferredCov&quot;</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="kp">ncol</span><span class="p">(</span>X<span class="p">))</span>
+<span class="kp">rownames</span><span class="p">(</span>X<span class="p">)</span> <span class="o">&lt;-</span> <span class="kp">rownames</span><span class="p">(</span>M<span class="p">)</span>
+<span class="kp">colnames</span><span class="p">(</span>X<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span>
+<span class="kp">rownames</span><span class="p">(</span>A<span class="p">)</span> <span class="o">&lt;-</span> <span class="kt">c</span>
+<span class="kp">colnames</span><span class="p">(</span>A<span class="p">)</span> <span class="o">&lt;-</span> <span class="s">&quot;Alpha&quot;</span>
+A <span class="o">&lt;-</span> <span class="kp">as.data.frame</span><span class="p">(</span>A<span class="p">)</span>
+A<span class="o">$</span>Relevance <span class="o">&lt;-</span> <span class="m">1.0</span> <span class="o">/</span> A<span class="o">$</span>Alpha
+<span class="kp">rownames</span><span class="p">(</span>R<span class="p">)</span> <span class="o">&lt;-</span> <span class="kp">colnames</span><span class="p">(</span>M<span class="p">)</span>
+<span class="kp">colnames</span><span class="p">(</span>R<span class="p">)</span> <span class="o">&lt;-</span> <span class="kp">rownames</span><span class="p">(</span>M<span class="p">)</span>
+ 
+<span class="c1"># write results</span>
+<span class="kp">cat</span><span class="p">(</span><span class="s">&quot;PEER: writing results ... &quot;</span><span class="p">)</span>
+WriteTable<span class="p">(</span><span class="kp">t</span><span class="p">(</span>X<span class="p">),</span> <span class="kp">paste0</span><span class="p">(</span>prefix<span class="p">,</span> <span class="s">&quot;_PEER_covariates.txt&quot;</span><span class="p">),</span> <span class="s">&quot;ID&quot;</span><span class="p">)</span>  <span class="c1"># format(X, digits=6)</span>
+WriteTable<span class="p">(</span>A<span class="p">,</span> <span class="kp">paste0</span><span class="p">(</span>prefix<span class="p">,</span> <span class="s">&quot;_PEER_alpha.txt&quot;</span><span class="p">),</span> <span class="s">&quot;ID&quot;</span><span class="p">)</span>
+WriteTable<span class="p">(</span>R<span class="p">,</span> <span class="kp">paste0</span><span class="p">(</span>prefix<span class="p">,</span> <span class="s">&quot;_PEER_residuals.txt&quot;</span><span class="p">),</span> <span class="s">&quot;ID&quot;</span><span class="p">)</span>
+<span class="kp">cat</span><span class="p">(</span><span class="s">&quot;done.\n&quot;</span><span class="p">)</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">umich_to_plink_1</span><span class="p">,</span> <span class="n">broad_to_plink_1</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># UMich imputed VCF to plink format</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="nb">filter</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
+<span class="kn">output:</span> <span class="s2">&quot;${_input!nn}.bed&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
 </pre></div>
 
-<div class="source blob-code sos-script "><pre><span></span>Rscript <span class="si">${</span><span class="nv">script</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]</span><span class="si">}</span> <span class="si">${</span><span class="nv">input</span><span class="p">[0]!nn</span><span class="si">}</span> <span class="si">${</span><span class="nv">num_peer</span><span class="si">}</span>
+<div class="source blob-code sos-script "><pre><span></span>touch <span class="si">${</span><span class="nv">filter</span><span class="si">}</span>.txt
+<span class="k">if</span> <span class="o">[[</span> <span class="si">${</span><span class="nv">filter</span><span class="si">}</span> -ne <span class="m">0</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
+   zcat <span class="si">${</span><span class="nv">_input</span><span class="si">}</span> <span class="p">|</span> awk <span class="s1">&#39;{if ($7 == &quot;PASS&quot;) {print $2}}&#39;</span> &gt; <span class="si">${</span><span class="nv">_input</span><span class="p">!nn</span><span class="si">}</span>.exclude_id
+   plink --vcf <span class="si">${</span><span class="nv">_input</span><span class="si">}</span> --out <span class="si">${</span><span class="nv">_output</span><span class="p">!n</span><span class="si">}</span> --exclude <span class="si">${</span><span class="nv">_input</span><span class="p">!nn</span><span class="si">}</span>.exclude_id --make-bed
+   rm -f <span class="si">${</span><span class="nv">_input</span><span class="p">!nn</span><span class="si">}</span>.exclude_id
+<span class="k">else</span>
+   plink --vcf <span class="si">${</span><span class="nv">_input</span><span class="si">}</span> --out <span class="si">${</span><span class="nv">_output</span><span class="p">!n</span><span class="si">}</span> --make-bed
+<span class="k">fi</span>
  
 </pre></div>
 
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">covariate_regression</span><span class="p">]</span>
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">umich_to_plink_2</span><span class="p">]</span>
 </pre></div>
 
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Remove covariate from expression data</span>
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Fix multi-allelic sites</span>
+<span class="c1"># By changing duplicate SNP ID</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
+<span class="kn">output:</span> <span class="s2">&quot;${_input!n}.bim&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span> 
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Counter</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+ 
+<span class="n">dat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;&lt;U48&#39;</span><span class="p">)</span>
+<span class="n">counter</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">()</span>
+<span class="n">dup_list</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">deduped</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dup_list</span><span class="p">:</span>
+    <span class="n">new</span> <span class="o">=</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">counter</span><span class="p">[</span><span class="n">name</span><span class="p">])</span> <span class="k">if</span> <span class="n">counter</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="k">else</span> <span class="n">name</span>
+    <span class="n">counter</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="mi">1</span><span class="p">})</span>
+    <span class="n">deduped</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+<span class="n">dat</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">deduped</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">savetxt</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">dat</span><span class="p">,</span> <span class="n">delimiter</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">fmt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">)</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">broad_to_plink_2</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Remove indel sites</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
+<span class="kn">output:</span> <span class="s2">&quot;${_input!n}.snp_only.bed&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>awk <span class="s1">&#39;{if ((length($5) &gt; 1 ) || (length($6) &gt; 1)) {print $2}}&#39;</span> <span class="si">${</span><span class="nv">_input</span><span class="p">!n</span><span class="si">}</span>.bim &gt; <span class="si">${</span><span class="nv">_input</span><span class="p">!n</span><span class="si">}</span>.exclude_id
+plink --bfile <span class="si">${</span><span class="nv">_input</span><span class="p">!n</span><span class="si">}</span> --out <span class="si">${</span><span class="nv">_output</span><span class="p">!n</span><span class="si">}</span> --exclude <span class="si">${</span><span class="nv">_input</span><span class="p">!n</span><span class="si">}</span>.exclude_id --make-bed
+rm -f <span class="si">${</span><span class="nv">_input</span><span class="p">!n</span><span class="si">}</span>.exclude_id
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">umich_to_plink_3</span><span class="p">,</span> <span class="n">broad_to_plink_3</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Merge all files</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">output:</span> <span class="s2">&quot;${workdir}/${project_name}.bed&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="nb">echo</span> <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span> <span class="p">|</span> sed <span class="s1">&#39;s/ /\n/g&#39;</span> <span class="p">|</span> grep -v chrX &gt; plink.merge-list
+plink --bfile <span class="si">${</span><span class="nv">input</span><span class="p">[0]!n</span><span class="si">}</span> --merge-list plink.merge-list --out <span class="si">${</span><span class="nv">output</span><span class="p">!n</span><span class="si">}</span> --chr <span class="m">1</span>-22 --make-bed
+rm plink.merge-list
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">variants_filter</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Filter by MAF, HWE etc</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">maf</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="kn">parameter:</span> <span class="n">mac</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kn">output:</span> <span class="s2">&quot;${input!n}.filtered.bed&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>plink --bfile <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span> --maf <span class="si">${</span><span class="nv">maf</span><span class="si">}</span> --mac <span class="si">${</span><span class="nv">mac</span><span class="si">}</span> --make-bed --out <span class="si">${</span><span class="nv">output</span><span class="p">!n</span><span class="si">}</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">LD_pruning_1</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Mark independent variants</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">pairwise_ld_param</span> <span class="o">=</span> <span class="s1">&#39;50 5 0.2&#39;</span>
+<span class="kn">parameter:</span> <span class="n">maf</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;plink&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.{ext}&#39;</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{name}.prune.in&#39;</span><span class="p">)</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span> 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>plink --bfile <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span> <span class="se">\</span>
+      --allow-no-sex <span class="se">\</span>
+      --maf <span class="si">${</span><span class="nv">maf</span><span class="si">}</span> <span class="se">\</span>
+      --indep-pairwise <span class="si">${</span><span class="nv">pairwise_ld_param</span><span class="si">}</span> <span class="se">\</span>
+      --out <span class="si">${</span><span class="nv">output</span><span class="p">!nn</span><span class="si">}</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">LD_pruning_2</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Select independent common variants</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;plink&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s1">&#39;{name}.prune.in&#39;</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{name}.prune.bed&#39;</span><span class="p">)</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span> 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>plink --bfile <span class="si">${</span><span class="nv">input</span><span class="p">!nn</span><span class="si">}</span> <span class="se">\</span>
+      --extract <span class="si">${</span><span class="nv">input</span><span class="si">}</span> <span class="se">\</span>
+      --no-sex --no-pheno --no-parents <span class="se">\</span>
+      --make-bed <span class="se">\</span>
+      --out <span class="si">${</span><span class="nv">output</span><span class="p">!n</span><span class="si">}</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">global_ancestry_1</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># global ancestry analysis via KING</span>
+<span class="c1"># And fix family ID (replace by ancestry coding)</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">phenotype</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;phenotype&#39;]!a}&quot;</span>
+<span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;king&#39;</span><span class="p">),</span> <span class="n">phenotype</span>
+<span class="kn">input:</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s2">&quot;{name}.{ext}&quot;</span>
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{name}.pc.ped&#39;</span><span class="p">)</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="c1"># king -b ${input!n}.bed --pca 20 --prefix ${input!n}.</span>
+<span class="c1"># Would be much faster if I use MDS</span>
+<span class="c1"># One should use PCA to be more comparable to GTEx official results, though</span>
+king -b <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span>.bed --mds --prefix <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span>.
+ 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="n">reference</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">phenotype</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">usecols</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">reference</span><span class="p">[</span><span class="s1">&#39;ETHNCTY&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;POP&#39;</span> <span class="o">+</span> <span class="n">reference</span><span class="p">[</span><span class="s1">&#39;ETHNCTY&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">fam</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="p">,</span>
+                  <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fid&#39;</span><span class="p">,</span> <span class="s1">&#39;sid&#39;</span><span class="p">,</span> <span class="s1">&#39;pid&#39;</span><span class="p">,</span> <span class="s1">&#39;mid&#39;</span><span class="p">,</span> <span class="s1">&#39;sex&#39;</span><span class="p">,</span> <span class="s1">&#39;phen&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;PC{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">)])</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">reference</span><span class="p">,</span> <span class="n">fam</span><span class="p">,</span> <span class="n">left_on</span> <span class="o">=</span> <span class="s1">&#39;SUBJID&#39;</span><span class="p">,</span> <span class="n">right_on</span> <span class="o">=</span> <span class="s2">&quot;sid&quot;</span><span class="p">)</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;SUBJID&#39;</span><span class="p">,</span> <span class="s1">&#39;fid&#39;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">dat</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">global_ancestry_2</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># scatter plot for global ancestry analysis result</span>
+<span class="c1"># R plotly implementation</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;plotly&quot;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s2">&quot;{name}.ped&quot;</span> 
+<span class="kn">output:</span> <span class="n">expand_pattern</span><span class="p">(</span><span class="s1">&#39;{name}.html&#39;</span><span class="p">)</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span> 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span> 
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="kn">library</span><span class="p">(</span>plotly<span class="p">)</span>
+dat <span class="o">&lt;-</span> read.table<span class="p">(</span><span class="o">$</span><span class="p">{</span>input<span class="o">!</span>r<span class="p">},</span> sep <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="p">)</span>
+<span class="kr">for</span> <span class="p">(</span>i <span class="kr">in</span> <span class="m">1</span><span class="o">:</span><span class="p">(</span><span class="kp">ncol</span><span class="p">(</span>dat<span class="p">)</span> <span class="o">-</span> <span class="m">6</span> <span class="o">-</span> <span class="m">1</span><span class="p">))</span> <span class="p">{</span>
+    title <span class="o">&lt;-</span> <span class="kp">paste</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>input<span class="o">!</span>bnr<span class="p">},</span> <span class="s">&quot;PC&quot;</span><span class="p">,</span> i<span class="p">,</span> <span class="s">&quot;vs&quot;</span><span class="p">,</span> <span class="s">&quot;PC&quot;</span><span class="p">,</span> i <span class="o">+</span> <span class="m">1</span><span class="p">,</span> sep <span class="o">=</span> <span class="s">&quot;_&quot;</span><span class="p">)</span>
+    p <span class="o">&lt;-</span> plot_ly<span class="p">(</span>dat<span class="p">,</span> x <span class="o">=</span> dat<span class="p">[,</span> <span class="m">6</span> <span class="o">+</span> i<span class="p">],</span> y <span class="o">=</span> dat<span class="p">[,</span> <span class="m">7</span> <span class="o">+</span> i<span class="p">],</span> text <span class="o">=</span> dat<span class="p">[,</span><span class="m">2</span><span class="p">],</span> color <span class="o">=</span> dat<span class="p">[,</span><span class="m">1</span><span class="p">],</span>
+                 mode <span class="o">=</span> <span class="s">&quot;markers&quot;</span><span class="p">,</span> type <span class="o">=</span> <span class="s">&#39;scatter&#39;</span><span class="p">,</span> visible <span class="o">=</span> <span class="s">&#39;legendonly&#39;</span><span class="p">)</span> <span class="o">%&gt;%</span> layout<span class="p">(</span>title <span class="o">=</span> title<span class="p">)</span>
+    htmlwidgets<span class="o">::</span>saveWidget<span class="p">(</span>as.widget<span class="p">(</span>p<span class="p">),</span> <span class="kp">paste0</span><span class="p">(</span>title<span class="p">,</span> <span class="s">&quot;.html&quot;</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span> 
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>foo <span class="o">()</span> <span class="o">{</span>
+  <span class="nb">echo</span> <span class="s1">&#39;&lt;html&gt;&lt;body&gt;&#39;</span>
+  sed <span class="s1">&#39;s/^.*/&lt;a href=&quot;&amp;&quot;&gt;&amp;&lt;\/a&gt;&lt;br\/&gt;/&#39;</span>
+  <span class="nb">echo</span> <span class="s1">&#39;&lt;/body&gt;&lt;/html&gt;&#39;</span>
+<span class="o">}</span>
+mkdir -p <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span><span class="p">;</span> mv <span class="si">${</span><span class="nv">input</span><span class="p">!bn</span><span class="si">}</span>*.html <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span>
+ls <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span>/*.html <span class="p">|</span> foo &gt; <span class="si">${</span><span class="nv">output</span><span class="si">}</span>
 </pre></div>
 
 </table>
