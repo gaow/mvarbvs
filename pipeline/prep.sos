@@ -34,6 +34,17 @@ sos_run("DW.vcf_by_chrom", workdir = CONFIG['wd'])
 input: CONFIG['rna_rpkm'], CONFIG['rna_cnts'], CONFIG['genotype'], CONFIG['sample_attr'] 
 sos_run("MC.rnaseq", workdir =  CONFIG['wd'])
 
+[pca_plot_broad]
+input: '/tmp/GTExPCA.ped'
+sos_run("MC.global_ancestry:2", workdir = '/tmp')
+
+[genotype_pca_broad]
+parameter: project_name = "GTEx7.dbGaP"
+input: CONFIG['genotype']
+sos_run("DW.vcf_by_chrom+MC.broad_to_plink+MC.LD_pruning+MC.global_ancestry", 
+        workdir = CONFIG['wd'],
+        project_name = project_name)
+
 [genotype_pca_umich]
 parameter: project_name = "GTEx7.Imputed"
 input: CONFIG['imputed_genotype']
@@ -41,15 +52,16 @@ sos_run("MC.umich_to_plink+MC.LD_pruning+MC.global_ancestry",
         workdir = CONFIG['wd'],
         project_name = project_name)
 
-[genotype_pca_broad]
-parameter: project_name = "GTEx7.dbGaP"
-input: CONFIG['genotype']
-sos_run("DW.vcf_by_chrom+MC.broad_to_plink+MC.LD_pruning+MC.global_ancestry", 
-        workdir = CONFIG['wd'],
-        project_name = project_name,
-        filter = 0)
+[genotype_pca_umich_filtered]
+# Filtered imputation data removing imputed sites
+input: "{}/GTEx7.Imputed.genotyped.filtered.bed".format(CONFIG['wd'])
+sos_run("MC.LD_pruning+MC.global_ancestry", 
+        workdir = CONFIG['wd'])
 
-[pca_plot_broad]
-input: '/tmp/GTExPCA.ped'
-sos_run("MC.global_ancestry:2", workdir = '/tmp')
+[genotype_formatting]
+parameter: original_variants = "{}/GTEx7.dbGaP.bed".format(CONFIG['wd'])
+input: "{}/GTEx7.Imputed.bed".format(CONFIG['wd'])
+sos_run("MC.variants_filter", 
+        workdir = CONFIG['wd'], 
+        include = original_variants)
 
