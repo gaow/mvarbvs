@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/Misc.sos
       <span class="file-info-divider"></span>
-    9.6 KiB
+    10.1 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -661,11 +661,10 @@ WriteTable<span class="p">(</span>R<span class="p">,</span> <span class="kp">pas
 <div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">umich_to_plink_1</span><span class="p">,</span> <span class="n">broad_to_plink_1</span><span class="p">]</span>
 </pre></div>
 
-<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># UMich imputed VCF to plink format</span>
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># VCF to plink format</span>
 </pre></div>
 
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="nb">filter</span> <span class="o">=</span> <span class="mi">1</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
 <span class="kn">output:</span> <span class="s2">&quot;${_input!nn}.bed&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
@@ -673,14 +672,7 @@ WriteTable<span class="p">(</span>R<span class="p">,</span> <span class="kp">pas
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
 </pre></div>
 
-<div class="source blob-code sos-script "><pre><span></span>touch <span class="si">${</span><span class="nv">filter</span><span class="si">}</span>.txt
-<span class="k">if</span> <span class="o">[[</span> <span class="si">${</span><span class="nv">filter</span><span class="si">}</span> -ne <span class="m">0</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-   zcat <span class="si">${</span><span class="nv">_input</span><span class="si">}</span> <span class="p">|</span> awk <span class="s1">&#39;{if ($7 == &quot;PASS&quot;) {print $2}}&#39;</span> &gt; <span class="si">${</span><span class="nv">_input</span><span class="p">!nn</span><span class="si">}</span>.exclude_id
-   plink --vcf <span class="si">${</span><span class="nv">_input</span><span class="si">}</span> --out <span class="si">${</span><span class="nv">_output</span><span class="p">!n</span><span class="si">}</span> --exclude <span class="si">${</span><span class="nv">_input</span><span class="p">!nn</span><span class="si">}</span>.exclude_id --make-bed
-   rm -f <span class="si">${</span><span class="nv">_input</span><span class="p">!nn</span><span class="si">}</span>.exclude_id
-<span class="k">else</span>
-   plink --vcf <span class="si">${</span><span class="nv">_input</span><span class="si">}</span> --out <span class="si">${</span><span class="nv">_output</span><span class="p">!n</span><span class="si">}</span> --make-bed
-<span class="k">fi</span>
+<div class="source blob-code sos-script "><pre><span></span>plink --vcf <span class="si">${</span><span class="nv">_input</span><span class="si">}</span> --out <span class="si">${</span><span class="nv">_output</span><span class="p">!n</span><span class="si">}</span> --make-bed
  
 </pre></div>
 
@@ -755,7 +747,40 @@ rm plink.merge-list
  
 </pre></div>
 
-<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">variants_filter</span><span class="p">]</span>
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">variants_filter_1</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Exclude imputed variants</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">include</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">output:</span> <span class="s2">&quot;${input!n}.genotyped.bed&quot;</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="n">imputed</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;${input!n}.bim&quot;</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">usecols</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">genotyped</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;${include!n}.bim&quot;</span><span class="p">,</span> <span class="n">dtype</span> <span class="o">=</span> <span class="nb">str</span><span class="p">,</span> <span class="n">usecols</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">imputed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">imputed</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">imputed</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">imputed</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="mi">3</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">genotyped</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">genotyped</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">genotyped</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">genotyped</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">imputed</span><span class="p">,</span> <span class="n">genotyped</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s2">&quot;${input!n}.extract_id&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>plink --bfile <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span> --out <span class="si">${</span><span class="nv">output</span><span class="p">!n</span><span class="si">}</span> --extract <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span>.extract_id --make-bed
+rm -f <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span>.extract_id
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">variants_filter_2</span><span class="p">]</span>
 </pre></div>
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Filter by MAF, HWE etc</span>

@@ -154,7 +154,7 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sossave</span> <span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">f</span> <span class="o">-</span><span class="n">x</span>
@@ -199,6 +199,17 @@ $( document ).ready(function(){
 <span class="kn">input:</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;rna_rpkm&#39;</span><span class="p">],</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;rna_cnts&#39;</span><span class="p">],</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;sample_attr&#39;</span><span class="p">]</span> 
 <span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.rnaseq&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span>  <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 
+<span class="p">[</span><span class="n">pca_plot_broad</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="s1">&#39;/tmp/GTExPCA.ped&#39;</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.global_ancestry:2&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">genotype_pca_broad</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">project_name</span> <span class="o">=</span> <span class="s2">&quot;GTEx7.dbGaP&quot;</span>
+<span class="kn">input:</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.vcf_by_chrom+MC.broad_to_plink+MC.LD_pruning+MC.global_ancestry&quot;</span><span class="p">,</span> 
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
+        <span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span><span class="p">)</span>
+
 <span class="p">[</span><span class="n">genotype_pca_umich</span><span class="p">]</span>
 <span class="kn">parameter:</span> <span class="n">project_name</span> <span class="o">=</span> <span class="s2">&quot;GTEx7.Imputed&quot;</span>
 <span class="kn">input:</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;imputed_genotype&#39;</span><span class="p">]</span>
@@ -206,17 +217,18 @@ $( document ).ready(function(){
         <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
         <span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span><span class="p">)</span>
 
-<span class="p">[</span><span class="n">genotype_pca_broad</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">project_name</span> <span class="o">=</span> <span class="s2">&quot;GTEx7.dbGaP&quot;</span>
-<span class="kn">input:</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">]</span>
-<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.vcf_by_chrom+MC.broad_to_plink+MC.LD_pruning+MC.global_ancestry&quot;</span><span class="p">,</span> 
-        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
-        <span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span><span class="p">,</span>
-        <span class="nb">filter</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="p">[</span><span class="n">genotype_pca_umich_filtered</span><span class="p">]</span>
+<span class="c1"># Filtered imputation data removing imputed sites</span>
+<span class="kn">input:</span> <span class="s2">&quot;{}/GTEx7.Imputed.genotyped.filtered.bed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.LD_pruning+MC.global_ancestry&quot;</span><span class="p">,</span> 
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 
-<span class="p">[</span><span class="n">pca_plot_broad</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="s1">&#39;/tmp/GTExPCA.ped&#39;</span>
-<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.global_ancestry:2&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="s1">&#39;/tmp&#39;</span><span class="p">)</span>
+<span class="p">[</span><span class="n">genotype_formatting</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">original_variants</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.dbGaP.bed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+<span class="kn">input:</span> <span class="s2">&quot;{}/GTEx7.Imputed.bed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.variants_filter&quot;</span><span class="p">,</span> 
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span> 
+        <span class="n">include</span> <span class="o">=</span> <span class="n">original_variants</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -289,7 +301,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Genotype-QC-/-imputation">Genotype QC / imputation<a class="anchor-link" href="#Genotype-QC-/-imputation">&#182;</a></h3>
+<h3 id="Genotype-imputation">Genotype imputation<a class="anchor-link" href="#Genotype-imputation">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -343,6 +355,28 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Genotype-QC,-filtering-/-formatting">Genotype QC, filtering / formatting<a class="anchor-link" href="#Genotype-QC,-filtering-/-formatting">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">genotype_formatting</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span> <span class="o">-</span><span class="n">J</span> <span class="mi">6</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Global-ancestry-analysis">Global ancestry analysis<a class="anchor-link" href="#Global-ancestry-analysis">&#182;</a></h2>
 </div>
 </div>
@@ -352,9 +386,10 @@ $( document ).ready(function(){
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">genotype_pca_umich</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span> 
-<span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">genotype_pca_broad</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span> 
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">genotype_pca_umich</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span> <span class="o">-</span><span class="n">J</span> <span class="mi">6</span>
+<span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">genotype_pca_broad</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span> <span class="o">-</span><span class="n">J</span> <span class="mi">6</span>
 <span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">pca_plot_broad</span>
+<span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">genotype_pca_umich_filtered</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span> <span class="o">-</span><span class="n">J</span> <span class="mi">6</span>
 </pre></div>
 
 </div>
