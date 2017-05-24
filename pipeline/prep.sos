@@ -16,6 +16,7 @@ sos_run('RM.plink', workdir = CONFIG['wd'])
 sos_run('RM.minimac3', workdir = CONFIG['wd'])
 sos_run('RM.vcftools', workdir = CONFIG['wd'])
 sos_run('RM.peer', workdir = CONFIG['wd'])
+sos_run('RM.king', workdir = CONFIG['wd'])
 
 #
 # Workhorse
@@ -33,7 +34,20 @@ sos_run("DW.vcf_by_chrom", workdir = CONFIG['wd'])
 input: CONFIG['rna_rpkm'], CONFIG['rna_cnts'], CONFIG['genotype'], CONFIG['sample_attr'] 
 sos_run("MC.rnaseq", workdir =  CONFIG['wd'])
 
-[genotype_pca]
+[genotype_pca_umich]
+parameter: project_name = "GTEx7.Imputed"
+
 input: CONFIG['imputed_genotype']
-sos_run("MC.umich_to_plink+MC.LD_pruning+MC.global_ancestry", workdir = CONFIG['wd'])
+sos_run("MC.umich_to_plink+MC.LD_pruning+MC.global_ancestry", 
+        workdir = CONFIG['wd'],
+        project_name = project_name)
+
+[genotype_pca_broad]
+parameter: project_name = "GTEx7.dbGaP"
+input: CONFIG['genotype']
+sos_run("MC.broad_to_plink+MC.LD_pruning+MC.global_ancestry", 
+        workdir = CONFIG['wd'],
+        project_name = project_name,
+        filter = 0)
+
 

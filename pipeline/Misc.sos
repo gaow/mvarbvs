@@ -5,7 +5,7 @@
 # When some workflow gets complicated they will be separated into dedicated files
 
 
-parameter: project_name = "GTEx7"
+parameter: project_name = None
 
 [genotype_stats_1]
 # making genotype summary statistics via vcftools
@@ -137,7 +137,7 @@ WriteTable(A, paste0(prefix, "_PEER_alpha.txt"), "ID")
 WriteTable(R, paste0(prefix, "_PEER_residuals.txt"), "ID")
 cat("done.\n")
 
-[umich_to_plink_1]
+[umich_to_plink_1, broad_to_plink_1]
 # UMich imputed VCF to plink format
 # Fix multi-allelic sites
 # By changing duplicate SNP ID
@@ -145,9 +145,10 @@ cat("done.\n")
 parameter: filter = 1
 input: group_by = 'single'
 output: "${_input!nn}.bed"
-task:
+task: workdir = workdir
 run:
-  if [[ ${filter} ]]; then
+  touch ${filter}.txt
+  if [[ ${filter} -ne 0 ]]; then
      zcat ${_input} | awk '{if ($7 == "PASS") {print $2}}' > ${_input!nn}.exclude_id
      plink --vcf ${_input} --out ${_output!nn} --exclude ${_input!nn}.exclude_id --make-bed
      rm -f ${_input!nn}.exclude_id
@@ -173,24 +174,11 @@ np.savetxt('${_output!n}.bim', dat, delimiter = '\t', fmt = '%s')
 
 [umich_to_plink_2]
 # Merge all files
-# And fix family ID (replace by ancestry coding)
-parameter: phenotype = "${CONFIG['phenotype']!a}"
-depends: phenotype
 output: "${workdir}/${project_name}.bed"
 task: workdir = workdir
 run:
   echo ${input!n} | sed 's/ /\n/g' | grep -v chrX > plink.merge-list
   plink --bfile ${input[0]!n} --merge-list plink.merge-list --out ${output!n} --chr 1-22 --make-bed
-
-python:
-import pandas as pd
-reference = pd.read_csv(${phenotype!r}, dtype = str, usecols = (0,4), sep = '\t')
-reference['RACE'] = 'POP' + reference['RACE'].astype(str)
-fam = pd.read_csv("${output!n}.fam", header = None, sep = ' ',
-                  names = ['fid', 'sid', 'pid', 'mid', 'sex', 'phen'])
-dat = pd.merge(reference, fam, left_on = 'SUBJID', right_on = "sid")
-dat.drop(['SUBJID', 'fid'], axis=1, inplace = True)
-dat.to_csv("${output!n}.fam", sep = ' ', header = False, index = False)
 
 [variants_filter]
 # Filter by MAF, HWE etc
@@ -233,16 +221,28 @@ run:
 
 [global_ancestry_1]
 # global ancestry analysis via KING
+# And fix family ID (replace by ancestry coding)
+parameter: phenotype = "${CONFIG['phenotype']!a}"
 parameter: workdir = None
-depends: executable('king')
+depends: executable('king'), phenotype
 input: pattern = "{name}.{ext}"
 output: expand_pattern('{name}.pc.ped')
 task: workdir = workdir
 run:
-  king -b ${input!n}.bed --pca 20 --prefix ${input!n}.
+  # king -b ${input!n}.bed --pca 20 --prefix ${input!n}.
   # Would be much faster if I use MDS
-  # But I use PCA to be more comparable to GTEx official results
-  # king -b ${input!n}.bed --mds --prefix ${input!n}.
+  # One should use PCA to be more comparable to GTEx official results, though
+  king -b ${input!n}.bed --mds --prefix ${input!n}.
+
+python:
+import pandas as pd
+reference = pd.read_csv(${phenotype!r}, dtype = str, usecols = (0,4), sep = '\t')
+reference['RACE'] = 'POP' + reference['RACE'].astype(str)
+fam = pd.read_csv(${output!r}, header = None, sep = ' ',
+                  names = ['fid', 'sid', 'pid', 'mid', 'sex', 'phen'] + ['PC{}'.format(x+1) for x in range(20)])
+dat = pd.merge(reference, fam, left_on = 'SUBJID', right_on = "sid")
+dat.drop(['SUBJID', 'fid'], axis=1, inplace = True)
+dat.to_csv(${output!r}, sep = ' ', header = False, index = False)
 
 [global_ancestry_2]
 # scatter plot for global ancestry analysis result
@@ -269,6 +269,3 @@ run:
    }
    mkdir -p ${input!n}; mv ${input!bn}*.html ${input!n}
    ls ${input!n}/*.html | foo > ${output}
-
-[fastqtl_1]
-# FastQTL pipeline
