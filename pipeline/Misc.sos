@@ -139,9 +139,6 @@ cat("done.\n")
 
 [umich_to_plink_1, broad_to_plink_1]
 # UMich imputed VCF to plink format
-# Fix multi-allelic sites
-# By changing duplicate SNP ID
-
 parameter: filter = 1
 input: group_by = 'single'
 output: "${_input!nn}.bed"
@@ -150,18 +147,24 @@ run:
   touch ${filter}.txt
   if [[ ${filter} -ne 0 ]]; then
      zcat ${_input} | awk '{if ($7 == "PASS") {print $2}}' > ${_input!nn}.exclude_id
-     plink --vcf ${_input} --out ${_output!nn} --exclude ${_input!nn}.exclude_id --make-bed
+     plink --vcf ${_input} --out ${_output!n} --exclude ${_input!nn}.exclude_id --make-bed
      rm -f ${_input!nn}.exclude_id
   else
-     plink --vcf ${_input} --out ${_output!nn} --make-bed
+     plink --vcf ${_input} --out ${_output!n} --make-bed
   fi
 
+[umich_to_plink_2, broad_to_plink_2]
+# Fix multi-allelic sites
+# By changing duplicate SNP ID
+input: group_by = 'single'
+output: "${_input!n}.bim"
+task: workdir = workdir
 python:
 
 from collections import Counter
 import numpy as np
 
-dat = np.genfromtxt('${_output!n}.bim', dtype = '<U48')
+dat = np.genfromtxt(${_output!r}, dtype = '<U48')
 counter = Counter()
 dup_list = dat[:,1]
 deduped = []
@@ -170,9 +173,9 @@ for name in dup_list:
     counter.update({name: 1})
     deduped.append(new)
 dat[:,1] = np.array(deduped)
-np.savetxt('${_output!n}.bim', dat, delimiter = '\t', fmt = '%s')
+np.savetxt(${_output!r}, dat, delimiter = '\t', fmt = '%s')
 
-[umich_to_plink_2]
+[umich_to_plink_3, broad_to_plink_3]
 # Merge all files
 output: "${workdir}/${project_name}.bed"
 task: workdir = workdir
