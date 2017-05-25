@@ -52,7 +52,7 @@ for k in data:
 [umich_to_plink_1, broad_to_plink_1]
 # VCF to plink format
 input: group_by = 'single'
-output: "${_input!nn}.bed"
+output: "${_input!nn}.a2flipped.bed"
 task: workdir = workdir
 run:
   plink --vcf ${_input} --out ${_output!n} --make-bed
@@ -79,6 +79,16 @@ for name in dup_list:
 dat[:,1] = np.array(deduped)
 np.savetxt(${_output!r}, dat, delimiter = '\t', fmt = '%s')
 
+[umich_to_plink_3]
+# VCF to plink format
+input: group_by = 'single'
+output: "${_input!nn}.bed"
+task: workdir = workdir
+run:
+  plink --bfile ${_input!n} \
+        --a2-allele <(zcat ${_input!nn}.vcf.gz | cut -f1-4) 4 3 '#' \
+        --out ${output!n} --make-bed
+
 [broad_to_plink_2]
 # Remove indel sites
 input: group_by = 'single'
@@ -86,10 +96,11 @@ output: "${_input!n}.snp_only.bed"
 task: workdir = workdir
 run:
   awk '{if ((length($5) > 1 ) || (length($6) > 1)) {print $2}}' ${_input!n}.bim > ${_input!n}.exclude_id
-  plink --bfile ${_input!n} --out ${_output!n} --exclude ${_input!n}.exclude_id --make-bed
+  plink --bfile ${_input!n} --out ${_output!n} --make-bed \
+        --exclude ${_input!n}.exclude_id \
   rm -f ${_input!n}.exclude_id
 
-[umich_to_plink_3, broad_to_plink_3]
+[umich_to_plink_4, broad_to_plink_3]
 # Merge all files
 output: "${workdir}/${project_name}.bed"
 task: workdir = workdir
