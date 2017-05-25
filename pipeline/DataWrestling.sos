@@ -49,7 +49,6 @@ if os.path.isfile(${output!r}):
 for k in data:
     data[k].to_hdf(${output!r}, k, mode = 'a', complevel = 9, complib = 'zlib')
 
-
 [umich_to_plink_1, broad_to_plink_1]
 # VCF to plink format
 input: group_by = 'single'
@@ -126,3 +125,36 @@ output: "${input!n}.filtered.bed"
 task: workdir = workdir
 run:
   plink --bfile ${input!n} --maf ${maf} --mac ${mac} --make-bed --out ${output!n}
+
+[plink_to_hdf5_batch]
+# Convert plink genotype to HDF5 in batches of genes
+# Only autosomal genes are considered
+depends: Py_Module("pandas-plink")
+parameter: ann = None
+parameter: workdir = None
+parameter: cis = 1000000
+output: "${input!n}.cis.h5"
+task: workdir = workdir
+python:
+import os
+import pandas as pd, numpy as np
+from collections import OrderedDict
+from pandas_plink import read_plink
+
+if os.path.isfile(${output!r}):
+   os.remove(${output!r})
+
+(bim, fam, bed) = read_plink(${input!nr})
+ann = [x.strip().split() for x in open(${ann!r}).readlines()]
+n = len(ann)
+for i, line in enumerate(ann):
+    if line[0] not in list(map(str, [x+1 for x in range(22)])):
+        continue
+    snps = bim.query("chrom == '{}' and (pos >= {} and pos <= {})".\
+                            format(line[0], int(line[1]) - ${cis}, int(line[2]) + ${cis}))
+    X = pd.DataFrame(bed[snps.i,:].compute(), 
+                     index = [':'.join((x.split('_', 1)[0], y,z)) for x, y, z in zip(snps.snp, snps.a0, snps.a1)], 
+                     columns = fam.iid, dtype = np.uint8)
+    X.to_hdf(${output!r}, 'chr{}/{}'.format(line[0], line[3]), mode = 'a', complevel = 9, complib = 'zlib')
+    if(i%100 == 0):
+        print('%.2f ' % ((float(i)/n)*100))
