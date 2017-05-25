@@ -4,16 +4,7 @@
 
 # This script provides routines for file conversions and data transformations
 
-[vcf_to_plink]
-# Convert VCF to PLINK format
-
-[gtexseq_to_hdf]
-# Convert GTEx RNA-seq data to HDF5 format
-
-[genotype_slicer]
-# Select genotype data based on position ranges and sample lists
-# Output in PLINK PED format
-# This is like a data provider unit to association analysis
+parameter: project_name = 'GTEx'
 
 [vcf_by_chrom]
 # split vcf by chroms
@@ -57,3 +48,81 @@ if os.path.isfile(${output!r}):
     os.remove(${output!r})
 for k in data:
     data[k].to_hdf(${output!r}, k, mode = 'a', complevel = 9, complib = 'zlib')
+
+
+[umich_to_plink_1, broad_to_plink_1]
+# VCF to plink format
+input: group_by = 'single'
+output: "${_input!nn}.bed"
+task: workdir = workdir
+run:
+  plink --vcf ${_input} --out ${_output!n} --make-bed
+
+[umich_to_plink_2]
+# Fix multi-allelic sites
+# By changing duplicate SNP ID
+input: group_by = 'single'
+output: "${_input!n}.bim"
+task: workdir = workdir
+python:
+
+from collections import Counter
+import numpy as np
+
+dat = np.genfromtxt(${_output!r}, dtype = '<U48')
+counter = Counter()
+dup_list = dat[:,1]
+deduped = []
+for name in dup_list:
+    new = name + '_' + str(counter[name]) if counter[name] else name
+    counter.update({name: 1})
+    deduped.append(new)
+dat[:,1] = np.array(deduped)
+np.savetxt(${_output!r}, dat, delimiter = '\t', fmt = '%s')
+
+[broad_to_plink_2]
+# Remove indel sites
+input: group_by = 'single'
+output: "${_input!n}.snp_only.bed"
+task: workdir = workdir
+run:
+  awk '{if ((length($5) > 1 ) || (length($6) > 1)) {print $2}}' ${_input!n}.bim > ${_input!n}.exclude_id
+  plink --bfile ${_input!n} --out ${_output!n} --exclude ${_input!n}.exclude_id --make-bed
+  rm -f ${_input!n}.exclude_id
+
+[umich_to_plink_3, broad_to_plink_3]
+# Merge all files
+output: "${workdir}/${project_name}.bed"
+task: workdir = workdir
+run:
+  echo ${input!n} | sed 's/ /\n/g' | grep -v chrX > plink.merge-list
+  plink --bfile ${input[0]!n} --merge-list plink.merge-list --out ${output!n} --chr 1-22 --make-bed
+  rm plink.merge-list
+
+[variants_filter_1]
+# Exclude imputed variants
+parameter: include = None
+output: "${input!n}.genotyped.bed"
+python:
+import pandas as pd
+imputed = pd.read_csv("${input!n}.bim", dtype = str, usecols = (0,1,3), header = None, sep = '\t')
+genotyped = pd.read_csv("${include!n}.bim", dtype = str, usecols = (0,1,3), header = None, sep = '\t')
+imputed[0] = imputed[0] + '_' + imputed[3]
+imputed.drop([3], axis = 1, inplace = True)
+genotyped[0] = genotyped[0] + '_' + genotyped[3]
+genotyped.drop([1,3], axis = 1, inplace = True)
+res = pd.merge(imputed, genotyped, how='inner', on=[0,0])
+res[1].to_csv("${input!n}.extract_id", header = False, index = False)
+
+run:
+  plink --bfile ${input!n} --out ${output!n} --extract ${input!n}.extract_id --make-bed
+  rm -f ${input!n}.extract_id
+
+[variants_filter_2]
+# Filter by MAF, HWE etc
+parameter: maf = 0.01
+parameter: mac = 10
+output: "${input!n}.filtered.bed"
+task: workdir = workdir
+run:
+  plink --bfile ${input!n} --maf ${maf} --mac ${mac} --make-bed --out ${output!n}
