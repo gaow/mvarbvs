@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/prep.sos
       <span class="file-info-divider"></span>
-    1.8 KiB
+    2.1 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -504,6 +504,7 @@ body {
 <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.vcftools&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.peer&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.king&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+ 
  
 </pre></div>
 
@@ -560,7 +561,7 @@ body {
 <span class="kn">input:</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">]</span>
 </pre></div>
 
-<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.vcf_by_chrom+MC.broad_to_plink+MC.LD_pruning+MC.global_ancestry&quot;</span><span class="p">,</span> 
+<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.vcf_by_chrom+DW.broad_to_plink+MC.LD_pruning+MC.global_ancestry&quot;</span><span class="p">,</span> 
         <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
         <span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span><span class="p">)</span>
  
@@ -573,7 +574,7 @@ body {
 <span class="kn">input:</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;imputed_genotype&#39;</span><span class="p">]</span>
 </pre></div>
 
-<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.umich_to_plink+MC.LD_pruning+MC.global_ancestry&quot;</span><span class="p">,</span> 
+<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.umich_to_plink+MC.LD_pruning+MC.global_ancestry&quot;</span><span class="p">,</span> 
         <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
         <span class="n">project_name</span> <span class="o">=</span> <span class="n">project_name</span><span class="p">)</span>
  
@@ -593,16 +594,30 @@ body {
  
 </pre></div>
 
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">gene_annotation</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;rna_cnts&#39;]!n}.annotation&quot;</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="s2">&quot;${CONFIG[&#39;rna_cnts&#39;]}&quot;</span>
+<span class="kn">output:</span> <span class="s2">&quot;${CONFIG[&#39;rna_cnts&#39;]!n}.annotation&quot;</span>
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.ensembl_annotation&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+ 
+</pre></div>
+
 <div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">genotype_formatting</span><span class="p">]</span>
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">original_variants</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.dbGaP.bed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+<span class="kn">parameter:</span> <span class="n">gene_annotation</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;rna_cnts&#39;]!n}.annotation&quot;</span>
+<span class="kn">depends:</span> <span class="n">original_variants</span>
 <span class="kn">input:</span> <span class="s2">&quot;{}/GTEx7.Imputed.bed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 </pre></div>
 
-<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;MC.variants_filter&quot;</span><span class="p">,</span> 
+<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.variants_filter+DW.plink_to_hdf5_batch&quot;</span><span class="p">,</span> 
         <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span> 
-        <span class="n">include</span> <span class="o">=</span> <span class="n">original_variants</span><span class="p">)</span>
+        <span class="n">include</span> <span class="o">=</span> <span class="n">original_variants</span><span class="p">,</span>
+        <span class="n">ann</span> <span class="o">=</span> <span class="n">gene_annotation</span><span class="p">)</span>
  
 </pre></div>
 
