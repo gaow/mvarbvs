@@ -90,7 +90,7 @@ loadTable <- function(filename, group, auto_transpose = FALSE) {
 }
 
 getNumPeer <- function(ss) {
-  if (ss<150) return (15)
+  if (ss<150) return (min(15, ceiling(ss / 5)))
   else if (ss >=150 && ss < 250) return(30)
   else return(35)
 }
@@ -208,7 +208,7 @@ R:
                     mode = "markers", type = 'scatter', visible = 'legendonly') %>% layout(title = title)
        htmlwidgets::saveWidget(as.widget(p), paste0(title, ".html"))
    }
-run: 
+run:
    foo () {
      echo '<html><body>'
      sed 's/^.*/<a href="&">&<\/a><br\/>/'

@@ -19,7 +19,7 @@ run:
 [RNASeq_to_HDF5]
 # Convert RNASeq data to HDF5
 parameter: workdir = None
-parameter: dtype = 'np.unit32'
+parameter: dtype = 'np.uint32'
 output: "${input[0]!nb}.hdf5"
 task: workdir = workdir
 python:
@@ -148,6 +148,7 @@ depends: Py_Module("pandas-plink")
 parameter: ann = None
 parameter: workdir = None
 parameter: cis = 1000000
+parameter: resume = 1
 output: "${input!n}.cis.h5"
 # task: workdir = workdir
 python:
@@ -155,20 +156,34 @@ import os
 import pandas as pd, numpy as np
 from pandas_plink import read_plink
 
+keys = []
 if os.path.isfile(${output!r}):
-   os.remove(${output!r})
+   if ${resume} == 1:
+      print("loading existing database ${output!b}")
+      keys = pd.HDFStore(${output!r}).keys()
+      print("{} existing genes will be skipped".format(len(keys)))
+   else:
+      os.remove(${output!r})
 
 (bim, fam, bed) = read_plink(${input!nr})
 ann = [x.strip().split() for x in open(${ann!ar}).readlines()]
 n = len(ann)
+empty_genes = []
 for i, line in enumerate(ann):
+    if(i % 100 == 0):
+        print('[percent completed] %.2f' % ((float(i)/n)*100))
     if line[0] not in list(map(str, [x+1 for x in range(22)])):
+        continue
+    if '/chr{}/{}'.format(line[0], line[3]) in keys:
         continue
     snps = bim.query("chrom == '{}' and (pos >= {} and pos <= {})".\
                             format(line[0], int(line[1]) - ${cis}, int(line[1]) + ${cis}))
+    if (snps.empty):
+        empty_genes.append(line[3])
+        continue
     X = pd.DataFrame(2 - bed[snps.i,:].compute(), 
                      index = [':'.join((x.split('_', 1)[0], y,z)) for x, y, z in zip(snps.snp, snps.a1, snps.a0)], 
                      columns = fam.iid, dtype = np.uint8)
     X.to_hdf(${output!r}, 'chr{}/{}'.format(line[0], line[3]), mode = 'a', complevel = 9, complib = 'zlib')
-    if(i % 100 == 0):
-        print('[percent completed] %.2f' % ((float(i)/n)*100))
+with open("${output!n}.empty_genes", 'w') as f:
+     f.write('\n'.join(empty_genes))
