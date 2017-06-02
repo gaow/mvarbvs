@@ -54,14 +54,14 @@ run:
 # There are a number of configuable parameters in this script
 # Using default values for now. Can be changed here or not depending on the analyst
 depends: R_library('rhdf5'), R_library('peer')
-parameter: tissues = get_output("h5ls ${input[3]} | awk '{print $1}'").strip().split('\n')
+parameter: tissues = get_output("h5ls ${input[2]} | awk '{print $1}'").strip().split('\n')
 parameter: workdir = None
 input: for_each = ['tissues']
 output: "${workdir}/${_tissues}_PEER_covariates.txt", "${workdir}/${_tissues}_PEER_alpha.txt", "${workdir}/${_tissues}_PEER_residuals.txt"
 task: workdir = workdir, walltime = "20:00:00", cores = 1, mem = "4G"
 R:
 
-expr.h5 = ${input[3]!r}
+expr.h5 = ${input[2]!r}
 prefix = ${_tissues!r}
 alphaprior_a=0.001
 alphaprior_b=0.01
