@@ -74,3 +74,18 @@ sos_run("DW.variants_filter+DW.plink_to_hdf5_batch",
         include = original_variants,
         ann = gene_annotation)
 
+[covariate_preparation]
+# Covariates are: sex, platform, 3 PC and PEER factors
+parameter: peer_factors = glob.glob("{}/*_PEER_covariates.txt".format("${CONFIG['wd']!a}"))
+parameter: pc_file = "{}/GTEx7.Imputed.prune.pc.ped".format(CONFIG['wd'])
+parameter: attr_file = CONFIG['sample_attr']
+parameter: covar_file = CONFIG['phenotype']
+parameter: expression_file = CONFIG['expression_db']
+sos_run("DW.recode_platform + DW.covariates_to_HDF5", 
+        workdir = CONFIG['wd'],
+        peer_factors = peer_factors,
+        pc_file = pc_file,
+        attr_file = attr_file,
+        covar_file = covar_file,
+        output_file = "{}/GTEx7.Imputed.covariates.h5".format(CONFIG['wd']))
+

@@ -187,3 +187,52 @@ for i, line in enumerate(ann):
     X.to_hdf(${output!r}, 'chr{}/{}'.format(line[0], line[3]), mode = 'a', complevel = 9, complib = 'zlib')
 with open("${output!n}.empty_genes", 'w') as f:
      f.write('\n'.join(empty_genes))
+
+[recode_platform: shared = {'platform_info': 'output'}]
+# Covariate "platform" needs to be recoded
+parameter: attr_file = None
+input: attr_file
+output: "${input}.platform_info"
+python:
+import pandas as pd
+samples = pd.read_csv(${input!r}, dtype=str, delimiter='\t', header=0)
+res = [('SUBJID', 'GENO_PLATFORM')]
+platform = []
+for row in samples[['SAMPID', 'SMGEBTCHT', 'SMAFRZE']].values:
+    if row[2] == 'WGS':
+       row[0] = '-'.join(row[0].split('-')[:2])
+       if not row[1] in platform:
+          platform.append(row[1])
+       res.append((row[0], str(platform.index(row[1]))))
+with open(${output!r}, "w") as f:
+    f.write('\n'.join([','.join(x) for x in res]))
+
+[covariates_to_HDF5]
+parameter: peer_factors = None
+parameter: pc_file = None
+parameter: covar_file = None
+parameter: output_file = None
+input: peer_factors, pc_file, covar_file, platform_info
+output: output_file
+#task: workdir = workdir
+python:
+import os
+import pandas as pd
+if os.path.isfile(${output!ar}):
+   os.remove(${output!ar})
+pc = pd.read_csv(${pc_file!r}, header = None, sep = ' ', index_col = 1,
+     names = ['fid','pid','mid','sex','phen'] + ["PC{}".format(i+1) for i in range(20)])[["PC1", "PC2", "PC3"]]
+platform = pd.read_csv(${platform_info!r}, header = 0, sep = ',', index_col = 0)
+covar = pd.read_csv(${covar_file!r}, header = 0, sep = '\t', index_col = 0)['SEX'].to_frame()
+dat = covar.merge(platform, left_index = True, right_index = True)
+dat = dat.merge(pc, left_index = True, right_index = True)
+# Add PEER
+for item in [${peer_factors!ar,}]:
+    peer = pd.read_csv(item, header = 0, sep = '\t', index_col = 0).transpose()
+    samples = {}
+    for x in peer.index:
+        samples[x] = dat.loc['-'.join(x.split('-')[:2])].tolist()
+    samples = pd.DataFrame(samples).transpose()
+    samples.columns = dat.columns
+    samples = samples.merge(peer, left_index = True, right_index = True)
+    samples.to_hdf(${output!ar}, '/{}'.format(os.path.basename(item[:-20])), mode = 'a', complevel = 9, complib = 'zlib')
