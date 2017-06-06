@@ -81,11 +81,21 @@ parameter: pc_file = "{}/GTEx7.Imputed.prune.pc.ped".format(CONFIG['wd'])
 parameter: attr_file = CONFIG['sample_attr']
 parameter: covar_file = CONFIG['phenotype']
 parameter: expression_file = CONFIG['expression_db']
-sos_run("DW.recode_platform + DW.covariates_to_HDF5", 
+sos_run("DW.recode_platform + DW.covariates_to_HDF5",
         workdir = CONFIG['wd'],
         peer_factors = peer_factors,
         pc_file = pc_file,
         attr_file = attr_file,
         covar_file = covar_file,
         output_file = "{}/GTEx7.Imputed.covariates.h5".format(CONFIG['wd']))
+
+[make_toy]
+# Create a toy example
+sos_run("DW.subset_HDF5_data",
+        workdir = CONFIG['wd'],
+        ann_file = "${CONFIG['rna_cnts']!n}.annotation",
+        geno_file = "{}/GTEx7.Imputed.genotyped.filtered.cis.h5".format(CONFIG['wd']),
+        expr_file = "${CONFIG['rna_cnts']!nn}.qnorm.std.h5",
+        toy_file = CONFIG['toy_prefix'],
+        gene_list = CONFIG['toy_gene_list'])
 
