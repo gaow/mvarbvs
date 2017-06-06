@@ -269,5 +269,5 @@ for g in genes:
     geno.to_hdf(gfile, 'chr{}/{}'.format(chrom, g), mode = 'a', complevel = 9, complib = 'zlib')
 
 for key in pd.HDFStore(${input[1]!r}).keys():
-    expr = pd.read_hdf(${input[1]!r}, k).loc[genes]
-    expr.to_hdf(efile, k, mode = 'a', complevel = 9, complib = 'zlib')
+    expr = pd.read_hdf(${input[1]!r}, key).loc[genes]
+    expr.to_hdf(efile, key, mode = 'a', complevel = 9, complib = 'zlib')
