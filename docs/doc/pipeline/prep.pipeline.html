@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/prep.sos
       <span class="file-info-divider"></span>
-    2.1 KiB
+    2.8 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -618,6 +618,29 @@ body {
         <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span> 
         <span class="n">include</span> <span class="o">=</span> <span class="n">original_variants</span><span class="p">,</span>
         <span class="n">ann</span> <span class="o">=</span> <span class="n">gene_annotation</span><span class="p">)</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">covariate_preparation</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Covariates are: sex, platform, 3 PC and PEER factors</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">peer_factors</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;{}/*_PEER_covariates.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">))</span>
+<span class="kn">parameter:</span> <span class="n">pc_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.prune.pc.ped&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+<span class="kn">parameter:</span> <span class="n">attr_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;sample_attr&#39;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">covar_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;phenotype&#39;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">expression_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;expression_db&#39;</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.recode_platform + DW.covariates_to_HDF5&quot;</span><span class="p">,</span> 
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
+        <span class="n">peer_factors</span> <span class="o">=</span> <span class="n">peer_factors</span><span class="p">,</span>
+        <span class="n">pc_file</span> <span class="o">=</span> <span class="n">pc_file</span><span class="p">,</span>
+        <span class="n">attr_file</span> <span class="o">=</span> <span class="n">attr_file</span><span class="p">,</span>
+        <span class="n">covar_file</span> <span class="o">=</span> <span class="n">covar_file</span><span class="p">,</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.covariates.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">]))</span>
  
 </pre></div>
 

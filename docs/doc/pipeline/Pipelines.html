@@ -154,7 +154,7 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sossave</span> <span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">f</span> <span class="o">-</span><span class="n">x</span>
@@ -238,25 +238,24 @@ $( document ).ready(function(){
         <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span> 
         <span class="n">include</span> <span class="o">=</span> <span class="n">original_variants</span><span class="p">,</span>
         <span class="n">ann</span> <span class="o">=</span> <span class="n">gene_annotation</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">covariate_preparation</span><span class="p">]</span>
+<span class="c1"># Covariates are: sex, platform, 3 PC and PEER factors</span>
+<span class="kn">parameter:</span> <span class="n">peer_factors</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;{}/*_PEER_covariates.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">))</span>
+<span class="kn">parameter:</span> <span class="n">pc_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.prune.pc.ped&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+<span class="kn">parameter:</span> <span class="n">attr_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;sample_attr&#39;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">covar_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;phenotype&#39;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">expression_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;expression_db&#39;</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.recode_platform + DW.covariates_to_HDF5&quot;</span><span class="p">,</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
+        <span class="n">peer_factors</span> <span class="o">=</span> <span class="n">peer_factors</span><span class="p">,</span>
+        <span class="n">pc_file</span> <span class="o">=</span> <span class="n">pc_file</span><span class="p">,</span>
+        <span class="n">attr_file</span> <span class="o">=</span> <span class="n">attr_file</span><span class="p">,</span>
+        <span class="n">covar_file</span> <span class="o">=</span> <span class="n">covar_file</span><span class="p">,</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.covariates.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">]))</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-<div class="prompt"></div>
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Workflow saved to prep.sos
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -266,7 +265,8 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Prepare-computational-resource">Prepare computational resource<a class="anchor-link" href="#Prepare-computational-resource">&#182;</a></h3>
+<h3 id="Prepare-computational-resource">Prepare computational resource<a class="anchor-link" href="#Prepare-computational-resource">&#182;</a></h3><p>This will download / install (most) software necessary for the analysis pipeline</p>
+
 </div>
 </div>
 </div>
@@ -288,7 +288,8 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Data-summary">Data summary<a class="anchor-link" href="#Data-summary">&#182;</a></h3>
+<h3 id="Data-summary">Data summary<a class="anchor-link" href="#Data-summary">&#182;</a></h3><p>Summary statistics on data, such as missingness statistics on genotypes. It also includes various diagnostic plots. More features will be added to this workflow as analysis develops.</p>
+
 </div>
 </div>
 </div>
@@ -332,7 +333,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The imputation step was done with <a href="https://imputationserver.sph.umich.edu">Michigan Imputation Server</a> because it uses Haplotype Reference Consortium (32,914 samples) reference panel which is not publicly available otherwise. So the genotype input would be genotype after imputation. <a href="https://imputationserver.sph.umich.edu/start.html#!pages/help">Here is how to prepare data</a> for this service. The prepared files are uploaded to <a href="https://imputationserver.sph.umich.edu">Michigan imputation server</a>. <a href="https://gaow.github.io/mvarbvs/img/UMichImputation.png">Here is configuration</a> of imputation job on UMich server, and <a href="https://gaow.github.io/mvarbvs/img/UMichImputationResult.pdf">here</a> is summary of the outcome.</p>
+<p>The imputation step was done with <a href="https://imputationserver.sph.umich.edu">Michigan Imputation Server</a> because it uses Haplotype Reference Consortium (32,914 samples) reference panel which is not publicly available otherwise. <a href="https://imputationserver.sph.umich.edu/start.html#!pages/help">Here is how to prepare data</a> for this service. The prepared files are uploaded to <a href="https://imputationserver.sph.umich.edu">Michigan imputation server</a>. <a href="https://gaow.github.io/mvarbvs/img/UMichImputation.png">Here is configuration</a> of imputation job on UMich server, and <a href="https://gaow.github.io/mvarbvs/img/UMichImputationResult.pdf">here</a> is summary of the outcome.</p>
 
 </div>
 </div>
@@ -342,7 +343,8 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="RNA-seq-preprocessing">RNA-seq preprocessing<a class="anchor-link" href="#RNA-seq-preprocessing">&#182;</a></h3>
+<h3 id="RNA-seq-preprocessing">RNA-seq preprocessing<a class="anchor-link" href="#RNA-seq-preprocessing">&#182;</a></h3><p>This workflow includes data normalization and PEER factor analysis. It results in 4 <strong>analysis ready expression data files</strong> in HDF5 format of different versions / organizations of the same information: emperical quantile normalized and standard normal quantile normalized, saved as a flat file or grouped by tissues. This is so far the most computational intensive step</p>
+
 </div>
 </div>
 </div>
@@ -351,7 +353,7 @@ $( document ).ready(function(){
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">rna_preprocessing</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span> <span class="o">-</span><span class="n">J</span> <span class="mi">8</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">rna_preprocessing</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span> <span class="o">-</span><span class="n">J</span> <span class="mi">38</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
 </pre></div>
 
 </div>
@@ -364,7 +366,8 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Genotype-filtering,-formatting-and-QC-via-global-ancestry-analysis">Genotype filtering, formatting and QC via global ancestry analysis<a class="anchor-link" href="#Genotype-filtering,-formatting-and-QC-via-global-ancestry-analysis">&#182;</a></h3><p><code>genotype_pca_umich_filtered</code> has to be executed after both <code>genotype_pca_umich</code> and <code>genotype_pca_broad</code> are executed.</p>
+<h3 id="Genotype-filtering-and-formatting,-followed-by-global-ancestry-analysis">Genotype filtering and formatting, followed by global ancestry analysis<a class="anchor-link" href="#Genotype-filtering-and-formatting,-followed-by-global-ancestry-analysis">&#182;</a></h3><p><code>genotype_pca_umich_filtered</code> has to be executed after both <code>genotype_pca_umich</code> and <code>genotype_pca_broad</code> are executed.</p>
+<p>Genotypes are converted to PLINK binary format. During the conversion, imputed sites are removed and variant ID for tri-allelic sites are fixed. Also both the original and imputed data are converted for PCA analysis. The <a href="https://github.com/gaow/mvarbvs/issues/15#issuecomment-303814249">results are compared</a>.</p>
 
 </div>
 </div>
@@ -387,12 +390,47 @@ $( document ).ready(function(){
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Variants-annotation,-cis-SNP-selection-and-genotype-formatting">Variants annotation, cis-SNP selection and genotype formatting<a class="anchor-link" href="#Variants-annotation,-cis-SNP-selection-and-genotype-formatting">&#182;</a></h3><p>Genes are annotated to chromosomal positions, and annotate variants to genes. Then for each gene, variants are selected 2MB of a gene's TSS. It results a <strong>single analysis ready file</strong> in HDF5 format containing ~50K groups of genotype data (gene-names).</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span>
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">gene_annotation</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span> <span class="o">-</span><span class="n">J</span> <span class="mi">6</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
+<span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">genotype_formatting</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span> <span class="o">-</span><span class="n">J</span> <span class="mi">6</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Merge-covariates-info">Merge covariates info<a class="anchor-link" href="#Merge-covariates-info">&#182;</a></h3><p>Covariates for analysis we've got so far include sample phenotypes (sex), sample attributes (genotyping platform), first principle components for population structure, and PEER factors. All saved in various files.</p>
+<p>This workflow consolidates these files and generates a <strong>single analysis ready covariate file</strong> in HDF5 format.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">covariate_preparation</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span>
 </pre></div>
 
 </div>

@@ -569,7 +569,7 @@ vcftools --gzvcf <span class="si">${</span><span class="nv">input</span><span cl
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;peer&#39;</span><span class="p">)</span>
-<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;h5ls ${input[3]} | awk &#39;{print $1}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;h5ls ${input[2]} | awk &#39;{print $1}&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tissues&#39;</span><span class="p">]</span>
 <span class="kn">output:</span> <span class="s2">&quot;${workdir}/${_tissues}_PEER_covariates.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${_tissues}_PEER_alpha.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${_tissues}_PEER_residuals.txt&quot;</span>
@@ -580,7 +580,7 @@ vcftools --gzvcf <span class="si">${</span><span class="nv">input</span><span cl
 </pre></div>
 
 <div class="source blob-code sos-script "><pre><span></span> 
-expr.h5 <span class="o">=</span> <span class="o">$</span><span class="p">{</span>input<span class="p">[</span><span class="m">3</span><span class="p">]</span><span class="o">!</span>r<span class="p">}</span>
+expr.h5 <span class="o">=</span> <span class="o">$</span><span class="p">{</span>input<span class="p">[</span><span class="m">2</span><span class="p">]</span><span class="o">!</span>r<span class="p">}</span>
 prefix <span class="o">=</span> <span class="o">$</span><span class="p">{</span>_tissues<span class="o">!</span>r<span class="p">}</span>
 alphaprior_a<span class="o">=</span><span class="m">0.001</span>
 alphaprior_b<span class="o">=</span><span class="m">0.01</span>
@@ -609,7 +609,7 @@ loadTable <span class="o">&lt;-</span> <span class="kr">function</span><span cla
 <span class="p">}</span>
  
 getNumPeer <span class="o">&lt;-</span> <span class="kr">function</span><span class="p">(</span>ss<span class="p">)</span> <span class="p">{</span>
-  <span class="kr">if</span> <span class="p">(</span>ss<span class="o">&lt;</span><span class="m">150</span><span class="p">)</span> <span class="kr">return</span> <span class="p">(</span><span class="m">15</span><span class="p">)</span>
+  <span class="kr">if</span> <span class="p">(</span>ss<span class="o">&lt;</span><span class="m">150</span><span class="p">)</span> <span class="kr">return</span> <span class="p">(</span><span class="kp">min</span><span class="p">(</span><span class="m">15</span><span class="p">,</span> <span class="kp">ceiling</span><span class="p">(</span>ss <span class="o">/</span> <span class="m">5</span><span class="p">)))</span>
   <span class="kr">else</span> <span class="kr">if</span> <span class="p">(</span>ss <span class="o">&gt;=</span><span class="m">150</span> <span class="o">&amp;&amp;</span> ss <span class="o">&lt;</span> <span class="m">250</span><span class="p">)</span> <span class="kr">return</span><span class="p">(</span><span class="m">30</span><span class="p">)</span>
   <span class="kr">else</span> <span class="kr">return</span><span class="p">(</span><span class="m">35</span><span class="p">)</span>
 <span class="p">}</span>
@@ -773,7 +773,7 @@ dat <span class="o">&lt;-</span> read.table<span class="p">(</span><span class="
 <span class="p">}</span>
 </pre></div>
 
-<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span> 
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">run:</span>
 </pre></div>
 
 <div class="source blob-code sos-script "><pre><span></span>foo <span class="o">()</span> <span class="o">{</span>
