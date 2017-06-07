@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/DataWrestling.sos
       <span class="file-info-divider"></span>
-    8.4 KiB
+    9.5 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -811,7 +811,6 @@ rm -f <span class="si">${</span><span class="nv">input</span><span class="p">!n<
 <span class="kn">parameter:</span> <span class="n">output_file</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">input:</span> <span class="n">peer_factors</span><span class="p">,</span> <span class="n">pc_file</span><span class="p">,</span> <span class="n">covar_file</span><span class="p">,</span> <span class="n">platform_info</span>
 <span class="kn">output:</span> <span class="n">output_file</span>
-<span class="c1">#task: workdir = workdir</span>
 </pre></div>
 
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span>
@@ -837,6 +836,52 @@ rm -f <span class="si">${</span><span class="nv">input</span><span class="p">!n<
     <span class="n">samples</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">dat</span><span class="o">.</span><span class="n">columns</span>
     <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">peer</span><span class="p">,</span> <span class="n">left_index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">right_index</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">samples</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="err">!</span><span class="n">ar</span><span class="p">},</span> <span class="s1">&#39;/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">item</span><span class="p">[:</span><span class="o">-</span><span class="mi">20</span><span class="p">])),</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">subset_HDF5_data</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Given gene list, extract SNP and expression data from formatted database</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">ann_file</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">geno_file</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">expr_file</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">toy_file</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">gene_list</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">input:</span> <span class="s2">&quot;${geno_file!a}&quot;</span><span class="p">,</span> <span class="s2">&quot;${expr_file!a}&quot;</span>
+<span class="kn">output:</span> <span class="s2">&quot;${toy_file!a}.genotype.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${toy_file!a}.expr.h5&quot;</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="c1"># load gene annotation</span>
+<span class="n">ann</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">ann_file</span><span class="err">!</span><span class="n">ar</span><span class="p">},</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chr&#39;</span><span class="p">,</span> <span class="s1">&#39;gene&#39;</span><span class="p">],</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="n">usecols</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">ann</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span><span class="n">c</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ann</span><span class="p">[</span><span class="s1">&#39;gene&#39;</span><span class="p">],</span> <span class="n">ann</span><span class="p">[</span><span class="s1">&#39;chr&#39;</span><span class="p">])}</span>
+<span class="c1"># load gene list</span>
+<span class="n">genes</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">gene_list</span><span class="err">!</span><span class="n">ar</span><span class="p">},</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="c1"># purge existing toy</span>
+<span class="n">gfile</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">}</span>
+<span class="n">efile</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">output</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">}</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">gfile</span><span class="p">):</span>
+   <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">gfile</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">efile</span><span class="p">):</span>
+   <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">efile</span><span class="p">)</span>
+<span class="c1"># build toy</span>
+<span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">genes</span><span class="p">:</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">chrom</span> <span class="o">=</span> <span class="n">ann</span><span class="p">[</span><span class="n">g</span><span class="p">]</span>
+    <span class="n">geno</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;chr{}/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chrom</span><span class="p">,</span> <span class="n">g</span><span class="p">))</span>
+    <span class="n">geno</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">gfile</span><span class="p">,</span> <span class="s1">&#39;chr{}/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">chrom</span><span class="p">,</span> <span class="n">g</span><span class="p">),</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
+ 
+<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">})</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">expr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="nb">input</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">genes</span><span class="p">]</span>
+    <span class="n">expr</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="n">efile</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
 </pre></div>
 
 </table>

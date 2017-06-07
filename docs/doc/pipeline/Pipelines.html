@@ -154,7 +154,7 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sossave</span> <span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">f</span> <span class="o">-</span><span class="n">x</span>
@@ -253,9 +253,36 @@ $( document ).ready(function(){
         <span class="n">attr_file</span> <span class="o">=</span> <span class="n">attr_file</span><span class="p">,</span>
         <span class="n">covar_file</span> <span class="o">=</span> <span class="n">covar_file</span><span class="p">,</span>
         <span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.covariates.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">]))</span>
+
+<span class="p">[</span><span class="n">make_toy</span><span class="p">]</span>
+<span class="c1"># Create a toy example</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.subset_HDF5_data&quot;</span><span class="p">,</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
+        <span class="n">ann_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;rna_cnts&#39;]!n}.annotation&quot;</span><span class="p">,</span>
+        <span class="n">geno_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.genotyped.filtered.cis.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">]),</span>
+        <span class="n">expr_file</span> <span class="o">=</span> <span class="s2">&quot;{}/${CONFIG[&#39;rna_rpkm&#39;]!bnn}.qnorm.std.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">]),</span>
+        <span class="n">toy_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;toy_prefix&#39;</span><span class="p">],</span>
+        <span class="n">gene_list</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;toy_gene_list&#39;</span><span class="p">])</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+
+<div class="output_html rendered_html output_subarea ">
+Workflow saved to <a href="prep.sos" target="_blank">prep.sos</a>
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -431,6 +458,52 @@ $( document ).ready(function(){
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">covariate_preparation</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Generate-a-toy-data-set">Generate a toy data-set<a class="anchor-link" href="#Generate-a-toy-data-set">&#182;</a></h3><p>Finally, a toy data-set is created from the data bundle. This toy can be used for methods / pipeline development. Genes selected for the toy are the same as the <a href="https://stephenslab.github.io/gtexresults_mash/TwoSNP/2SNP.sos">LD show-case in the mash paper</a> (although the workflow itself takes an arbitary list of genes). See <a href="https://stephenslab.github.io/gtexresults_mash/TwoSNP/">this table</a> for motivation that these genes get selected.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="n">make_toy</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="mf">20170507.</span><span class="n">conf</span> <span class="o">-</span><span class="n">b</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="nb">bin</span> <span class="o">-</span><span class="n">J</span> <span class="mi">6</span> <span class="o">-</span><span class="n">j</span> <span class="mi">1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simulations">Simulations<a class="anchor-link" href="#Simulations">&#182;</a></h2><p>Please see <a href="../documents/MR-ASH-Simulation.html">this notebook</a> for interactive codes simulating expression data for given genotypes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span>
 </pre></div>
 
 </div>

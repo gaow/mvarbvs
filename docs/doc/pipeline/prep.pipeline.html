@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/prep.sos
       <span class="file-info-divider"></span>
-    2.8 KiB
+    3.2 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -634,13 +634,29 @@ body {
 <span class="kn">parameter:</span> <span class="n">expression_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;expression_db&#39;</span><span class="p">]</span>
 </pre></div>
 
-<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.recode_platform + DW.covariates_to_HDF5&quot;</span><span class="p">,</span> 
+<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.recode_platform + DW.covariates_to_HDF5&quot;</span><span class="p">,</span>
         <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
         <span class="n">peer_factors</span> <span class="o">=</span> <span class="n">peer_factors</span><span class="p">,</span>
         <span class="n">pc_file</span> <span class="o">=</span> <span class="n">pc_file</span><span class="p">,</span>
         <span class="n">attr_file</span> <span class="o">=</span> <span class="n">attr_file</span><span class="p">,</span>
         <span class="n">covar_file</span> <span class="o">=</span> <span class="n">covar_file</span><span class="p">,</span>
         <span class="n">output_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.covariates.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">]))</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">make_toy</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Create a toy example</span>
+</pre></div>
+
+<div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.subset_HDF5_data&quot;</span><span class="p">,</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
+        <span class="n">ann_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;rna_cnts&#39;]!n}.annotation&quot;</span><span class="p">,</span>
+        <span class="n">geno_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.genotyped.filtered.cis.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">]),</span>
+        <span class="n">expr_file</span> <span class="o">=</span> <span class="s2">&quot;{}/${CONFIG[&#39;rna_rpkm&#39;]!bnn}.qnorm.std.h5&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">]),</span>
+        <span class="n">toy_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;toy_prefix&#39;</span><span class="p">],</span>
+        <span class="n">gene_list</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;toy_gene_list&#39;</span><span class="p">])</span>
  
 </pre></div>
 
