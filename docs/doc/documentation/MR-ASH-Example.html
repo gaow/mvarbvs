@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8" />
+<title>MR-ASH-Example</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+
+
+
+
+
+
+<!-- Custom stylesheet, it must be in the same directory as the html file -->
+<link rel="stylesheet" href="custom.css">
+
+<!-- Loading mathjax macro -->
+<!-- Load mathjax -->
+    <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+    <!-- MathJax configuration -->
+    <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+            processEscapes: true,
+            processEnvironments: true
+        },
+        // Center justify equations in code and markdown cells. Elsewhere
+        // we use CSS to left justify single line equations in code cells.
+        displayAlign: 'center',
+        "HTML-CSS": {
+            styles: {'.MathJax_Display': {"margin": 0}},
+            linebreaks: { automatic: true }
+        }
+    });
+    </script>
+    <!-- End of mathjax configuration --></head>
+
+ <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<style>  /* defined here in case the main.css below cannot be loaded */
+.lev1 {margin-left: 80px}
+.lev2 {margin-left: 100px}
+.lev3 {margin-left: 120px}
+.lev4 {margin-left: 140px}
+.lev5 {margin-left: 160px}
+.lev6 {margin-left: 180px}
+</style>
+
+<link rel="stylesheet" type="text/css" href="../../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../../css/toc2.css">
+
+<script src="../../js/toc2.js"></script>
+<script src="../../js/docs.js"></script>
+
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["STIX","TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+<script>
+$( document ).ready(function(){
+
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false, 
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+
+            // fire the main function with these parameters
+
+
+            table_of_contents(cfg,st);
+
+            var file=notebookDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=documentation;
+            var pos=documentation.indexOf(file);
+        
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+name+'.html">'+name.replace(/_/g," ")+'</a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+
+
+            $('<li id="indexHome"><a href="../../documentation.html"><b>Analysis Home<b></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+name+'.html">'+name.replace(/_/g," ")+'</a></li>');
+            }
+            $("#toc-header").hide();
+
+    });
+</script>
+<body>
+  <div tabindex="-1" id="notebook" class="border-box-sizing">
+    <div class="container" id="notebook-container">
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="mr-ash-example-analysis">mr-ash example analysis<a class="anchor-link" href="#mr-ash-example-analysis">&#182;</a></h1><p>Here we analyze <a href="MR-ASH-Simulation.html">GTEx based simulation data</a> using mr-ash implemented  in <code>varbvs</code>. The simulated data is stored in the same format as the <a href="../pipeline/Pipelines.html#Preprocessing">processed GTEx</a> data; therefore the same procedure can be used directly for data analysis. The only difference is that simulated data do not have covariates.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>All files are saved in HDF5 format on midway <code>project/compbio/internal_public_supp/GTEx7Toy</code>. In the toy data-set I selected 3 genes:</p>
+
+<pre><code>/chr4/ENSG00000145214
+/chr18/ENSG00000264247
+/chr19/ENSG00000267508</code></pre>
+<p>These should be used as <code>geno_table</code> variable in the code below.</p>
+<p>For the toy real data there are 53 groups in the HDF file. Their names are available via:</p>
+<div class="highlight"><pre><span></span>h5ls TY.expr.h5
+</pre></div>
+<p>For the simulated data there is only one group called <code>simulated</code>, which is the data I'll use in the example below.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To load data:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="c1"># source(&quot;http://bioconductor.org/biocLite.R&quot;)</span>
+<span class="c1"># biocLite(&quot;rhdf5&quot;)</span>
+<span class="kn">library</span><span class="p">(</span>rhdf5<span class="p">)</span>
+fpath <span class="o">=</span> <span class="s">&#39;/home/gaow/Documents/GTEx/ToyExample&#39;</span>
+genotype_file <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>fpath<span class="p">,</span> <span class="s">&#39;/TY.genotype.h5&#39;</span><span class="p">)</span>
+expr_file <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>fpath<span class="p">,</span> <span class="s">&#39;/TY.expr_simulated.h5&#39;</span><span class="p">)</span>
+geno_table <span class="o">=</span> <span class="s">&#39;/chr4/ENSG00000145214&#39;</span>
+expr_table <span class="o">=</span> <span class="s">&#39;/simulated&#39;</span>
+
+load_data <span class="o">=</span> <span class="kr">function</span><span class="p">(</span>genotype_file<span class="p">,</span> expr_file<span class="p">,</span> geno_table<span class="p">,</span> expr_table<span class="p">)</span> <span class="p">{</span>
+    geno <span class="o">&lt;-</span> h5read<span class="p">(</span>genotype_file<span class="p">,</span> geno_table<span class="p">)</span>
+    gdata <span class="o">=</span> geno<span class="o">$</span>block0_values
+    <span class="kp">colnames</span><span class="p">(</span>gdata<span class="p">)</span> <span class="o">=</span> geno<span class="o">$</span>axis1
+    <span class="kp">rownames</span><span class="p">(</span>gdata<span class="p">)</span> <span class="o">=</span> geno<span class="o">$</span>axis0
+    expr <span class="o">&lt;-</span> h5read<span class="p">(</span>expr_file<span class="p">,</span> expr_table<span class="p">)</span>
+    edata <span class="o">=</span> expr<span class="o">$</span>block0_values
+    <span class="kp">colnames</span><span class="p">(</span>edata<span class="p">)</span> <span class="o">=</span> expr<span class="o">$</span>axis1
+    <span class="kp">rownames</span><span class="p">(</span>edata<span class="p">)</span> <span class="o">=</span> expr<span class="o">$</span>axis0
+    edata <span class="o">=</span> edata<span class="p">[,</span> <span class="kp">basename</span><span class="p">(</span>geno_table<span class="p">)]</span>
+    <span class="kr">return</span><span class="p">(</span><span class="kt">list</span><span class="p">(</span>X<span class="o">=</span>gdata<span class="p">,</span>y<span class="o">=</span>edata<span class="p">))</span>
+<span class="p">}</span>
+
+dat <span class="o">=</span> load_data<span class="p">(</span>genotype_file<span class="p">,</span> expr_file<span class="p">,</span> geno_table<span class="p">,</span> expr_table<span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To analyze:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="c1"># library(devtools)</span>
+<span class="c1"># install_github(&quot;pcarbo/varbvs&quot;,subdir = &quot;varbvs-R&quot;)</span>
+X <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>dat<span class="o">$</span>X<span class="p">)</span>
+<span class="kp">storage.mode</span><span class="p">(</span>X<span class="p">)</span> <span class="o">&lt;-</span> <span class="s">&quot;double&quot;</span>
+y <span class="o">=</span> <span class="kp">as.vector</span><span class="p">(</span>dat<span class="o">$</span>y<span class="p">)</span>
+res <span class="o">=</span> varbvs<span class="o">::</span>varbvsmix<span class="p">(</span>X<span class="p">,</span> <span class="kc">NULL</span><span class="p">,</span> y<span class="p">,</span> <span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">9</span><span class="p">))</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Fitting variational approximation for linear regression model with
+mixture-of-normals priors.
+samples:      635    mixture component sd&#39;s:    1..9
+variables:    7258   fit mixture variances:     no
+covariates:   0      fit mixture weights:       yes
+mixture size: 3      fit residual var. (sigma): yes
+intercept:    yes    convergence tolerance      1.0e-04
+       variational    max. --------- hyperparameters ---------
+iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
+ 
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To compare with simulation meta data:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span>meta <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>fpath<span class="p">,</span> <span class="s">&#39;/TY.meta_simulation.json&#39;</span><span class="p">)</span>
+<span class="c1"># install.packages(&#39;rjson&#39;, repos = &#39;http://cloud.r-project.org&#39;)</span>
+meta <span class="o">&lt;-</span> rjson<span class="o">::</span>fromJSON<span class="p">(</span>file <span class="o">=</span> meta<span class="p">)</span>
+str<span class="p">(</span>meta<span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 4
+ $ pi   : num [1:3] 0.25 0.3 0.45
+ $ pi0  : num 0.98
+ $ sigma: num [1:3] 1 0.4 3
+ $ beta :List of 3
+  ..$ ENSG00000264247: num [1:9871] -5.36 0 0 0 0 ...
+  ..$ ENSG00000267508: num [1:8911] -4.83 0 0 0 0 ...
+  ..$ ENSG00000145214: num [1:7258] 4.07 0 0 0 0 ...
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+    </div>
+  </div>
+</body>
+
+ 
+
+
+</html>
