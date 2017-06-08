@@ -144,16 +144,19 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[102]:</div>
+<div class="prompt input_prompt">In&nbsp;[137]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">random</span>
 
-<span class="k">class</span> <span class="nc">MMSimulator</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">PhenotypeSimulator</span><span class="p">:</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">genotype_file</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gfile</span> <span class="o">=</span> <span class="n">genotype_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phenotype</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="kc">None</span>
         
     <span class="k">def</span> <span class="nf">get_genes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">limit</span> <span class="o">=</span> <span class="mi">5</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gfile</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -193,10 +196,53 @@ $( document ).ready(function(){
         <span class="n">mix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pis</span><span class="p">),</span> <span class="n">sigmas</span><span class="p">,</span> <span class="n">nbeta</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mix</span> <span class="o">*</span> <span class="n">masks</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">binomial</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">pi0</span><span class="p">,</span> <span class="n">nbeta</span><span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">generate_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">generate_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">phenotype</span> <span class="ow">and</span> <span class="n">force</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name &quot;</span><span class="si">{}</span><span class="s1">&quot; already exists. Use &quot;force = True&quot; to overwrite it&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">))</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">phenotype</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">]</span>
         <span class="k">assert</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="n">beta</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">beta</span><span class="p">),</span><span class="mi">1</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">],</span> <span class="n">index</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phenotype</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="k">return</span> <span class="n">y</span>
+    
+    <span class="k">def</span> <span class="nf">select_convoluted_snps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ld</span><span class="p">,</span> <span class="n">cutoff1</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">,</span> <span class="n">cutoff2</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">cutoff3</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;based on LD matrix select SNPs in strong LD with other SNPs </span>
+<span class="sd">        yet are independent between themselves&#39;&#39;&#39;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Count strong LD&#39;</span><span class="p">)</span>
+        <span class="n">strong_ld_count</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">ld</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">cutoff1</span><span class="p">)</span> <span class="o">*</span> <span class="n">ld</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">ascending</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">strong_ld_count</span> <span class="o">=</span> <span class="n">strong_ld_count</span><span class="p">[</span><span class="n">strong_ld_count</span> <span class="o">&gt;</span> <span class="n">cutoff2</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Filter by LD&#39;</span><span class="p">)</span>
+        <span class="n">exclude</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">strong_ld_count</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">strong_ld_count</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">exclude</span> <span class="ow">or</span> <span class="n">y</span> <span class="o">==</span> <span class="n">x</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">ld</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">cutoff3</span><span class="p">:</span>
+                    <span class="n">exclude</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">strong_ld_count</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">exclude</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">swap_beta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">strength_index</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Set tops of beta to tops in strength_index&#39;&#39;&#39;</span>
+        <span class="n">nb</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">abs</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">strength_index</span><span class="p">:</span>
+            <span class="n">nb</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">nb</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">strength_index</span><span class="p">:</span>
+                <span class="n">nb</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">nb</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">set_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">name</span>
 </pre></div>
 
 </div>
@@ -215,10 +261,10 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[103]:</div>
+<div class="prompt input_prompt">In&nbsp;[138]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ms</span> <span class="o">=</span> <span class="n">MMSimulator</span><span class="p">(</span><span class="s2">&quot;/home/gaow/Documents/ToyExample/TY.genotype.h5&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ms</span> <span class="o">=</span> <span class="n">PhenotypeSimulator</span><span class="p">(</span><span class="s2">&quot;/home/gaow/Documents/GTEx/ToyExample/TY.genotype.h5&quot;</span><span class="p">)</span>
 <span class="n">tables</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_genes</span><span class="p">()</span>
 </pre></div>
 
@@ -238,13 +284,74 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ld</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_ld</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">save_to</span> <span class="o">=</span> <span class="s2">&quot;/home/gaow/Documents/ToyExample/TY.ld.h5&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ld</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_ld</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">save_to</span> <span class="o">=</span> <span class="s2">&quot;/home/gaow/Documents/GTEx/ToyExample/TY.ld.h5&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Putting-all-together">Putting all together<a class="anchor-link" href="#Putting-all-together">&#182;</a></h2><p>If you just want to get simulated data without knowing the details you can run the following code and find the output <code>/home/gaow/Documents/GTEx/ToyExample/TY.expr_simulated.h5</code>. Otherwise you should read on for more details.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[139]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">pis</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">]</span>
+<span class="n">pi0</span> <span class="o">=</span> <span class="mf">0.98</span>
+<span class="n">sigmas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+    <span class="n">ms</span><span class="o">.</span><span class="n">set_id</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
+    <span class="n">nbeta</span> <span class="o">=</span> <span class="n">ld</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">generate_betamix</span><span class="p">(</span><span class="n">nbeta</span><span class="o">=</span><span class="n">nbeta</span><span class="p">,</span><span class="n">pi0</span><span class="o">=</span><span class="n">pi0</span><span class="p">,</span><span class="n">pis</span><span class="o">=</span><span class="n">pis</span><span class="p">,</span><span class="n">sigmas</span><span class="o">=</span><span class="n">sigmas</span><span class="p">)</span>
+    <span class="n">strong_snps_idx</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">select_convoluted_snps</span><span class="p">(</span><span class="n">ld</span><span class="p">[</span><span class="n">table</span><span class="p">])</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">swap_beta</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">strong_snps_idx</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_X</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">generate_y</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">phenotype</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTEx/ToyExample/TY.expr_simulated.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;/simulated&#39;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;/home/gaow/Documents/GTEx/ToyExample/TY.beta_simulated.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+    <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Count strong LD
+Filter by LD
+Done
+Count strong LD
+Filter by LD
+Done
+Count strong LD
+Filter by LD
+Done
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 
@@ -490,12 +597,12 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[93]:</div>
+<div class="prompt input_prompt">In&nbsp;[105]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">nbeta</span> <span class="o">=</span> <span class="n">ld</span><span class="p">[</span><span class="s1">&#39;/chr18/ENSG00000264247&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">pis</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.45</span><span class="p">]</span>
-<span class="n">pi0</span> <span class="o">=</span> <span class="mf">0.95</span>
+<span class="n">pi0</span> <span class="o">=</span> <span class="mf">0.98</span>
 <span class="n">sigmas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
 <span class="n">beta</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">generate_betamix</span><span class="p">(</span><span class="n">nbeta</span><span class="o">=</span><span class="n">nbeta</span><span class="p">,</span><span class="n">pi0</span><span class="o">=</span><span class="n">pi0</span><span class="p">,</span><span class="n">pis</span><span class="o">=</span><span class="n">pis</span><span class="p">,</span><span class="n">sigmas</span><span class="o">=</span><span class="n">sigmas</span><span class="p">)</span>
 </pre></div>
@@ -510,18 +617,17 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Swap-big-effect-size-to-most-LD-convoluted-SNPs">Swap big effect size to most LD-convoluted SNPs<a class="anchor-link" href="#Swap-big-effect-size-to-most-LD-convoluted-SNPs">&#182;</a></h2><p>To better illustrate the potential of mr-ash I identify from genotype matrix potentially the more LD-convoluted SNPs and assign them the largest effect size. Specifically, I rank SNPs by their number of having LD with other SNPs greater than 0.9 (unsigned), and filter the top ranked SNPs until there is no LD between them. Then I swap $\beta$s so that these SNPs have large effect size.</p>
+<h2 id="Swap-big-effect-size-to-most-LD-convoluted-SNPs">Swap big effect size to most LD-convoluted SNPs<a class="anchor-link" href="#Swap-big-effect-size-to-most-LD-convoluted-SNPs">&#182;</a></h2><p>To better illustrate the potential of mr-ash I identify from genotype matrix potentially the more LD-convoluted SNPs and assign them the largest effect size. Specifically, I rank SNPs by their number of having LD with other SNPs greater than 0.9 (unsigned), and filter the top ranked SNPs until there is no strong LD between them ($r^2<0.1$). Then I swap $\beta$s so that these SNPs have large effect size.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[107]:</div>
+<div class="prompt input_prompt">In&nbsp;[74]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_X</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="s1">&#39;/chr18/ENSG00000264247&#39;</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">generate_y</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">strong_snps_idx</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">select_convoluted_snps</span><span class="p">(</span><span class="n">ld</span><span class="p">[</span><span class="s1">&#39;/chr18/ENSG00000264247&#39;</span><span class="p">])</span>
 </pre></div>
 
 </div>
@@ -533,172 +639,14 @@ $( document ).ready(function(){
 
 
 <div class="output_area">
-<div class="prompt output_prompt">Out[107]:</div>
+<div class="prompt"></div>
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>array([ 39.65906218,  35.49526935,  11.47496833,  44.63175627,
-        16.28701958,  14.86007608,  14.48171811,  55.06798035,
-        12.96719083,  24.83519252,  15.78988186,  20.83907165,
-        23.7154485 ,  22.32831885,   3.43386601,  13.19188103,
-        23.8614422 ,  22.3767278 ,  17.4851875 ,  18.69392984,
-        20.64893659,  48.00630834,  16.55713499,  27.67218895,
-        48.18375822,  29.0869412 ,  13.24114659,  39.1931791 ,
-        25.97746757,  13.68004058,  24.12629591,  23.7553819 ,
-        25.27740606,  17.56743665,  36.86839409,  29.59898613,
-        30.62425701,  14.7721995 ,  16.46814296,  33.82811882,
-        11.42287229,  49.80764191,  -2.29610058,  40.82723556,
-         1.19427127,  18.30384807,  24.97877197,   9.08195473,
-        18.75567954,  29.37102348,  22.51197147,   4.74334803,
-        16.71737032,  23.62048838,  32.64531544,  23.93122014,
-         9.3182069 ,  13.75309363,   8.45999621,  40.94804988,
-        15.86559905,  36.49882624, -26.12444483,  25.86462218,
-         2.79531433,  24.589202  ,  37.02209751,  47.36962555,
-        25.31952441,   9.65050104,  15.07753292,  29.06741375,
-        15.33774502,  11.3340032 ,  45.84999775,  18.68842167,
-        14.44950471,  30.6885179 ,  29.53087776,  18.01668741,
-        13.70358997,  -8.08439986,  22.68302021,  26.75901715,
-        24.64959347,  15.63854582,  38.93755003,  15.3665284 ,
-        38.69880612,  29.44809473,  17.67770666,  26.11004316,
-        10.93925774,  20.67179161,  27.46143428,  25.0796187 ,
-        18.53391204,  16.9927456 ,  19.02372027,  27.84971699,
-        20.73172367,  25.50993433,  33.56342143,  34.76830516,
-        10.3931755 ,  30.83489316,  19.33454617,  16.02858757,
-        31.85375693,  43.11892897,  16.57194694,  27.09612111,
-        17.32581635,  20.35326339,  14.31352559,  31.71476151,
-        -3.53790941,  39.69982425,  25.29331642,   5.73604031,
-        25.93246765,   5.87476217,  26.4605692 ,  29.34052205,
-        48.69378691,   7.28481642,   9.07499744,   8.985936  ,
-        24.93565524,   5.94632441,  24.51297976,  23.61120002,
-        22.8351152 ,  44.0492292 ,  30.89872549,  11.40742321,
-         5.04532313,  14.3803504 ,  24.88414532,  19.88798879,
-        24.59202839,  33.02430632,  25.83798324,  16.81397694,
-         3.82182871,  28.29901451,  19.64758728,  17.74704441,
-        17.37377972,  37.04234121,  21.88896589,  18.27000289,
-        12.36992273,  44.29224987,  23.43352424,  18.46489075,
-        36.44616168,  14.07372557,  23.35739235,  37.95385418,
-        25.5767089 ,  16.99492046,  24.24804816,  39.51047021,
-        -3.35314462,  30.18910533,  35.39259295,   3.21012668,
-         3.32989304,  42.21569739,  20.68662909,  29.43651276,
-        -9.38908606,  41.07376316,  20.4387931 ,  20.16632904,
-        33.40195164,  26.14479168,  26.07804493,  26.92696438,
-        24.7125148 ,  16.36489386,  26.25663653,  28.53488766,
-        45.88812698,  32.72354361,  31.71744003,  32.90193548,
-        38.15900008,  11.00838602,  34.96216807,  25.4112278 ,
-        24.3762349 ,  31.31346655,  44.91817326,  32.77130498,
-        21.97854974, -16.14591251,  10.57325953,  17.61321439,
-        35.11794455,  11.02438175,  -6.88468231,  18.60534827,
-        33.72937364,  38.1396685 ,  21.97377484,  21.57835957,
-        27.7440335 ,   1.1085195 ,  30.64352692,  34.68738131,
-         7.80241857,  40.31312654,   7.47559801,   5.27249405,
-        28.16480672,   2.68019897,  27.78071351,  39.50462327,
-        22.72882085,  17.96216433,   6.32645766,   8.62055425,
-        28.01985933,  18.94892432,  10.13024228,  19.17370571,
-        24.20299036, -10.08701517,  37.92944206,  26.77558127,
-        24.11573135,  23.69055932,   6.90358079,  23.88565032,
-         4.58203147,  23.77402159,  43.00327994,  41.09620578,
-        15.73327661,  16.95011525,  36.27281084,  25.53335366,
-        -0.21713776,  29.24943563,  12.37109899,  35.30188344,
-        19.95867097,  -0.73241807,  19.16652877,   7.08141746,
-        -1.20315067,  31.92966567,  27.73505178,  47.11395204,
-        38.35285872,   8.19584745,  29.86576588,  17.28020428,
-        11.31572067, -10.39131517,  11.65051437,   2.45381796,
-        52.34231005,  25.93705173,  27.46152609,  -6.80658394,
-        22.73949747,  24.36660376,   5.39476713,  19.26914871,
-        26.39590345,  24.72308749,  32.27726451,  10.99663312,
-        13.24452068,  32.6042429 ,  22.50333557,  32.77067273,
-        32.64391015,   4.92988114,  34.90635048,  39.26281519,
-        24.06286228,  11.25814121,   8.12539059,  35.90354433,
-        17.73929266,  11.92645227,  15.37263242,  22.19592268,
-        21.64073222,   3.2464021 ,  28.54548836,  49.28757009,
-         8.00645756,  26.68078133,  -6.79852438,   6.27699841,
-        20.33146131,  56.46324527,  17.16924525,   8.86154167,
-        13.69525169,  24.24296853,   3.89789541,   7.54515197,
-        15.77382728,  17.53881516,  42.37809125,  14.70869782,
-        36.38373932,  13.53252851,  19.36230372,  22.09377006,
-        24.44684503,  29.5227355 ,   7.24636099,  25.93327787,
-        28.3154598 ,  21.56085063,   2.68561864,  49.48560061,
-        28.47714305,  24.12286579,  20.00636906,   7.81704679,
-        28.36938699,  18.45216743,  30.02360106,  35.96813862,
-        51.39357402,   4.83385577,  15.55960559,  31.27514098,
-        25.94290829,  25.2038211 , -15.11440945,  31.22236573,
-        27.01856999,  29.80033969,  19.5663897 ,  36.13332511,
-        27.74929373,  11.64442202,  11.88875984,  32.77710861,
-        21.41536812,  34.93770821,   6.97456775,  25.23506667,
-        13.17156903,  21.52570409,  24.3815909 ,   2.64685824,
-        28.73588264,  -5.30664961,  11.64149863,   7.92037597,
-        33.14703798,  25.68048765,  11.31835906,   2.92166849,
-        12.29839712,  37.2366694 ,   4.95195421,  23.94613865,
-        36.92679368,   6.19329694,  12.08168453,  28.54946839,
-        28.77120108,  33.27477341,  33.97167   ,  17.94612914,
-         3.58534806,  33.16157977,  20.64201196,  13.88905307,
-        31.03719168,  17.61908633,  21.72170885,  16.97460405,
-         3.77294335,  28.53208002,  24.29805011,  23.74650368,
-        -3.24943356,  13.33684611,  23.1594786 ,  21.0258153 ,
-        15.60804733,  29.84473435,  11.80786093,  13.95128227,
-        25.88691709,  30.81568566,   7.16493804,  37.51769799,
-        11.58446257,   3.43923816,  12.8409248 ,  39.73130399,
-         6.06473965,  45.39961955,  44.75966462,   7.16235005,
-        19.96368002,  19.69121854,  23.76048553,  23.43404834,
-        16.92499562,  53.58301659,  19.41064976,  28.15817329,
-         3.37633562,  -5.55618379,  28.5415524 ,  30.01170438,
-        28.267324  ,  42.45175807,  11.12459024,  30.99123244,
-        31.70478687,  38.60112894,   8.36723026,  21.39408746,
-        35.0927037 ,  28.81122325,  26.11760265,  39.25647835,
-        37.18283915,  14.39647423,  31.22537808,  -1.16949343,
-         5.22737759,  23.59587115,   9.37204301,  35.33293256,
-        15.45646055,  14.37378907,  43.77396293,  21.54290406,
-        17.69184635,  -6.12251183,  34.32789001,  15.89220305,
-        42.08037586,  23.90916362,  18.6177449 ,  14.84800025,
-        -2.54559629,  28.61040155,  11.9667734 ,  42.07477788,
-        14.35275368,  30.81260916,  54.20471375,  12.92477372,
-        13.1579867 ,  29.58066133,  15.75347451,  30.78889599,
-        -0.7348687 ,  30.23579018,  -0.57841546,  11.30734986,
-        34.05645479,  34.33358994,   4.49723901,  14.3611958 ,
-        30.33812836,   2.95180876,   9.72256672,  39.81739371,
-        13.23190276,  10.4759986 ,  17.49680764,  17.33817038,
-        23.97822286,  23.48238796,   7.11711234,  19.72591471,
-        32.81654013,  17.29314708,  14.63319594,  36.44820543,
-        19.85899184,  29.25378006,  30.02597435,  13.12949642,
-        27.35671697,   8.15967066,  11.45880555,  30.22354524,
-        16.67138008,  21.26500087,  17.43192279,  25.06014768,
-        41.04459872,  21.45328656,  27.49061594,  30.49777727,
-         6.26509794,  27.32016426,  15.43282462,  24.99496921,
-        25.1653225 ,  43.90344478,   2.05440188,  11.33092438,
-        -0.54193228,  13.00155587,   0.57282428,  17.57791076,
-        11.71044258,   3.79124341,  25.00876155,   5.04314783,
-        -0.74738659,  29.86578639,   8.7705229 ,   4.19054339,
-        23.7251305 ,   2.38910677,  15.88881639,  34.06828038,
-        36.70052651,  40.43697597,  24.81144267,  34.09829205,
-        40.22200305,  22.62040272,  28.75210842,  11.3555563 ,
-        23.08392386,  42.62425073,  17.52106713,   2.96505497,
-        29.77203853,   3.45841329,   1.72699337,   8.76940179,
-        19.68453111,  19.50223019,  25.76122685,  15.90199734,
-        36.10416275,  11.87157648,   3.54806357,  25.54751023,
-        32.8113071 ,  -6.858882  ,  -4.96060983,  28.68653604,
-        41.46462971,   5.4702908 ,  37.99091286,  20.70854568,
-         4.58745633,  39.31889935,  35.08019407,  25.43567894,
-        11.16972247,  -3.79849054,  37.56906695,  17.87323742,
-        27.3788486 ,  35.48893116,  23.28162855,   9.43595974,
-         6.51919336,  33.06829985,  34.53394167,  36.43832325,
-        24.78971975,  35.05426708,  26.355638  ,   5.23506354,
-        32.34433313,   0.69937005,  24.45991406,  15.9975198 ,
-        29.17896774,  28.64233257,  10.47867233,  10.73365303,
-        24.47601298,  20.44442229,  29.29552954,   0.76948468,
-        37.96975846,  31.09846621,  22.82112779,  18.49711298,
-        -0.18548878,  46.10610534,  25.27613812,  18.78614754,
-        25.54407005,  14.37921551,  29.86315353,  20.90065783,
-        22.23135992,  15.55556847,  29.40079849,  25.42645742,
-        34.30779225,  33.84248296,  36.50747758,   1.3165134 ,
-        -4.13103054,  33.5704145 ,  25.94743451,  22.75822152,
-        -0.38267365,  -1.50666821,  41.54519979,  19.36139416,
-        13.10209729,  28.23825751,  16.57909815,  11.59194279,
-        29.40064095,  28.50032215,  23.96901641,  22.72961496,
-         9.79587419,  14.86093803,  46.45778872,   2.7942711 ,
-        33.60554965,  20.87179451,  13.69190863])</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Count strong LD
+Filter by LD
+Done
+</pre>
 </div>
-
 </div>
 
 </div>
@@ -707,13 +655,135 @@ $( document ).ready(function(){
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[106]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">beta</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">swap_beta</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">strong_snps_idx</span><span class="p">)</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Simulate-phenotypes">Simulate phenotypes<a class="anchor-link" href="#Simulate-phenotypes">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[122]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_X</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="s1">&#39;/chr18/ENSG00000264247&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">generate_y</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ENSG00000264247&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[124]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt output_prompt">Out[124]:</div>
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style>
+    .dataframe thead tr:only-child th {
+        text-align: right;
+    }
+
+    .dataframe thead th {
+        text-align: left;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>iid</th>
+      <th>GTEX-1A3MV</th>
+      <th>GTEX-1A3MW</th>
+      <th>GTEX-1A3MX</th>
+      <th>GTEX-1A8FM</th>
+      <th>GTEX-1A8G6</th>
+      <th>GTEX-1A8G7</th>
+      <th>GTEX-1A32A</th>
+      <th>GTEX-1AMEY</th>
+      <th>GTEX-1AMFI</th>
+      <th>GTEX-1AX8Z</th>
+      <th>...</th>
+      <th>GTEX-ZYFC</th>
+      <th>GTEX-ZYFD</th>
+      <th>GTEX-ZYFG</th>
+      <th>GTEX-ZYT6</th>
+      <th>GTEX-ZYVF</th>
+      <th>GTEX-ZYW4</th>
+      <th>GTEX-ZYY3</th>
+      <th>GTEX-ZZ64</th>
+      <th>GTEX-ZZPT</th>
+      <th>GTEX-ZZPU</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>ENSG00000264247</th>
+      <td>-23.986548</td>
+      <td>-18.094246</td>
+      <td>-16.663314</td>
+      <td>-14.677913</td>
+      <td>-23.234465</td>
+      <td>-12.28504</td>
+      <td>-1.389807</td>
+      <td>-13.192255</td>
+      <td>-16.23599</td>
+      <td>-5.80662</td>
+      <td>...</td>
+      <td>4.487896</td>
+      <td>-15.573231</td>
+      <td>-12.584244</td>
+      <td>-12.163406</td>
+      <td>-1.492891</td>
+      <td>-33.267576</td>
+      <td>-4.070685</td>
+      <td>-26.442516</td>
+      <td>-5.318166</td>
+      <td>-5.144975</td>
+    </tr>
+  </tbody>
+</table>
+<p>1 rows × 635 columns</p>
+</div>
+</div>
+
+</div>
+
 </div>
 </div>
 
