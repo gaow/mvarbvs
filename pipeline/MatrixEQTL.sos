@@ -1,0 +1,35 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+# MatrixEQTL pipeline
+[matrix_eqtl_1]
+parameter: geno = None
+parameter: expr = None 
+parameter: covar = None
+parameter: jobs = 
+geno_table = '/chr4/ENSG00000145214'
+expr_table = '/simulated'
+
+
+task:
+R:
+# source("http://bioconductor.org/biocLite.R")
+# biocLite("rhdf5")
+library(rhdf5)
+# Good to load all expression data and covariates
+load_table = function(h_file, h_table) {
+    hdata <- h5read(h_file, h_table)
+    res = hdata$block0_values
+    colnames(res) = hdata$axis1
+    rownames(res) = hdata$axis0
+    return(res)
+}
+
+# Load specific genotype and expression data
+load_xy = function(genotype_file, geno_table, expr_data) {
+    gdata = load_table(genotype_file, geno_table)
+    edata = expr_data[, basename(geno_table)]
+    return(list(X=gdata,y=edata))
+}
+
+dat = load_data(${geno!r}, ${expr!r}, ${covar!r})
