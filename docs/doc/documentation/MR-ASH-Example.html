@@ -183,6 +183,7 @@ $( document ).ready(function(){
 fpath <span class="o">=</span> <span class="s">&#39;/home/gaow/Documents/GTEx/ToyExample&#39;</span>
 genotype_file <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>fpath<span class="p">,</span> <span class="s">&#39;/TY.genotype.h5&#39;</span><span class="p">)</span>
 expr_file <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>fpath<span class="p">,</span> <span class="s">&#39;/TY.expr_simulated.h5&#39;</span><span class="p">)</span>
+gene <span class="o">=</span> <span class="s">&#39;ENSG00000145214&#39;</span>
 geno_table <span class="o">=</span> <span class="s">&#39;/chr4/ENSG00000145214&#39;</span>
 expr_table <span class="o">=</span> <span class="s">&#39;/simulated&#39;</span>
 
@@ -227,7 +228,7 @@ dat <span class="o">=</span> load_data<span class="p">(</span>genotype_file<span
 X <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>dat<span class="o">$</span>X<span class="p">)</span>
 <span class="kp">storage.mode</span><span class="p">(</span>X<span class="p">)</span> <span class="o">&lt;-</span> <span class="s">&quot;double&quot;</span>
 y <span class="o">=</span> <span class="kp">as.vector</span><span class="p">(</span>dat<span class="o">$</span>y<span class="p">)</span>
-res <span class="o">=</span> varbvs<span class="o">::</span>varbvsmix<span class="p">(</span>X<span class="p">,</span> <span class="kc">NULL</span><span class="p">,</span> y<span class="p">,</span> <span class="p">(</span><span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">9</span><span class="p">))</span><span class="o">^</span><span class="m">2</span><span class="p">)</span>
+res <span class="o">=</span> varbvs<span class="o">::</span>varbvsmix<span class="p">(</span>X<span class="p">,</span> <span class="kc">NULL</span><span class="p">,</span> y<span class="p">,</span> sa <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="m">0.4</span><span class="p">,</span> <span class="m">3</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -244,10 +245,10 @@ res <span class="o">=</span> varbvs<span class="o">::</span>varbvsmix<span class
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Fitting variational approximation for linear regression model with
 mixture-of-normals priors.
-samples:      635    mixture component sd&#39;s:    1..9
+samples:      635    mixture component sd&#39;s:    0.63..1.7
 variables:    7258   fit mixture variances:     no
 covariates:   0      fit mixture weights:       yes
-mixture size: 3      fit residual var. (sigma): yes
+mixture size: 4      fit residual var. (sigma): yes
 intercept:    yes    convergence tolerance      1.0e-04
        variational    max. --------- hyperparameters ---------
 iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
@@ -265,7 +266,7 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To compare with simulation meta data:</p>
+<p>To extract results from analysis:</p>
 
 </div>
 </div>
@@ -273,6 +274,29 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span>res<span class="o">$</span>pip <span class="o">=</span> res<span class="o">$</span>alpha <span class="o">%*%</span> <span class="kt">c</span><span class="p">(</span>res<span class="o">$</span>w<span class="p">)</span>
+res<span class="o">$</span>beta <span class="o">=</span> res<span class="o">$</span>mu <span class="o">%*%</span> <span class="kt">c</span><span class="p">(</span>res<span class="o">$</span>w<span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Compare-with-simulation-parameters">Compare with simulation parameters<a class="anchor-link" href="#Compare-with-simulation-parameters">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span>meta <span class="o">=</span> <span class="kp">paste0</span><span class="p">(</span>fpath<span class="p">,</span> <span class="s">&#39;/TY.meta_simulation.json&#39;</span><span class="p">)</span>
@@ -309,15 +333,160 @@ str<span class="p">(</span>meta<span class="p">)</span>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Compare mixture proportion estimates:</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>
+<div class=" highlight hl-r"><pre><span></span>truth <span class="o">=</span> <span class="kt">c</span><span class="p">(</span>meta<span class="o">$</span>pi0<span class="p">,</span> meta<span class="o">$</span><span class="kc">pi</span> <span class="o">*</span> <span class="p">(</span><span class="m">1</span> <span class="o">-</span> meta<span class="o">$</span>pi0<span class="p">))</span>
+est <span class="o">=</span> res<span class="o">$</span>w
+<span class="kp">cbind</span><span class="p">(</span>truth<span class="p">,</span> est<span class="p">)</span>
 </pre></div>
 
 </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>truth</th><th scope=col>est</th></tr></thead>
+<tbody>
+	<tr><td>0.980       </td><td>9.922627e-01</td></tr>
+	<tr><td>0.005       </td><td>7.641773e-03</td></tr>
+	<tr><td>0.006       </td><td>9.553623e-05</td></tr>
+	<tr><td>0.009       </td><td>1.814362e-09</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Compare effect size estimates:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span>beta <span class="o">=</span> <span class="kp">cbind</span><span class="p">(</span>res<span class="o">$</span><span class="kp">beta</span><span class="p">,</span> meta<span class="o">$</span><span class="kp">beta</span><span class="p">[[</span>gene<span class="p">]])</span>
+beta <span class="o">=</span> <span class="kp">beta</span><span class="p">[</span><span class="kp">order</span><span class="p">(</span><span class="kp">beta</span><span class="p">[,</span><span class="m">2</span><span class="p">]),]</span>
+<span class="kp">beta</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<tbody>
+	<tr><th scope=row>4:289272:C:T</th><td>-4.629785e-03</td><td>-2.9899070   </td></tr>
+	<tr><th scope=row>4:322080:A:G</th><td>-9.845190e-04</td><td>-2.8569581   </td></tr>
+	<tr><th scope=row>4:525147:A:T</th><td>-1.466576e-02</td><td>-2.3781926   </td></tr>
+	<tr><th scope=row>4:572249:T:G</th><td>-3.039666e-03</td><td>-2.3617605   </td></tr>
+	<tr><th scope=row>4:811215:A:G</th><td>-1.542018e-02</td><td>-2.1958673   </td></tr>
+	<tr><th scope=row>4:1084335:G:C</th><td>-2.937208e-03</td><td>-2.0941702   </td></tr>
+	<tr><th scope=row>4:1730254:A:G</th><td>-5.409377e-03</td><td>-1.8410226   </td></tr>
+	<tr><th scope=row>4:999595:G:A</th><td>-2.051137e-02</td><td>-1.6770177   </td></tr>
+	<tr><th scope=row>4:586981:G:T</th><td>-2.378742e-03</td><td>-1.6481972   </td></tr>
+	<tr><th scope=row>4:1134766:C:T</th><td>-2.238047e-03</td><td>-1.5740744   </td></tr>
+	<tr><th scope=row>4:850701:C:T</th><td> 2.054836e-05</td><td>-1.5014056   </td></tr>
+	<tr><th scope=row>4:438902:T:C</th><td>-1.548809e-03</td><td>-1.4181681   </td></tr>
+	<tr><th scope=row>4:1812329:G:T</th><td>-2.564254e-03</td><td>-1.3330828   </td></tr>
+	<tr><th scope=row>4:1801697:T:C</th><td>-3.523300e-03</td><td>-1.3110519   </td></tr>
+	<tr><th scope=row>4:1488897:G:A</th><td>-9.675063e-04</td><td>-1.3055383   </td></tr>
+	<tr><th scope=row>4:1649350:T:C</th><td>-5.497196e-04</td><td>-1.3052800   </td></tr>
+	<tr><th scope=row>4:1087171:T:G</th><td>-1.041435e-04</td><td>-1.2937558   </td></tr>
+	<tr><th scope=row>4:1532036:T:C</th><td> 1.196645e-03</td><td>-1.0521573   </td></tr>
+	<tr><th scope=row>4:1397297:G:T</th><td>-3.568035e-04</td><td>-0.9529719   </td></tr>
+	<tr><th scope=row>4:745053:T:C</th><td>-2.431634e-04</td><td>-0.8612085   </td></tr>
+	<tr><th scope=row>4:1848088:G:A</th><td>-5.994068e-03</td><td>-0.8331971   </td></tr>
+	<tr><th scope=row>4:1368112:C:T</th><td>-1.361703e-03</td><td>-0.8021533   </td></tr>
+	<tr><th scope=row>4:1552149:C:T</th><td>-1.235588e-03</td><td>-0.7854194   </td></tr>
+	<tr><th scope=row>4:1784140:C:T</th><td>-3.085447e-03</td><td>-0.7751047   </td></tr>
+	<tr><th scope=row>4:1626195:T:C</th><td>-1.445454e-03</td><td>-0.7538894   </td></tr>
+	<tr><th scope=row>4:1189139:G:A</th><td>-8.952618e-04</td><td>-0.7058948   </td></tr>
+	<tr><th scope=row>4:918358:G:A</th><td>-1.495988e-03</td><td>-0.6975680   </td></tr>
+	<tr><th scope=row>4:753807:C:T</th><td>-2.257978e-04</td><td>-0.6816892   </td></tr>
+	<tr><th scope=row>4:1421022:T:G</th><td>-2.919960e-03</td><td>-0.6754911   </td></tr>
+	<tr><th scope=row>4:527677:T:C</th><td> 1.140294e-03</td><td>-0.6561650   </td></tr>
+	<tr><th scope=row>⋮</th><td>⋮</td><td>⋮</td></tr>
+	<tr><th scope=row>4:614672:C:T</th><td> 3.131611e-03</td><td>0.9856783    </td></tr>
+	<tr><th scope=row>4:1478976:C:T</th><td> 9.063885e-03</td><td>0.9862456    </td></tr>
+	<tr><th scope=row>4:86798:C:T</th><td> 3.867178e-04</td><td>1.0592496    </td></tr>
+	<tr><th scope=row>4:713106:C:T</th><td>-1.342424e-04</td><td>1.1052502    </td></tr>
+	<tr><th scope=row>4:1098169:C:T</th><td> 1.308614e-03</td><td>1.1193407    </td></tr>
+	<tr><th scope=row>4:781977:G:C</th><td> 8.081345e-04</td><td>1.1408016    </td></tr>
+	<tr><th scope=row>4:1083459:T:C</th><td> 5.247983e-04</td><td>1.1419684    </td></tr>
+	<tr><th scope=row>4:1887355:G:T</th><td> 3.171117e-03</td><td>1.1618373    </td></tr>
+	<tr><th scope=row>4:908868:A:C</th><td> 1.625614e-03</td><td>1.1894441    </td></tr>
+	<tr><th scope=row>4:1351509:T:C</th><td>-2.661504e-04</td><td>1.2013751    </td></tr>
+	<tr><th scope=row>4:1417105:T:C</th><td> 2.543121e-03</td><td>1.2950951    </td></tr>
+	<tr><th scope=row>4:949471:C:T</th><td> 1.006146e-03</td><td>1.3488377    </td></tr>
+	<tr><th scope=row>4:859557:G:A</th><td> 9.777217e-04</td><td>1.3689217    </td></tr>
+	<tr><th scope=row>4:663630:G:C</th><td> 3.259480e-03</td><td>1.3882854    </td></tr>
+	<tr><th scope=row>4:1507366:A:G</th><td> 2.174914e-03</td><td>1.4692677    </td></tr>
+	<tr><th scope=row>4:875339:C:A</th><td> 3.511452e-05</td><td>1.5341179    </td></tr>
+	<tr><th scope=row>4:298088:A:G</th><td> 1.119684e-02</td><td>1.6289800    </td></tr>
+	<tr><th scope=row>4:534311:A:G</th><td> 1.554343e-03</td><td>1.7357610    </td></tr>
+	<tr><th scope=row>4:794760:G:A</th><td> 1.523132e-03</td><td>1.9724066    </td></tr>
+	<tr><th scope=row>4:1340889:C:T</th><td> 1.568175e-03</td><td>2.0609858    </td></tr>
+	<tr><th scope=row>4:831281:T:C</th><td> 6.508573e-03</td><td>2.1457904    </td></tr>
+	<tr><th scope=row>4:783383:A:G</th><td> 5.504887e-04</td><td>2.3572929    </td></tr>
+	<tr><th scope=row>4:531931:C:T</th><td> 3.398429e-03</td><td>2.3732810    </td></tr>
+	<tr><th scope=row>4:516398:G:A</th><td> 2.731603e-02</td><td>2.7270642    </td></tr>
+	<tr><th scope=row>4:382491:C:T</th><td> 1.356233e-03</td><td>2.7936372    </td></tr>
+	<tr><th scope=row>4:276765:A:T</th><td> 2.049281e-03</td><td>3.4827282    </td></tr>
+	<tr><th scope=row>4:243968:C:T</th><td> 1.886959e-03</td><td>3.6180898    </td></tr>
+	<tr><th scope=row>4:133427:G:A</th><td> 2.039130e-02</td><td>3.6471556    </td></tr>
+	<tr><th scope=row>4:101562:G:A</th><td> 3.920518e-03</td><td>3.8172410    </td></tr>
+	<tr><th scope=row>4:10253:G:T</th><td> 4.335672e-02</td><td>4.0681253    </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
 </div>
 </div>
 
