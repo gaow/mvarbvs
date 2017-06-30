@@ -138,7 +138,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="GTEx-pipeline-execution-interface">GTEx pipeline execution interface<a class="anchor-link" href="#GTEx-pipeline-execution-interface">&#182;</a></h1>
+<h1 id="m&amp;m-ash-pipeline-execution-interface">m&amp;m ash pipeline execution interface<a class="anchor-link" href="#m&amp;m-ash-pipeline-execution-interface">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -147,7 +147,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Preparation-&amp;-preprocessing">Preparation &amp; preprocessing<a class="anchor-link" href="#Preparation-&amp;-preprocessing">&#182;</a></h2><p>See <a href="https://gaow.github.io/mvarbvs/doc/writeup/GTEx7_Analysis_Plan.html#Preprocessing">this page</a> and <a href="https://gaow.github.io/mvarbvs/doc/writeup/Meetings.html#Project-meeting-20170518">this meeting note</a> for details.</p>
+<h2 id="Preparation-&amp;-preprocessing-GTEx-data">Preparation &amp; preprocessing GTEx data<a class="anchor-link" href="#Preparation-&amp;-preprocessing-GTEx-data">&#182;</a></h2><p>See <a href="https://gaow.github.io/mvarbvs/doc/writeup/GTEx7_Analysis_Plan.html#Preprocessing">this page</a> and <a href="https://gaow.github.io/mvarbvs/doc/writeup/Meetings.html#Project-meeting-20170518">this meeting note</a> for details.</p>
 
 </div>
 </div>
@@ -157,7 +157,7 @@ $( document ).ready(function(){
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sossave</span> <span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">f</span> <span class="o">-</span><span class="n">x</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">save</span> <span class="n">prep</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">f</span> <span class="o">-</span><span class="n">x</span>
 <span class="c1">#!/usr/bin/env sos-runner</span>
 <span class="c1">#fileformat=SOS1.0</span>
 
@@ -278,7 +278,7 @@ $( document ).ready(function(){
 
 
 <div class="output_html rendered_html output_subarea ">
-Workflow saved to <a href="prep.sos" target="_blank">prep.sos</a>
+<div class="sos_hint">Cell content saved to <a href="prep.sos" target="_blank">prep.sos</a></div>
 </div>
 
 </div>
@@ -493,7 +493,88 @@ Workflow saved to <a href="prep.sos" target="_blank">prep.sos</a>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Simulations">Simulations<a class="anchor-link" href="#Simulations">&#182;</a></h2><p>Please see <a href="../documentation/MR-ASH-Simulation.html">this notebook</a> for interactive codes simulating expression data for given genotypes.</p>
+<h2 id="Simulations">Simulations<a class="anchor-link" href="#Simulations">&#182;</a></h2><p>Please see <a href="../documentation/MR-ASH-Simulation.html">this notebook</a> for interactive codes simulating expression data for given genotypes, and this <a href="../documentation/MR-ASH-Example.html">notebook</a> for a toy analysis. This pipeline is a more formal version of those exploratory analysis.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">save</span> <span class="n">simulation</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">f</span> <span class="o">-</span><span class="n">x</span>
+<span class="c1">#!/usr/bin/env sos-runner</span>
+<span class="c1">#fileformat=SOS1.0</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="n">Misc</span> <span class="k">as</span> <span class="n">MC</span>
+
+<span class="p">[</span><span class="n">phenotype_original_genotype</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;MC.genotype_LD&#39;</span><span class="p">,</span> 
+        <span class="n">genotype_data</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;src&#39;]!a}&quot;</span><span class="p">)</span>
+
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;MC.simulation&#39;</span><span class="p">,</span>
+        <span class="n">genotype_data</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;src&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">pi0</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;pi0&#39;</span><span class="p">],</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">],</span>
+        <span class="n">n_rep</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;n_rep&#39;</span><span class="p">])</span>
+
+<span class="p">[</span><span class="n">phenotype_permuted_genotype</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;MC.genotype_LD&#39;</span><span class="p">,</span>
+        <span class="n">genotype_data</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;src&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">permute_genotype</span> <span class="o">=</span> <span class="s2">&quot;True&quot;</span><span class="p">)</span>
+
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;MC.simulation&#39;</span><span class="p">,</span>
+        <span class="n">genotype_data</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;src&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">permuted_genotype</span> <span class="o">=</span> <span class="s2">&quot;True&quot;</span><span class="p">,</span>
+        <span class="n">pi0</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;pi0&#39;</span><span class="p">],</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">],</span>
+        <span class="n">n_rep</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;n_rep&#39;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+<div class="prompt"></div>
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">Cell content saved to <a href="simulation.sos" target="_blank">simulation.sos</a></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Generate-phenotype-from-original-genotype">Generate phenotype from original genotype<a class="anchor-link" href="#Generate-phenotype-from-original-genotype">&#182;</a></h3><p>One replicate multiple scenarios</p>
+<div class="highlight"><pre><span></span>./simulation.sos phenotype_original_genotype -J <span class="m">38</span> -c conf/simulate-20170630.conf
+./simulation.sos phenotype_permuted_genotype -J <span class="m">38</span> -c conf/simulate-20170630.conf
+</pre></div>
+<p>One scenario multiple replicates</p>
+<div class="highlight"><pre><span></span>./simulation.sos phenotype_original_genotype -J <span class="m">38</span> -c conf/simulate-20170630-reps.conf
+./simulation.sos phenotype_permuted_genotype -J <span class="m">38</span> -c conf/simulate-20170630-reps.conf
+</pre></div>
 
 </div>
 </div>
@@ -503,10 +584,94 @@ Workflow saved to <a href="prep.sos" target="_blank">prep.sos</a>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Univariate-eQTL-analysis">Univariate eQTL analysis<a class="anchor-link" href="#Univariate-eQTL-analysis">&#182;</a></h2><p>Here I perform eQTL analysis using</p>
+<h2 id="Univariate-eQTL-analysis">Univariate eQTL analysis<a class="anchor-link" href="#Univariate-eQTL-analysis">&#182;</a></h2><p>A <a href="http://www.bios.unc.edu/research/genomic_software/Matrix_eQTL/">MatrixEQTL</a> based pipeline:</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sossave</span> <span class="n">eqtl</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">f</span> <span class="o">-</span><span class="n">x</span>
+<span class="c1">#!/usr/bin/env sos-runner</span>
+<span class="c1">#fileformat=SOS1.0</span>
+
+<span class="o">%</span><span class="n">include</span> <span class="n">ResourceManagement</span> <span class="k">as</span> <span class="n">RM</span>
+<span class="o">%</span><span class="n">include</span> <span class="n">Misc</span> <span class="k">as</span> <span class="n">MC</span>
+<span class="o">%</span><span class="n">include</span> <span class="n">MatrixEQTL</span> <span class="k">as</span> <span class="n">ME</span>
+
+<span class="p">[</span><span class="n">default</span><span class="p">]</span>
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;ME.matrix_eqtl&#39;</span><span class="p">,</span> <span class="n">geno_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;genotype&#39;]!a}&quot;</span><span class="p">,</span> 
+        <span class="n">expr_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;expression&#39;]!a}&quot;</span><span class="p">,</span> 
+        <span class="n">covar_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;covariates&#39;]!a}&quot;</span><span class="p">,</span> 
+        <span class="n">ann_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;gene_annotation&#39;]!a}&quot;</span><span class="p">,</span> 
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="o">./</span><span class="n">eqtl</span><span class="o">.</span><span class="n">sos</span> <span class="o">-</span><span class="n">c</span> <span class="n">conf</span><span class="o">/</span><span class="n">eqtl</span><span class="o">-</span><span class="n">test</span><span class="o">-</span><span class="mf">20170609.</span><span class="n">conf</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">matrix_eqtxl_2</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="n">n_per_batch</span>
+<span class="kn">parameter:</span> <span class="n">geno</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">expr</span> <span class="o">=</span> <span class="bp">None</span> 
+<span class="kn">parameter:</span> <span class="n">covar</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">jobs</span> <span class="o">=</span> 
+<span class="n">geno_table</span> <span class="o">=</span> <span class="s1">&#39;/chr4/ENSG00000145214&#39;</span>
+<span class="n">expr_table</span> <span class="o">=</span> <span class="s1">&#39;/simulated&#39;</span>
+
+<span class="p">[</span><span class="n">matrix_eqtxl_3</span><span class="p">]</span>
+<span class="c1"># merge batches</span>
+<span class="kn">task:</span>
+<span class="kn">R:</span>
+<span class="c1"># source(&quot;http://bioconductor.org/biocLite.R&quot;)</span>
+<span class="c1"># biocLite(&quot;rhdf5&quot;)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">rhdf5</span><span class="p">)</span>
+<span class="c1"># Good to load all expression data and covariates</span>
+<span class="n">load_table</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">h_file</span><span class="p">,</span> <span class="n">h_table</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">hdata</span> <span class="o">&lt;-</span> <span class="n">h5read</span><span class="p">(</span><span class="n">h_file</span><span class="p">,</span> <span class="n">h_table</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">hdata</span><span class="err">$</span><span class="n">block0_values</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">=</span> <span class="n">hdata</span><span class="err">$</span><span class="n">axis1</span>
+    <span class="n">rownames</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">=</span> <span class="n">hdata</span><span class="err">$</span><span class="n">axis0</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># Load specific genotype and expression data</span>
+<span class="n">load_xy</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">,</span> <span class="n">expr_data</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">gdata</span> <span class="o">=</span> <span class="n">load_table</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">)</span>
+    <span class="n">edata</span> <span class="o">=</span> <span class="n">expr_data</span><span class="p">[,</span> <span class="n">basename</span><span class="p">(</span><span class="n">geno_table</span><span class="p">)]</span>
+    <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">gdata</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">edata</span><span class="p">))</span>
+<span class="p">}</span>
+
+<span class="n">dat</span> <span class="o">=</span> <span class="n">load_xy</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">geno</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">expr</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">covar</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
     </div>
   </div>

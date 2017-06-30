@@ -468,7 +468,7 @@ body {
   <div class="file-info">
       ./pipeline/Misc.sos
       <span class="file-info-divider"></span>
-    8.5 KiB
+    13.9 KiB
   </div>
   <div class="file-actions">
   </div>
@@ -547,7 +547,7 @@ vcftools --gzvcf <span class="si">${</span><span class="nv">input</span><span cl
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">rpkm_cutoff</span> <span class="o">=</span> <span class="mf">0.1</span>
 <span class="kn">parameter:</span> <span class="n">read_cutoff</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="kn">parameter:</span> <span class="n">sample_cutoff</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="kn">parameter:</span> <span class="n">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../src/normalize_expression.py&quot;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="kp">script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s2">&quot;../src/normalize_expression.py&quot;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">output:</span> <span class="s2">&quot;${workdir}/${input[0]!nnb}.qnorm.std.flat.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${input[0]!nnb}.qnorm.flat.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${input[0]!nnb}.qnorm.std.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;${workdir}/${input[0]!nnb}.qnorm.h5&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
@@ -814,6 +814,171 @@ write.table<span class="p">(</span>res<span class="p">,</span> file <span class=
 
 <div class="source blob-code sos-script "><pre><span></span>cat <span class="si">${</span><span class="nv">output</span><span class="si">}</span> <span class="p">|</span> sed -e <span class="s1">&#39;s/&quot;//g&#39;</span> <span class="p">|</span> sort -g -o <span class="si">${</span><span class="nv">output</span><span class="si">}</span>
 rm -f <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span>.gene_id
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">genotype_LD_1</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Permute X &amp; Get LD structure</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">src</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">genotype_data</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">permute_genotype</span> <span class="o">=</span> <span class="s2">&quot;False&quot;</span>
+<span class="kn">input:</span> <span class="n">genotype_data</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">output:</span> <span class="s2">&quot;${_input!an}.ld.h5&quot;</span> <span class="k">if</span> <span class="n">permute_genotype</span> <span class="o">==</span> <span class="s1">&#39;False&#39;</span> <span class="k">else</span> <span class="s2">&quot;${_input!an}.permuted.ld.h5&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">sys</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">src</span><span class="err">!</span><span class="n">ar</span><span class="p">})</span>
+<span class="kn">from</span> <span class="nn">SimUtils</span> <span class="kn">import</span> <span class="n">PhenotypeSimulator</span><span class="p">,</span> <span class="n">BetaDist</span>
+<span class="n">ms</span> <span class="o">=</span> <span class="n">PhenotypeSimulator</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="err">!</span><span class="n">ar</span><span class="p">})</span>
+<span class="n">tables</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_genes</span><span class="p">()</span>
+<span class="k">if</span> <span class="err">$</span><span class="p">{</span><span class="n">permute_genotype</span><span class="p">}:</span>
+   <span class="n">ms</span><span class="o">.</span><span class="n">permute_X</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">save_to</span> <span class="o">=</span> <span class="s1">&#39;${_output!nn}.h5&#39;</span><span class="p">)</span>
+<span class="n">ld</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_ld</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="n">save_to</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+<span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+    <span class="n">ms</span><span class="o">.</span><span class="n">ld_heatmap</span><span class="p">(</span><span class="n">ld</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="mi">1000</span><span class="p">,:</span><span class="mi">1000</span><span class="p">],</span> <span class="s1">&#39;{}.ld.png&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">table</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39;.permuted&#39;</span> <span class="k">if</span> <span class="err">$</span><span class="p">{</span><span class="n">permute_genotype</span><span class="p">}</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)))</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">simulation_1</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Generate simulated data</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">src</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">pi0</span> <span class="o">=</span> <span class="bp">None</span> 
+<span class="kn">parameter:</span> <span class="n">shape</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">n_rep</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">replicate</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rep</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">genotype_data</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">permuted_genotype</span> <span class="o">=</span> <span class="s2">&quot;False&quot;</span>
+<span class="kn">input:</span> <span class="n">genotype_data</span> <span class="k">if</span> <span class="n">permuted_genotype</span> <span class="o">==</span> <span class="s1">&#39;False&#39;</span> <span class="k">else</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.h5&quot;</span><span class="p">,</span> <span class="s2">&quot;.permuted.h5&quot;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">genotype_data</span><span class="p">],</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pi0&#39;</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">,</span> <span class="s1">&#39;replicate&#39;</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s2">&quot;${workdir}/${_input!bn}.&quot;</span> <span class="o">+</span> <span class="s2">&quot;${_pi0}_${_shape}_${_replicate}&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.expr.h5&#39;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">python:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">json</span><span class="o">,</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">src</span><span class="err">!</span><span class="n">ar</span><span class="p">})</span>
+<span class="kn">from</span> <span class="nn">SimUtils</span> <span class="kn">import</span> <span class="n">PhenotypeSimulator</span><span class="p">,</span> <span class="n">BetaDist</span>
+<span class="n">ms</span> <span class="o">=</span> <span class="n">PhenotypeSimulator</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="err">!</span><span class="n">ar</span><span class="p">})</span>
+<span class="n">tables</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_genes</span><span class="p">()</span>
+<span class="n">ld</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">load_ld</span><span class="p">(</span><span class="n">tables</span><span class="p">,</span> <span class="s2">&quot;${_input!an}.ld.h5&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">r</span><span class="p">}):</span>
+   <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+<span class="n">param</span> <span class="o">=</span> <span class="n">BetaDist</span><span class="p">()</span>  
+<span class="n">param</span><span class="o">.</span><span class="n">set_pi0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_pi0</span><span class="p">})</span>
+<span class="n">param</span><span class="o">.</span><span class="n">set_</span><span class="err">$</span><span class="p">{</span><span class="n">_shape</span><span class="p">}()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">param</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">table</span> <span class="ow">in</span> <span class="n">tables</span><span class="p">:</span>
+  <span class="n">ms</span><span class="o">.</span><span class="n">set_id</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">table</span><span class="p">))</span>
+  <span class="n">nbeta</span> <span class="o">=</span> <span class="n">ld</span><span class="p">[</span><span class="n">table</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+  <span class="n">beta</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">generate_betamix</span><span class="p">(</span><span class="n">nbeta</span><span class="o">=</span><span class="n">nbeta</span><span class="p">,</span><span class="n">pi0</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">pi0</span><span class="p">,</span> <span class="n">pis</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">pis</span><span class="p">,</span> <span class="n">mus</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">mus</span><span class="p">,</span> <span class="n">sigmas</span><span class="o">=</span><span class="n">param</span><span class="o">.</span><span class="n">sigmas</span><span class="p">)</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="err">$</span><span class="p">{</span><span class="n">permuted_genotype</span><span class="p">}:</span>
+     <span class="n">strong_snps_idx</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">select_convoluted_snps</span><span class="p">(</span><span class="n">ld</span><span class="p">[</span><span class="n">table</span><span class="p">])</span>
+     <span class="n">beta</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">swap_beta</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="n">strong_snps_idx</span><span class="p">)</span>
+  <span class="n">X</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">get_X</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">)</span>
+  <span class="n">y</span> <span class="o">=</span> <span class="n">ms</span><span class="o">.</span><span class="n">generate_y</span><span class="p">(</span><span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span><span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">force</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">ms</span><span class="o">.</span><span class="n">phenotype</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">to_hdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/simulated&#39;</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">complevel</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span> <span class="n">complib</span> <span class="o">=</span> <span class="s1">&#39;zlib&#39;</span><span class="p">)</span>
+<span class="n">meta</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pi&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">pis</span><span class="p">,</span> <span class="s1">&#39;pi0&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">pi0</span><span class="p">,</span> <span class="s1">&#39;sigma&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">sigmas</span><span class="p">,</span> <span class="s1">&#39;mu&#39;</span><span class="p">:</span> <span class="n">param</span><span class="o">.</span><span class="n">mus</span><span class="p">,</span> <span class="s1">&#39;beta&#39;</span><span class="p">:</span> <span class="n">ms</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="err">$</span><span class="p">{</span><span class="n">_shape</span><span class="err">!</span><span class="n">r</span><span class="p">}}</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;${_output!n}.json&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fp</span><span class="p">:</span>
+  <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">fp</span><span class="p">)</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">simulation_2</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Analyze data</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">genotype_data</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">output:</span> <span class="s2">&quot;${_input!n}.analyzed.rds&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span><span class="kn">library</span><span class="p">(</span>rhdf5<span class="p">)</span>
+<span class="kn">source</span><span class="p">(</span><span class="s">&quot;src/Utils.R&quot;</span><span class="p">)</span>
+genotype_file <span class="o">=</span> <span class="s">&quot;${genotype_data[0]!ad}/${_input!bnnn}.h5&quot;</span>
+expr_file <span class="o">=</span> <span class="o">$</span><span class="p">{</span>_input<span class="o">!</span>r<span class="p">}</span>
+expr_table <span class="o">=</span> <span class="s">&#39;/simulated&#39;</span>
+tables <span class="o">=</span> get_h5_groups<span class="p">(</span>genotype_file<span class="p">)</span>
+res <span class="o">=</span> <span class="kt">list</span><span class="p">()</span>
+<span class="kr">for</span> <span class="p">(</span>table <span class="kr">in</span> tables<span class="p">)</span> <span class="p">{</span>
+    dat <span class="o">=</span> load_data<span class="p">(</span>genotype_file<span class="p">,</span> expr_file<span class="p">,</span> <span class="kp">table</span><span class="p">,</span> expr_table<span class="p">)</span>
+    X <span class="o">=</span> <span class="kp">as.matrix</span><span class="p">(</span>dat<span class="o">$</span>X<span class="p">)</span>
+    <span class="kp">storage.mode</span><span class="p">(</span>X<span class="p">)</span> <span class="o">&lt;-</span> <span class="s">&quot;double&quot;</span>
+    y <span class="o">=</span> <span class="kp">as.vector</span><span class="p">(</span>dat<span class="o">$</span>y<span class="p">)</span>
+    <span class="c1"># Univariate analysis</span>
+    res0 <span class="o">=</span> univariate_lm<span class="p">(</span>X<span class="p">,</span>y<span class="p">)</span>
+    mixsd <span class="o">=</span> ashr<span class="o">:::</span>autoselect.mixsd<span class="p">(</span>res0<span class="p">,</span> <span class="kp">sqrt</span><span class="p">(</span><span class="m">2</span><span class="p">),</span> <span class="m">0</span><span class="p">,</span> <span class="kt">c</span><span class="p">(</span><span class="o">-</span><span class="kc">Inf</span><span class="p">,</span><span class="kc">Inf</span><span class="p">),</span> <span class="s">&quot;normal&quot;</span><span class="p">)</span>
+    res1 <span class="o">=</span> varbvs<span class="o">::</span>varbvsmix<span class="p">(</span>X<span class="p">,</span> <span class="kc">NULL</span><span class="p">,</span> y<span class="p">,</span> sa <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> mixsd<span class="o">^</span><span class="m">2</span><span class="p">))</span>
+    res1<span class="o">$</span>pip <span class="o">=</span> res1<span class="o">$</span>alpha <span class="o">%*%</span> <span class="kt">c</span><span class="p">(</span>res1<span class="o">$</span>w<span class="p">)</span>
+    res1<span class="o">$</span>beta <span class="o">=</span> <span class="kp">rowSums</span><span class="p">(</span>res1<span class="o">$</span>alpha <span class="o">*</span> res1<span class="o">$</span>mu<span class="p">)</span>
+    res1<span class="o">$</span>y <span class="o">=</span> X <span class="o">%*%</span> res1<span class="o">$</span>beta <span class="o">+</span> res1<span class="o">$</span>mu.cov<span class="p">[</span><span class="m">1</span><span class="p">]</span>
+    meta <span class="o">=</span> rjson<span class="o">::</span>fromJSON<span class="p">(</span>file <span class="o">=</span> <span class="s">&quot;${_input!n}.json&quot;</span><span class="p">)</span>
+    meta<span class="o">$</span>y <span class="o">=</span> y
+    meta<span class="o">$</span>beta <span class="o">=</span> meta<span class="o">$</span><span class="kp">beta</span><span class="p">[[</span><span class="kp">basename</span><span class="p">(</span><span class="kp">table</span><span class="p">)]]</span>
+    res2 <span class="o">=</span> ashr<span class="o">::</span>ash<span class="p">(</span>res0<span class="o">$</span>x<span class="p">,</span> res0<span class="o">$</span>s<span class="p">)</span>
+    res<span class="p">[[</span><span class="kp">basename</span><span class="p">(</span><span class="kp">table</span><span class="p">)]]</span> <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>uni<span class="o">=</span>res0<span class="p">,</span>mr.ash<span class="o">=</span>res1<span class="p">,</span>ash<span class="o">=</span>res2<span class="p">,</span>meta<span class="o">=</span>meta<span class="p">)</span>
+<span class="p">}</span>
+<span class="kp">saveRDS</span><span class="p">(</span>res<span class="p">,</span> file <span class="o">=</span> <span class="o">$</span><span class="p">{</span>_output<span class="o">!</span>r<span class="p">})</span>
+ 
+</pre></div>
+
+<div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">simulation_3</span><span class="p">]</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Make plots</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">output:</span> <span class="s2">&quot;${_input!n}.pdf&quot;</span>
+<span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
+</pre></div>
+
+<div class="source blob-code sos-directive"><pre><span></span><span class="kn">R:</span>
+</pre></div>
+
+<div class="source blob-code sos-script "><pre><span></span>dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</span><span class="o">$</span><span class="p">{</span>_input<span class="o">!</span>r<span class="p">})</span>
+pdf<span class="p">(</span><span class="o">$</span><span class="p">{</span>_output<span class="o">!</span>r<span class="p">})</span>
+<span class="kr">for</span> <span class="p">(</span>table <span class="kr">in</span> <span class="kp">names</span><span class="p">(</span>dat<span class="p">))</span> <span class="p">{</span>
+    res <span class="o">=</span> dat<span class="p">[[</span><span class="kp">table</span><span class="p">]]</span>
+    <span class="c1"># Fitted mixture porportions</span>
+    par<span class="p">(</span>mfrow <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> oma<span class="o">=</span><span class="kt">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">0</span><span class="p">))</span>
+    barplot<span class="p">(</span><span class="kt">c</span><span class="p">(</span>res<span class="o">$</span>meta<span class="o">$</span>pi0<span class="p">,</span> res<span class="o">$</span>meta<span class="o">$</span><span class="kc">pi</span> <span class="o">*</span> <span class="p">(</span><span class="m">1</span> <span class="o">-</span> res<span class="o">$</span>meta<span class="o">$</span>pi0<span class="p">)),</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.2</span><span class="p">,</span><span class="m">0.4</span><span class="p">,</span><span class="m">0.6</span><span class="p">,</span><span class="m">0.6</span><span class="p">),</span> horiz<span class="o">=</span><span class="bp">T</span><span class="p">,</span> las<span class="o">=</span><span class="m">1</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;truth&#39;</span><span class="p">)</span>
+    barplot<span class="p">(</span>res<span class="o">$</span>mr.ash<span class="o">$</span>w<span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.2</span><span class="p">,</span><span class="m">0.4</span><span class="p">,</span><span class="m">0.6</span><span class="p">,</span><span class="m">0.6</span><span class="p">),</span> horiz<span class="o">=</span><span class="bp">T</span><span class="p">,</span> las<span class="o">=</span><span class="m">1</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;mr-ash, fitted g&#39;</span><span class="p">)</span>
+    barplot<span class="p">(</span>ashr<span class="o">::</span>get_fitted_g<span class="p">(</span>res<span class="o">$</span>ash<span class="p">)</span><span class="o">$</span><span class="kc">pi</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.2</span><span class="p">,</span><span class="m">0.4</span><span class="p">,</span><span class="m">0.6</span><span class="p">,</span><span class="m">0.6</span><span class="p">),</span> horiz<span class="o">=</span><span class="bp">T</span><span class="p">,</span> las<span class="o">=</span><span class="m">1</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;ash, fitted g&#39;</span><span class="p">)</span>
+    title<span class="p">(</span><span class="kp">paste0</span><span class="p">(</span><span class="kp">table</span><span class="p">,</span> <span class="s">&quot; &quot;</span><span class="p">,</span> <span class="kp">ifelse</span><span class="p">(</span><span class="kp">grepl</span><span class="p">(</span><span class="s">&#39;permuted&#39;</span><span class="p">,</span> <span class="o">$</span><span class="p">{</span>_input<span class="o">!</span>r<span class="p">}),</span> <span class="s">&quot;permuted&quot;</span><span class="p">,</span> <span class="s">&quot;original&quot;</span><span class="p">),</span> <span class="s">&quot; genotype, &quot;</span><span class="p">,</span> <span class="kp">round</span><span class="p">(</span>res<span class="o">$</span>meta<span class="o">$</span>pi0<span class="p">,</span><span class="m">4</span><span class="p">),</span> <span class="s">&quot; pi0 + &quot;</span><span class="p">,</span> res<span class="o">$</span>meta<span class="o">$</span>name<span class="p">,</span> <span class="s">&quot; mixture&quot;</span><span class="p">),</span> outer<span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+    <span class="c1"># Compare fit</span>
+    par<span class="p">(</span>mfrow <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">3</span><span class="p">,</span><span class="m">2</span><span class="p">),</span> mar <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="p">))</span>
+    plot<span class="p">(</span>res<span class="o">$</span>meta<span class="o">$</span><span class="kp">beta</span><span class="p">,</span> pch<span class="o">=</span><span class="m">20</span><span class="p">,</span> bg<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.6</span><span class="p">,</span><span class="m">0.9</span><span class="p">,</span><span class="m">0.9</span><span class="p">),</span> ylab <span class="o">=</span> <span class="s">&quot;betahat&quot;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;truth, betahat&#39;</span><span class="p">)</span>
+    plot<span class="p">(</span>res<span class="o">$</span>mr.ash<span class="o">$</span><span class="kp">beta</span><span class="p">,</span> pch<span class="o">=</span><span class="m">20</span><span class="p">,</span> bg<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.6</span><span class="p">,</span><span class="m">0.9</span><span class="p">,</span><span class="m">0.9</span><span class="p">),</span> ylab <span class="o">=</span> <span class="s">&quot;betahat&quot;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;mr-ash, betahat&#39;</span><span class="p">)</span>
+    legend<span class="p">(</span><span class="s">&quot;topleft&quot;</span><span class="p">,</span> <span class="kp">paste0</span><span class="p">(</span><span class="s">&quot;sigma = &quot;</span><span class="p">,</span> <span class="kp">round</span><span class="p">(</span>res<span class="o">$</span>mr.ash<span class="o">$</span>sigma<span class="p">,</span><span class="m">2</span><span class="p">)),</span> bty<span class="o">=</span><span class="s">&quot;n&quot;</span><span class="p">)</span> 
+    plot<span class="p">(</span>ashr<span class="o">::</span>get_pm<span class="p">(</span>res<span class="o">$</span>ash<span class="p">),</span> pch<span class="o">=</span><span class="m">20</span><span class="p">,</span> bg<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.6</span><span class="p">,</span><span class="m">0.9</span><span class="p">,</span><span class="m">0.9</span><span class="p">),</span> ylab <span class="o">=</span> <span class="s">&quot;betahat&quot;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;ash, betahat&#39;</span><span class="p">)</span>
+    plot<span class="p">(</span>res<span class="o">$</span>uni<span class="o">$</span>x<span class="p">,</span> pch<span class="o">=</span><span class="m">20</span><span class="p">,</span> bg<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.6</span><span class="p">,</span><span class="m">0.9</span><span class="p">,</span><span class="m">0.9</span><span class="p">),</span> ylab <span class="o">=</span> <span class="s">&quot;betahat&quot;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;univariate, betahat&#39;</span><span class="p">)</span>
+    plot<span class="p">(</span>res<span class="o">$</span>meta<span class="o">$</span><span class="kp">beta</span><span class="p">,</span> res<span class="o">$</span>mr.ash<span class="o">$</span><span class="kp">beta</span><span class="p">,</span> pch<span class="o">=</span><span class="m">20</span><span class="p">,</span> bg<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.9</span><span class="p">,</span><span class="m">0.9</span><span class="p">),</span> ylab <span class="o">=</span> <span class="s">&quot;mr.ash&quot;</span><span class="p">,</span> xlab <span class="o">=</span> <span class="s">&quot;truth&quot;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;truth vs mr.ash, betahat&#39;</span><span class="p">)</span>
+    abline<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span> col<span class="o">=</span><span class="s">&quot;whitesmoke&quot;</span><span class="p">)</span>
+    plot<span class="p">(</span>ashr<span class="o">::</span>get_pm<span class="p">(</span>res<span class="o">$</span>ash<span class="p">),</span> res<span class="o">$</span>mr.ash<span class="o">$</span><span class="kp">beta</span><span class="p">,</span> pch<span class="o">=</span><span class="m">20</span><span class="p">,</span> bg<span class="o">=</span><span class="s">&quot;white&quot;</span><span class="p">,</span> col<span class="o">=</span>rgb<span class="p">(</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.3</span><span class="p">,</span><span class="m">0.9</span><span class="p">,</span><span class="m">0.9</span><span class="p">),</span> ylab <span class="o">=</span> <span class="s">&quot;mr.ash&quot;</span><span class="p">,</span> xlab <span class="o">=</span> <span class="s">&quot;ash&quot;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;ash vs mr.ash, betahat&#39;</span><span class="p">)</span>
+    abline<span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">1</span><span class="p">,</span> col<span class="o">=</span><span class="s">&quot;whitesmoke&quot;</span><span class="p">)</span>
+<span class="p">}</span>
 </pre></div>
 
 </table>
