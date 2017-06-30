@@ -348,13 +348,13 @@ R:
       title(paste0(table, " ", ifelse(grepl('permuted', ${_input!r}), "permuted", "original"), " genotype, ", round(res$meta$pi0,4), " pi0 + ", res$meta$name, " mixture"), outer=TRUE)
       # Compare fit
       par(mfrow = c(3,2), mar = c(2,2,2,1))
-      plot(res$meta$beta, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'truth, betahat')
+      plot(res$meta$beta, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "beta", main = 'truth, beta')
       plot(res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'mr-ash, betahat')
       legend("topleft", paste0("sigma = ", round(res$mr.ash$sigma,2)), bty="n") 
       plot(ashr::get_pm(res$ash), pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'ash, betahat')
       plot(res$uni$x, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'univariate, betahat')
-      plot(res$meta$beta, res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.3,0.9,0.9), ylab = "mr.ash", xlab = "truth", main = 'truth vs mr.ash, betahat')
+      plot(res$meta$beta, res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.3,0.9,0.9), ylab = "mr.ash", xlab = "truth", main = 'truth vs mr.ash')
       abline(0,1, col="whitesmoke")
-      plot(ashr::get_pm(res$ash), res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.3,0.9,0.9), ylab = "mr.ash", xlab = "ash", main = 'ash vs mr.ash, betahat')
+      plot(ashr::get_pm(res$ash), res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.3,0.9,0.9), ylab = "mr.ash", xlab = "ash", main = 'ash vs mr.ash')
       abline(0,1, col="whitesmoke")
   }
