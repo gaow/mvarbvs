@@ -21,3 +21,10 @@ univariate_lm = function(X,y,Z=NULL){
   }
   return(list(x = output[,1], s = output[,2], lik=list(name="normal")))
 }
+
+get_h5_groups <- function(fn) {
+meta = rhdf5::h5ls(fn)
+groups = unique(meta$group[duplicated(meta$group)])
+groups = groups[which(groups != '/')]
+return(groups)
+}

@@ -292,3 +292,36 @@ python:
   meta = {'pi': param.pis, 'pi0': param.pi0, 'sigma': param.sigmas, 'beta': ms.beta, 'name': ${_shape!r}}
   with open("${_output!n}.json", 'w') as fp:
     json.dump(meta, fp)
+
+[simulation_2]
+# Analyze data
+parameter: genotype_data = None
+parameter: workdir = None
+input: group_by = 1
+output: "${_input!n}.analyzed.rds"
+task: workdir = workdir
+R:
+  library(rhdf5)
+  source("src/Utils.R")
+  genotype_file = "${genotype_data[0]!ad}/${_input!bnnn}.h5"
+  expr_file = ${_input!r}
+  expr_table = '/simulated'
+  tables = get_h5_groups(genotype_file)
+  res = list()
+  for (table in tables) {
+      gene = basename(table)
+      dat = load_data(genotype_file, expr_file, table, expr_table)
+      X = as.matrix(dat$X)
+      storage.mode(X) <- "double"
+      y = as.vector(dat$y)
+      # Univariate analysis
+      res0 = univariate_lm(X,y)
+      mixsd = ashr:::autoselect.mixsd(res0, sqrt(2), 0, c(-Inf,Inf), "normal")
+      res1 = varbvs::varbvsmix(X, NULL, y, sa = c(0, mixsd^2))
+      res1$pip = res1$alpha %*% c(res1$w)
+      res1$beta = rowSums(res1$alpha * res1$mu)
+      res1$meta <- rjson::fromJSON(file = "${_input!n}.json")
+      res2 = ashr::ash(res0$x, res0$s)
+      res[[table]] = list(uni=res0,mr.ash=res1,ash=res2)
+  }
+  saveRDS(res, file = ${_output!r})
