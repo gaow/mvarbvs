@@ -337,7 +337,7 @@ output: "${_input!n}.pdf"
 task: workdir = workdir
 R:
   dat = readRDS(${_input!r})
-  pdf(${_output!r})
+  pdf(${_output!r}, title = "${_input!bnn}")
   for (table in names(dat)) {
       res = dat[[table]]
       # Fitted mixture porportions
@@ -347,7 +347,7 @@ R:
       barplot(ashr::get_fitted_g(res$ash)$pi, col=rgb(0.2,0.4,0.6,0.6), horiz=T, las=1, main = 'ash, fitted g')
       title(paste0(table, " ", ifelse(grepl('permuted', ${_input!r}), "permuted", "original"), " genotype, ", round(res$meta$pi0,4), " pi0 + ", res$meta$name, " mixture"), outer=TRUE)
       # Compare fit
-      par(mfrow = c(3,2), mar = c(2,1,2,1))
+      par(mfrow = c(3,2), mar = c(2,2,2,1))
       plot(res$meta$beta, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'truth, betahat')
       plot(res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'mr-ash, betahat')
       legend("topleft", paste0("sigma = ", round(res$mr.ash$sigma,2)), bty="n") 
