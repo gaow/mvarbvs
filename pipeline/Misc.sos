@@ -240,38 +240,39 @@ parameter: workdir = None
 parameter: src = None
 parameter: genotype_data = None
 parameter: permute_genotype = "False"
-input: genotype_data if permute_genotype == 'False' else ["${x!n}.permuted.h5" for x in genotype_data], group_by = 1
-output: "${_input!n}.ld.h5"
+input: genotype_data, group_by = 1
+output: "${_input!an}.ld.h5" if permute_genotype == 'False' else "${_input!an}.permuted.ld.h5"
 task: workdir = workdir
 python:
   import os, sys
   sys.path.append(${src!ar})
   from SimUtils import PhenotypeSimulator, BetaDist
-  ms = PhenotypeSimulator(${_input!r})
+  ms = PhenotypeSimulator(${_input!ar})
   tables = ms.get_genes()
   if ${permute_genotype}:
-     ms.permute_X(tables, save_to = ${_output!r})
+     ms.permute_X(tables, save_to = '${_output!nn}.h5')
   ld = ms.get_ld(tables, save_to = ${_output!r})
   for table in tables:
-      ms.ld_heatmap(ld[table].iloc[:1000,:1000], '{}.ld.png'.format(os.path.basename(table) + ('.permuted' if ${permuted_genotype} else '')))
+      ms.ld_heatmap(ld[table].iloc[:1000,:1000], '{}.ld.png'.format(os.path.basename(table) + ('.permuted' if ${permute_genotype} else '')))
 
-[phenotype_simulator_1]
+[simulation_1]
+# Generate simulated data
 parameter: workdir = None
 parameter: src = None
 parameter: pi0 = [0.5, 0.9, 0.995, 0.999]
 parameter: shape = ['spiky', 'near_normal', 'flat_top', 'skew', 'big_normal', 'bimodal']
 parameter: genotype_data = None
 parameter: permuted_genotype = "False"
-input: genotype_data if permuted_genotype == 'False' else ["${x!n}.permuted.h5" for x in genotype_data], group_by = 1, for_each = ['pi0', 'shape']
+input: genotype_data if permuted_genotype == 'False' else [x.replace(".h5", ".permuted.h5") for x in genotype_data], group_by = 1, for_each = ['pi0', 'shape']
 output: "${workdir}/${_input!bn}." + "${_pi0}_${_shape}".replace('.', 'p') + '.expr.h5'
 task: workdir = workdir
 python:
   import sys, os, json, pandas as pd
   sys.path.append(${src!ar})
   from SimUtils import PhenotypeSimulator, BetaDist
-  ms = PhenotypeSimulator(${_input!r})
+  ms = PhenotypeSimulator(${_input!ar})
   tables = ms.get_genes()
-  ld = ms.load_ld(tables, "${_input!n}.ld.h5")
+  ld = ms.load_ld(tables, "${_input!an}.ld.h5")
   if os.path.isfile(${_output!r}):
      os.remove(${_output!r})
   param = BetaDist()  

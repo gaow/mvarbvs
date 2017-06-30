@@ -2,11 +2,8 @@ import pandas as pd
 import numpy as np
 import os, random
 
-def shuffle(df, n=1, axis=1):     
-        df = df.copy()
-        for _ in range(n):
-            df.apply(np.random.permutation, axis=axis)
-        return df
+def shuffle(df, axis=1):     
+        return df.apply(np.random.permutation, axis=axis)
 
 class PhenotypeSimulator:
     def __init__(self, genotype_file):
