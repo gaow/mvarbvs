@@ -138,7 +138,7 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="MR-ASH-simulations">MR-ASH simulations<a class="anchor-link" href="#MR-ASH-simulations">&#182;</a></h1>
+<h1 id="MR-ASH-simulation-data-analysis">MR-ASH simulation data analysis<a class="anchor-link" href="#MR-ASH-simulation-data-analysis">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -147,10 +147,59 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Simulation procedures are available at</p>
+<p>Simulation procedures are <a href="https://gaow.github.io/mvarbvs/doc/pipeline/Pipelines.html#Simulations">available here</a>. In brief, we looked at various types of underlying mixture distribution of effect size, including those explored in Figure 2 of <a href="https://academic.oup.com/biostatistics/article/18/2/275/2557030/False-discovery-rates-a-new-deal">ash paper</a>, with different proportions of $\pi_0$.</p>
+<p>We perform 3 analysis for simulated data:</p>
+<ol>
+<li>Univariate analysis (R's <code>lm()</code>)</li>
+<li><code>mr-ash</code> analysis </li>
+<li><code>ash</code> analysis using results from 1</li>
+</ol>
+<p>Results are stored at: <code>/project/compbio/GTEx_eQTL/MRASH_results/Simulation</code>.</p>
+<h2 id="Highlights">Highlights<a class="anchor-link" href="#Highlights">&#182;</a></h2><h3 id="For-genotype-without-LD-convolution">For genotype without LD convolution<a class="anchor-link" href="#For-genotype-without-LD-convolution">&#182;</a></h3><p>These are results with <code>permuted</code> in the file name.</p>
+<ol>
+<li>When signal is dense and slap <code>mr-ash</code> will generate a quite sparse solution with much over estimated $\hat{\sigma}$. In the case of 50% signal <code>mr-ash</code> estimates $\hat{\sigma} > 1000$ whereas the truth is 1. (see file <code>0p5_big_normal_1.expr.analyzed.pdf</code>). Also though better in shrinking the effect than <code>ash</code> the estimate is still much larger. There is a big difference between <code>mr-ash</code> and <code>ash</code> results, too. </li>
+<li>There is less over estimate of $\hat{\sigma}$ when signal is more spiky. (see file <code>0p5_near_normal_1.expr.analyzed.pdf</code> and <code>0p5_spiky_1.expr.analyzed.pdf</code>)</li>
+<li>In a somewhat more realistic scenario both <code>ash</code> and <code>mr-ash</code> can do quite good job. There does not seem to have a particular harm using <code>mr-ash</code>. (see file <code>0p999_big_normal_1.expr.analyzed.pdf</code>)</li>
+<li>The difference between <code>mr-ash</code> and <code>ash</code> in the more realistic scenario above is even less obvious when signal is more spiky. (see file <code>0p999_near_normal_1.expr.analyzed.pdf</code> and <code>0p999_spiky_1.expr.analyzed.pdf</code>). In fact both <code>mr-ash</code> and <code>ash</code> recovers the true signal less well than the more slap situation (but maybe slap situation is more realistic?).</li>
+</ol>
+<h3 id="For-genotype-with-LD-convolution">For genotype with LD convolution<a class="anchor-link" href="#For-genotype-with-LD-convolution">&#182;</a></h3><p>These are results without <code>permuted</code> in the file name.</p>
+<ol>
+<li>When signal is dense and slap, <code>mr-ash</code> suffers the same problem as before. But in this scenario <code>ash</code> result over estimates effect size even more than plain univariate analysis. (see file <code>0p5_big_normal_1.expr.analyzed.pdf</code>)</li>
+<li>In a somewhat more realistic scenario (see file <code>0p999_big_normal_1.expr.analyzed.pdf</code>) the advantage of <code>mr-ash</code> is obvious. However there is still a slight over-estimate of $\hat{\sigma}$.</li>
+<li>When signal gets more spiky, there seems a slight under-estimate of $\hat{\sigma}$. Still <code>mr-ash</code> does better than <code>ash</code>. (see file <code>0p999_near_normal_1.expr.analyzed.pdf</code> and <code>0p999_spiky_1.expr.analyzed.pdf</code>)</li>
+</ol>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here we <a href="http://stephenslab.github.io/ash/analysis/plot_cdf_eg.html">compare CDF of estimates with the truth</a></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">ashr</span><span class="p">::</span><span class="n">normalmix</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="n">pi0</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">res</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="n">pi0</span><span class="p">)</span> <span class="o">*</span> <span class="n">res</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="n">pi</span><span class="p">),</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="n">sigma</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">res</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="n">sigma</span><span class="p">))</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="n">length</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">cdf_dat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">numeric</span><span class="p">(</span><span class="n">ashr</span><span class="p">::</span><span class="n">mixcdf</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="n">x</span><span class="p">)),</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;truth&quot;</span><span class="p">,</span> <span class="n">scenario</span> <span class="o">=</span> <span class="n">res</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="kp">name</span><span class="p">)</span>
+<span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="n">ggplot</span><span class="p">(</span><span class="n">cdf_dat</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">,</span><span class="n">color</span> <span class="o">=</span> <span class="n">method</span><span class="p">))</span> <span class="o">+</span> 
+    <span class="n">geom_line</span><span class="p">(</span><span class="n">lwd</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.7</span><span class="p">)</span> <span class="o">+</span> <span class="n">facet_grid</span><span class="p">(</span><span class="o">.~</span><span class="n">scenario</span><span class="p">)</span> <span class="o">+</span> 
+    <span class="n">theme</span><span class="p">(</span><span class="n">legend</span><span class="o">.</span><span class="n">position</span> <span class="o">=</span> <span class="s2">&quot;bottom&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
 </div>
     </div>
   </div>
