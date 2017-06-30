@@ -233,3 +233,61 @@ write.table(res, file = ${output!r}, row.names=FALSE, na= "<NA>", col.names = FA
 run:
   cat ${output} | sed -e 's/"//g' | sort -g -o ${output}
   rm -f ${input!n}.gene_id
+
+[genotype_LD_1]
+# Permute X & Get LD structure
+parameter: workdir = None
+parameter: src = None
+parameter: genotype_data = None
+parameter: permute_genotype = "False"
+input: genotype_data if permute_genotype == 'False' else ["${x!n}.permuted.h5" for x in genotype_data], group_by = 1
+output: "${_input!n}.ld.h5"
+task: workdir = workdir
+python:
+  import os, sys
+  sys.path.append(${src!ar})
+  from SimUtils import PhenotypeSimulator, BetaDist
+  ms = PhenotypeSimulator(${_input!r})
+  tables = ms.get_genes()
+  if ${permute_genotype}:
+     ms.permute_X(tables, save_to = ${_output!r})
+  ld = ms.get_ld(tables, save_to = ${_output!r})
+  for table in tables:
+      ms.ld_heatmap(ld[table].iloc[:1000,:1000], '{}.ld.png'.format(os.path.basename(table) + ('.permuted' if ${permuted_genotype} else '')))
+
+[phenotype_simulator_1]
+parameter: workdir = None
+parameter: src = None
+parameter: pi0 = [0.5, 0.9, 0.995, 0.999]
+parameter: shape = ['spiky', 'near_normal', 'flat_top', 'skew', 'big_normal', 'bimodal']
+parameter: genotype_data = None
+parameter: permuted_genotype = "False"
+input: genotype_data if permuted_genotype == 'False' else ["${x!n}.permuted.h5" for x in genotype_data], group_by = 1, for_each = ['pi0', 'shape']
+output: "${workdir}/${_input!bn}." + "${_pi0}_${_shape}".replace('.', 'p') + '.expr.h5'
+task: workdir = workdir
+python:
+  import sys, os, json, pandas as pd
+  sys.path.append(${src!ar})
+  from SimUtils import PhenotypeSimulator, BetaDist
+  ms = PhenotypeSimulator(${_input!r})
+  tables = ms.get_genes()
+  ld = ms.load_ld(tables, "${_input!n}.ld.h5")
+  if os.path.isfile(${_output!r}):
+     os.remove(${_output!r})
+  param = BetaDist()  
+  param.set_pi0(${_pi0})
+  param.set_${_shape}()
+  print(param)
+  for table in tables:
+    ms.set_id(os.path.basename(table))
+    nbeta = ld[table].shape[0]
+    beta = ms.generate_betamix(nbeta=nbeta,pi0=param.pi0, pis=param.pis, mus = param.mus, sigmas=param.sigmas)
+    if not ${permuted_genotype}:
+       strong_snps_idx = ms.select_convoluted_snps(ld[table])
+       beta = ms.swap_beta(beta, strong_snps_idx)
+    X = ms.get_X(table=table)
+    y = ms.generate_y(beta=beta,sigma=1, X=X, force = True)
+  pd.concat(ms.phenotype.values()).to_hdf(${_output!r}, '/simulated', mode = 'a', complevel = 9, complib = 'zlib')
+  meta = {'pi': param.pis, 'pi0': param.pi0, 'sigma': param.sigmas, 'beta': ms.beta, 'name': ${_shape!r}}
+  with open("${_output!n}.json", 'w') as fp:
+    json.dump(meta, fp)

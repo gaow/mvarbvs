@@ -1,9 +1,14 @@
 #!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
+# Usage:
+# ./prep.sos download
+# ./prep.sos 
+
 %include ResourceManagement as RM
 %include Misc as MC
 %include DataWrestling as DW
+
 [global]
 
 #
@@ -98,4 +103,3 @@ sos_run("DW.subset_HDF5_data",
         expr_file = "{}/${CONFIG['rna_rpkm']!bnn}.qnorm.std.h5".format(CONFIG['wd']),
         toy_file = CONFIG['toy_prefix'],
         gene_list = CONFIG['toy_gene_list'])
-
