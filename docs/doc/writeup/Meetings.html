@@ -150,6 +150,20 @@ $( document ).ready(function(){
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Project-meeting-20170630">Project meeting 20170630<a class="anchor-link" href="#Project-meeting-20170630">&#182;</a></h2><p>With Matthew and Wei on simulation and some real data results. We mostly finished discussing <a href="https://gaow.github.io/mvarbvs/doc/documentation/20170630-Simulation-Results.html">this notebook</a>. We've mostly focused on the situation when there is very dense true signal yet <code>mr-ash</code> cannot recover any of them.</p>
+<p>Some interesting discussions are:</p>
+<ol>
+<li>Why do we see ASH over-shrink the effect size? One intuition is that the $s$ we feed to ash are estimates from univariate regresiosn, which is different from the (proper) estimate of residual variance comparing the model with/without the corresponding SNP. It may be an over-estimate thus effectively over-shrink $\hat{\beta}$</li>
+<li>Relevant to 1: when using ASH estimates either as initialization values for <code>mr-ash</code>, or for prediction of response, we should scale it by a factor of $c$ such that $||Y-c\hat{\beta}||^2$ is minimized.</li>
+<li>To rule out any potential convergence issue, we should initialize at some "good" estimates, eg, from <code>ash</code> (scaled), and look at the variational lower bound to see if it improves. Another initialization would be result from ridge regression -- none of the effects will be zero.</li>
+<li>We can try to simulate from a simple model, the LMM, which has close form solution. We can see how well we fit. In fact this seemingly simple model can be a difficult problem to solve in given circumstances! Suppose we have $$Y=X\beta+E$$ $$\beta \sim N(0, \sigma_\beta^2I)$$ then $$Y \sim N(0, \sigma_\beta^2XX^T+\sigma_e^2I)$$ When $XX^T$ is identity, estimates for $\sigma_\beta$ and $\sigma_e$ are not identifiable. This may explain why <code>mr-ash</code> failed to recover any signal when there is no correlation between columns of $X$. </li>
+</ol>
+<p>Next steps:</p>
+<ol>
+<li>Simulate and fit under LMM model, also fit that simple simulation to <code>mr-ash</code>. Check out <code>BoltLMM</code> paper from Price Lab.</li>
+<li>Try make predictions with <code>mr-ash</code> and <code>ash</code> results and see how well it works</li>
+<li>Minor fix: include z-scores in diagnostic plots</li>
+</ol>
 <h2 id="Project-meeting-20170615">Project meeting 20170615<a class="anchor-link" href="#Project-meeting-20170615">&#182;</a></h2><p>With Matthew on simulation results</p>
 <ul>
 <li>Analyze with ASH and see what to exploit</li>
@@ -286,19 +300,6 @@ $( document ).ready(function(){
 
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
 </div>
     </div>
   </div>
