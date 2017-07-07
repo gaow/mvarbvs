@@ -111,8 +111,11 @@ with open('docs/js/docs.js', 'w') as f:
 # release website
 run:
   cd docs && git add . && git commit --no-verify -m "${CONFIG['release_message']}" && git push --no-verify
-if CONFIG['post_release_actions']:
-   run('''${CONFIG['post_release_actions']}''')
+
+[post-release]
+# post release actions
+run:
+ ${CONFIG['post_release_actions']}
 
 [default_1]
 # compile everything
@@ -127,3 +130,5 @@ if len(pipeline_files):
 sos_run('update-toc')
 if CONFIG['release_message']:
    sos_run('release-website')
+if CONFIG['post_release_actions']:
+   sos_run('post-release')
