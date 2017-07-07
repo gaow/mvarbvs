@@ -421,8 +421,10 @@ body {
 .source .mh { color: #666666 } /* Literal.Number.Hex */
 .source .mi { color: #666666 } /* Literal.Number.Integer */
 .source .mo { color: #666666 } /* Literal.Number.Oct */
+.source .sa { color: #BA2121 } /* Literal.String.Affix */
 .source .sb { color: #BA2121 } /* Literal.String.Backtick */
 .source .sc { color: #BA2121 } /* Literal.String.Char */
+.source .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .source .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .source .s2 { color: #BA2121 } /* Literal.String.Double */
 .source .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -433,9 +435,11 @@ body {
 .source .s1 { color: #BA2121 } /* Literal.String.Single */
 .source .ss { color: #19177C } /* Literal.String.Symbol */
 .source .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.source .fm { color: #0000FF } /* Name.Function.Magic */
 .source .vc { color: #19177C } /* Name.Variable.Class */
 .source .vg { color: #19177C } /* Name.Variable.Global */
 .source .vi { color: #19177C } /* Name.Variable.Instance */
+.source .vm { color: #19177C } /* Name.Variable.Magic */
 .source .il { color: #666666 } /* Literal.Number.Integer.Long */
 
  </style>
@@ -653,7 +657,7 @@ rm -f <span class="si">${</span><span class="nv">_input</span><span class="p">!n
 </pre></div>
 
 <div class="source blob-code sos-script "><pre><span></span><span class="nb">echo</span> <span class="si">${</span><span class="nv">input</span><span class="p">!n</span><span class="si">}</span> <span class="p">|</span> sed <span class="s1">&#39;s/ /\n/g&#39;</span> <span class="p">|</span> grep -v chrX &gt; plink.merge-list
-plink --bfile <span class="si">${</span><span class="nv">input</span><span class="p">[0]!n</span><span class="si">}</span> --merge-list plink.merge-list --out <span class="si">${</span><span class="nv">output</span><span class="p">!n</span><span class="si">}</span> --chr 1-22 --make-bed
+plink --bfile <span class="si">${</span><span class="nv">input</span><span class="p">[0]!n</span><span class="si">}</span> --merge-list plink.merge-list --out <span class="si">${</span><span class="nv">output</span><span class="p">!n</span><span class="si">}</span> --chr <span class="m">1</span>-22 --make-bed
 rm plink.merge-list
  
 </pre></div>

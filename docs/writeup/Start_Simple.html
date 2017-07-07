@@ -159,7 +159,8 @@ body {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -167,7 +168,8 @@ body {
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -182,11 +184,11 @@ We will contrast the difference between analyze the 2 SNPs separately vs. analyz
 This can be done to GTEx data with straightforward linear regression analysis.
 @gaow is going to invest it soon.</p>
 <h3 id="2-tissues">2 tissues<a class="anchor-link" href="#2-tissues">&#182;</a></h3><p>This aims to simulate / solve a situation simple enough that we can leverage to fully investigate properties of the multi-SNP approach in multiple tissues.
-Currently we are having computational issues with $J &gt; 2$, that the residual variance for response is a $J \times J$ matrix and there can be too many parameters to estimate. 
+Currently we are having computational issues with $J > 2$, that the residual variance for response is a $J \times J$ matrix and there can be too many parameters to estimate. 
 @pcarbo points out that if we start with $J = 2$ and instead of using <code>ash</code> we can simply enumerate the model underlying the "ground truth" (giving us a "2D spike-slab" mixture) 
 and we can possibly infer all parameters involved via variational EM.
 In this setting the residual covariance matrix will have only 3 parameters to estimate at each iteration.
-This simple model (with $J = 2$ and $P &gt; 2$) and parameters to infer is outlined as follows:
+This simple model (with $J = 2$ and $P > 2$) and parameters to infer is outlined as follows:
 <img src="figures/2tissues-model.png" alt="">
 Solving this model will not only give us estimate of effects (as <code>ash</code> model does), but also give estimates of weights on mixture components that, unlike <code>ash</code> weights, has clear interpretation.</p>
 <p>This model can possibly be solved via:</p>
@@ -210,12 +212,12 @@ For this simple case we can solve $\Sigma$ the residual variance updates at each
 We can also use this to evaluate diagonal $\Sigma$ approximation.
 It will also provide ground truth of effect size to compare with <code>m&amp;m ash</code> estimates.
 My concern with formulating and solving the model as described is that it might still be difficult and computationally intensive,
-and even if we workout $J = 2$ case it is hard to justify that at $J &gt; 2$ case we can safely switch to using <code>ash</code> approach instead and all our investigation at $J = 2$ will remain held.</li>
+and even if we workout $J = 2$ case it is hard to justify that at $J > 2$ case we can safely switch to using <code>ash</code> approach instead and all our investigation at $J = 2$ will remain held.</li>
 <li>@NKweiwang points out that effect size estimate with <code>m&amp;m ash</code> may well be as good as solving this model, 
 although <code>m&amp;m ash</code> does not provide mixture proportion estimates.</li>
 <li>@pcarbo thinks if we can workout $J = 2$ case alone and find good data example, 
 it warrants a paper on a biological journal. 
-We can then publish a statistical paper on $J &gt; 2$ with <code>m&amp;m ash</code> model that makes additional assumptions to deal with computational limitations of the $J = 2$ approach.</li>
+We can then publish a statistical paper on $J > 2$ with <code>m&amp;m ash</code> model that makes additional assumptions to deal with computational limitations of the $J = 2$ approach.</li>
 </ul>
 </div>
 </div>
