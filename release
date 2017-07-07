@@ -1,81 +1,129 @@
 #!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
-parameter: web_url = 'http://gaow.github.io/mvarbvs'
+DEFAULT_CONF = {
+           'name': 'Human Genome Project',
+           'repo': 'http://github.com/gaow/test-jnbinder',
+           'footer': "&copy 2016-2017 Gao Wang at Stephens Lab, University of Chicago",
+           'include_dir': [],
+           'exclude_file': [],
+           'disqus': None,
+           'release_message': None,
+           'post_release_actions': None,
+           'homepage_label': 'Overview',
+           'source_label': '<span class="fa fa-github"></span>',
+           'theme': 'cosmo',
+           'homepage': 'Overview.ipynb',
+           'font': "Droid Sans",
+           'nb_toc': True
+           }
+CONFIG.update({k:v for k,v in DEFAULT_CONF.items() if k not in CONFIG})
+parameter: binders = CONFIG['include_dir']
+# parameter: binders = [x for x in next(os.walk('./'))[1] if x not in CONFIG['exclude_dir'] + ['docs'] and not x.startswith('.')]
+parameter: notebook_files = sum([[y for y in glob.glob("{}/*.ipynb".format(x)) if y not in ["{}/index.ipynb".format(x), "{}/_index.ipynb".format(x), CONFIG['homepage']] + CONFIG['exclude_file']] for x in binders], [])
+parameter: pipeline_files = sum([[y for y in glob.glob("{}/*.sos".format(x)) if y not in CONFIG['exclude_file']] for x in binders], [])
 
-[convert-pipeline]
-input:  './pipeline/*.sos', group_by=1
-output: _input[0].replace('/pipeline/', '/docs/doc/pipeline/').replace('.sos', '.pipeline.html')
-
+[upgrade-jnbinder]
+download:
+  https://github.com/gaow/jnbinder/archive/master.zip
 run:
-	sos convert ${_input} ${_output}
-
-[convert-pipeline-notebook]
-input:  './pipeline/*.ipynb', group_by=1
-output: _input[0].replace('/pipeline/', '/docs/doc/pipeline/').replace('.ipynb', '.html')
-
-run:
-	sos convert ${_input!a} ${_output!a} --template analysis/notebook/toc_doc.tpl
-  perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output!a}
-
-[convert-documentation]
-input:  './analysis/notebook/*.ipynb', group_by=1
-depends: './analysis/notebook/toc_doc.tpl'
-output: _input[0].replace('/analysis/notebook/', '/docs/doc/documentation/').replace('.ipynb', '.html')
-
-run:	
-	sos convert ${_input!a} ${_output!a} --template analysis/notebook/toc_doc.tpl
-  perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output!a}
-
-[convert-writeup]
-input:  './analysis/writeup/*.ipynb', group_by=1
-depends: './analysis/writeup/toc_wrt.tpl'
-output: _input[0].replace('/analysis/writeup/', '/docs/doc/writeup/').replace('.ipynb', '.html')
-
-run: 
-	sos convert ${_input!a} ${_output!a}  --template analysis/writeup/toc_wrt.tpl
-  perl -0777 -pi -e 'BEGIN{undef $/;}  s/<style type=\"text\/css\">(.+?)<\/style>//smg' ${_output!a}
-
-[convert-homepage]
-input:  './analysis/homepage/*.ipynb', group_by=1
-depends: './analysis/homepage/homepage.tpl'
-output: "./docs/${_input!bn}.html"
-
-run: 
-	sos convert ${_input!a} ${_output!a} --template analysis/homepage/homepage.tpl
-
-
-[getFileNames]
-run:
-	python docs/js/findnames.py
-
-[update-website]
-
-# convert ipynb to HTML
-sos_run('getFileNames')
-if len(glob.glob('analysis/notebook/*.ipynb')) > 0:
-   sos_run('convert-documentation')
-if len(glob.glob('analysis/writeup/*.ipynb')) > 0:
-   sos_run('convert-writeup')
-if len(glob.glob('pipeline/*.sos')) > 0:
-   sos_run('convert-pipeline')
-if len(glob.glob('pipeline/*.ipynb')) > 0:
-   sos_run('convert-pipeline-notebook')
-sos_run('convert-homepage')
-
-# push changes to website
-parameter: msg = "Update website"
-
-run: workdir='.'
-	git add --all docs/doc/* docs/*.html
-	git commit docs/js/docs.js docs/*.html docs/doc/* --no-verify -m '${msg}'
-	git push --no-verify
-  cd analysis/writeup/8858826xzvbppzrxmtw
-  git pull
+  unzip master.zip
+  cp jnbinder-master/docs/jnbinder.py docs
+  cp jnbinder-master/docs/css/* docs/css
+  cp jnbinder-master/config.yml config.default.yml
+  cp jnbinder-master/release ./
+  rm -rf jnbinder-master master.zip
 
 [check-link]
+depends: executable('linkchecker')
 run:
-    linkchecker ${web_url}
+  linkchecker http://${CONFIG['repo']!db}.github.io/${CONFIG['repo']!b}
 
-[default]
-sos_run('update-website')
+[update-tpl]
+# set up templates in existing directories
+# and update gitignore file
+depends: 'docs/jnbinder.py'
+output: ["docs/{}.tpl".format(x) for x in binders] + ['docs/index.tpl', '.gitignore']
+import os, sys
+sys.path.append('docs')
+from jnbinder import make_template
+make_template(CONFIG, binders, 'docs')
+flag = True
+if os.path.isfile('.gitignore'):
+  lines = [x.strip() for x in open('.gitignore').readlines()]
+  if '**/.sos' in lines:
+    flag = False
+if flag:
+  with open('.gitignore', 'a') as f:
+    f.write('\n**/.sos\n**/.ipynb_checkpoints\ndocs/__pycache__\n**/_index.ipynb\n**/_index.html')
+
+[update-index]
+# update index
+input: for_each = ['binders']
+output: ["{}/_index.ipynb".format(x) for x in binders]
+python:
+import os, sys
+sys.path.append('docs')
+from jnbinder import make_index_nb, make_empty_nb
+data = make_index_nb(${_binders!r}, [${CONFIG['exclude_file']!r,}] + [${CONFIG['homepage']!r}])
+with open('${_binders}/_index.ipynb', 'w') as f:
+    f.write(data.strip())
+if not os.path.isfile(${CONFIG['homepage']!r}):
+   with open(${CONFIG['homepage']!r}, 'w') as f:
+        f.write(make_empty_nb(${CONFIG['name']!r}))
+
+[update-hp]
+# update homepages HTML
+input: ['{}/index.ipynb'.format(x) if os.path.isfile('{}/index.ipynb'.format(x)) else '{}/_index.ipynb'.format(x) for x in binders] + [CONFIG['homepage']], group_by = 1
+output: 'docs/' + _input[0].replace(CONFIG['homepage'], 'index.ipynb').replace('/_index', '').replace('/index', '').replace('.ipynb', '.html')
+#task:
+run:
+  sos convert ${_input!a} ${_output!a} --template docs/index.tpl --log-level 0
+  perl -i -ne 'print if /\S/' ${_output!a}
+
+[update-nb]
+# update notebook HTML
+input: notebook_files, group_by = 1
+output: 'docs/' + _input[0].replace('.ipynb', '.html')
+#task:
+run:
+  sos convert ${_input!a} ${_output!a} --template docs/${_input!d}.tpl --log-level 0
+  perl -i -ne 'print if /\S/' ${_output!a}
+
+[update-sos]
+# update pipeline HTML
+input: pipeline_files, group_by = 1
+output: 'docs/' + _input[0].replace('.sos', '.pipeline.html')
+#task:
+run:
+  sos convert ${_input} ${_output}
+
+[update-toc]
+# update js file for toc
+import sys
+sys.path.append('docs')
+from jnbinder import get_toc
+out = [get_toc(x, CONFIG['exclude_file'] + [CONFIG['homepage']]) for x in binders]
+with open('docs/js/docs.js', 'w') as f:
+  f.write('\n'.join(['\n'.join(x) for x in out]))
+
+[release-website]
+# release website
+run:
+  cd docs && git add . && git commit --no-verify -m "${CONFIG['release_message']}" && git push --no-verify
+if CONFIG['post_release_actions']:
+   run('''${CONFIG['post_release_actions']}''')
+
+[default_1]
+# compile everything
+if len(binders):
+   sos_run('update-tpl')
+   sos_run('update-index')
+   sos_run('update-hp')
+if len(notebook_files):
+   sos_run('update-nb')
+if len(pipeline_files):
+   sos_run('update-sos')
+sos_run('update-toc')
+if CONFIG['release_message']:
+   sos_run('release-website')
