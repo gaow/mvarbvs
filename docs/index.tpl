@@ -1,10 +1,17 @@
+{%- extends 'basic.tpl' -%}
+
+{%- block header -%}
+{{ super() }}
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta charset="utf-8">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+
 <title>m&m ash</title>
+
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
@@ -12,6 +19,7 @@
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 <link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
 <style type="text/css">code{white-space: pre;}</style>
 <link rel="stylesheet"
       href="site_libs/highlight/textmate.css"
@@ -51,6 +59,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
     });
 </script>
 </head>
+
 <body>
 <style type = "text/css">
 @font-face {
@@ -71,24 +80,29 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
  font-style: normal;
  src: local('PT Mono'), url('fonts/ptmono.ttf') format('truetype');
 }
+
 body {
   font-family: "Droid Sans";
   font-size: 160%;
   padding-top: 51px;
   padding-bottom: 40px;
 }
+
 h1 {
   margin-top: 25px;
   margin-bottom: 30px;
 }
+
 h2 {
   margin-bottom: 25px;
 }
+
 a.anchor-link:link {
   text-decoration: none;
   padding: 0px 20px;
   visibility: hidden;
 }
+
 h1:hover .anchor-link,
 h2:hover .anchor-link,
 h3:hover .anchor-link,
@@ -97,6 +111,7 @@ h5:hover .anchor-link,
 h6:hover .anchor-link {
   visibility: visible;
 }
+
 .main-container {
   max-width: 940px;
   margin-left: auto;
@@ -117,6 +132,7 @@ button.code-folding-btn:focus {
   outline: none;
 }
 </style>
+
 <script>
 // manage active state of menu based on current page
 $(document).ready(function () {
@@ -126,13 +142,17 @@ $(document).ready(function () {
   if (href === "")
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
+
   // mark it active
   menuAnchor.parent().addClass('active');
+
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
 });
 </script>
+
 <div class="container-fluid main-container">
+
 <!-- tabsets -->
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <script>
@@ -140,7 +160,9 @@ $(document).ready(function () {
   window.buildTabsets("TOC");
 });
 </script>
+
 <!-- code folding -->
+
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -153,18 +175,23 @@ $(document).ready(function () {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        
 <li>
   <a href="./index.html">Overview</a>
 </li>
+    
 <li>
   <a href="./analysis.html">Analysis</a>
 </li>
+        
 <li>
   <a href="./pipeline.html">Pipeline</a>
 </li>
+        
 <li>
   <a href="./writeup.html">Writeup</a>
 </li>
+        
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
@@ -176,68 +203,22 @@ $(document).ready(function () {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Writeup">Writeup<a class="anchor-link" href="#Writeup">&#182;</a></h1>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Notebooks">Notebooks<a class="anchor-link" href="#Notebooks">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="writeup/GTEx7_Analysis_Plan.html">GTEx7 Analysis Plan</a><br>
-&nbsp; &nbsp; GTEx V7 eQTL data analysis procedure</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="writeup/Meetings.html">Meetings</a><br>
-&nbsp; &nbsp; Meetings</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="writeup/Modular_MNMASH.html">Modular MNMASH</a><br>
-&nbsp; &nbsp; A modular approach to M&amp;M ASH model</p>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="writeup/Start_Simple.html">Start Simple</a><br>
-&nbsp; &nbsp; Start Simple!</p>
-</div>
-</div>
-</div>
+
+{%- endblock header -%}
+{% block footer %}
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
 <!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
 </div>
+
 <script>
 // add bootstrap table styles to pandoc tables
 $(document).ready(function () {
   $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
 });
 </script>
+
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
   (function () {
@@ -249,3 +230,4 @@ $(document).ready(function () {
 </script>
 </body>
 </html>
+{% endblock %}
