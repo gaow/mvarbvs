@@ -7,6 +7,7 @@ DEFAULT_CONF = {
            'footer': "&copy 2016-2017 Gao Wang at Stephens Lab, University of Chicago",
            'include_dir': [],
            'exclude_file': [],
+           'hide_navbar': [],
            'disqus': None,
            'release_message': None,
            'post_release_actions': None,
@@ -15,9 +16,10 @@ DEFAULT_CONF = {
            'theme': 'cosmo',
            'homepage': 'Overview.ipynb',
            'font': "Droid Sans",
-           'nb_toc': True
+           'notebook_toc': True
            }
 CONFIG.update({k:v for k,v in DEFAULT_CONF.items() if k not in CONFIG})
+
 parameter: binders = CONFIG['include_dir']
 # parameter: binders = [x for x in next(os.walk('./'))[1] if x not in CONFIG['exclude_dir'] + ['docs'] and not x.startswith('.')]
 parameter: notebook_files = sum([[y for y in glob.glob("{}/*.ipynb".format(x)) if y not in ["{}/index.ipynb".format(x), "{}/_index.ipynb".format(x), CONFIG['homepage']] + CONFIG['exclude_file']] for x in binders], [])
@@ -31,7 +33,11 @@ run:
   cp jnbinder-master/docs/jnbinder.py docs
   cp jnbinder-master/docs/css/* docs/css
   cp jnbinder-master/config.yml config.default.yml
-  cp jnbinder-master/release ./
+  if [ -f release.sos ]; then
+     cp jnbinder-master/release ./release.sos
+  else
+     cp jnbinder-master/release ./
+  fi
   rm -rf jnbinder-master master.zip
 
 [check-link]
@@ -59,27 +65,26 @@ if flag:
 
 [update-index]
 # update index
-input: for_each = ['binders']
-output: ["{}/_index.ipynb".format(x) for x in binders]
-python:
 import os, sys
 sys.path.append('docs')
 from jnbinder import make_index_nb, make_empty_nb
-data = make_index_nb(${_binders!r}, [${CONFIG['exclude_file']!r,}] + [${CONFIG['homepage']!r}])
-with open('${_binders}/_index.ipynb', 'w') as f:
-    f.write(data.strip())
-if not os.path.isfile(${CONFIG['homepage']!r}):
-   with open(${CONFIG['homepage']!r}, 'w') as f:
-        f.write(make_empty_nb(${CONFIG['name']!r}))
+for binder in binders:
+  if not os.path.isfile('{}/index.ipynb'.format(binder)):
+    data = make_index_nb(binder, CONFIG['exclude_file'] + [CONFIG['homepage']])
+    with open('{}/_index.ipynb'.format(binder), 'w') as f:
+      f.write(data.strip())
+if not os.path.isfile(CONFIG['homepage']):
+  with open(CONFIG['homepage'], 'w') as f:
+    f.write(make_empty_nb(CONFIG['name']))
 
 [update-hp]
 # update homepages HTML
-input: ['{}/index.ipynb'.format(x) if os.path.isfile('{}/index.ipynb'.format(x)) else '{}/_index.ipynb'.format(x) for x in binders] + [CONFIG['homepage']], group_by = 1
-output: 'docs/' + _input[0].replace(CONFIG['homepage'], 'index.ipynb').replace('/_index', '').replace('/index', '').replace('.ipynb', '.html')
+input: ['{}/index.ipynb'.format(x) if os.path.isfile('{}/index.ipynb'.format(x)) else '{}/_index.ipynb'.format(x) for x in binders if x not in CONFIG['hide_navbar']] + [CONFIG['homepage']], group_by = 1
+output: ['docs/{}.html'.format(x) for x in binders if x not in CONFIG['hide_navbar']] + ['docs/index.html']
 #task:
 run:
-  sos convert ${_input!a} ${_output!a} --template docs/index.tpl --log-level 0
-  perl -i -ne 'print if /\S/' ${_output!a}
+  sos convert ${_input!a} ${output[_index]!a} --template docs/index.tpl --log-level 0
+  perl -i -ne 'print if /\S/' ${output[_index]!a}
 
 [update-nb]
 # update notebook HTML
@@ -111,11 +116,8 @@ with open('docs/js/docs.js', 'w') as f:
 # release website
 run:
   cd docs && git add . && git commit --no-verify -m "${CONFIG['release_message']}" && git push --no-verify
-
-[post-release]
-# post release actions
-run:
- ${CONFIG['post_release_actions']}
+if CONFIG['post_release_actions']:
+   run(CONFIG['post_release_actions'])
 
 [default_1]
 # compile everything
@@ -130,5 +132,3 @@ if len(pipeline_files):
 sos_run('update-toc')
 if CONFIG['release_message']:
    sos_run('release-website')
-if CONFIG['post_release_actions']:
-   sos_run('post-release')

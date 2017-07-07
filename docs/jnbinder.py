@@ -174,7 +174,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 body {
   %s
   font-size: 160%%;
-  padding-top: 51px;
+  padding-top: 66px;
   padding-bottom: 40px;
 }
 
@@ -305,8 +305,8 @@ $(document).ready(function () {
 </body>
 </html>
 {%% endblock %%}
-	''' % (conf['name'], conf['theme'], get_font(conf['font']),
-           conf['name'], get_nav(dirs, conf['homepage_label']),
+	''' % (conf['name'], conf['theme'], get_font(conf['font']), conf['name'],
+           get_nav([x for x in dirs if not x in conf['hide_navbar']], conf['homepage_label']),
            conf['repo'], conf['source_label'], conf['footer'],
            get_disqus(conf['disqus']))
     return content
@@ -405,7 +405,7 @@ $(document).ready(function () {
 <style type = "text/css">
 body {
   %s
-  padding-top: 51px;
+  padding-top: 66px;
   padding-bottom: 40px;
 }
 </style>
@@ -448,9 +448,9 @@ body {
 </body>
 </html>
 {%% endblock %%}
-	''' % (conf['theme'], get_sidebar(path) if conf['nb_toc'] else '',
-           conf['name'], get_font(conf['font']),
-           conf['name'], get_nav(dirs, conf['homepage_label'], '../'),
+	''' % (conf['theme'], get_sidebar(path) if conf['notebook_toc'] else '',
+           conf['name'], get_font(conf['font']), conf['name'],
+           get_nav([x for x in dirs if not x in conf['hide_navbar']], conf['homepage_label'], '../'),
            conf['repo'], conf['source_label'])
     return content
 
@@ -469,7 +469,7 @@ def get_notebook_toc(path, exclude):
         name = os.path.basename(fn[:-6]).strip()
         with open(fn) as f:
             data = json.load(f)
-        title = data["cells"][0]["source"][0].replace(" ", "-")[2:].strip() + "-1"
+        title = re.compile('([^\s\w])+').sub('', data["cells"][0]["source"][0]).strip().replace(" ", "-") + "-1"
         out +='"' + title + '":"' + name + '",'
     if not out.endswith('{'):
         out = out[:-1]
@@ -496,7 +496,7 @@ def get_toc(path, exclude):
     return [get_index_toc(path) + '\n' + get_notebook_toc(path, exclude)]
 
 def make_index_nb(path, exclude):
-    sos_files = [x for x in glob.glob(os.path.join(path, "*.sos")) if not x in exclude]
+    sos_files = [x for x in sorted(glob.glob(os.path.join(path, "*.sos")), reverse = True) if not x in exclude]
     out = '''
 {
  "cells": [
@@ -516,7 +516,7 @@ def make_index_nb(path, exclude):
     "## Notebooks"
    ]
   },'''
-    for fn in sorted(glob.glob(os.path.join(path, "*.ipynb"))):
+    for fn in sorted(glob.glob(os.path.join(path, "*.ipynb")), reverse = True):
         if os.path.basename(fn) in ['_index.ipynb', 'index.ipynb'] or fn in exclude:
             continue
         name = os.path.splitext(os.path.basename(fn))[0].replace('_', ' ')
