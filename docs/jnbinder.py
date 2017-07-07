@@ -496,6 +496,7 @@ def get_toc(path, exclude):
     return [get_index_toc(path) + '\n' + get_notebook_toc(path, exclude)]
 
 def make_index_nb(path, exclude):
+    sos_files = [x for x in glob.glob(os.path.join(path, "*.sos")) if not x in exclude]
     out = '''
 {
  "cells": [
@@ -505,14 +506,16 @@ def make_index_nb(path, exclude):
    "source": [
     "# %s"
    ]
-  },
+  },''' % os.path.basename(path.capitalize())
+    if len(sos_files):
+        out += '''
   {
    "cell_type": "markdown",
    "metadata": {},
    "source": [
     "## Notebooks"
    ]
-  },''' % os.path.basename(path.capitalize())
+  },'''
     for fn in sorted(glob.glob(os.path.join(path, "*.ipynb"))):
         if os.path.basename(fn) in ['_index.ipynb', 'index.ipynb'] or fn in exclude:
             continue
@@ -529,17 +532,15 @@ def make_index_nb(path, exclude):
     "&nbsp; &nbsp; %s"
    ]
   },''' % (name, path, os.path.splitext(os.path.basename(fn))[0] + '.html', title)
-    sos_files = [x for x in glob.glob(os.path.join(path, "*.sos")) if not x in exclude]
     if len(sos_files):
         out += '''
-      {
-       "cell_type": "markdown",
-       "metadata": {},
-       "source": [
-        "## Pipelines"
-       ]
-      },
-        '''
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Pipelines"
+   ]
+  },'''
     for fn in sos_files:
         name = os.path.splitext(os.path.basename(fn))[0].replace('_', ' ')
         out += '''
