@@ -183,9 +183,9 @@ body {
 </div><!--/.navbar -->
 {%- endblock header -%}
 {% block footer %}
-</div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
+</div>
 </div>
 </body>
 </html>

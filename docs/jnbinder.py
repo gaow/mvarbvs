@@ -443,9 +443,9 @@ body {
 </div><!--/.navbar -->
 {%%- endblock header -%%}
 {%% block footer %%}
-</div>
 <hr>
 %s
+</div>
 </div>
 </body>
 </html>
