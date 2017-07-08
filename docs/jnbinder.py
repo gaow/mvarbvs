@@ -444,6 +444,8 @@ body {
 {%%- endblock header -%%}
 {%% block footer %%}
 </div>
+<hr>
+%s
 </div>
 </body>
 </html>
@@ -451,7 +453,7 @@ body {
 	''' % (conf['theme'], get_sidebar(path) if conf['notebook_toc'] else '',
            conf['name'], get_font(conf['font']), conf['name'],
            get_nav([x for x in dirs if not x in conf['hide_navbar']], conf['homepage_label'], '../'),
-           conf['repo'], conf['source_label'])
+           conf['repo'], conf['source_label'], conf['footer'])
     return content
 
 def make_template(conf, dirs, outdir):

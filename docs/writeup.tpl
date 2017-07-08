@@ -129,7 +129,7 @@ $(document).ready(function () {
 <style type = "text/css">
 body {
   font-family: "Droid Sans";
-  padding-top: 51px;
+  padding-top: 66px;
   padding-bottom: 40px;
 }
 </style>
@@ -184,6 +184,8 @@ body {
 {%- endblock header -%}
 {% block footer %}
 </div>
+<hr>
+&copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
 </div>
 </body>
 </html>
