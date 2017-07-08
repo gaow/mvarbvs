@@ -471,7 +471,7 @@ def get_notebook_toc(path, exclude):
         name = os.path.basename(fn[:-6]).strip()
         with open(fn) as f:
             data = json.load(f)
-        title = re.compile('([^\s\w])+').sub('', data["cells"][0]["source"][0]).strip().replace(" ", "-") + "-1"
+        title = re.compile('(^\W+|\W+$)').sub('', data["cells"][0]["source"][0]).strip().replace(" ", "-") + "-1"
         out +='"' + title + '":"' + name + '",'
     if not out.endswith('{'):
         out = out[:-1]
