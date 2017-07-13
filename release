@@ -146,5 +146,5 @@ if len(notebook_files):
 if len(pipeline_files):
    sos_run('update-sos')
 sos_run('update-toc')
-if CONFIG['release_message']:
+if CONFIG['release_message'] and get_output('git status --untracked-files=no --porcelain').strip():
    sos_run('release-website')
