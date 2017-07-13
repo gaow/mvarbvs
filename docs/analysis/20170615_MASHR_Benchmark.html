@@ -164,8 +164,17 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="mashr-R-vs.-C++-benchmark">mashr R vs. C++ benchmark<a class="anchor-link" href="#mashr-R-vs.-C++-benchmark">&#182;</a></h1><p>We've recently implemented a C++ version of <code>mashr</code> which seems to perform very well on small scale toy data. How does it scale with data size? This notebook benchmarks speed of both implementations on small to larger scale of data.</p>
-<p><strong>last modified:</strong> Sat Jul 8 18:33:55 2017<br><strong>last committed:</strong> revision 179, <font color="gray">11b2bc9bb6d78debef0c47cda59a62d18624764a</font></p>
+<h1 id="mashr-R-vs.-C++-benchmark">mashr R vs. C++ benchmark<a class="anchor-link" href="#mashr-R-vs.-C++-benchmark">&#182;</a></h1>
+<p><strong>last modified:</strong> Thu Jul 13 17:47:42 2017<br><strong>last committed:</strong> revision 181, <a href="http://github.com/gaow/mvarbvs/commit/ab04e894861c831271461286e05426058dcc7933">ab04e89</a></p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We've recently implemented a C++ version of <code>mashr</code> which seems to perform very well on small scale toy data. How does it scale with data size? This notebook benchmarks speed of both implementations on small to larger scale of data.</p>
 <p>Before getting to the experiements let's recap the problem and its expected computational requirement. We are fitting <code>mash</code> model with data-set of $J$ effects, $R$ conditions, on $K$ priors each with $L$ grids. Often a straightforward loop is applied over all combinations, generating $LJK$ problems. Then for each problem it often involves some Gaussian density calculation which requires computing inverse of an $R$ matrix. So the computational should scale by the order of $O(LJKR^3)$.</p>
 </div>
 </div>
