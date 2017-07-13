@@ -25,7 +25,7 @@ def get_commit_info(fn, conf):
             res.append("<strong>last modified:</strong> {}".\
                        format(get_output('git show -s --format="%cd" --date=local {}'.format(long_fmt))))
             res.append('<strong>last committed:</strong> revision {}, <a href=\\"{}\\">{}</a>'.\
-                       format(get_output('git rev-list --count HEAD'),
+                       format(get_output('git rev-list --count {}'.format(long_fmt)),
                               "{}/commit/{}".format(conf['repo'], long_fmt),
                               short_fmt))
         except:
