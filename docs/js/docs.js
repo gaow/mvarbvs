@@ -1,6 +1,6 @@
-var analysisArray = ["MR_ASH_Simulation", "MR_ASH_Example", "20170630_Simulation_Results", "20170615_MASHR_Benchmark", "20170523_GTEx_PCA_Label", "20170518_Imputation_Summary", "20170515_V7_RNASeq_Preprocessing", "20170515_V7_Missing_Data"]
+var analysisArray = ['MR_ASH_Simulation', 'MR_ASH_Example', '20170630_Simulation_Results', '20170615_MASHR_Benchmark', '20170523_GTEx_PCA_Label', '20170518_Imputation_Summary', '20170515_V7_RNASeq_Preprocessing', '20170515_V7_Missing_Data']
 var analysisDict = {"GTEx-V7-genotype-missing-data-summary-1":"20170515_V7_Missing_Data","GTEx-V7-RNA-Seq-data-processing-1":"20170515_V7_RNASeq_Preprocessing","Summary-of-imputation-outcome-1":"20170518_Imputation_Summary","Match-sample-label-with-GTEx-provided-PCA-results-1":"20170523_GTEx_PCA_Label","mashr-R-vs.-C++-benchmark-1":"20170615_MASHR_Benchmark","mr-ash-simulation-data-analysis-1":"20170630_Simulation_Results","mr-ash-example-analysis-1":"MR_ASH_Example","Simulation-of-quantitative-phenotype-given-genotypes-1":"MR_ASH_Simulation"}
-var pipelineArray = ["Pipelines", "simulation.pipeline", "prep.pipeline", "ResourceManagement.pipeline", "Misc.pipeline", "MatrixEQTL.pipeline", "DataWrestling.pipeline"]
+var pipelineArray = ['Pipelines', 'simulation.pipeline', 'prep.pipeline', 'ResourceManagement.pipeline', 'Misc.pipeline', 'MatrixEQTL.pipeline', 'DataWrestling.pipeline']
 var pipelineDict = {"m&m-ash-pipeline-execution-interface-1":"Pipelines"}
-var writeupArray = ["Start_Simple", "Modular_MNMASH", "Meetings", "GTEx7_Analysis_Plan"]
+var writeupArray = ['Start_Simple', 'Modular_MNMASH', 'Meetings', 'GTEx7_Analysis_Plan']
 var writeupDict = {"GTEx-V7-eQTL-data-analysis-procedure-1":"GTEx7_Analysis_Plan","Meetings-1":"Meetings","A-modular-approach-to-M&M-ASH-model-1":"Modular_MNMASH","Start-Simple-1":"Start_Simple"}
