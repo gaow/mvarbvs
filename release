@@ -5,9 +5,10 @@ import sys
 sys.path.append('docs')
 
 DEFAULT_CONF = {
-           'name': 'Human Genome Project',
-           'repo': 'http://github.com/gaow/test-jnbinder',
-           'author': None,
+           '__version__': '0.9.1',
+           '__about_commit__': 'https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids',
+           'name': 'A Pet Project',
+           'repo': 'http://github.com/gaow/jnbinder',
            'footer': "&copy 2016-2017 Gao Wang at Stephens Lab, University of Chicago",
            'include_dir': [],
            'exclude_file': [],
@@ -25,7 +26,7 @@ DEFAULT_CONF = {
            }
 CONFIG.update({k:v for k,v in DEFAULT_CONF.items() if k not in CONFIG})
 CONFIG['jt_theme'] = CONFIG['theme'] if os.path.isfile("docs/css/{}.css".format(CONFIG['theme'])) else None
-parameter: binders = CONFIG['include_dir']
+parameter: binders = [x for x in CONFIG['include_dir'] if os.path.isdir(x)]
 # parameter: binders = [x for x in next(os.walk('./'))[1] if x not in CONFIG['exclude_dir'] + ['docs'] and not x.startswith('.')]
 parameter: notebook_files = sum([[y for y in glob.glob("{}/*.ipynb".format(x)) if y not in ["{}/index.ipynb".format(x), "{}/_index.ipynb".format(x), CONFIG['homepage']] + CONFIG['exclude_file']] for x in binders], [])
 parameter: pipeline_files = sum([[y for y in glob.glob("{}/*.sos".format(x)) if y not in CONFIG['exclude_file']] for x in binders], [])
@@ -82,10 +83,9 @@ if flag:
 import os
 from jnbinder import make_index_nb, make_empty_nb
 for binder in binders:
-  if not os.path.isfile('{}/index.ipynb'.format(binder)):
-    data = make_index_nb(binder, CONFIG['exclude_file'] + [CONFIG['homepage']])
-    with open('{}/_index.ipynb'.format(binder), 'w') as f:
-      f.write(data.strip())
+  data = make_index_nb(binder, CONFIG['exclude_file'] + [CONFIG['homepage']])
+  with open('{}/_index.ipynb'.format(binder), 'w') as f:
+    f.write(data.strip())
 if not os.path.isfile(CONFIG['homepage']):
   with open(CONFIG['homepage'], 'w') as f:
     f.write(make_empty_nb(CONFIG['name']))
@@ -103,14 +103,14 @@ run:
 [update-nb]
 # update notebook HTML
 from jnbinder import get_commit_info
-parameter: nb_headers = [get_commit_info(x, CONFIG) for x in notebook_files]
-input: notebook_files, group_by = 1, paired_with = ['nb_headers']
+parameter: nb_info = [get_commit_info(x, CONFIG) for x in notebook_files]
+input: notebook_files, group_by = 1, paired_with = ['nb_info']
 output: 'docs/' + _input[0].replace('.ipynb', '.html')
 #task:
 run:
   sos convert ${_input!a} ${_output!a} --template docs/${_input!d}.tpl --log-level 0
-  num=`grep -n -m 1 "^<h1 id=" ${_output!a} | sed 's/\([0-9]*\).*/\1/'`
-  perl -i -lpe 'print "${_nb_headers}" if $. == '"$num"'+1' ${_output!a}
+  num=`grep -n -Fx '''${CONFIG['footer']}''' ${_output!a} | tail -1 | sed 's/\([0-9]*\).*/\1/'`
+  perl -i -lpe 'print "${_nb_info}" if $. == '"$num"'+1' ${_output!a}
   perl -i -ne 'print if /\S/' ${_output!a}
 
 [update-sos]
@@ -129,23 +129,38 @@ with open('docs/js/docs.js', 'w') as f:
   f.write('\n'.join(['\n'.join(x) for x in out]))
 
 [release-website]
-# release website
+# release `docs`
 run:
   cd docs && git add . && git commit --no-verify -m "${CONFIG['release_message']}" && git push --no-verify
 if CONFIG['post_release_actions']:
    run(CONFIG['post_release_actions'])
 
 [default_1]
-# compile everything
-if len(binders):
-   sos_run('update-tpl')
-   sos_run('update-index')
-   sos_run('update-hp')
+# build ipynb website ...
+parameter: err_msg1 = '''
+[ERROR] No valid path found in `include_dir`!
+Please properly set `include_dir` in `config.yml`.
+'''
+parameter: err_msg2 = '''
+[ERROR] To properly add git commit info, the working tree must be empty;
+that is, all changes must be committed using "git commit".
+Please commit all changes, or you may set `add_commit_info: False`
+in `config.yaml` if you want to disable this feature.
+'''
+stop_if(len(binders) == 0, msg = err_msg1)
+if CONFIG['add_commit_info'] and os.path.isdir('.git'):
+  stop_if(get_output('git status --untracked-files=no --porcelain').strip(), msg = err_msg2)
+sos_run('update-tpl')
+sos_run('update-index')
+sos_run('update-hp')
 if len(notebook_files):
-   sos_run('update-nb')
+  sos_run('update-nb')
 if len(pipeline_files):
-   sos_run('update-sos')
+  sos_run('update-sos')
 sos_run('update-toc')
+for binder in binders:
+  if os.path.isfile("{}/_index.ipynb".format(binder)):
+    os.remove("{}/_index.ipynb".format(binder))
 if CONFIG['release_message']:
-   if get_output('git status --untracked-files=no --porcelain').strip():
-      sos_run('release-website')
+  if get_output('git status --untracked-files=no --porcelain').strip():
+    sos_run('release-website')
