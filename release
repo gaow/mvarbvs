@@ -94,7 +94,7 @@ if not os.path.isfile(CONFIG['homepage']):
 # update homepages HTML
 input: ['{}/index.ipynb'.format(x) if os.path.isfile('{}/index.ipynb'.format(x)) else '{}/_index.ipynb'.format(x) for x in binders if x not in CONFIG['hide_navbar']] + [CONFIG['homepage']], group_by = 1
 output: ['docs/{}.html'.format(x) for x in binders if x not in CONFIG['hide_navbar']] + ['docs/index.html']
-#task:
+task:
 run:
   sos convert ${_input!a} ${output[_index]!a} --template docs/index.tpl --log-level 0
   # sed -i 's/<div class="prompt input_prompt">In&nbsp;\[[0-9]\]:<\/div>//g' ${output[_index]!a}
@@ -106,7 +106,7 @@ from jnbinder import get_commit_info
 parameter: nb_info = [get_commit_info(x, CONFIG) for x in notebook_files]
 input: notebook_files, group_by = 1, paired_with = ['nb_info']
 output: 'docs/' + _input[0].replace('.ipynb', '.html')
-#task:
+task:
 run:
   sos convert ${_input!a} ${_output!a} --template docs/${_input!d}.tpl --log-level 0
   num=`grep -n -Fx '''${CONFIG['footer']}''' ${_output!a} | tail -1 | sed 's/\([0-9]*\).*/\1/'`
@@ -117,7 +117,7 @@ run:
 # update pipeline HTML
 input: pipeline_files, group_by = 1
 output: 'docs/' + _input[0].replace('.sos', '.pipeline.html')
-#task:
+task:
 run:
   sos convert ${_input} ${_output}
 
@@ -129,11 +129,13 @@ with open('docs/js/docs.js', 'w') as f:
   f.write('\n'.join(['\n'.join(x) for x in out]))
 
 [release-website]
-# release `docs`
-run:
-  cd docs && git add . && git commit --no-verify -m "${CONFIG['release_message']}" && git push --no-verify
-if CONFIG['post_release_actions']:
-   run(CONFIG['post_release_actions'])
+# git push website
+if CONFIG['release_message']:
+  try:
+    run('cd docs && git add . && git commit --no-verify -m "{}" && git push --no-verify'.format(CONFIG['release_message']))
+    run(CONFIG['post_release_actions'])
+  except:
+    pass
 
 [default_1]
 # build ipynb website ...
@@ -143,9 +145,9 @@ Please properly set `include_dir` in `config.yml`.
 '''
 parameter: err_msg2 = '''
 [ERROR] To properly add git commit info, the working tree must be empty;
-that is, all changes must be committed using "git commit".
-Please commit all changes, or you may set `add_commit_info: False`
-in `config.yaml` if you want to disable this feature.
+that is, all changes must be committed via "git commit".
+Please commit all changes and run this command again. Or you may set
+`add_commit_info: False` in `config.yaml` if you want to disable this feature.
 '''
 stop_if(len(binders) == 0, msg = err_msg1)
 if CONFIG['add_commit_info'] and os.path.isdir('.git'):
@@ -161,6 +163,9 @@ sos_run('update-toc')
 for binder in binders:
   if os.path.isfile("{}/_index.ipynb".format(binder)):
     os.remove("{}/_index.ipynb".format(binder))
-if CONFIG['release_message']:
-  if get_output('git status --untracked-files=no --porcelain').strip():
-    sos_run('release-website')
+sos_run('release-website')
+
+[clean]
+# remove generated files
+to_remove = ['docs/{}.html'.format(x) for x in binders if x not in CONFIG['hide_navbar']] + ['docs/index.html'] + ['docs/' + x.replace('.ipynb', '.html') for x in notebook_files] + ['docs/' + x.replace('.sos', '.pipeline.html') for x in pipeline_files] + ['docs/js/docs.js', 'docs/index.tpl'] + ["docs/{}.tpl".format(x) for x in binders]
+run("rm -f ${to_remove}")
