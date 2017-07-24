@@ -3,4 +3,4 @@ var analysisDict = {"GTEx-V7-genotype-missing-data-summary-1":"20170515_V7_Missi
 var pipelineArray = ['Pipelines', 'prep.pipeline', 'eqtl.pipeline', 'ResourceManagement.pipeline', 'Misc.pipeline', 'MatrixEQTL.pipeline', 'DataWrestling.pipeline']
 var pipelineDict = {"m-m-ash-pipeline-execution-interface-1":"Pipelines"}
 var writeupArray = ['Status_MR_ASH', 'Status_MM_ASH', 'Start_Simple', 'Modular_MNMASH', 'Meetings', 'GTEx7_Analysis_Plan']
-var writeupDict = {"GTEx-V7-eQTL-data-analysis-procedure-1":"GTEx7_Analysis_Plan","Meetings-1":"Meetings","A-modular-approach-to-M-M-ASH-model-1":"Modular_MNMASH","Start-Simple-1":"Start_Simple","Status-of-m-m-ash-project-1":"Status_MM_ASH","Status-of-mr-ash-project-1":"Status_MR_ASH"}
+var writeupDict = {"GTEx-V7-eQTL-data-analysis-procedure-1":"GTEx7_Analysis_Plan","Meetings-1":"Meetings","A-modular-approach-to-M&M-ASH-model-1":"Modular_MNMASH","Start-Simple-1":"Start_Simple","Status-of-m&m-ash-project-1":"Status_MM_ASH","Status-of-mr-ash-project-1":"Status_MR_ASH"}
