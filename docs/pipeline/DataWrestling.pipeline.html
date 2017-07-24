@@ -3,13 +3,10 @@
 <html>
 <head>
     <meta charset='utf-8'>
-
-
-
  <title>DataWrestling.sos</title>
 <meta http-equiv="content-type" content="text/html; charset=None">
-<style type="text/css">
 
+<style type="text/css">
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -211,38 +208,42 @@ pre {
 }
 
 .sos-comment {
-  background: #f7f7f7;
+  /* background: #f7f7f7; */
 }
 .sos-report {
   background: #FAFAD2;
   padding-top: 5px;
 }
 .sos-header {
-  margin-top: 20px;
+  margin-top: 5px;
   margin-bottom: 0px;
   padding-top: 5px;
-  background-color: #C0C0C0;
-  border-bottom-color: #dde4e6;
+  padding-bottom: 5px;
+  background-color: #ddd;
+  /* border-bottom-color: #dde4e6; */
+  color: darkblue;
+  border-top-style: solid;
 
 }
 .sos-directive {
   padding-top: 5px;
-  background-color: #fff9ea;
+  /* background-color: #fff9ea; */
   border-color: #f1c0c0;
 }
 .sos-statement {
   padding-top: 5px;
-  background-color: #f2f9fc;
+  /* background-color: #f2f9fc; */
 }
 .sos-error {
-  background: #ffdddd;
+  /* background: #ffdddd; */
+  color: red;
 }
 .sos-script {
   position: relative;
   padding-right: 10px;
   padding-left: 30px;
   vertical-align: top;
-  background-color: #eff0f1;
+  /* background-color: #eff0f1; */
 }
 
 
@@ -374,6 +375,7 @@ body {
   display: none;
 }
 
+
 .source .c { color: #408080; font-style: italic } /* Comment */
 .source .err { border: 1px solid #FF0000 } /* Error */
 .source .k { color: #008000; font-weight: bold } /* Keyword */
@@ -441,10 +443,10 @@ body {
 .source .vi { color: #19177C } /* Name.Variable.Instance */
 .source .vm { color: #19177C } /* Name.Variable.Magic */
 .source .il { color: #666666 } /* Literal.Number.Integer.Long */
-
  </style>
 </head>
 <body>
+
 
 
 <div class="container new-discussion-timeline experiment-repo-nav">
@@ -476,13 +478,22 @@ body {
  <div itemprop="text" class="blob-wrapper data type-python">
 
 <table class="highlight tab-size js-file-line-container"><div class="source blob-code sos-comment"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
-<span class="c1"># vim: set filetype=python: set expandtab : ts=4:</span>
-<span class="c1">#fileformat=SOS1.0</span>
- 
-<span class="c1"># This script provides routines for file conversions and data transformations</span>
- 
 </pre></div>
 
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># vim: set filetype=python: set expandtab : ts=4:</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#fileformat=SOS1.0</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># This script provides routines for file conversions and data transformations</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">project_name</span> <span class="o">=</span> <span class="s1">&#39;GTEx&#39;</span>
  
 </pre></div>
@@ -492,7 +503,6 @@ body {
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># split vcf by chroms</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">parameter:</span> <span class="n">chrom</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">22</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="c1"># there is in fact no Y chrom</span>
 <span class="kn">input:</span> <span class="kp">pattern</span> <span class="o">=</span> <span class="s2">&quot;{name}.vcf.gz&quot;</span><span class="p">,</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chrom&#39;</span><span class="p">]</span>
@@ -512,7 +522,6 @@ body {
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Convert RNASeq data to HDF5</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">parameter:</span> <span class="n">dtype</span> <span class="o">=</span> <span class="s1">&#39;np.uint32&#39;</span>
 <span class="kn">output:</span> <span class="s2">&quot;${input[0]!nb}.hdf5&quot;</span>
@@ -555,7 +564,6 @@ body {
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># VCF to plink format</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
 <span class="kn">output:</span> <span class="s2">&quot;${_input!nn}.a2flipped.bed&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
@@ -572,9 +580,10 @@ body {
 </pre></div>
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Fix multi-allelic sites</span>
-<span class="c1"># By changing duplicate SNP ID</span>
 </pre></div>
 
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># By changing duplicate SNP ID</span>
+</pre></div>
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
 <span class="kn">output:</span> <span class="s2">&quot;${_input!n}.bim&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
@@ -605,7 +614,6 @@ body {
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># VCF to plink format</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
 <span class="kn">output:</span> <span class="s2">&quot;${_input!nn}.bed&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
@@ -627,7 +635,6 @@ rm -f <span class="si">${</span><span class="nv">_input</span><span class="p">!n
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Remove indel sites</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="s1">&#39;single&#39;</span>
 <span class="kn">output:</span> <span class="s2">&quot;${_input!n}.snp_only.bed&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
@@ -648,7 +655,6 @@ rm -f <span class="si">${</span><span class="nv">_input</span><span class="p">!n
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Merge all files</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">output:</span> <span class="s2">&quot;${workdir}/${project_name}.bed&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
 </pre></div>
@@ -667,7 +673,6 @@ rm plink.merge-list
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Exclude imputed variants</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">include</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">output:</span> <span class="s2">&quot;${input!n}.genotyped.bed&quot;</span>
 <span class="kn">task:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="kp">workdir</span>
@@ -701,7 +706,6 @@ rm -f <span class="si">${</span><span class="nv">input</span><span class="p">!n<
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Filter by MAF, HWE etc</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">maf</span> <span class="o">=</span> <span class="mf">0.01</span>
 <span class="kn">parameter:</span> <span class="n">mac</span> <span class="o">=</span> <span class="mi">10</span>
 <span class="kn">output:</span> <span class="s2">&quot;${input!n}.filtered.bed&quot;</span>
@@ -719,10 +723,13 @@ rm -f <span class="si">${</span><span class="nv">input</span><span class="p">!n<
 </pre></div>
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Convert plink genotype to HDF5 in batches of genes</span>
-<span class="c1"># Only autosomal genes are considered</span>
-<span class="c1"># cis: ${cis} up/downstream from TSS of each gene</span>
 </pre></div>
 
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Only autosomal genes are considered</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># cis: ${cis} up/downstream from TSS of each gene</span>
+</pre></div>
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s2">&quot;pandas-plink&quot;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="n">ann</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">parameter:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="bp">None</span>
@@ -778,7 +785,6 @@ rm -f <span class="si">${</span><span class="nv">input</span><span class="p">!n<
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Covariate &quot;platform&quot; needs to be recoded</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">attr_file</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">input:</span> <span class="n">attr_file</span>
 <span class="kn">output:</span> <span class="s2">&quot;${input}.platform_info&quot;</span>
@@ -844,7 +850,6 @@ rm -f <span class="si">${</span><span class="nv">input</span><span class="p">!n<
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Given gene list, extract SNP and expression data from formatted database</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">ann_file</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">parameter:</span> <span class="n">geno_file</span> <span class="o">=</span> <span class="bp">None</span>
 <span class="kn">parameter:</span> <span class="n">expr_file</span> <span class="o">=</span> <span class="bp">None</span>

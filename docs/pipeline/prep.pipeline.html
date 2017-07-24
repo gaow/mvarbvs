@@ -3,13 +3,10 @@
 <html>
 <head>
     <meta charset='utf-8'>
-
-
-
  <title>prep.sos</title>
 <meta http-equiv="content-type" content="text/html; charset=None">
-<style type="text/css">
 
+<style type="text/css">
 html {
   font-family: sans-serif;
   -ms-text-size-adjust: 100%;
@@ -211,38 +208,42 @@ pre {
 }
 
 .sos-comment {
-  background: #f7f7f7;
+  /* background: #f7f7f7; */
 }
 .sos-report {
   background: #FAFAD2;
   padding-top: 5px;
 }
 .sos-header {
-  margin-top: 20px;
+  margin-top: 5px;
   margin-bottom: 0px;
   padding-top: 5px;
-  background-color: #C0C0C0;
-  border-bottom-color: #dde4e6;
+  padding-bottom: 5px;
+  background-color: #ddd;
+  /* border-bottom-color: #dde4e6; */
+  color: darkblue;
+  border-top-style: solid;
 
 }
 .sos-directive {
   padding-top: 5px;
-  background-color: #fff9ea;
+  /* background-color: #fff9ea; */
   border-color: #f1c0c0;
 }
 .sos-statement {
   padding-top: 5px;
-  background-color: #f2f9fc;
+  /* background-color: #f2f9fc; */
 }
 .sos-error {
-  background: #ffdddd;
+  /* background: #ffdddd; */
+  color: red;
 }
 .sos-script {
   position: relative;
   padding-right: 10px;
   padding-left: 30px;
   vertical-align: top;
-  background-color: #eff0f1;
+  /* background-color: #eff0f1; */
 }
 
 
@@ -374,6 +375,7 @@ body {
   display: none;
 }
 
+
 .source .c { color: #408080; font-style: italic } /* Comment */
 .source .err { border: 1px solid #FF0000 } /* Error */
 .source .k { color: #008000; font-weight: bold } /* Keyword */
@@ -441,10 +443,10 @@ body {
 .source .vi { color: #19177C } /* Name.Variable.Instance */
 .source .vm { color: #19177C } /* Name.Variable.Magic */
 .source .il { color: #666666 } /* Literal.Number.Integer.Long */
-
  </style>
 </head>
 <body>
+
 
 
 <div class="container new-discussion-timeline experiment-repo-nav">
@@ -476,34 +478,59 @@ body {
  <div itemprop="text" class="blob-wrapper data type-python">
 
 <table class="highlight tab-size js-file-line-container"><div class="source blob-code sos-comment"><pre><span></span><span class="ch">#!/usr/bin/env sos-runner</span>
-<span class="c1">#fileformat=SOS1.0</span>
- 
-<span class="c1"># Usage:</span>
-<span class="c1"># ./prep.sos download</span>
-<span class="c1"># ./prep.sos </span>
- 
-<span class="o">%</span><span class="n">include</span> <span class="n">ResourceManagement</span> <span class="k">as</span> <span class="n">RM</span>
-<span class="o">%</span><span class="n">include</span> <span class="n">Misc</span> <span class="k">as</span> <span class="n">MC</span>
-<span class="o">%</span><span class="n">include</span> <span class="n">DataWrestling</span> <span class="k">as</span> <span class="n">DW</span>
- 
 </pre></div>
 
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#fileformat=SOS1.0</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Usage:</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># ./prep.sos download</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># ./prep.sos </span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="n">ResourceManagement</span> <span class="k">as</span> <span class="n">RM</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="n">Misc</span> <span class="k">as</span> <span class="n">MC</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="n">DataWrestling</span> <span class="k">as</span> <span class="n">DW</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
 <div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
 </pre></div>
 
 <div class="source blob-code sos-comment"><pre><span></span> 
-<span class="c1">#</span>
-<span class="c1"># Auxiliary steps</span>
-<span class="c1">#</span>
- 
 </pre></div>
 
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Auxiliary steps</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
 <div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="kp">download</span><span class="p">]</span>
 </pre></div>
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Resource preparation</span>
 </pre></div>
-
 <div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.plink&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.minimac3&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 <span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;RM.vcftools&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
@@ -514,11 +541,16 @@ body {
 </pre></div>
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
-<span class="c1"># Workhorse</span>
-<span class="c1">#</span>
- 
 </pre></div>
 
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Workhorse</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span><span class="c1">#</span>
+</pre></div>
+
+<div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
 <div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">data_summary</span><span class="p">]</span>
 </pre></div>
 
@@ -590,7 +622,6 @@ body {
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Filtered imputation data removing imputed sites</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">input:</span> <span class="s2">&quot;{}/GTEx7.Imputed.genotyped.filtered.bed&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 </pre></div>
 
@@ -631,7 +662,6 @@ body {
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Covariates are: sex, platform, 3 PC and PEER factors</span>
 </pre></div>
-
 <div class="source blob-code sos-directive"><pre><span></span><span class="kn">parameter:</span> <span class="n">peer_factors</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s2">&quot;{}/*_PEER_covariates.txt&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">))</span>
 <span class="kn">parameter:</span> <span class="n">pc_file</span> <span class="o">=</span> <span class="s2">&quot;{}/GTEx7.Imputed.prune.pc.ped&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
 <span class="kn">parameter:</span> <span class="n">attr_file</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;sample_attr&#39;</span><span class="p">]</span>
@@ -654,7 +684,6 @@ body {
 
 <div class="source blob-code sos-comment"><pre><span></span><span class="c1"># Create a toy example</span>
 </pre></div>
-
 <div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s2">&quot;DW.subset_HDF5_data&quot;</span><span class="p">,</span>
         <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">],</span>
         <span class="n">ann_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;rna_cnts&#39;]!n}.annotation&quot;</span><span class="p">,</span>
