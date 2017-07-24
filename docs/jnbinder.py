@@ -532,7 +532,7 @@ def get_notebook_toc(path, exclude):
         with open(fn) as f:
             data = json.load(f)
         try:
-            title = re.sub('[^0-9a-zA-Z-:&]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
+            title = re.sub('[^0-9a-zA-Z-:&!?]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
         except IndexError:
             continue
         out +='"' + title + '":"' + name + '",'
