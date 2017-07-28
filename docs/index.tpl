@@ -54,7 +54,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
         },
         "HTML-CSS": {
             preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
+            availableFonts: ["TeX"],
             styles: {
                 scale: 110,
                 ".MathJax_Display": {
@@ -183,10 +183,6 @@ $(document).ready(function () {
       <ul class="nav navbar-nav">
         
 <li>
-  <a href="./index.html">Overview</a>
-</li>
-    
-<li>
   <a href="./analysis.html">Analysis</a>
 </li>
         
@@ -199,13 +195,13 @@ $(document).ready(function () {
 </li>
         
       </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-    <a href="http://github.com/gaow/mvarbvs">
-    <span class="fa fa-github"></span>
-    </a>
-    </li>
-    </ul>
+    
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
