@@ -2,6 +2,14 @@ import os
 import glob
 import re
 import json
+from dateutil.parser import parse
+
+def is_date(string):
+    try:
+        parse(string)
+        return True
+    except ValueError:
+        return False
 
 def get_output(cmd, show_command=False, prompt='$ '):
     import subprocess
@@ -54,11 +62,14 @@ def get_commit_info(fn, conf):
     return out.replace('/', '\/')
 
 def get_nav(dirs, home_label, prefix = './'):
-    out = '''
+    if home_label:
+        out = '''
 <li>
   <a href="{}index.html">{}</a>
 </li>
-    '''.format(prefix, home_label)
+        '''.format(prefix, home_label)
+    else:
+        out = ''
     for item in dirs:
         out += '''
 <li>
@@ -66,6 +77,18 @@ def get_nav(dirs, home_label, prefix = './'):
 </li>
         '''.format(prefix, item, item.capitalize())
     return out
+
+def get_right_nav(repo, source_label):
+    if source_label:
+        return '''
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="%s"> %s </a>
+</li>
+</ul>
+        ''' % (repo, source_label)
+    else:
+        return ''
 
 def get_font(font):
     if font is None:
@@ -194,7 +217,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
         },
         "HTML-CSS": {
             preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
+            availableFonts: ["TeX"],
             styles: {
                 scale: 110,
                 ".MathJax_Display": {
@@ -323,13 +346,7 @@ $(document).ready(function () {
       <ul class="nav navbar-nav">
         %s
       </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-    <a href="%s">
     %s
-    </a>
-    </li>
-    </ul>
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -363,7 +380,7 @@ $(document).ready(function () {
 {%% endblock %%}
 	''' % (conf['__version__'], conf['name'], conf['theme'], get_font(conf['font']), conf['name'],
            get_nav([x for x in dirs if not x in conf['hide_navbar']], conf['homepage_label']),
-           conf['repo'], conf['source_label'], conf['footer'],
+           get_right_nav(conf['repo'], conf['source_label']), conf['footer'],
            get_disqus(conf['disqus']))
     return content
 
@@ -422,7 +439,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
         },
         "HTML-CSS": {
             preferredFont: "TeX",
-            availableFonts: ["STIX","TeX"],
+            availableFonts: ["TeX"],
             styles: {
                 scale: 110,
                 ".MathJax_Display": {
@@ -488,14 +505,8 @@ body {
       <ul class="nav navbar-nav">
         %s
       </ul>
-      <ul class="nav navbar-nav navbar-right">
-        <li>
-    <a href="%s">
-    %s
-    </a>
-    </li>
-    </ul>
-    </div><!--/.nav-collapse -->
+        %s
+      </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 {%%- endblock header -%%}
@@ -513,7 +524,7 @@ body {
            conf['theme'], get_sidebar(path) if conf['notebook_toc'] else '',
            conf['name'], get_font(conf['font']), conf['name'],
            get_nav([x for x in dirs if not x in conf['hide_navbar']], conf['homepage_label'], '../'),
-           conf['repo'], conf['source_label'], conf['footer'])
+           get_right_nav(conf['repo'], conf['source_label']), conf['footer'])
     return content
 
 def make_template(conf, dirs, outdir):
@@ -532,7 +543,7 @@ def get_notebook_toc(path, exclude):
         with open(fn) as f:
             data = json.load(f)
         try:
-            title = re.sub('[^0-9a-zA-Z-:&!?]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
+            title = re.sub('[^0-9a-zA-Z-:&!?@.,]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
         except IndexError:
             continue
         out +='"' + title + '":"' + name + '",'
@@ -597,20 +608,36 @@ def make_index_nb(path, exclude, long_description = False, reverse_alphabet = Fa
     "## Notebooks"
    ]
   },'''
+    date_section = None
+    add_date_section = False
     for fn in sorted(glob.glob(os.path.join(path, "*.ipynb")), reverse = reverse_alphabet):
         if os.path.basename(fn) in ['_index.ipynb', 'index.ipynb'] or fn in exclude:
             continue
         name = os.path.splitext(os.path.basename(fn))[0].replace('_', ' ')
+        tmp = "{}/{}".format(name[:4], name[4:6])
+        if is_date(tmp) and date_section != tmp:
+            date_section = tmp
+            add_date_section = True
         with open(fn) as f:
             data = json.load(f)
         try:
             source = [x.strip() for x in data["cells"][0]["source"] if x.strip()]
-            if long_description and source[0].startswith('#') and len(source) >= 2:
+            if long_description and source[0].startswith('#') and len(source) >= 2 and not source[1].startswith('#'):
                 description = source[1]
             else:
                 description = source[0]
         except IndexError:
             continue
+        if add_date_section:
+            add_date_section = False
+            out += '''
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### %s\\n"
+   ]
+  },''' % date_section
         out += '''
   {
    "cell_type": "markdown",
