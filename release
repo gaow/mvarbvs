@@ -166,7 +166,8 @@ Please commit all changes and run this command again. Or you may set
 '''
 fail_if(len(binders) == 0, msg = err_msg1)
 fail_if(get_output('git status --untracked-files=no --porcelain').strip() and CONFIG['add_commit_info'] and os.path.isdir('.git'), msg = err_msg2)
-sos_run('update-tpl + update-hp + update-nb + update-sos + update-toc + remove-obsolete + release-website')
+sos_run('update-tpl + update-hp + update-nb + update-sos + update-toc + remove-obsolete')
+sos_run('release-website')
 
 [default_2]
 # remove intermediate files
