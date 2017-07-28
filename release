@@ -159,13 +159,12 @@ No valid path found in `include_dir`!
 Please properly set `include_dir` in `config.yml`.
 '''
 parameter: err_msg2 = '''
-To properly add git commit info, the working tree must be empty;
-that is, all changes must be committed via "git commit".
-Please commit all changes and run this command again. Or you may set
-`add_commit_info: False` in `config.yml` if you want to disable this feature.
+To properly add git commit info, all changes made to notebooks must be committed.
+Please use `git commit` to commit changes and run this command again. Or you may
+set `add_commit_info: False` in `config.yml` if you want to disable this feature.
 '''
 fail_if(len(binders) == 0, msg = err_msg1)
-fail_if(get_output('git status --untracked-files=no --porcelain').strip() and CONFIG['add_commit_info'] and os.path.isdir('.git'), msg = err_msg2)
+fail_if('ipynb' in get_output('git status --untracked-files=no --porcelain') and CONFIG['add_commit_info'] and os.path.isdir('.git'), msg = err_msg2)
 sos_run('update-tpl + update-hp + update-nb + update-sos + update-toc + remove-obsolete')
 sos_run('release-website')
 
