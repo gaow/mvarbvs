@@ -543,7 +543,8 @@ def get_notebook_toc(path, exclude):
         with open(fn) as f:
             data = json.load(f)
         try:
-            title = re.sub('[^0-9a-zA-Z-:&!?@.,]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
+            # FIXME: this regex is to be continuously updated based on observed TOC generated
+            title = re.sub('[^0-9a-zA-Z-:&!?@.,()]+', '-', data["cells"][0]["source"][0].strip()).strip('-') + "-1"
         except IndexError:
             continue
         out +='"' + title + '":"' + name + '",'
@@ -638,7 +639,9 @@ def make_index_nb(path, exclude, long_description = False, reverse_alphabet = Fa
     "### %s\\n"
    ]
   },''' % date_section
-        out += '''
+        title = re.sub('[^\x00-\x7F]+', ' ', description.strip("#").replace('"', "'").replace("\\", '\\\\'))
+        if name.strip() != title.strip():
+            out += '''
   {
    "cell_type": "markdown",
    "metadata": {},
@@ -646,8 +649,16 @@ def make_index_nb(path, exclude, long_description = False, reverse_alphabet = Fa
     "[**%s**](%s/%s)<br>\\n",
     "&nbsp; &nbsp; %s"
    ]
-  },''' % (name, path, os.path.splitext(os.path.basename(fn))[0] + '.html',
-           re.sub('[^\x00-\x7F]+', ' ', description.strip("#").replace('"', "'")))
+  },''' % (name, path, os.path.splitext(os.path.basename(fn))[0] + '.html', title)
+        else:
+            out += '''
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "[**%s**](%s/%s)<br>"
+   ]
+  },''' % (name, path, os.path.splitext(os.path.basename(fn))[0] + '.html')
     if len(sos_files):
         out += '''
   {
@@ -691,7 +702,7 @@ def make_index_nb(path, exclude, long_description = False, reverse_alphabet = Fa
  "nbformat": 4,
  "nbformat_minor": 2
 }'''
-    return out
+    return out.strip()
 
 def make_empty_nb(name):
     return '''{
