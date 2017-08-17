@@ -264,6 +264,9 @@ if os.path.isfile(efile):
 # build toy
 for g in genes:
     g = g.split('.')[0]
+    if g not in ann:
+       print("Gene {} not found".format(g))
+       continue
     chrom = ann[g]
     geno = pd.read_hdf(${input[0]!r}, 'chr{}/{}'.format(chrom, g))
     geno.to_hdf(gfile, 'chr{}/{}'.format(chrom, g), mode = 'a', complevel = 9, complib = 'zlib')
