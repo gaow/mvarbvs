@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<link rel="stylesheet"
+      href="../site_libs/highlight/textmate.css"
+      type="text/css" />
+<script src="../site_libs/highlight/highlight.js"></script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+<script src="../js/toc2.js"></script>
+<script src="../js/docs.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>');
+            }
+            $("#toc-header").hide();
+    });
+</script>
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+<title>m&m ash</title>
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+<!-- code folding -->
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">m&m ash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+<li>
+  <a href="../pipeline.html">Pipeline</a>
+</li>
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+      </ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="MR-ASH-GTEx-genes">MR ASH GTEx genes<a class="anchor-link" href="#MR-ASH-GTEx-genes">&#182;</a></h1><p>Here we analyze a few GTEx genes with <code>mr-ash</code>.</p>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTEx</span><span class="o">/</span><span class="n">MRASH</span><span class="o">/</span><span class="n">TOY</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;h5py&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">parameter:</span> <span class="n">genotype_file</span> <span class="o">=</span> <span class="s1">&#39;TY.genotype.h5&#39;</span>
+<span class="kn">parameter:</span> <span class="n">expr_file</span> <span class="o">=</span> <span class="s1">&#39;TY.expr.h5&#39;</span>
+<span class="kn">parameter:</span> <span class="n">covar_file</span> <span class="o">=</span> <span class="s1">&#39;TY.covariates.h5&#39;</span>
+<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">expr_file</span><span class="p">,</span> <span class="n">libver</span><span class="o">=</span><span class="s1">&#39;latest&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">libver</span><span class="o">=</span><span class="s1">&#39;latest&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">genes</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">genes</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;{}/{}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">f</span><span class="p">[</span><span class="n">k</span><span class="p">]])</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;tools&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;genes&#39;</span><span class="p">,</span> <span class="s1">&#39;tissues&#39;</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="s2">&quot;${_tissues}_${_genes!b}.rds&quot;</span>
+<span class="kn">task:</span>
+<span class="kn">R:</span>
+<span class="n">load_data</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">expr_file</span><span class="p">,</span><span class="n">cov_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">,</span><span class="n">cov_table</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">geno</span> <span class="o">=</span> <span class="n">h5read</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">)</span>
+  <span class="n">gdata</span> <span class="o">=</span> <span class="n">geno</span><span class="err">$</span><span class="n">block0_values</span>
+  <span class="n">colnames</span><span class="p">(</span><span class="n">gdata</span><span class="p">)</span> <span class="o">=</span> <span class="n">geno</span><span class="err">$</span><span class="n">axis1</span>
+  <span class="n">rownames</span><span class="p">(</span><span class="n">gdata</span><span class="p">)</span> <span class="o">=</span> <span class="n">geno</span><span class="err">$</span><span class="n">axis0</span>
+  <span class="n">expr</span> <span class="o">=</span> <span class="n">h5read</span><span class="p">(</span><span class="n">expr_file</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">)</span>
+  <span class="n">edata</span> <span class="o">=</span> <span class="n">expr</span><span class="err">$</span><span class="n">block0_values</span>
+  <span class="c1"># colnames(edata) = expr$axis1</span>
+  <span class="n">colnames</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span> <span class="o">=</span> <span class="n">tools</span><span class="p">::</span><span class="n">file_path_sans_ext</span><span class="p">(</span><span class="n">expr</span><span class="err">$</span><span class="n">axis1</span><span class="p">)</span>
+  <span class="c1"># rownames(edata) = expr$axis0</span>
+  <span class="n">rownames</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span> <span class="o">=</span> <span class="nb">apply</span><span class="p">(</span><span class="n">sapply</span><span class="p">(</span><span class="n">strsplit</span><span class="p">(</span><span class="n">expr</span><span class="err">$</span><span class="n">axis0</span><span class="p">,</span><span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="sb">`[`</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">paste</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">collapse</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">))</span>
+  <span class="n">index</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">duplicated</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="p">(</span><span class="n">edata</span><span class="p">)))</span>
+  <span class="n">edata</span> <span class="o">=</span> <span class="n">edata</span><span class="p">[</span><span class="o">-</span><span class="n">index</span><span class="p">,]</span>
+  <span class="c1"># edata = data.frame(edata)</span>
+  <span class="n">covariate</span> <span class="o">&lt;-</span> <span class="n">h5read</span><span class="p">(</span><span class="n">cov_file</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span>
+  <span class="n">cdata</span> <span class="o">=</span> <span class="n">covariate</span><span class="err">$</span><span class="n">block0_values</span>
+  <span class="n">colnames</span><span class="p">(</span><span class="n">cdata</span><span class="p">)</span> <span class="o">=</span> <span class="nb">apply</span><span class="p">(</span><span class="n">sapply</span><span class="p">(</span><span class="n">strsplit</span><span class="p">(</span><span class="n">covariate</span><span class="err">$</span><span class="n">axis1</span><span class="p">,</span><span class="s2">&quot;-&quot;</span><span class="p">),</span> <span class="sb">`[`</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)),</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">paste</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">collapse</span> <span class="o">=</span> <span class="s1">&#39;-&#39;</span><span class="p">))</span>
+  <span class="c1"># rownames(edata) = expr$axis0</span>
+  <span class="n">rownames</span><span class="p">(</span><span class="n">cdata</span><span class="p">)</span> <span class="o">=</span> <span class="n">covariate</span><span class="err">$</span><span class="n">axis0</span> 
+  <span class="n">cdata</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">cdata</span><span class="p">)[</span><span class="o">-</span><span class="n">index</span><span class="p">,]</span>
+  <span class="n">gdata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">gdata</span><span class="p">)</span>
+  <span class="c1"># I want to use merge but later</span>
+  <span class="c1"># index_overlap = which(row.names(gdata) %in% row.names(edata))</span>
+  <span class="n">edata</span> <span class="o">=</span> <span class="n">edata</span><span class="p">[,</span> <span class="n">basename</span><span class="p">(</span><span class="n">geno_table</span><span class="p">)]</span>
+  <span class="n">edata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span>
+  <span class="n">edata</span><span class="err">$</span><span class="n">ID</span> <span class="o">=</span> <span class="n">rownames</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span>
+  <span class="n">gdata</span><span class="err">$</span><span class="n">ID</span> <span class="o">=</span> <span class="n">rownames</span><span class="p">(</span><span class="n">gdata</span><span class="p">)</span>
+  <span class="n">output</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">edata</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">gdata</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;ID&quot;</span><span class="p">,</span> <span class="nb">all</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
+  <span class="c1"># gdata = gdata[index_overlap,]</span>
+  <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">output</span><span class="p">[,</span><span class="o">-</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]),</span> <span class="n">y</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">output</span><span class="err">$</span><span class="n">edata</span><span class="p">),</span> <span class="n">Z</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">cdata</span><span class="p">)))</span>
+<span class="p">}</span>
+<span class="n">autoselect</span><span class="o">.</span><span class="n">mixsd</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span><span class="n">sebetahat</span><span class="p">,</span><span class="n">mult</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)){</span>
+  <span class="n">sebetahat</span><span class="o">=</span><span class="n">sebetahat</span><span class="p">[</span><span class="n">sebetahat</span><span class="o">!=</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#To avoid exact measure causing (usually by mistake)</span>
+  <span class="n">sigmaamin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">sebetahat</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span> <span class="c1">#so that the minimum is small compared with measurement precision</span>
+  <span class="k">if</span><span class="p">(</span><span class="nb">all</span><span class="p">(</span><span class="n">betahat</span><span class="o">^</span><span class="mi">2</span><span class="o">&lt;=</span><span class="n">sebetahat</span><span class="o">^</span><span class="mi">2</span><span class="p">)){</span>
+    <span class="n">sigmaamax</span> <span class="o">=</span> <span class="mi">8</span><span class="o">*</span><span class="n">sigmaamin</span> <span class="c1">#to deal with the occassional odd case where this could happen; 8 is arbitrary</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">sigmaamax</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">betahat</span><span class="o">^</span><span class="mi">2</span><span class="o">-</span><span class="n">sebetahat</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span> <span class="c1">#this computes a rough largest value you&#39;d want to use, based on idea that sigmaamax^2 + sebetahat^2 should be at least betahat^2   </span>
+  <span class="p">}</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">mult</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">sigmaamax</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+  <span class="p">}</span><span class="k">else</span><span class="p">{</span>
+    <span class="n">npoint</span> <span class="o">=</span> <span class="n">ceiling</span><span class="p">(</span><span class="n">log2</span><span class="p">(</span><span class="n">sigmaamax</span><span class="o">/</span><span class="n">sigmaamin</span><span class="p">)</span><span class="o">/</span><span class="n">log2</span><span class="p">(</span><span class="n">mult</span><span class="p">))</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">mult</span><span class="o">^</span><span class="p">((</span><span class="o">-</span><span class="n">npoint</span><span class="p">):</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmaamax</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="n">initial_step</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">){</span>
+  <span class="n">P</span> <span class="o">=</span> <span class="n">dim</span><span class="p">(</span><span class="n">X</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+  <span class="n">output</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">nrow</span> <span class="o">=</span> <span class="n">P</span><span class="p">,</span><span class="n">ncol</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">P</span><span class="p">){</span>
+    <span class="k">if</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">Z</span><span class="p">)){</span>
+      <span class="n">g</span> <span class="o">=</span> <span class="n">summary</span><span class="p">(</span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="o">~</span><span class="n">X</span><span class="p">[,</span><span class="n">i</span><span class="p">]))</span>
+    <span class="p">}</span> <span class="k">else</span><span class="p">{</span>
+      <span class="n">g</span> <span class="o">=</span> <span class="n">summary</span><span class="p">(</span><span class="n">lm</span><span class="p">(</span><span class="n">y</span><span class="o">~</span><span class="n">X</span><span class="p">[,</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">Z</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">output</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span> <span class="o">=</span> <span class="n">g</span><span class="err">$</span><span class="n">coefficients</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+  <span class="p">}</span>
+  <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">betahat</span> <span class="o">=</span> <span class="n">output</span><span class="p">[,</span><span class="mi">1</span><span class="p">],</span><span class="n">sebetahat</span> <span class="o">=</span> <span class="n">output</span><span class="p">[,</span><span class="mi">2</span><span class="p">]))</span>
+<span class="p">}</span>
+<span class="n">analyze</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">genename</span> <span class="o">=</span> <span class="s1">&#39;/chr4/ENSG00000145214&#39;</span><span class="p">,</span> <span class="n">tissue</span> <span class="o">=</span> <span class="s1">&#39;/Lung&#39;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="s1">&#39;test.rds&#39;</span><span class="p">){</span>
+  <span class="n">library</span><span class="p">(</span><span class="n">rhdf5</span><span class="p">)</span>
+  <span class="n">genotype_file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">genotype_file</span><span class="err">!</span><span class="n">r</span><span class="p">}</span>
+  <span class="n">expr_file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">expr_file</span><span class="err">!</span><span class="n">r</span><span class="p">}</span>
+  <span class="n">geno_table</span> <span class="o">=</span> <span class="n">genename</span>
+  <span class="n">expr_table</span> <span class="o">=</span> <span class="n">tissue</span> 
+  <span class="n">gene</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">geno_table</span><span class="p">)</span>
+  <span class="n">cov_file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">covar_file</span><span class="err">!</span><span class="n">r</span><span class="p">}</span>
+  <span class="n">cov_table</span> <span class="o">=</span> <span class="n">expr_table</span>
+  <span class="n">dat</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">genotype_file</span> <span class="o">=</span> <span class="n">genotype_file</span><span class="p">,</span>
+                  <span class="n">expr_file</span> <span class="o">=</span> <span class="n">expr_file</span><span class="p">,</span>
+                  <span class="n">cov_file</span> <span class="o">=</span> <span class="n">cov_file</span><span class="p">,</span>
+                  <span class="n">geno_table</span> <span class="o">=</span> <span class="n">geno_table</span><span class="p">,</span>
+                  <span class="n">expr_table</span> <span class="o">=</span> <span class="n">expr_table</span><span class="p">,</span>
+                  <span class="n">cov_table</span> <span class="o">=</span> <span class="n">cov_table</span><span class="p">)</span>
+  <span class="n">X</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">X</span><span class="p">)</span>
+  <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[,</span><span class="n">which</span><span class="p">(</span><span class="n">colSums</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">)]</span>
+  <span class="k">if</span> <span class="p">((</span><span class="n">nrow</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span> <span class="p">{</span>
+  	<span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(),</span> <span class="n">out</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+  <span class="n">storage</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="s2">&quot;double&quot;</span>
+  <span class="n">y</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">y</span><span class="p">)</span>
+  <span class="n">Z</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">Z</span><span class="p">)</span>
+  <span class="n">initial</span> <span class="o">=</span> <span class="n">initial_step</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+  <span class="n">mixsd</span> <span class="o">=</span> <span class="n">autoselect</span><span class="o">.</span><span class="n">mixsd</span><span class="p">(</span><span class="n">initial</span><span class="err">$</span><span class="n">betahat</span><span class="p">,</span><span class="n">initial</span><span class="err">$</span><span class="n">sebetahat</span><span class="p">)</span>
+  <span class="n">logdata</span> <span class="o">=</span> <span class="n">capture</span><span class="o">.</span><span class="n">output</span><span class="p">({</span><span class="n">res</span> <span class="o">=</span> <span class="n">varbvs</span><span class="p">::</span><span class="n">varbvsmix</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sa</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">mixsd</span><span class="o">^</span><span class="mi">2</span><span class="p">))</span> <span class="p">})</span>
+  <span class="n">mrash_out</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">betahat</span> <span class="o">=</span> <span class="n">rowSums</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">res</span><span class="err">$</span><span class="n">mu</span><span class="p">))</span>
+  <span class="n">ash_out</span> <span class="o">=</span> <span class="n">ashr</span><span class="p">::</span><span class="n">ash</span><span class="p">(</span><span class="n">initial</span><span class="err">$</span><span class="n">betahat</span><span class="p">,</span><span class="n">initial</span><span class="err">$</span><span class="n">sebetahat</span><span class="p">,</span><span class="n">mixcompdist</span> <span class="o">=</span> <span class="s2">&quot;normal&quot;</span><span class="p">)</span>
+  <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ash</span> <span class="o">=</span> <span class="n">ash_out</span><span class="p">,</span> <span class="n">uni</span> <span class="o">=</span> <span class="n">initial</span><span class="p">,</span> <span class="n">mr_ash</span> <span class="o">=</span> <span class="n">mrash_out</span><span class="p">,</span> <span class="n">logdata</span> <span class="o">=</span> <span class="n">logdata</span><span class="p">),</span> <span class="n">out</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="p">}</span>
+<span class="n">analyze</span><span class="p">(</span><span class="n">genename</span> <span class="o">=</span> <span class="s2">&quot;/${_genes}&quot;</span><span class="p">,</span> <span class="n">tissue</span> <span class="o">=</span> <span class="s2">&quot;/${_tissues}&quot;</span><span class="p">,</span> <span class="n">out</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="err">!</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">sosrun</span> <span class="o">-</span><span class="n">J</span> <span class="mi">40</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<hr>
+&copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/5c2c6a20d43de5c73e3542eea81c021cbe4ce829/analysis/20160814_MR_ASH_GTEx.ipynb"><code>analysis/20160814_MR_ASH_GTEx.ipynb</code></a> committed by Gao Wang on Mon Aug 21 17:07:36 2017 <a href="http://github.com/gaow/mvarbvs/commit/5c2c6a20d43de5c73e3542eea81c021cbe4ce829">revision 226, 5c2c6a2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
