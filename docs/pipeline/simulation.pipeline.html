@@ -3,7 +3,7 @@
 <html>
 <head>
     <meta charset='utf-8'>
- <title>eqtl.sos</title>
+ <title>simulation.sos</title>
 <meta http-equiv="content-type" content="text/html; charset=None">
 
 <style type="text/css">
@@ -467,7 +467,7 @@ body {
         <img src="http://vatlab.github.io/SOS/img/sos_icon.svg" alt="sos_icon">
         </a>
 
-        <span class="user-mention">eqtl.sos</span>
+        <span class="user-mention">simulation.sos</span>
       </div>
       </div>
 
@@ -476,9 +476,9 @@ body {
   <div class="file-header">
 
   <div class="file-info">
-      pipeline/eqtl.sos
+      pipeline/simulation.sos
       <span class="file-info-divider"></span>
-    389 B
+    971 B
   </div>
   <div class="file-actions">
   </div>
@@ -494,26 +494,71 @@ body {
 <tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>3</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span> 
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>4</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="n">ResourceManagement</span> <span class="k">as</span> <span class="n">RM</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>4</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="n">Misc</span> <span class="k">as</span> <span class="n">MC</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>5</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="n">Misc</span> <span class="k">as</span> <span class="n">MC</span>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>5</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span> 
+</pre></div>
+</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>6</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">phenotype_original_genotype</span><span class="p">]</span>
 </pre></div>
 </td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>6</pre></div></td><td class="code"><div class="source blob-code sos-comment"><pre><span></span><span class="o">%</span><span class="n">include</span> <span class="n">MatrixEQTL</span> <span class="k">as</span> <span class="n">ME</span>
-</pre></div>
-</td></tr><tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>7</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">default</span><span class="p">]</span>
-</pre></div>
-</td></tr>
-<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre> 8
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre> 7
+ 8
  9
 10
 11
-12</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;ME.matrix_eqtl&#39;</span><span class="p">,</span> <span class="n">geno_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;genotype&#39;]!a}&quot;</span><span class="p">,</span> 
-        <span class="n">expr_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;expression&#39;]!a}&quot;</span><span class="p">,</span> 
-        <span class="n">covar_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;covariates&#39;]!a}&quot;</span><span class="p">,</span> 
-        <span class="n">ann_file</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;gene_annotation&#39;]!a}&quot;</span><span class="p">,</span> 
-        <span class="kp">workdir</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;wd&#39;</span><span class="p">])</span>
+12
+13
+14
+15
+16
+17
+18
+19</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;MC.genotype_LD&#39;</span><span class="p">,</span> 
+        <span class="n">genotype_data</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;src&#39;]!a}&quot;</span><span class="p">)</span>
+ 
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;MC.simulation&#39;</span><span class="p">,</span>
+        <span class="n">genotype_data</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;src&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">pi0</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;pi0&#39;</span><span class="p">],</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">],</span>
+        <span class="n">n_rep</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;n_rep&#39;</span><span class="p">])</span>
+ 
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>20</pre></div></td><td class="code"><div class="source blob-code sos-header"><pre><span></span><span class="p">[</span><span class="n">phenotype_permuted_genotype</span><span class="p">]</span>
+</pre></div>
+</td></tr>
+<tr><td class="blob-num js-line-number"><div class="linenodiv"><pre>21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34</pre></div></td><td class="code"><div class="source blob-code sos-statement"><pre><span></span><span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;MC.genotype_LD&#39;</span><span class="p">,</span> 
+        <span class="n">genotype_data</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;src&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">permute_genotype</span> <span class="o">=</span> <span class="s2">&quot;True&quot;</span><span class="p">)</span>
+ 
+<span class="kp">sos_run</span><span class="p">(</span><span class="s1">&#39;MC.simulation&#39;</span><span class="p">,</span>
+        <span class="n">genotype_data</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;genotype&#39;</span><span class="p">],</span>
+        <span class="kp">workdir</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;wd&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">src</span> <span class="o">=</span> <span class="s2">&quot;${CONFIG[&#39;src&#39;]!a}&quot;</span><span class="p">,</span>
+        <span class="n">permuted_genotype</span> <span class="o">=</span> <span class="s2">&quot;True&quot;</span><span class="p">,</span>
+        <span class="n">pi0</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;pi0&#39;</span><span class="p">],</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;shape&#39;</span><span class="p">],</span>
+        <span class="n">n_rep</span> <span class="o">=</span> <span class="n">CONFIG</span><span class="p">[</span><span class="s1">&#39;n_rep&#39;</span><span class="p">])</span>
 </pre></div>
 </td></tr>
 </table>
