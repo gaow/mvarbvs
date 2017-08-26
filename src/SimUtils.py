@@ -14,7 +14,7 @@ class PhenotypeSimulator:
         
     def get_genes(self, limit = 5):
         res = pd.HDFStore(self.gfile).keys()
-        if len(res) > limit:
+        if len(res) > limit and limit > 0:
             res = res[:limit]
         return res
     
