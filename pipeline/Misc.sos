@@ -1,23 +1,6 @@
 #!/usr/bin/env sos-runner
 #fileformat=SOS1.0
 
-[ensembl_annotation]
-# Annotate gene to chromosomal positions
-# Input is GTEx expression file with first column the ENSG IDs
-depends: R_library("biomaRt")
-output: "${input!n}.annotation"
-task: workdir = workdir
-R:
-system("zcat ${input} | cut -f 1 | tail -n+4 | cut -f 1 -d '.' > ${input!n}.gene_id")
-values = unlist(read.table("${input!n}.gene_id", stringsAsFactors=FALSE)) 
-ensembl = biomaRt::useMart("ensembl", dataset="hsapiens_gene_ensembl", host="www.ensembl.org")
-res = biomaRt::getBM(attributes = c("chromosome_name", "start_position", "end_position", "ensembl_gene_id", "hgnc_symbol"), filters = c("ensembl_gene_id"), values = values,  mart = ensembl)
-write.table(res, file = ${output!r}, row.names=FALSE, na= "<NA>", col.names = FALSE)
-
-run:
-  cat ${output} | sed -e 's/"//g' | sort -g -o ${output}
-  rm -f ${input!n}.gene_id
-
 [genotype_LD_1]
 # Permute X & Get LD structure
 parameter: workdir = None
