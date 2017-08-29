@@ -1,0 +1,63 @@
+[simulation_2]
+# Analyze data
+parameter: genotype_data = None
+parameter: workdir = None
+input: group_by = 1
+output: "${_input!n}.analyzed.rds"
+task: workdir = workdir
+R:
+  library(rhdf5)
+  source("src/Utils.R")
+  genotype_file = "${genotype_data[0]!ad}/${_input!bnnn}.h5"
+  expr_file = ${_input!r}
+  expr_table = '/simulated'
+  tables = get_h5_groups(genotype_file)
+  res = list()
+  for (table in tables) {
+      dat = load_data(genotype_file, expr_file, table, expr_table)
+      X = as.matrix(dat$X)
+      storage.mode(X) <- "double"
+      y = as.vector(dat$y)
+      # Univariate analysis
+      res0 = univariate_lm(X,y)
+      mixsd = ashr:::autoselect.mixsd(res0, sqrt(2), 0, c(-Inf,Inf), "normal")
+      res1 = varbvs::varbvsmix(X, NULL, y, sa = c(0, mixsd^2))
+      res1$pip = res1$alpha %*% c(res1$w)
+      res1$beta = rowSums(res1$alpha * res1$mu)
+      res1$y = X %*% res1$beta + res1$mu.cov[1]
+      meta = rjson::fromJSON(file = "${_input!n}.json")
+      meta$y = y
+      meta$beta = meta$beta[[basename(table)]]
+      res2 = ashr::ash(res0$x, res0$s)
+      res[[basename(table)]] = list(uni=res0,mr.ash=res1,ash=res2,meta=meta)
+  }
+  saveRDS(res, file = ${_output!r})
+
+[simulation_3]
+# Make plots
+input: group_by = 1
+output: "${_input!n}.pdf"
+task: workdir = workdir
+R:
+  dat = readRDS(${_input!r})
+  pdf(${_output!r}, title = "${_input!bnn}")
+  for (table in names(dat)) {
+      res = dat[[table]]
+      # Fitted mixture porportions
+      par(mfrow = c(1,3), oma=c(0,0,2,0))
+      barplot(c(res$meta$pi0, res$meta$pi * (1 - res$meta$pi0)), col=rgb(0.2,0.4,0.6,0.6), horiz=T, las=1, main = 'truth')
+      barplot(res$mr.ash$w, col=rgb(0.2,0.4,0.6,0.6), horiz=T, las=1, main = 'mr-ash, fitted g')
+      barplot(ashr::get_fitted_g(res$ash)$pi, col=rgb(0.2,0.4,0.6,0.6), horiz=T, las=1, main = 'ash, fitted g')
+      title(paste0(table, " ", ifelse(grepl('permuted', ${_input!r}), "permuted", "original"), " genotype, ", round(res$meta$pi0,4), " pi0 + ", res$meta$name, " mixture"), outer=TRUE)
+      # Compare fit
+      par(mfrow = c(3,2), mar = c(2,2,2,1))
+      plot(res$meta$beta, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "beta", main = 'truth, beta')
+      plot(res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'mr-ash, betahat')
+      legend("topleft", paste0("sigma = ", round(res$mr.ash$sigma,2)), bty="n") 
+      plot(ashr::get_pm(res$ash), pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'ash, betahat')
+      plot(res$uni$x, pch=20, bg="white", col=rgb(0.3,0.6,0.9,0.9), ylab = "betahat", main = 'univariate, betahat')
+      plot(res$meta$beta, res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.3,0.9,0.9), ylab = "mr.ash", xlab = "truth", main = 'truth vs mr.ash')
+      abline(0,1, col="whitesmoke")
+      plot(ashr::get_pm(res$ash), res$mr.ash$beta, pch=20, bg="white", col=rgb(0.3,0.3,0.9,0.9), ylab = "mr.ash", xlab = "ash", main = 'ash vs mr.ash')
+      abline(0,1, col="whitesmoke")
+  }

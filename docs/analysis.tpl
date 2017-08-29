@@ -432,7 +432,7 @@ body {
 </li>
         
 <li>
-  <a href="../pipeline.html">Pipeline</a>
+  <a href="../prototype.html">Prototype</a>
 </li>
         
 <li>
