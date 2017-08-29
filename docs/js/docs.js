@@ -1,5 +1,5 @@
 var analysisArray = ['20170630_Simulation_Study', '20170624_Simulation_Procedures']
-var analysisDict = {"Simulation-of-quantitative-phenotype-given-genotypes-1":"20170624_Simulation_Procedures","20170630-simulation-study-1":"20170630_Simulation_Study"}
+var analysisDict = {"Simulation-of-quantitative-phenotype-given-genotypes-1":"20170624_Simulation_Procedures","mr-ash-simulation-ash-paper-scenarios-1":"20170630_Simulation_Study"}
 var prototypeArray = ['20170628_MR_ASH_Toy_Example', '20170615_MASHR_Benchmark']
 var prototypeDict = {"mashr-R-vs.-C++-benchmark-1":"20170615_MASHR_Benchmark","mr-ash-example-analysis-1":"20170628_MR_ASH_Toy_Example"}
 var writeupArray = ['Status_MR_ASH', 'Status_MM_ASH', 'Start_Simple', 'Modular_MNMASH', 'Meetings']
