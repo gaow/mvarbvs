@@ -419,7 +419,6 @@ body {
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-{%- endblock header -%}
 
 <div class='display_control_panel'>
         <div class="display_checkboxes">
@@ -435,6 +434,8 @@ body {
             <label for="show_messages">Messages</label>
     </div>
 </div>
+    
+{%- endblock header -%}
 
 {%- block input -%}
 

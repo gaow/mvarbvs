@@ -617,7 +617,7 @@ function toggle_messages() {
 
 {%- endif -%}
     '''
-    elif option == "body":
+    elif option == "panel":
         return '''
 <div class='display_control_panel'>
         <div class="display_checkboxes">
@@ -633,7 +633,9 @@ function toggle_messages() {
             <label for="show_messages">Messages</label>
     </div>
 </div>
-
+    '''
+    elif option == "body":
+        return '''
 {%- block input -%}
 
     {%- if 'scratch' in cell.metadata.tags -%}
@@ -806,6 +808,7 @@ body {
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+%s
 {%%- endblock header -%%}
 %s
 {%% block footer %%}
@@ -824,6 +827,7 @@ body {
            conf['name'], get_font(conf['font']), conf['name'],
            get_nav([x for x in dirs if not x in conf['hide_navbar']], conf['homepage_label'], '../'),
            get_right_nav(conf['repo'], conf['source_label']),
+           get_sos_tpl('panel' if conf['report_style'] is True else ''),
            get_sos_tpl('body' if conf['report_style'] is True else ''),
            conf['footer'])
     return content
