@@ -425,8 +425,8 @@ q(\bs{B}, \bs{\Gamma}, \bs{\Lambda}) = q(\bs{\Lambda})\prod_{j = 1}^{J}q(\bs{b}_
 \bs{\xi}_j &amp;= E\left[\bs{R}_{-j}\right]^{\intercal}\bs{x}_j\|\bs{x}_j\|^{-2}, \\
 \bs{\Sigma}_{jt} &amp;= \left(\bs{V}_t^{-1} + \|\bs{x}_j\|^2\bs{\Lambda}\right)^{-1}, \\
 \bs{\mu}_{jt} &amp;= \bs{\Sigma}_{jt}\bs{\Lambda}E\left[\bs{R}_{-k}\right]^{\intercal}\bs{x}_j, \\
-\gamma_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs{x}_j\|^{-2})}{\sum_{t = 0}^T\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs{x}_j\|^{-2})},\\
-\bs{\mu}_{\bs{B}[j, ]}  &amp;= \sum_{t = 0}^T \gamma_{jt}\bs{\mu}_{jt}
+w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs{x}_j\|^{-2})}{\sum_{t = 0}^T\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs{x}_j\|^{-2})},\\
+\bs{\mu}_{\bs{B}[j, ]}  &amp;= \sum_{t = 0}^T w_{jt}\bs{\mu}_{jt}
 \end{align}</p>
 <p>We update until the lower bound $\mathcal{L}(q)$ converges.</p>
 <h2 id="Initialization">Initialization<a class="anchor-link" href="#Initialization">&#182;</a></h2><ul>
@@ -621,7 +621,15 @@ q(\bs{B}, \bs{\Gamma}, \bs{\Lambda}) = q(\bs{\Lambda})\prod_{j = 1}^{J}q(\bs{b}_
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
+    </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First feature:</p>
+</div>
+</div>
+</div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
@@ -638,7 +646,6 @@ q(\bs{B}, \bs{\Gamma}, \bs{\Lambda}) = q(\bs{\Lambda})\prod_{j = 1}^{J}q(\bs{b}_
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -732,11 +739,21 @@ YTBIkhoGgySpYTBIkhr/H6/jUOTxu587AAAAAElFTkSuQmCC
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
+    </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">Second</span> <span class="n">feature</span><span class="p">:</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
@@ -751,7 +768,6 @@ YTBIkhoGgySpYTBIkhr/H6/jUOTxu587AAAAAElFTkSuQmCC
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -853,7 +869,6 @@ QZLUYTFIkjosBklSh8UgSer4//Vl92KkyBiyAAAAAElFTkSuQmCC
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
@@ -872,7 +887,6 @@ QZLUYTFIkjosBklSh8UgSer4//Vl92KkyBiyAAAAAElFTkSuQmCC
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -971,7 +985,6 @@ UsNgkCQ1DAZJUsNgkCQ1DAZJUsNgkCQ1/j+2UFN4z6EH1QAAAABJRU5ErkJggg==
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
@@ -980,7 +993,7 @@ UsNgkCQ1DAZJUsNgkCQ1DAZJUsNgkCQ1/j+2UFN4z6EH1QAAAABJRU5ErkJggg==
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Compare with univariate LASSO</p>
+<p>Compare with univariate LASSO, first and 2nd features:</p>
 </div>
 </div>
 </div><div class="rendered lan_Python3">
@@ -1026,7 +1039,6 @@ UsNgkCQ1DAZJUsNgkCQ1DAZJUsNgkCQ1/j+2UFN4z6EH1QAAAABJRU5ErkJggg==
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -1144,7 +1156,6 @@ ktSJgSFJ6sTAkCR18v8B8uWaC9sJDsYAAAAASUVORK5CYII=
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
@@ -1164,7 +1175,6 @@ ktSJgSFJ6sTAkCR18v8B8uWaC9sJDsYAAAAASUVORK5CYII=
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -1266,7 +1276,6 @@ YII=
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
@@ -1978,7 +1987,7 @@ Y - X @ B =
     </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/034114f0ddfcbaa5c764e6588cc8b564370cda72/prototype/20171103_MNMASH_Model.ipynb"><code>prototype/20171103_MNMASH_Model.ipynb</code></a> committed by Gao Wang on Thu Nov 16 17:20:12 2017 <a href="http://github.com/gaow/mvarbvs/commit/034114f0ddfcbaa5c764e6588cc8b564370cda72">revision 10, 034114f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7e06e3e569fe6ea57385d83723e146e63f18a1df/prototype/20171103_MNMASH_Model.ipynb"><code>prototype/20171103_MNMASH_Model.ipynb</code></a> committed by Gao Wang on Thu Nov 16 17:25:36 2017 <a href="http://github.com/gaow/mvarbvs/commit/7e06e3e569fe6ea57385d83723e146e63f18a1df">revision 11, 7e06e3e</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
