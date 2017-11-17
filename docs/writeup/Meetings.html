@@ -366,6 +366,35 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20171115">20171115<a class="anchor-link" href="#20171115">&#182;</a></h2><p>Meeting with Matthew</p>
+<h3 id="mr-ash">mr-ash<a class="anchor-link" href="#mr-ash">&#182;</a></h3><p>Showed results of analysis on 3 tissues. We have simulation and some real data results so far on mr-ash. But real data results has "stability" or "inconsistency" issues.</p>
+<p>We decide to move from mr-ash for now. Eventually it can be used (in comparison with other methods) as a tool for prediction. The real data example is precisely the reason why it is not good for fine-mapping (I think we wanted to do fine-mapping differently anyways by adding an additional MCMC step).</p>
+<h3 id="m&amp;m-model">m&amp;m model<a class="anchor-link" href="#m&amp;m-model">&#182;</a></h3><p>Comments on current model implementation</p>
+<ul>
+<li>Change notation: $t$ to $p$, $V$ to $\Sigma$, to match with MASH notation</li>
+<li>Notation: $\xi_j$ vs $\hat{b}_j$. The latter is both more clear and confusing in its own way</li>
+<li>We remove prior on $\Lambda$. Just say it's MLE</li>
+<li>Missing values: do not attempt to impute in the updates. Just ignore them in computing updates <ul>
+<li>by properly setting elements in matrices &amp; vectors to zeros</li>
+</ul>
+</li>
+<li>Numeric issue: use difference of log of multivariate normal densities, rather than ratio of densities.</li>
+</ul>
+<p>Tips on debugging current model</p>
+<ul>
+<li>Use one tissue special case to debug, compare with mr-ash</li>
+<li>Maybe give up this model (which is a multivariate version of mr-ash) and use the <code>finemap-vb</code> model instead as the basis<ul>
+<li>Check out this <a href="https://stephens999.github.io/misc/newVB.html">outline</a> and generalize to multivariate case</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="20171005-m&amp;m-fine-mapping-meeting">20171005 m&amp;m fine mapping meeting<a class="anchor-link" href="#20171005-m&amp;m-fine-mapping-meeting">&#182;</a></h2><p>With Peter (mostly) and Matthew (briefly). We discussed various stuff on current modeling steps 1 and 2, making sure we are on the same page.</p>
 <p><img src="figures/IMG_20171005_1.jpg" alt=""></p>
 <p>We then discussed a simple MH sampling scheme. The key is, as suggested by Matthew and formalized by Peter, to sample 2 SNPs jointly at each move.</p>
@@ -530,7 +559,7 @@ body {
 </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/3234b37fd56d23f6198df84f53723fd0fddbbf68/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Fri Oct 6 08:08:03 2017 <a href="http://github.com/gaow/mvarbvs/commit/3234b37fd56d23f6198df84f53723fd0fddbbf68">revision 3, 3234b37</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7ebddcfeb5d83981ce295cb7e7887c9578d40cec/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Fri Nov 17 13:58:55 2017 <a href="http://github.com/gaow/mvarbvs/commit/7ebddcfeb5d83981ce295cb7e7887c9578d40cec">revision 4, 7ebddcf</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
