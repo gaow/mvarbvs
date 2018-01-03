@@ -110,193 +110,8 @@ $(document).ready(function () {
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
-</script><style type="text/css">
-table {
-   padding: 0;
-   border-collapse: collapse; }
-thead {
-    border-bottom-width: 1px;
-    border-bottom-color: rgb(0,0,0);
-    border-bottom-style: solid;
-}
-table tr {
-   border: none;
-   background-color: white;
-   margin: 0;
-   padding: 0; }
-table tr:nth-child(2n) {
-   background-color: #f8f8f8; }
-table tr th {
-   font-weight: bold;
-   border: none;
-   margin: 0;
-   padding: 6px 13px; }
-table tr td {
-   border: none;
-   margin: 0;
-   padding: 6px 13px; }
-table tr th :first-child, table tr td :first-child {
-   margin-top: 0; }
-table tr th :last-child, table tr td :last-child {
-   margin-bottom: 0; }
-.dataframe_container { max-height: 400px }
-.dataframe_input {
-    border: 1px solid #ddd;
-    margin-bottom: 5px;
-}
-.rendered_html table {
-  border: none;
-}
-.sos_hint {
-  color: rgba(0,0,0,.4);
-  font-family: monospace;
-  display: none;
-}
-.output_stderr {
-    display: none;
-}
-/*
- div.input {
-     display: none;
- }
-*/
-.hidden_content {
-    display: none;
-}
-.input_prompt {
-    display: none;
-}
-.output_area .prompt {
-    display: none;
-}
-.output_prompt {
-    display: none;
-}
-#nextsteps {
-   color: blue;
-}
-.scatterplot_by_rowname div.xAxis div.tickLabel {
-    transform: translateY(15px) translateX(15px) rotate(45deg);
-    -ms-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -moz-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -webkit-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -o-transform: translateY(15px) translateX(15px) rotate(45deg);
-    /*rotation-point:50% 50%;*/
-    /*rotation:270deg;*/
-}
-div.cell {
-    padding: 0pt;
-    border-width: 0pt;
-}
-.sos_dataframe td, .sos_dataframe th, .sos_dataframe tr {
-    white-space: nowrap;
-    border: none;
-}
-.sos_dataframe tr:hover {
-    background-color: #e6f2ff;
-}
-.display_control_panel  {
-    position: inherit;
-    z-index: 1000;
-}
-.display_checkboxes {
-    margin-top: 5pt;
-}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}</style>
-<script>
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        } 
-    }
-}
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-    if (dtype === 'numeric') {
-        var fn = function(a, b) { 
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]); 
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-    var sorted = isSorted(tr, fn);
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-function toggle_source() {
-    var btn = document.getElementById("show_cells");
-    if (btn.checked) {
-        $('div.input').css('display', 'flex');
-        $('.hidden_content').show();
-        // this somehow does not work.
-        $('div.cell').css('padding', '0pt').css('border-width', '0pt');
-    } else {
-        $('div.input').hide();
-        $('.hidden_content').hide();
-        $('div.cell').css('padding', '0pt').css('border-width', '0pt');
-    }
-}
-function toggle_prompt() {
-    var btn = document.getElementById("show_prompt");
-    if (btn.checked) {
-        $('.output_prompt').show();
-        $('.input_prompt').show();
-        $('.output_area .prompt').show();
-    } else {
-        $('.output_prompt').hide();
-        $('.input_prompt').hide();
-        $('.output_area .prompt').hide();
-    }
-}
-function toggle_messages() {
-    var btn = document.getElementById("show_messages");
-    if (btn.checked) {
-        $('.sos_hint').show();
-        $('.output_stderr').show();
-    } else {
-        $('.output_stderr').hide();
-        $('.sos_hint').hide();
-    }
-}
-</script><title>m&m ash</title>
+</script>
+<title>m&m ash</title>
 <style type = "text/css">
 body {
   font-family: "Droid Sans";
@@ -342,20 +157,6 @@ body {
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-<div class='display_control_panel'>
-        <div class="display_checkboxes">
-        Show:
-            &nbsp;
-            <input type="checkbox" id="show_cells" name="show_cells" onclick="toggle_source()">
-            <label for="show_cells">All cells</label>
-            &nbsp;
-            <input type="checkbox" id="show_prompt" name="show_prompt" onclick="toggle_prompt()">
-            <label for="show_prompt">Prompt</label>
-            &nbsp;
-            <input type="checkbox" id="show_messages" name="show_messages" onclick="toggle_messages()">
-            <label for="show_messages">Messages</label>
-    </div>
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -363,20 +164,18 @@ body {
 <h1 id="Simulation-of-multiple-phenotypes-given-genotypes-and-covariance">Simulation of multiple phenotypes given genotypes and covariance<a class="anchor-link" href="#Simulation-of-multiple-phenotypes-given-genotypes-and-covariance">&#182;</a></h1><p>Here we simulate effect size from mixture gaussian.</p>
 </div>
 </div>
-</div><div class="rendered lan_SoS">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTExV8/MNM&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -384,10 +183,10 @@ body {
 <h2 id="Prior-&amp;-residuals-inventory">Prior &amp; residuals inventory<a class="anchor-link" href="#Prior-&amp;-residuals-inventory">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -405,13 +204,11 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds&#39;</span><span class="p">)</span>
@@ -419,13 +216,11 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">X</span> <span class="n">Y</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
@@ -433,11 +228,9 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
@@ -445,11 +238,9 @@ body {
 </pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -457,10 +248,10 @@ body {
 <h2 id="Multivariate-simulation">Multivariate simulation<a class="anchor-link" href="#Multivariate-simulation">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">from</span> <span class="nn">libgaow.regression_simulate</span> <span class="kn">import</span> <span class="n">MMRegressionSimulator</span> <span class="k">as</span> <span class="n">SIM</span>
@@ -468,13 +259,11 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1">#data.get_xcorr(&#39;/home/gaow/Documents/GTExV8/FMO2.ld.npy&#39;)</span>
@@ -482,13 +271,11 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="o">*</span><span class="n">P3</span><span class="p">)</span>
@@ -496,24 +283,20 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">U</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[8]:</div>
 <div class="output_text output_subarea output_execute_result">
@@ -522,52 +305,44 @@ body {
         [ 1. ,  1.5]])}</pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">pi</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[9]:</div>
 <div class="output_text output_subarea output_execute_result">
 <pre>array([0, 1])</pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">generate_B</span><span class="p">(</span><span class="n">number_nonzero</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># Separate effects into different LD blocks</span>
@@ -576,11 +351,9 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -590,27 +363,23 @@ Done
 </pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">swap_B</span><span class="p">(</span><span class="n">indep_snps</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
@@ -619,25 +388,21 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> %preview /home/gaow/Documents/GTExV8/MNM/sim1.b1.png<br></div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> /home/gaow/Documents/GTExV8/MNM/sim1.b1.png (88.5 KiB):</div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -645,14 +410,12 @@ Done
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
@@ -661,25 +424,21 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> %preview /home/gaow/Documents/GTExV8/MNM/sim1.b2.png<br></div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> /home/gaow/Documents/GTExV8/MNM/sim1.b2.png (86.8 KiB):</div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -687,24 +446,20 @@ Done
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">data</span><span class="o">.</span><span class="n">generate_Y</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)))</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -712,10 +467,10 @@ Done
 <h2 id="M&amp;M-analysis">M&amp;M analysis<a class="anchor-link" href="#M&amp;M-analysis">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
@@ -723,13 +478,11 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">from</span> <span class="nn">libgaow.regression_data</span> <span class="kn">import</span> <span class="n">MNMASH</span>
@@ -738,26 +491,22 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">niter</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
@@ -766,25 +515,21 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> %preview /home/gaow/Documents/GTExV8/MNM/sim1.bpost1.png<br></div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> /home/gaow/Documents/GTExV8/MNM/sim1.bpost1.png (119.6 KiB):</div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -792,14 +537,12 @@ Done
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[27]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
@@ -808,25 +551,21 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> %preview /home/gaow/Documents/GTExV8/MNM/sim1.bpost2.png<br></div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> /home/gaow/Documents/GTExV8/MNM/sim1.bpost2.png (114.8 KiB):</div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -834,11 +573,9 @@ Done
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -846,10 +583,10 @@ Done
 <h2 id="Compare-with-varbvs">Compare with <code>varbvs</code><a class="anchor-link" href="#Compare-with-varbvs">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">X</span>
@@ -857,26 +594,22 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">X</span> <span class="n">Y</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">python3</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">n</span> <span class="o">&lt;-</span> <span class="n">nrow</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
@@ -891,26 +624,22 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">varbvs_bhat1</span> <span class="n">varbvs_bhat2</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
@@ -919,25 +648,21 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> %preview /home/gaow/Documents/GTExV8/MNM/sim1.varbvs1.png<br></div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> /home/gaow/Documents/GTExV8/MNM/sim1.varbvs1.png (97.2 KiB):</div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -945,14 +670,12 @@ Done
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">expand</span>
@@ -961,25 +684,21 @@ Done
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> %preview /home/gaow/Documents/GTExV8/MNM/sim1.varbvs2.png<br></div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 <div class="sos_hint">> /home/gaow/Documents/GTExV8/MNM/sim1.varbvs2.png (92.6 KiB):</div>
 </div>
 </div>
-        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -987,11 +706,9 @@ Done
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
 <p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/403195bb7f09029f4a21088517f52594d0a45c3a/analysis/20171210_Simulation_Multivariate.ipynb"><code>analysis/20171210_Simulation_Multivariate.ipynb</code></a> committed by Gao Wang on Mon Dec 18 15:27:58 2017 <a href="http://github.com/gaow/mvarbvs/commit/403195bb7f09029f4a21088517f52594d0a45c3a">revision 5, 403195b</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>

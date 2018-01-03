@@ -110,193 +110,8 @@ $(document).ready(function () {
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
-</script><style type="text/css">
-table {
-   padding: 0;
-   border-collapse: collapse; }
-thead {
-    border-bottom-width: 1px;
-    border-bottom-color: rgb(0,0,0);
-    border-bottom-style: solid;
-}
-table tr {
-   border: none;
-   background-color: white;
-   margin: 0;
-   padding: 0; }
-table tr:nth-child(2n) {
-   background-color: #f8f8f8; }
-table tr th {
-   font-weight: bold;
-   border: none;
-   margin: 0;
-   padding: 6px 13px; }
-table tr td {
-   border: none;
-   margin: 0;
-   padding: 6px 13px; }
-table tr th :first-child, table tr td :first-child {
-   margin-top: 0; }
-table tr th :last-child, table tr td :last-child {
-   margin-bottom: 0; }
-.dataframe_container { max-height: 400px }
-.dataframe_input {
-    border: 1px solid #ddd;
-    margin-bottom: 5px;
-}
-.rendered_html table {
-  border: none;
-}
-.sos_hint {
-  color: rgba(0,0,0,.4);
-  font-family: monospace;
-  display: none;
-}
-.output_stderr {
-    display: none;
-}
-/*
- div.input {
-     display: none;
- }
-*/
-.hidden_content {
-    display: none;
-}
-.input_prompt {
-    display: none;
-}
-.output_area .prompt {
-    display: none;
-}
-.output_prompt {
-    display: none;
-}
-#nextsteps {
-   color: blue;
-}
-.scatterplot_by_rowname div.xAxis div.tickLabel {
-    transform: translateY(15px) translateX(15px) rotate(45deg);
-    -ms-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -moz-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -webkit-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -o-transform: translateY(15px) translateX(15px) rotate(45deg);
-    /*rotation-point:50% 50%;*/
-    /*rotation:270deg;*/
-}
-div.cell {
-    padding: 0pt;
-    border-width: 0pt;
-}
-.sos_dataframe td, .sos_dataframe th, .sos_dataframe tr {
-    white-space: nowrap;
-    border: none;
-}
-.sos_dataframe tr:hover {
-    background-color: #e6f2ff;
-}
-.display_control_panel  {
-    position: inherit;
-    z-index: 1000;
-}
-.display_checkboxes {
-    margin-top: 5pt;
-}.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_SoS {}</style>
-<script>
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        } 
-    }
-}
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-    if (dtype === 'numeric') {
-        var fn = function(a, b) { 
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]); 
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-    var sorted = isSorted(tr, fn);
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-function toggle_source() {
-    var btn = document.getElementById("show_cells");
-    if (btn.checked) {
-        $('div.input').css('display', 'flex');
-        $('.hidden_content').show();
-        // this somehow does not work.
-        $('div.cell').css('padding', '0pt').css('border-width', '0pt');
-    } else {
-        $('div.input').hide();
-        $('.hidden_content').hide();
-        $('div.cell').css('padding', '0pt').css('border-width', '0pt');
-    }
-}
-function toggle_prompt() {
-    var btn = document.getElementById("show_prompt");
-    if (btn.checked) {
-        $('.output_prompt').show();
-        $('.input_prompt').show();
-        $('.output_area .prompt').show();
-    } else {
-        $('.output_prompt').hide();
-        $('.input_prompt').hide();
-        $('.output_area .prompt').hide();
-    }
-}
-function toggle_messages() {
-    var btn = document.getElementById("show_messages");
-    if (btn.checked) {
-        $('.sos_hint').show();
-        $('.output_stderr').show();
-    } else {
-        $('.output_stderr').hide();
-        $('.sos_hint').hide();
-    }
-}
-</script><title>m&m ash</title>
+</script>
+<title>m&m ash</title>
 <style type = "text/css">
 body {
   font-family: "Droid Sans";
@@ -342,20 +157,6 @@ body {
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-<div class='display_control_panel'>
-        <div class="display_checkboxes">
-        Show:
-            &nbsp;
-            <input type="checkbox" id="show_cells" name="show_cells" onclick="toggle_source()">
-            <label for="show_cells">All cells</label>
-            &nbsp;
-            <input type="checkbox" id="show_prompt" name="show_prompt" onclick="toggle_prompt()">
-            <label for="show_prompt">Prompt</label>
-            &nbsp;
-            <input type="checkbox" id="show_messages" name="show_messages" onclick="toggle_messages()">
-            <label for="show_messages">Messages</label>
-    </div>
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -377,10 +178,10 @@ body {
 <h2 id="Data-exploration">Data exploration<a class="anchor-link" href="#Data-exploration">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat1</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/Thyroid.FMO2.pm1Mb.RDS&#39;</span><span class="p">)</span>
@@ -388,24 +189,20 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -416,25 +213,21 @@ body {
 </pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -445,14 +238,12 @@ body {
 </pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">y</span><span class="p">)</span>
@@ -460,11 +251,9 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -473,14 +262,12 @@ body {
 </pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">Z</span><span class="p">)</span>
@@ -488,11 +275,9 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -507,14 +292,12 @@ body {
 </pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">all_samples</span> <span class="o">=</span> <span class="n">union</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">X</span><span class="p">),</span> <span class="n">rownames</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">))</span>
@@ -522,11 +305,9 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -534,11 +315,9 @@ body {
 </pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -546,10 +325,10 @@ body {
 <h2 id="Removing-covariates">Removing covariates<a class="anchor-link" href="#Removing-covariates">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat1</span><span class="err">$</span><span class="n">y</span> <span class="o">=</span> <span class="o">.</span><span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">Z</span><span class="p">,</span> <span class="n">dat1</span><span class="err">$</span><span class="n">y</span><span class="p">)</span><span class="err">$</span><span class="n">residuals</span>
@@ -557,10 +336,8 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -568,10 +345,10 @@ body {
 <h2 id="Data-merger">Data merger<a class="anchor-link" href="#Data-merger">&#182;</a></h2><h3 id="y">y<a class="anchor-link" href="#y">&#182;</a></h3>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">y1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">y</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">y</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
@@ -585,13 +362,11 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">y</span> <span class="o">&lt;-</span><span class="n">merge</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;rows&#39;</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
@@ -600,24 +375,20 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -634,36 +405,30 @@ body {
 </table>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 307
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -671,10 +436,10 @@ body {
 <h3 id="X">X<a class="anchor-link" href="#X">&#182;</a></h3>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">X2</span> <span class="o">=</span> <span class="n">subset</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="err">!</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">)</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">rownames</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">X</span><span class="p">)))</span>
@@ -683,24 +448,20 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dim</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -710,11 +471,9 @@ body {
 </ol>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -722,10 +481,10 @@ body {
 <h2 id="Save-data:-with-missing-/-without-missing">Save data: with missing / without missing<a class="anchor-link" href="#Save-data:-with-missing-/-without-missing">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">y_filled</span> <span class="o">=</span> <span class="n">y</span>
@@ -737,10 +496,8 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -748,10 +505,10 @@ body {
 <h2 id="Analyze-per-tissue-data-with-mr-ash">Analyze per-tissue data with mr-ash<a class="anchor-link" href="#Analyze-per-tissue-data-with-mr-ash">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">autoselect</span><span class="o">.</span><span class="n">mixsd</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span><span class="n">sebetahat</span><span class="p">,</span><span class="n">mult</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)){</span>
@@ -810,10 +567,8 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -821,10 +576,10 @@ body {
 <h2 id="For-thyroid">For thyroid<a class="anchor-link" href="#For-thyroid">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">initial</span> <span class="o">=</span> <span class="n">univariate_regression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Thyroid</span><span class="p">)</span>
@@ -844,24 +599,20 @@ body {
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">lfsr</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -889,25 +640,21 @@ body {
 </dl>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span> <span class="n">decreasing</span> <span class="o">=</span> <span class="n">T</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -935,38 +682,32 @@ body {
 </dl>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">lasso_res</span> <span class="o">=</span> <span class="n">glmnet</span><span class="p">::</span><span class="n">glmnet</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Thyroid</span><span class="p">,</span> <span class="n">intercept</span> <span class="o">=</span> <span class="n">F</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">coef</span><span class="p">(</span><span class="n">lasso_res</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -1421,11 +1162,9 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1433,10 +1172,10 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 <h2 id="For-Lung">For Lung<a class="anchor-link" href="#For-Lung">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">initial</span> <span class="o">=</span> <span class="n">univariate_regression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Lung</span><span class="p">)</span>
@@ -1456,24 +1195,20 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">lfsr</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -1501,25 +1236,21 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 </dl>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span> <span class="n">decreasing</span> <span class="o">=</span> <span class="n">T</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -1547,14 +1278,12 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 </dl>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">lasso_res</span> <span class="o">=</span> <span class="n">glmnet</span><span class="p">::</span><span class="n">glmnet</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Lung</span><span class="p">,</span> <span class="n">intercept</span> <span class="o">=</span> <span class="n">F</span><span class="p">)</span>
@@ -1562,11 +1291,9 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -2054,11 +1781,9 @@ gg=="
 >
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
 <p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/37cf5d7e655440661376e1bb91cbc621967fe190/analysis/20171103_MNMASH_Data.ipynb"><code>analysis/20171103_MNMASH_Data.ipynb</code></a> committed by Gao Wang on Tue Nov 7 18:32:33 2017 <a href="http://github.com/gaow/mvarbvs/commit/37cf5d7e655440661376e1bb91cbc621967fe190">revision 2, 37cf5d7</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>

@@ -110,193 +110,8 @@ $(document).ready(function () {
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
-</script><style type="text/css">
-table {
-   padding: 0;
-   border-collapse: collapse; }
-thead {
-    border-bottom-width: 1px;
-    border-bottom-color: rgb(0,0,0);
-    border-bottom-style: solid;
-}
-table tr {
-   border: none;
-   background-color: white;
-   margin: 0;
-   padding: 0; }
-table tr:nth-child(2n) {
-   background-color: #f8f8f8; }
-table tr th {
-   font-weight: bold;
-   border: none;
-   margin: 0;
-   padding: 6px 13px; }
-table tr td {
-   border: none;
-   margin: 0;
-   padding: 6px 13px; }
-table tr th :first-child, table tr td :first-child {
-   margin-top: 0; }
-table tr th :last-child, table tr td :last-child {
-   margin-bottom: 0; }
-.dataframe_container { max-height: 400px }
-.dataframe_input {
-    border: 1px solid #ddd;
-    margin-bottom: 5px;
-}
-.rendered_html table {
-  border: none;
-}
-.sos_hint {
-  color: rgba(0,0,0,.4);
-  font-family: monospace;
-  display: none;
-}
-.output_stderr {
-    display: none;
-}
-/*
- div.input {
-     display: none;
- }
-*/
-.hidden_content {
-    display: none;
-}
-.input_prompt {
-    display: none;
-}
-.output_area .prompt {
-    display: none;
-}
-.output_prompt {
-    display: none;
-}
-#nextsteps {
-   color: blue;
-}
-.scatterplot_by_rowname div.xAxis div.tickLabel {
-    transform: translateY(15px) translateX(15px) rotate(45deg);
-    -ms-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -moz-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -webkit-transform: translateY(15px) translateX(15px) rotate(45deg);
-    -o-transform: translateY(15px) translateX(15px) rotate(45deg);
-    /*rotation-point:50% 50%;*/
-    /*rotation:270deg;*/
-}
-div.cell {
-    padding: 0pt;
-    border-width: 0pt;
-}
-.sos_dataframe td, .sos_dataframe th, .sos_dataframe tr {
-    white-space: nowrap;
-    border: none;
-}
-.sos_dataframe tr:hover {
-    background-color: #e6f2ff;
-}
-.display_control_panel  {
-    position: inherit;
-    z-index: 1000;
-}
-.display_checkboxes {
-    margin-top: 5pt;
-}.lan_Python3 .input_prompt { background-color: #FFE771 !important }.lan_R .input_prompt { background-color: #DCDCDA !important }.lan_SoS {}</style>
-<script>
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
-            }
-            if (!matched)
-                tr[i].style.display = "none";
-        } 
-    }
-}
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-    if (dtype === 'numeric') {
-        var fn = function(a, b) { 
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]); 
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
-            }
-        return direction;
-    }
-    var sorted = isSorted(tr, fn);
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-function toggle_source() {
-    var btn = document.getElementById("show_cells");
-    if (btn.checked) {
-        $('div.input').css('display', 'flex');
-        $('.hidden_content').show();
-        // this somehow does not work.
-        $('div.cell').css('padding', '0pt').css('border-width', '0pt');
-    } else {
-        $('div.input').hide();
-        $('.hidden_content').hide();
-        $('div.cell').css('padding', '0pt').css('border-width', '0pt');
-    }
-}
-function toggle_prompt() {
-    var btn = document.getElementById("show_prompt");
-    if (btn.checked) {
-        $('.output_prompt').show();
-        $('.input_prompt').show();
-        $('.output_area .prompt').show();
-    } else {
-        $('.output_prompt').hide();
-        $('.input_prompt').hide();
-        $('.output_area .prompt').hide();
-    }
-}
-function toggle_messages() {
-    var btn = document.getElementById("show_messages");
-    if (btn.checked) {
-        $('.sos_hint').show();
-        $('.output_stderr').show();
-    } else {
-        $('.output_stderr').hide();
-        $('.sos_hint').hide();
-    }
-}
-</script><title>m&m ash</title>
+</script>
+<title>m&m ash</title>
 <style type = "text/css">
 body {
   font-family: "Droid Sans";
@@ -342,20 +157,6 @@ body {
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-<div class='display_control_panel'>
-        <div class="display_checkboxes">
-        Show:
-            &nbsp;
-            <input type="checkbox" id="show_cells" name="show_cells" onclick="toggle_source()">
-            <label for="show_cells">All cells</label>
-            &nbsp;
-            <input type="checkbox" id="show_prompt" name="show_prompt" onclick="toggle_prompt()">
-            <label for="show_prompt">Prompt</label>
-            &nbsp;
-            <input type="checkbox" id="show_messages" name="show_messages" onclick="toggle_messages()">
-            <label for="show_messages">Messages</label>
-    </div>
-</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -450,10 +251,10 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <p><strong>In this notebook we use a test data set of 2 tissues: Thyroid and Lung. As a first pass we also fix $\bs{V}$ as a null matrix plus an identity matrix, with weights and $\pi_0=0.9$.</strong></p>
 </div>
 </div>
-</div><div class="rendered lan_R">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds&#39;</span><span class="p">)</span>
@@ -462,7 +263,6 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -483,10 +283,9 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">X</span> <span class="n">Y</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
@@ -495,11 +294,9 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
@@ -507,11 +304,9 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -519,17 +314,16 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <h2 id="Data-preview">Data preview<a class="anchor-link" href="#Data-preview">&#182;</a></h2>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">X</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -548,30 +342,26 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -590,7 +380,6 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -598,10 +387,10 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <h2 id="Multivariate-LASSO">Multivariate LASSO<a class="anchor-link" href="#Multivariate-LASSO">&#182;</a></h2><p>For initialization of effects. Here I use implementation via <code>sklearn</code>, as documented <a href="http://scikit-learn.org/stable/modules/linear_model.html#multi-task-lasso">here</a>. It is quite slow to compute a proper CV version of LASSO, though.</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">linear_model</span>
@@ -612,11 +401,9 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[6]:</div>
 <div class="output_text output_subarea output_execute_result">
@@ -625,11 +412,9 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
         warm_start=False)</pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -637,10 +422,10 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <p>First feature:</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
@@ -651,7 +436,6 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -744,7 +528,6 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -752,10 +535,10 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 <p>Second feature:</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]))],</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
@@ -764,7 +547,6 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -868,7 +650,6 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -876,10 +657,10 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 <p>First vs. 2nd feature:</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
@@ -888,7 +669,6 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -989,7 +769,6 @@ AAAAAElFTkSuQmCC
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -997,10 +776,10 @@ AAAAAElFTkSuQmCC
 <p>Compare with univariate LASSO, first and 2nd features:</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># model = linear_model.LassoCV(alphas = [(x+1)/100 for x in range(10)], fit_intercept = False)</span>
@@ -1009,11 +788,9 @@ AAAAAElFTkSuQmCC
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[10]:</div>
 <div class="output_text output_subarea output_execute_result">
@@ -1022,14 +799,12 @@ AAAAAElFTkSuQmCC
    selection=&#39;cyclic&#39;, tol=0.0001, warm_start=False)</pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">))],</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
@@ -1038,7 +813,6 @@ AAAAAElFTkSuQmCC
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1157,10 +931,9 @@ xQItPQAAAABJRU5ErkJggg==
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
@@ -1170,7 +943,6 @@ xQItPQAAAABJRU5ErkJggg==
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1272,7 +1044,6 @@ pX8AAAAASUVORK5CYII=
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1288,7 +1059,7 @@ pX8AAAAASUVORK5CYII=
 <h2 id="VEM-implementation">VEM implementation<a class="anchor-link" href="#VEM-implementation">&#182;</a></h2><p>It is not working yet. Still trying to figure out what's going on.</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
@@ -1391,20 +1162,17 @@ pX8AAAAASUVORK5CYII=
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">MNMASH</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1420,30 +1188,27 @@ pX8AAAAASUVORK5CYII=
 <p>First iteration.</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1588,7 +1353,6 @@ Y - X @ B =
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1596,30 +1360,27 @@ Y - X @ B =
 <p>Second iteration.</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[60]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[61]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1764,57 +1525,48 @@ Y - X @ B =
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[62]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">wdE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[62]:</div>
 <div class="output_text output_subarea output_execute_result">
 <pre>5.604973192572156e-166</pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[63]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[63]:</div>
 <div class="output_text output_subarea output_execute_result">
 <pre>1.0062197120752165e-163</pre>
 </div>
 </div>
-        </div>
 </div>
 </div>
 </div>
-    </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -1822,10 +1574,10 @@ Y - X @ B =
 <p>3rd iteration.</p>
 </div>
 </div>
-</div><div class="rendered lan_Python3">
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div><div class="hidden_content">
+<div class="prompt input_prompt">In&nbsp;[64]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
@@ -1833,7 +1585,6 @@ Y - X @ B =
 </pre></div>
 </div>
 </div>
-        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1985,7 +1736,6 @@ Y - X @ B =
 </div>
 </div>
 </div>
-    </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
 <p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/2936cf4ed5b7bf6d7398d0fa0ebff77e285bb1b4/prototype/20171103_MNMASH_Model.ipynb"><code>prototype/20171103_MNMASH_Model.ipynb</code></a> committed by Gao Wang on Wed Nov 29 14:31:31 2017 <a href="http://github.com/gaow/mvarbvs/commit/2936cf4ed5b7bf6d7398d0fa0ebff77e285bb1b4">revision 15, 2936cf4</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
