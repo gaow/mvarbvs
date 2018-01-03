@@ -3,8 +3,6 @@
 
 sys.path.append('docs')
 
-# [default_0: shared = ['binders', 'notebook_files', 'index_files', 'pipeline_files', 'generated_files']]
-
 from sos.utils import load_config_files
 if os.path.exists('config.yml'):
    CONFIG.update(load_config_files('config.yml'))
@@ -40,7 +38,6 @@ notebook_files = sum([[y for y in glob.glob(f"{x}/*.ipynb") if y not in [f"{x}/i
 index_files = [f'{x}/index.ipynb' if os.path.isfile(f'{x}/index.ipynb') else f'{x}/_index.ipynb' for x in binders if x not in CONFIG['hide_navbar']]
 pipeline_files = sum([[y for y in glob.glob(f"{x}/*.sos") if y not in CONFIG['exclude_file']] for x in binders], [])
 generated_files = [f'docs/{x}.html' for x in binders if x not in CONFIG['hide_navbar']] + ['docs/index.html'] + ['docs/' + x.replace('.ipynb', '.html') for x in notebook_files] + ['docs/' + x.replace('.sos', '.pipeline.html') for x in pipeline_files] + ['docs/js/docs.js', 'docs/index.tpl'] + [f"docs/{x}.tpl" for x in binders]
-print(index_files)
 
 [download-jnbinder: provides = 'jnbinder-master/README.md']
 download: decompress = True, dest_file = 'jnbinder-master.zip'
@@ -121,7 +118,7 @@ task:
 run: expand = "${ }"
   sos convert ${_input:e} ${_output:e} --template docs/${_input:d}.tpl --log-level 0
   num=`grep -n -Fx '''${CONFIG['footer']}''' ${_output:e} | tail -1 | sed 's/\([0-9]*\).*/\1/'`
-  perl -i -lpe 'print "${_nb_info}" if $. == '"$num"'+1' ${_output:e}
+  perl -i -lpe 'print "${_nb_info[0]}" if $. == '"$num"'+1' ${_output:e}
   perl -i -ne 'print if /\S/' ${_output:e}
 
 [update-wf (Pipeline to HTML converter): skip = len(pipeline_files) == 0]
@@ -137,16 +134,16 @@ input: dynamic(notebook_files + index_files)
 output: 'docs/js/docs.js'
 from jnbinder import get_toc
 out = [get_toc(x, CONFIG['exclude_file'] + [CONFIG['homepage']]) for x in binders]
-with open(_output[0], 'w') as f:
+with open(_output, 'w') as f:
   f.write('\n'.join(['\n'.join(x) for x in out]))
 
 [remove-obsolete (Obsolete files remover)]
 input: None
 output: 'docs/MANIFEST'
-if os.path.isfile(_output[0]):
-  old_files = [x.strip() for x in open(_output[0]).readlines()]
-  run(f"rm -f {' '.join([x for x in old_files if not x in generated_files])}")
-with open(_output[0], 'w') as f:
+if os.path.isfile(_output):
+  old_files = [x.strip() for x in open(_output).readlines()]
+  run(f"rm -f {paths([x for x in old_files if not x in generated_files])}")
+with open(_output, 'w') as f:
   f.write('\n'.join(sorted(generated_files)))
 
 [release-website (gh-pages uploader): skip = CONFIG['release_message'] is None]
@@ -158,7 +155,7 @@ except:
 
 [clean]
 # remove generated files
-run(f"rm -f {' '.join(generated_files)}")
+run(f"rm -f {paths(generated_files)}")
 
 [default_1]
 # build ipynb website ...
