@@ -155,10 +155,12 @@ table tr th :last-child, table tr td :last-child {
 .output_stderr {
     display: none;
 }
-div.input {
-    display: none;
-}
-.hidden_output {
+/*
+ div.input {
+     display: none;
+ }
+*/
+.hidden_content {
     display: none;
 }
 .input_prompt {
@@ -263,12 +265,12 @@ function toggle_source() {
     var btn = document.getElementById("show_cells");
     if (btn.checked) {
         $('div.input').css('display', 'flex');
-        $('.hidden_output').show();
+        $('.hidden_content').show();
         // this somehow does not work.
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     } else {
         $('div.input').hide();
-        $('.hidden_output').hide();
+        $('.hidden_content').hide();
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     }
 }
@@ -451,7 +453,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds&#39;</span><span class="p">)</span>
@@ -460,6 +462,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -483,7 +486,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">X</span> <span class="n">Y</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
@@ -492,10 +495,11 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
@@ -518,13 +522,14 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">X</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -546,25 +551,27 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -594,7 +601,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">linear_model</span>
@@ -605,10 +612,11 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[6]:</div>
 <div class="output_text output_subarea output_execute_result">
@@ -632,7 +640,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
@@ -643,6 +651,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -746,7 +755,7 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">]))],</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
@@ -755,6 +764,7 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -869,7 +879,7 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
@@ -878,6 +888,7 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -989,7 +1000,7 @@ AAAAAElFTkSuQmCC
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># model = linear_model.LassoCV(alphas = [(x+1)/100 for x in range(10)], fit_intercept = False)</span>
@@ -998,10 +1009,11 @@ AAAAAElFTkSuQmCC
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[10]:</div>
 <div class="output_text output_subarea output_execute_result">
@@ -1017,7 +1029,7 @@ AAAAAElFTkSuQmCC
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">))],</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
@@ -1026,6 +1038,7 @@ AAAAAElFTkSuQmCC
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1147,7 +1160,7 @@ xQItPQAAAABJRU5ErkJggg==
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[:,</span><span class="mi">1</span><span class="p">])</span>
@@ -1157,6 +1170,7 @@ xQItPQAAAABJRU5ErkJggg==
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1380,13 +1394,14 @@ pX8AAAAASUVORK5CYII=
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div>
+<div class="prompt input_prompt">In&nbsp;[57]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">MNMASH</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div>
@@ -1408,25 +1423,27 @@ pX8AAAAASUVORK5CYII=
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="prompt input_prompt">In&nbsp;[58]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="prompt input_prompt">In&nbsp;[59]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1582,25 +1599,27 @@ Y - X @ B =
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[60]:</div>
+<div class="prompt input_prompt">In&nbsp;[60]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[61]:</div>
+<div class="prompt input_prompt">In&nbsp;[61]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1748,17 +1767,18 @@ Y - X @ B =
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[62]:</div>
+<div class="prompt input_prompt">In&nbsp;[62]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">wdE</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[62]:</div>
 <div class="output_text output_subarea output_execute_result">
@@ -1772,17 +1792,18 @@ Y - X @ B =
     </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[63]:</div>
+<div class="prompt input_prompt">In&nbsp;[63]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[63]:</div>
 <div class="output_text output_subarea output_execute_result">
@@ -1804,7 +1825,7 @@ Y - X @ B =
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[64]:</div>
+<div class="prompt input_prompt">In&nbsp;[64]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
@@ -1812,6 +1833,7 @@ Y - X @ B =
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
@@ -1966,7 +1988,7 @@ Y - X @ B =
     </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7ebddcfeb5d83981ce295cb7e7887c9578d40cec/prototype/20171103_MNMASH_Model.ipynb"><code>prototype/20171103_MNMASH_Model.ipynb</code></a> committed by Gao Wang on Fri Nov 17 13:58:55 2017 <a href="http://github.com/gaow/mvarbvs/commit/7ebddcfeb5d83981ce295cb7e7887c9578d40cec">revision 13, 7ebddcf</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/2936cf4ed5b7bf6d7398d0fa0ebff77e285bb1b4/prototype/20171103_MNMASH_Model.ipynb"><code>prototype/20171103_MNMASH_Model.ipynb</code></a> committed by Gao Wang on Wed Nov 29 14:31:31 2017 <a href="http://github.com/gaow/mvarbvs/commit/2936cf4ed5b7bf6d7398d0fa0ebff77e285bb1b4">revision 15, 2936cf4</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

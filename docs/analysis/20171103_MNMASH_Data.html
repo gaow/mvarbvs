@@ -155,10 +155,12 @@ table tr th :last-child, table tr td :last-child {
 .output_stderr {
     display: none;
 }
-div.input {
-    display: none;
-}
-.hidden_output {
+/*
+ div.input {
+     display: none;
+ }
+*/
+.hidden_content {
     display: none;
 }
 .input_prompt {
@@ -263,12 +265,12 @@ function toggle_source() {
     var btn = document.getElementById("show_cells");
     if (btn.checked) {
         $('div.input').css('display', 'flex');
-        $('.hidden_output').show();
+        $('.hidden_content').show();
         // this somehow does not work.
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     } else {
         $('div.input').hide();
-        $('.hidden_output').hide();
+        $('.hidden_content').hide();
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     }
 }
@@ -378,7 +380,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat1</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/Thyroid.FMO2.pm1Mb.RDS&#39;</span><span class="p">)</span>
@@ -386,22 +388,24 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -419,17 +423,18 @@ body {
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -447,7 +452,7 @@ body {
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">y</span><span class="p">)</span>
@@ -455,10 +460,11 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -474,7 +480,7 @@ body {
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">Z</span><span class="p">)</span>
@@ -482,10 +488,11 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -507,7 +514,7 @@ body {
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">all_samples</span> <span class="o">=</span> <span class="n">union</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">X</span><span class="p">),</span> <span class="n">rownames</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">))</span>
@@ -515,10 +522,11 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -541,7 +549,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat1</span><span class="err">$</span><span class="n">y</span> <span class="o">=</span> <span class="o">.</span><span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">Z</span><span class="p">,</span> <span class="n">dat1</span><span class="err">$</span><span class="n">y</span><span class="p">)</span><span class="err">$</span><span class="n">residuals</span>
@@ -549,6 +557,7 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div>
@@ -562,7 +571,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">y1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">y</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">y</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
@@ -576,12 +585,13 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">y</span> <span class="o">&lt;-</span><span class="n">merge</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">,</span> <span class="n">by</span><span class="o">=</span><span class="s1">&#39;rows&#39;</span><span class="p">,</span> <span class="nb">all</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
@@ -590,22 +600,24 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -629,17 +641,18 @@ body {
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -661,7 +674,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">X2</span> <span class="o">=</span> <span class="n">subset</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="err">!</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">)</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">rownames</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">X</span><span class="p">)))</span>
@@ -670,22 +683,24 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dim</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -710,7 +725,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">y_filled</span> <span class="o">=</span> <span class="n">y</span>
@@ -722,6 +737,7 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div>
@@ -735,7 +751,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">autoselect</span><span class="o">.</span><span class="n">mixsd</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span><span class="n">sebetahat</span><span class="p">,</span><span class="n">mult</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)){</span>
@@ -794,6 +810,7 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div>
@@ -807,7 +824,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">initial</span> <span class="o">=</span> <span class="n">univariate_regression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Thyroid</span><span class="p">)</span>
@@ -827,22 +844,24 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">lfsr</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -877,17 +896,18 @@ body {
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span> <span class="n">decreasing</span> <span class="o">=</span> <span class="n">T</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -922,29 +942,31 @@ body {
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">lasso_res</span> <span class="o">=</span> <span class="n">glmnet</span><span class="p">::</span><span class="n">glmnet</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Thyroid</span><span class="p">,</span> <span class="n">intercept</span> <span class="o">=</span> <span class="n">F</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">coef</span><span class="p">(</span><span class="n">lasso_res</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -1414,7 +1436,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">initial</span> <span class="o">=</span> <span class="n">univariate_regression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Lung</span><span class="p">)</span>
@@ -1434,22 +1456,24 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">lfsr</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -1484,17 +1508,18 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span> <span class="n">decreasing</span> <span class="o">=</span> <span class="n">T</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -1529,7 +1554,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
     </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">lasso_res</span> <span class="o">=</span> <span class="n">glmnet</span><span class="p">::</span><span class="n">glmnet</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Lung</span><span class="p">,</span> <span class="n">intercept</span> <span class="o">=</span> <span class="n">F</span><span class="p">)</span>
@@ -1537,10 +1562,11 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">

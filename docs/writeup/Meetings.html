@@ -155,10 +155,12 @@ table tr th :last-child, table tr td :last-child {
 .output_stderr {
     display: none;
 }
-div.input {
-    display: none;
-}
-.hidden_output {
+/*
+ div.input {
+     display: none;
+ }
+*/
+.hidden_content {
     display: none;
 }
 .input_prompt {
@@ -263,12 +265,12 @@ function toggle_source() {
     var btn = document.getElementById("show_cells");
     if (btn.checked) {
         $('div.input').css('display', 'flex');
-        $('.hidden_output').show();
+        $('.hidden_content').show();
         // this somehow does not work.
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     } else {
         $('div.input').hide();
-        $('.hidden_output').hide();
+        $('.hidden_content').hide();
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     }
 }
@@ -359,6 +361,58 @@ body {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Meetings">Meetings<a class="anchor-link" href="#Meetings">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20171210">20171210<a class="anchor-link" href="#20171210">&#182;</a></h2><p>Meeting with Matthew</p>
+<h3 id="Agenda">Agenda<a class="anchor-link" href="#Agenda">&#182;</a></h3><p>GTEx related</p>
+<ul>
+<li>New genotype uploaded along with updated results (including eQTL results); will be ready mid-week<ul>
+<li>MASH results: to wait for Zarlab or to produce results as is.</li>
+</ul>
+</li>
+<li><a href="https://github.com/stephenslab/gtex-eqtls/blob/master/writeup/Meetings.ipynb">Summary of GTEx fine-mapping group meeting</a><ul>
+<li>Relevance to new-vb (or Susie)</li>
+<li>Relevance to DSC (results exploration)</li>
+</ul>
+</li>
+</ul>
+<p>M&amp;M related:</p>
+<ul>
+<li><a href="https://www.overleaf.com/12276327wvnnmbmpwzbw#/46670603/">Algorithm</a><ul>
+<li><a href="https://stephens999.github.io/misc/newVB.ss.html">Derive ELBO</a></li>
+</ul>
+</li>
+<li><a href="https://notebooks.azure.com/n/3F9GLgPZuZY/notebooks/20171210_Simulation_Multivariate.ipynb#Multivariate-simulation">Simulation plan</a>: scenarios and scores<ul>
+<li>Scenarios<ul>
+<li>Is the current theme good enough to include all special cases?</li>
+<li>What other simulations will be needed?</li>
+</ul>
+</li>
+<li>Scores<ul>
+<li>Check CI</li>
+<li>Check lfsr</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Computation</li>
+</ul>
+<h2 id="20171127">20171127<a class="anchor-link" href="#20171127">&#182;</a></h2><p>Meeting with Matthew and Abhishek. Mostly we discussed big pictures of motivation and intuition of this proposed VB algorithm / parameterization based on the spike-slab model, and action lists for the next steps.</p>
+<p>We discussed comparison with MCMC based methods. One big selling point with the VB method is the novelty in defining and interpreting the term "fine-mapping". We believe our definition is more reasonable, and our method will natually lead to easily interpreable results. We envisage that by re-defining fine-mapping our way, we avoid situations that conventional methods may struggle with when doing fine-mapping the way they define it.</p>
+<p>We also discussed intuition behind the proposed parameterization and the VB algorithm that results in the particular structure of posterior distribution that we can exploit, i.e., posteriors at $L$ blocks. In this case, the model (parameterization of prior) was in fact motivated by the form of the algorithm deviced to result in the posterior structure.</p>
+<p>There are a few things in single-tissue application that we will consider next:</p>
+<ol>
+<li>Estimating (or fix?) hyper-parameters $\sigma$, $\sigma_b$</li>
+<li>Incorporate prior $\pi_j$: estimate or plug-in?</li>
+<li>Work with summary statistics</li>
+</ol>
+<p>We believe these are good enough (even without 3) as first pass to figuring out the foundamentals of this approach, and readily apply to eQTL mapping. Other actions are needed to extand to other contexts (GWAS, variationQTL, etc) that we can worry about next.</p>
+<p>We have not discussed multivariate applications in this meeting. But we agree that multivariate application can be done in parallel with single tissue analysis, and we focus on harvesting low-hanging fruits in GTEx data as first pass. The proposed method can utilize existing MASH computations. I also have implemented a version (in Python) following Matthew's outline; hopefully I'll get it to work later this week.</p>
 </div>
 </div>
 </div>
@@ -576,7 +630,7 @@ body {
 </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/886a898b67ba66441e613e64c4d52e1671cd5283/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Mon Nov 20 14:25:13 2017 <a href="http://github.com/gaow/mvarbvs/commit/886a898b67ba66441e613e64c4d52e1671cd5283">revision 7, 886a898</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/5cdb6a797689640826a73acb7a6a9cd9465350a2/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Mon Dec 11 14:42:47 2017 <a href="http://github.com/gaow/mvarbvs/commit/5cdb6a797689640826a73acb7a6a9cd9465350a2">revision 9, 5cdb6a7</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

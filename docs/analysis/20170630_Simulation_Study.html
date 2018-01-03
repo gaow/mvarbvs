@@ -155,10 +155,12 @@ table tr th :last-child, table tr td :last-child {
 .output_stderr {
     display: none;
 }
-div.input {
-    display: none;
-}
-.hidden_output {
+/*
+ div.input {
+     display: none;
+ }
+*/
+.hidden_content {
     display: none;
 }
 .input_prompt {
@@ -263,12 +265,12 @@ function toggle_source() {
     var btn = document.getElementById("show_cells");
     if (btn.checked) {
         $('div.input').css('display', 'flex');
-        $('.hidden_output').show();
+        $('.hidden_content').show();
         // this somehow does not work.
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     } else {
         $('div.input').hide();
-        $('.hidden_output').hide();
+        $('.hidden_content').hide();
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     }
 }
@@ -424,7 +426,7 @@ sos run 20170624_Simulation_Procedures.ipynb --pi0 0.999 \
 </div><div class="rendered lan_SoS">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">parameter:</span> <span class="n">fns</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTEx/Simulation/TY.genotype.permuted.0p999_near_normal_*.expr.analyzed.rds&#39;</span><span class="p">)</span>
@@ -452,6 +454,7 @@ sos run 20170624_Simulation_Procedures.ipynb --pi0 0.999 \
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div>
@@ -465,7 +468,7 @@ sos run 20170624_Simulation_Procedures.ipynb --pi0 0.999 \
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTEx/Simulation/cdf_compare.rds&#39;</span><span class="p">)</span>
@@ -476,6 +479,7 @@ sos run 20170624_Simulation_Procedures.ipynb --pi0 0.999 \
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">

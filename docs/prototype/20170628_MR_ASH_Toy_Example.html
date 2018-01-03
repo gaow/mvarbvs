@@ -155,10 +155,12 @@ table tr th :last-child, table tr td :last-child {
 .output_stderr {
     display: none;
 }
-div.input {
-    display: none;
-}
-.hidden_output {
+/*
+ div.input {
+     display: none;
+ }
+*/
+.hidden_content {
     display: none;
 }
 .input_prompt {
@@ -263,12 +265,12 @@ function toggle_source() {
     var btn = document.getElementById("show_cells");
     if (btn.checked) {
         $('div.input').css('display', 'flex');
-        $('.hidden_output').show();
+        $('.hidden_content').show();
         // this somehow does not work.
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     } else {
         $('div.input').hide();
-        $('.hidden_output').hide();
+        $('.hidden_content').hide();
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     }
 }
@@ -397,7 +399,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># source(&quot;http://bioconductor.org/biocLite.R&quot;)</span>
@@ -414,6 +416,7 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div>
@@ -427,7 +430,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># library(devtools)</span>
@@ -440,11 +443,12 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">mixsd</span> <span class="o">=</span> <span class="n">ashr</span><span class="p">:::</span><span class="n">autoselect</span><span class="o">.</span><span class="n">mixsd</span><span class="p">(</span><span class="n">res0</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="o">-</span><span class="n">Inf</span><span class="p">,</span><span class="n">Inf</span><span class="p">),</span> <span class="s2">&quot;normal&quot;</span><span class="p">)</span>
@@ -452,10 +456,11 @@ body {
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -485,7 +490,7 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">res</span><span class="err">$</span><span class="n">alpha</span> <span class="o">%*%</span> <span class="n">c</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">w</span><span class="p">)</span>
@@ -495,17 +500,18 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
 1.1227255080296
 </div>
 </div>
-        </div><div class="hidden_output">
+        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -548,7 +554,7 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">meta</span> <span class="o">=</span> <span class="n">paste0</span><span class="p">(</span><span class="n">fpath</span><span class="p">,</span> <span class="s1">&#39;/TY.meta_simulation.json&#39;</span><span class="p">)</span>
@@ -558,10 +564,11 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -590,7 +597,7 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">truth</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">pi0</span><span class="p">,</span> <span class="n">meta</span><span class="err">$</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">meta</span><span class="err">$</span><span class="n">pi0</span><span class="p">))</span>
@@ -599,6 +606,7 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
@@ -611,7 +619,7 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">beta</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">beta</span><span class="p">,</span> <span class="n">meta</span><span class="err">$</span><span class="n">beta</span><span class="p">[[</span><span class="n">gene</span><span class="p">]])</span>
@@ -620,11 +628,12 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">beta</span><span class="p">)</span>
@@ -633,10 +642,11 @@ iter   lower bound  change   sigma  mixture sd&#39;s  mix. weights
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -922,7 +932,7 @@ sAMACISwAwAIhLADAAiEsAMACISwAwAIhLADAAjE/wcGs7Nw7x5W6gAAAABJRU5ErkJggg=="
 >
 </div>
 </div>
-        </div><div class="hidden_output">
+        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -1301,7 +1311,7 @@ nI1zUyjLyZYAAAAASUVORK5CYII="
 >
 </div>
 </div>
-        </div><div class="hidden_output">
+        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -4223,7 +4233,7 @@ IAmCHQAAgCQIdgAAAJL4H3eIKc5l6PxhAAAAAElFTkSuQmCC"
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">beta_ash</span> <span class="o">=</span> <span class="n">ashr</span><span class="p">::</span><span class="n">ash</span><span class="p">(</span><span class="n">initial</span><span class="err">$</span><span class="n">betahat</span><span class="p">,</span><span class="n">initial</span><span class="err">$</span><span class="n">sebetahat</span><span class="p">)</span>
@@ -4231,10 +4241,11 @@ IAmCHQAAgCQIdgAAAJL4H3eIKc5l6PxhAAAAAElFTkSuQmCC"
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -6742,17 +6753,18 @@ AABAIQh2AAAACkGwAwAAUAiCHQAAgEL8PwzbUvzP6QV6AAAAAElFTkSuQmCC"
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="o">-</span><span class="n">log10</span><span class="p">(</span><span class="n">beta_ash</span><span class="err">$</span><span class="n">result</span><span class="err">$</span><span class="n">lfsr</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">
@@ -7808,7 +7820,7 @@ AzuEEEIIIROBgR1CCCGEkIn4f9ruUeNf9cXHAAAAAElFTkSuQmCC"
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">yhat</span> <span class="o">=</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">res</span><span class="err">$</span><span class="n">beta</span> <span class="o">+</span> <span class="n">res</span><span class="err">$</span><span class="n">mu</span><span class="o">.</span><span class="n">cov</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -7818,10 +7830,11 @@ AzuEEEIIIROBgR1CCCGEkIn4f9ruUeNf9cXHAAAAAElFTkSuQmCC"
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_html rendered_html output_subarea ">
@@ -7832,7 +7845,7 @@ AzuEEEIIIROBgR1CCCGEkIn4f9ruUeNf9cXHAAAAAElFTkSuQmCC"
 </table>
 </div>
 </div>
-        </div><div class="hidden_output">
+        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_png output_subarea ">

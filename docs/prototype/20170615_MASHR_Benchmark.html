@@ -155,10 +155,12 @@ table tr th :last-child, table tr td :last-child {
 .output_stderr {
     display: none;
 }
-div.input {
-    display: none;
-}
-.hidden_output {
+/*
+ div.input {
+     display: none;
+ }
+*/
+.hidden_content {
     display: none;
 }
 .input_prompt {
@@ -263,12 +265,12 @@ function toggle_source() {
     var btn = document.getElementById("show_cells");
     if (btn.checked) {
         $('div.input').css('display', 'flex');
-        $('.hidden_output').show();
+        $('.hidden_content').show();
         // this somehow does not work.
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     } else {
         $('div.input').hide();
-        $('.hidden_output').hide();
+        $('.hidden_content').hide();
         $('div.cell').css('padding', '0pt').css('border-width', '0pt');
     }
 }
@@ -381,7 +383,7 @@ body {
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="kn">library</span><span class="p">(</span>mashr<span class="p">)</span>
@@ -389,6 +391,7 @@ data <span class="o">&lt;-</span> <span class="kp">get</span><span class="p">(</
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 </div>
     </div>
@@ -402,7 +405,7 @@ data <span class="o">&lt;-</span> <span class="kp">get</span><span class="p">(</
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span>J <span class="o">=</span> <span class="m">100</span>
@@ -418,10 +421,11 @@ w <span class="o">=</span> w <span class="o">/</span> LK
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -444,7 +448,7 @@ w <span class="o">=</span> w <span class="o">/</span> LK
 </div><div class="rendered lan_R">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="c1">## Compute the likelihood matrix using the R implementation.</span>
@@ -460,10 +464,11 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -486,7 +491,7 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 </div><div class="rendered lan_ir">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="c1">## Compute posterior using the R implementation.</span>
@@ -504,10 +509,11 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
@@ -541,7 +547,7 @@ Calculations took 187.46 seconds.
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[71]:</div>
+<div class="prompt input_prompt">In&nbsp;[71]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span>import pandas as pd
@@ -550,10 +556,11 @@ lik
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[71]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result">
@@ -690,7 +697,7 @@ lik
 </div>
 </div>
 </div>
-        </div><div class="hidden_output">
+        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
@@ -713,7 +720,7 @@ lik
 </div><div class="rendered lan_Python3">
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[73]:</div>
+<div class="prompt input_prompt">In&nbsp;[73]:</div><div class="hidden_content">
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span>post <span class="o">=</span> pd.read_csv<span class="p">(</span><span class="s">&quot;../../data/mash_benchmark_posterior.txt&quot;</span><span class="p">)</span>
@@ -721,10 +728,11 @@ post
 </pre></div>
 </div>
 </div>
+        </div>
 </div>
 <div class="output_wrapper">
 <div class="output">
-<div class="hidden_output">
+<div class="hidden_content">
 <div class="output_area">
 <div class="prompt output_prompt">Out[73]:</div>
 <div class="output_html rendered_html output_subarea output_execute_result">
@@ -861,7 +869,7 @@ post
 </div>
 </div>
 </div>
-        </div><div class="hidden_output">
+        </div><div class="hidden_content">
 <div class="output_area">
 <div class="prompt"></div>
 <div class="output_subarea output_stream output_stderr output_text">
