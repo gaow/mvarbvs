@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<link rel="stylesheet"
+      href="../site_libs/highlight/textmate.css"
+      type="text/css" />
+<script src="../site_libs/highlight/highlight.js"></script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+<script src="../js/toc2.js"></script>
+<script src="../js/docs.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=writeupDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=writeupArray;
+            var pos=writeupArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  var name=docs[a]
+                  $('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  var name=docs[a]
+                  $(".toc #toc-level0").append('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>');
+            }
+            $("#toc-header").hide();
+    });
+</script>
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+<title>m&m ash</title>
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+<!-- code folding -->
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">m&m ash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+      </ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="A-modular-approach-to-M&amp;M-ASH-model">A modular approach to M&amp;M ASH model<a class="anchor-link" href="#A-modular-approach-to-M&amp;M-ASH-model">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><em>Update: for a more formal version of this documentation please see this <a href="https://www.overleaf.com/8858826xzvbppzrxmtw">overleaf writeup</a>.</em></p>
+<h2 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h2><p>In genetic association studies there is great interest in finding multiple causal variants (eQTL or GWAS hits). Several methods for fine mapping in univariate association problems (eg, eQTL discovery with single tissues) have been developed, but for multi-condition analysis this problem is more difficult to address. <a href="http://dx.doi.org/10.1016/j.ajhg.2016.03.029">DAP (Wen 2016)</a> uses an MCMC based method (DAP) for fine mapping but it lacks a principled approach to combine genome-wide information to estimate hyperparameters required by the algorithm, due to computational limitations.</p>
+<p>On the other side of the coin, linkage Disequilibrium (LD) can impact effect estimates in association analysis. In the case of univariate regression (snp-by-snp analysis) LD causes effect size estimates not of the true effect of each SNP, but the "LD-convolved" effect that essentially is the combined effect (the sum) of all SNPs in LD with the SNP of interest. So not only are these estimates correlated but more fundamentally they are not consistent estimate of multiple regression (multiple SNP per phenotype) coefficients, when there are indeed more than one causal variant for the condition of interest. The same argument can be generalized to conventional multivariate regression.</p>
+<p>A particular type of multivariate regression, the <a href="http://dx.doi.org/10.1101/096552">mash (Urbut 2016)</a> paper that uses summary statistics from simple regression is also influenced in the same manner. By taking LD-convoluted effect size estimate as input, the resulting output of mash is not consistent estimate of "the truth" (ie, if all SNPs are typed, then in the absence of population structure a multiple-SNP regression estimate can be interpreted as the causal effects), and our application of mash in GTEx data discovered eQTLs having opposite direction of effect size in brain vs non-brain tissues. However we suspect this is more likely due to multiple eQTLs in negative LD that the current mash procedure failed to account for, rather than true effects being negative.</p>
+<p>So we attempt to fix both problems with the M&amp;M ASH model, or m&amp;m for short hereafter. We have developed with <a href="https://github.com/gaow/mvarbvs/tree/master/analysis/writeup/identity_cov">m&amp;m assuming identity covariance</a> and <a href="https://github.com/gaow/mvarbvs/tree/master/analysis/writeup/lr_diag_cov">m&amp;m assuming diagonal plus low rank covariance</a>, along with a very first draft <a href="https://github.com/gaow/mnmashr">implementation</a>, based on the variational inference framework similar to <a href="http://stephenslab.uchicago.edu/assets/papers/Carbonetto2012.pdf">varbvs (Carbonatto 2012)</a> and <a href="https://github.com/stephenslab/mvash">mr-ash</a> to hand issues with LD, yet in the multivariate notation that fits into the mash mixture model. At the same time there are other potentially connected work in the lab including <a href="http://dx.doi.org/10.1101/042457">rss (Zhu 2016)</a>, which can be extended to the summary statistics version of mr-ash, and BMASS (Turchin), which can be considered a special case of mash (if we are willing to use known residual covariance matrix). Building m&amp;m from scratch already involves implementing varbvs / mr-ash and mash as special cases; adding other special cases to m&amp;m seems overly ambitious, and may result in a monster (rather than master!) algorithm / software that claims to do everything yet excels in nothing (in terms of performance) compared to existing individual pieces that have already been carefully designed, well engineered, extensively tested and properly documented<code>*</code>. Therefore we want to adopt a modular design to m&amp;m that harnesses, rather than reinvent, all related Stephens lab work.</p>
+<p><code>*</code> <em>one aspect the monster algorithm is surely to suffer is that the mixture components has to be initialized up-front, that means it has to be computed with LD-convoluted effect size estimates. But the modular approach will not have the problem.</em></p>
+<p>The modular m&amp;m should work as follows:</p>
+<ol>
+<li>Estimate deconvoluted effect size for each condition</li>
+<li>Use 1 to perform mash to obtain hyperparameters (mixture proportions) at genome level</li>
+<li>Trait analysis units (genes, LD blocks) independent and use prior from 2 to initialize multivariate fine mapping method such as DAP.</li>
+</ol>
+<h2 id="Step-one:-deconvoluted-effect-size-estimation">Step one: deconvoluted effect size estimation<a class="anchor-link" href="#Step-one:-deconvoluted-effect-size-estimation">&#182;</a></h2><p>The goal here is to obtain LD-deconvoluted effect size estimates for each condition separately (univariate analysis). This is a variable selection problem that can be addressed with a number of existing methods but we'll use mr-ash because 1) the idea of ASH is powerful and 2) the variational EM algorithm (VEM) is efficient.</p>
+<p>There is identifiability problem with mr-ash because VEM will converge to local optima and the effect size it reports for the SNP identified may not be the causal SNP. But it is irrelevant because as previously mentioned we'll take a hybrid approach, ie, use VEM to estimate hyperparameters, and condition MCMC on these hyperparameter estimates to perform fine-mapping with these hyperparameters. It is in fact advantageous to use VEM at this stage -- as precursor to mash we would prefer sparse solution (via VEM) rather than averaged solution (via MCMC), because sparsed mode is more representative than mean of modes.</p>
+<p>However we do have to ensure that each of mr-ash analysis on different conditions will give the same sparse mode. One way to ensure this is to assume effects across all conditions are the same and fit a fixed effect model, using estimates from there to initialize mr-ash hoping the VEM converge to the same mode this way. But Wei has pointed out that VEM computation always favors $X_1$ in the block of $X_1, ..., X_p$, thus as long as the order of $X$ remains the same across univariate analysis we should be good.</p>
+<p>Another issue to verify is that the hyperparameters $\mathbf{\pi}$ obtained via running ash on effect size estimates from mr-ash agrees with those estimated from mr-ash. If this is verified, we can claim that the hyperparameters estimated by mash using mr-ash deconvoluted data is equivalent to fitting the monster algorithm.</p>
+<p>Also, instead of using posterior mean of $\beta$ from mr-ash, we should use likelihood:</p>
+<p>$$P(Y|\beta_1) \propto \frac{P(\beta_1|Y)}{P(\beta_1)}$$</p>
+<p>where $P(\beta_1)$ is available from the VEM updates.</p>
+<h2 id="Step-two:-multivariate-analysis-on-deconvoluted-effect-size-estimates">Step two: multivariate analysis on deconvoluted effect size estimates<a class="anchor-link" href="#Step-two:-multivariate-analysis-on-deconvoluted-effect-size-estimates">&#182;</a></h2><p>We use mash to perform another shrinkage in order to learn typical patterns of sparsity, sharing and correlations among effects, and pass this knowledge to the next step. First, as with mash we initialize $U_k$ using a number of decompositions on covariance matrix of effect size. But I'm not sure about whether we still take the "top SNP" per unit (gene) across conditions?</p>
+<p>Then we estimate $U_k$ via some deconvolution method (Bovy or Gerard), use the result in the mixture prior and write up the likelihood of $\hat{\beta}$ to feed into the algorithm for mixture proportion estimation (a convex problem).</p>
+<h2 id="Step-three:-fine-mapping-for-eQTL-discovery">Step three: fine-mapping for eQTL discovery<a class="anchor-link" href="#Step-three:-fine-mapping-for-eQTL-discovery">&#182;</a></h2><p>To generate posterior mean of effect size -- the fine-mapping. DAP can be applied in parallel to all units using the same prior from previous step. I still have to read about it.</p>
+<h2 id="What-to-do-with-mr-ash?">What to do with <code>mr-ash</code>?<a class="anchor-link" href="#What-to-do-with-mr-ash?">&#182;</a></h2><p>This is a separate topic from m&amp;m yet it is important because mr-ash is the first step in m&amp;m. Currently we have these verions of mr-ash:</p>
+<ul>
+<li>Full data versions:<ul>
+<li>matlab version (varbvs by Peter)</li>
+<li>R version (mvash by Wei)</li>
+<li>R/C++ version (a special case of mnmashr by Gao)</li>
+</ul>
+</li>
+<li>Summary data version:<ul>
+<li>matlab version (rss by Xiang)</li>
+<li>R version (by Nick)</li>
+</ul>
+</li>
+</ul>
+<p>For the full data version we'll consolidate our efforts to <code>varbvs</code> package. I had a conversation with Peter: it is not hard, according to him, to come up with an R/C version that fits in the varbvs engineering framework. As a first pass m&amp;m will start from full data, because we do have the luxury to access individual level GTEx data and for eQTL problem the scale of computation per gene is not big enough to induce the need of approximating $X^TX$ with banded structure and use summary version of mr-ash.</p>
+<p>As for where mr-ash paper goes, we've previously agreed to write it up as an extension to the large scale BVS problem using adaptive shrinkage prior, and to provide better estimate of effect size distribution due to "adaptive" (meaning better) shrinkage. It is more interesting to make a non-trivial application in the paper than to just focus on selling the method part. Xiang Zhu is planning on performing effect size distribution estimation using summary data. We'd like to apply mr-ash on traits in UK Biobank data to provide the community a proper GWAS analysis which by itself would be a great application but using mr-ash for it makes it even greater!</p>
+<h2 id="Next-action-items">Next action items<a class="anchor-link" href="#Next-action-items">&#182;</a></h2><p>Will discuss it on github.</p>
+</div>
+</div>
+</div>
+<hr>
+&copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/8f994eaed346b3790718e19a23624dbdb2e71449/writeup/Modular_MNMASH.ipynb"><code>writeup/Modular_MNMASH.ipynb</code></a> committed by Gao Wang on Thu Jul 6 23:35:45 2017 <a href="http://github.com/gaow/mvarbvs/commit/8f994eaed346b3790718e19a23624dbdb2e71449">revision 1, 8f994ea</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
