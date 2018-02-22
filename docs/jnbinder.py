@@ -2,7 +2,10 @@ import os
 import glob
 import re
 import json
+import subprocess
+from hashlib import sha1
 from dateutil.parser import parse
+from bs4 import BeautifulSoup
 
 def is_date(string):
     try:
@@ -12,7 +15,6 @@ def is_date(string):
         return False
 
 def get_output(cmd, show_command=False, prompt='$ '):
-    import subprocess
     try:
         output = subprocess.check_output(cmd, stderr=subprocess.DEVNULL, shell=True).decode()
     except subprocess.CalledProcessError as e:
@@ -21,6 +23,26 @@ def get_output(cmd, show_command=False, prompt='$ '):
         return '{}{}\n{}'.format(prompt, cmd, output)
     else:
         return output.strip()
+
+def compare_versions(v1, v2):
+    # This will split both the versions by '.'
+    arr1 = v1.split(".")
+    arr2 = v2.split(".")
+    # Initializer for the version arrays
+    i = 0
+    # We have taken into consideration that both the
+    # versions will contains equal number of delimiters
+    while(i < len(arr1)):
+        # Version 2 is greater than version 1
+        if int(arr2[i]) > int(arr1[i]):
+            return -1
+        # Version 1 is greater than version 2
+        if int(arr1[i]) > int(arr2[i]):
+            return 1
+        # We can't conclude till now
+        i += 1
+    # Both the versions are equal
+    return 0
 
 def get_commit_link(repo, cid):
     bits = os.path.split(repo)
@@ -75,7 +97,7 @@ def get_nav(dirs, home_label, prefix = './'):
 <li>
   <a href="{}{}.html">{}</a>
 </li>
-        '''.format(prefix, item, item.capitalize())
+        '''.format(prefix, item, ' '.join([x.capitalize() for x in item.split('_')]))
     return out
 
 def get_right_nav(repo, source_label):
@@ -134,7 +156,7 @@ $( document ).ready(function(){
                   var name=docs[a]
                   $(".toc #toc-level0").append('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>');
             }
-            $("#toc-header").hide();
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
     });
 </script>
 ''' % (path, path, path)
@@ -164,6 +186,14 @@ def get_index_tpl(conf, dirs):
 {%%- extends 'basic.tpl' -%%}
 
 {%%- block header -%%}
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+  gtag('config', 'UA-107286198-1');
+</script>
 {{ super() }}
 
 <!DOCTYPE html>
@@ -174,8 +204,8 @@ def get_index_tpl(conf, dirs):
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <title>%s</title>
-
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 <link href="site_libs/bootstrap-3.3.5/css/%s.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
@@ -184,9 +214,9 @@ def get_index_tpl(conf, dirs):
 
 <style type="text/css">code{white-space: pre;}</style>
 <link rel="stylesheet"
-      href="site_libs/highlight/textmate.css"
+      href="site_libs/highlightjs-1.1/textmate.css"
       type="text/css" />
-<script src="site_libs/highlight/highlight.js"></script>
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
 <style type="text/css">
   div.input_prompt {display: none;}
   div.output_html {
@@ -206,6 +236,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
    }, 0);
 }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script>
     MathJax.Hub.Config({
         extensions: ["tex2jax.js"],
@@ -227,6 +258,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
         }
     });
 </script>
+
 </head>
 
 <body>
@@ -273,7 +305,7 @@ h3:hover .anchor-link,
 h4:hover .anchor-link,
 h5:hover .anchor-link,
 h6:hover .anchor-link {
-  visibility: visible;
+  visibility: hidden;
 }
 
 .main-container {
@@ -366,7 +398,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
@@ -527,7 +559,7 @@ function filterDataFrame(id) {
             }
             if (!matched)
                 tr[i].style.display = "none";
-        } 
+        }
     }
 }
 
@@ -694,6 +726,14 @@ def get_notebook_tpl(conf, dirs, path):
 {%%- extends 'basic.tpl' -%%}
 
 {%%- block header -%%}
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+  gtag('config', 'UA-107286198-1');
+</script>
 {{ super() }}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -716,10 +756,10 @@ def get_notebook_tpl(conf, dirs, path):
 <script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
 
 <link rel="stylesheet"
-      href="../site_libs/highlight/textmate.css"
+      href="../site_libs/highlightjs-1.1/textmate.css"
       type="text/css" />
 
-<script src="../site_libs/highlight/highlight.js"></script>
+<script src="../site_libs/highlightjs-1.1/highlight.js"></script>
 <script type="text/javascript">
 if (window.hljs && document.readyState && document.readyState === "complete") {
    window.setTimeout(function() {
@@ -728,10 +768,10 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
 }
 </script>
 
-<script src="../js/toc2.js"></script>
+<script src="../js/doc_toc.js"></script>
 <script src="../js/docs.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script>
     MathJax.Hub.Config({
         extensions: ["tex2jax.js"],
@@ -752,6 +792,66 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
             }
         }
     });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
 </script>
 %s
 <script>
@@ -839,6 +939,16 @@ body {
            conf['footer'])
     return content
 
+def update_gitignore():
+    flag = True
+    if os.path.isfile('.gitignore'):
+      lines = [x.strip() for x in open('.gitignore').readlines()]
+      if '**/.sos' in lines:
+        flag = False
+    if flag:
+      with open('.gitignore', 'a') as f:
+        f.write('\n**/.sos\n**/.ipynb_checkpoints\n**/__pycache__')
+
 def make_template(conf, dirs, outdir):
     with open('{}/index.tpl'.format(outdir), 'w') as f:
         f.write(get_index_tpl(conf, dirs).strip())
@@ -866,7 +976,7 @@ def get_notebook_toc(path, exclude):
     return out
 
 def get_index_toc(path):
-    out = 'var {}Array = '.format(os.path.basename(path))
+    out = f'var {os.path.basename(path)}Array = '
     # Reference index
     fr = os.path.join(path, '_index.ipynb')
     if not os.path.isfile(fr):
@@ -881,9 +991,9 @@ def get_index_toc(path):
         data = json.load(f)
     for cell in data['cells']:
         for sentence in cell["source"]:
-            doc = re.search('(.+?)/(.+?).html', sentence)
+            doc = re.search('^.*\/(.+?).html', sentence)
             if doc:
-                res.append(doc.group(2))
+                res.append(doc.group(1))
     # Filter by reference index
     if not fi == fr:
         ref = []
@@ -891,9 +1001,9 @@ def get_index_toc(path):
             data = json.load(f)
         for cell in data['cells']:
             for sentence in cell["source"]:
-                doc = re.search('(.+?)/(.+?).html', sentence)
+                doc = re.search('^.*\/(.+?).html', sentence)
                 if doc:
-                    ref.append(doc.group(2))
+                    ref.append(doc.group(1))
         res = [x for x in res if x in ref]
     return out + repr(res)
 
@@ -1051,22 +1161,92 @@ def make_empty_nb(name):
  "nbformat_minor": 2
 }''' % name
 
-def compare_versions(v1, v2):
-    # This will split both the versions by '.'
-    arr1 = v1.split(".")
-    arr2 = v2.split(".")
-    # Initializer for the version arrays
-    i = 0
-    # We have taken into consideration that both the
-    # versions will contains equal number of delimiters
-    while(i < len(arr1)):
-        # Version 2 is greater than version 1
-        if int(arr2[i]) > int(arr1[i]):
-            return -1
-        # Version 1 is greater than version 2
-        if int(arr1[i]) > int(arr2[i]):
-            return 1
-        # We can't conclude till now
-        i += 1
-    # Both the versions are equal
-    return 0
+def protect_page(page, page_tpl, password, write):
+    # page: docs/{name}
+    page_dir, page_file = os.path.split(page)
+    page_file = '/'.join(page.split('/')[1:])
+    secret = page_dir + '/' + sha1((password + page_file).encode()).hexdigest() + '.html'
+    if write:
+        content = open(page).readlines()
+        content.insert(5, '<meta name="robots" content="noindex">\n')
+        with open(secret, 'w') as f:
+            f.write(''.join(content))
+        content = open(page_tpl).readlines()
+        with open(page, 'w') as f:
+            f.write(''.join(content).replace("TPL_PLACEHOLDER", page_file))
+    secret = os.path.basename(secret)
+    return secret, f'docs/{secret.rsplit(".", 1)[0]}_{os.path.basename(page_dir)}.sha1'
+
+def get_sha1_files(index_files, notebook_files, passwords, write = False):
+    # Inputs are list of files [(input, output), ...]
+    password = [None if passwords is None or (os.path.dirname(fn[0]) not in passwords and fn[0] not in passwords) else (passwords[os.path.dirname(fn[0]) if (os.path.dirname(fn[0]) in passwords and not fn[0] in passwords) else fn[0]]) for fn in index_files] + [None if passwords is None or fn[0] not in passwords else passwords[fn[0]] for fn in notebook_files]
+    res = [protect_page(fn[1], 'docs/site_libs/jnbinder_password.html', p, write)[1]
+           for fn, p in zip(index_files + notebook_files, password) if p]
+    return res
+
+def parse_html(url, html):
+    '''
+    A simple script to create tipue content by searching for documentation
+    files under given folders.
+
+    Copyright (C) 2016 Bo Peng (bpeng@mdanderson.org) under GNU General Public License
+    '''
+    with open(html, 'rb') as content:
+        soup = BeautifulSoup(content, "html.parser", from_encoding='utf-8')
+        #
+        # try to get the title of the page from h1, h2, or title, and
+        # uses filename if none of them exists.
+        #
+        title = soup.find('h1')
+        if title is None:
+            title = soup.find('h2')
+        if title is None:
+            title = soup.find('title')
+        if title is None:
+            title = os.path.basename(html).rsplit('.')[0]
+        else:
+            title = title.get_text()
+        maintitle = soup.find('h1')
+        if maintitle is None:
+            maintitle = soup.find('h2')
+        if maintitle is None:
+            maintitle = soup.find('title')
+        if maintitle is None:
+            maintitle = os.path.basename(html).rsplit('.')[0]
+        else:
+            maintitle = maintitle.get_text()
+
+        # remove special characters which might mess up js file
+        title = re.sub(r'[¶^a-zA-Z0-9_\.\-]', ' ', title)
+        #
+        # sear
+        all_text = []
+        for header in soup.find_all(re.compile('^h[1-6]$')):
+            # remove special character
+            part = re.sub(r'[^a-zA-Z0-9_\-=\'".,\\]', ' ', header.get_text()).replace('"', "'").strip() + "\n"
+            part = re.sub(r'\s+', ' ', part)
+            ids = [x for x in header.findAll('a') if x.get('id')]
+            if ids:
+                tag = '#' + ids[0].get('id')
+            else:
+                hrefs = header.findAll('a', {'class': 'anchor-link'})
+                if hrefs:
+                    tag = hrefs[0].get('href')
+                else:
+                    tag = ''
+            part = '{{"mainTitle": "{}", "title": "{}", "text": "{}", "tags": "", "mainUrl": "{}", "url": "{}"}}'.format(
+                    re.sub('¶', '', maintitle), re.sub('¶', '', header.get_text()), part, url, url + tag)
+            all_text.append(part)
+    return all_text
+
+def generate_tipue_content(html_files, base_url, docs_dir):
+    # input is a list of html files and their url
+    n = len(docs_dir)
+    text = [parse_html(url, html) for (url, html) in [(os.path.join(base_url, item[len(docs_dir):]), item) for item in html_files]]
+    # write the output to file.
+    with open(os.path.join(docs_dir, 'site_libs/tipuesearch', 'tipuesearch_content.js'), 'w') as out:
+        out.write('''\
+var tipuesearch = {{"pages": [
+{}
+]}};
+'''.format(',\n'.join(sum(text, []))))
