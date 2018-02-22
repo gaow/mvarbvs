@@ -1,11 +1,23 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+  gtag('config', 'UA-107286198-1');
+</script>
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="ipynb_website:version" content="0.9.2" />
+<meta name="ipynb_website:version" content="0.9.3" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+
 <link rel="stylesheet" type="text/css" href="../css/jt.css">
+
 <link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
 <link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
 <link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -14,10 +26,12 @@
 <script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
 <link rel="stylesheet"
-      href="../site_libs/highlight/textmate.css"
+      href="../site_libs/highlightjs-1.1/textmate.css"
       type="text/css" />
-<script src="../site_libs/highlight/highlight.js"></script>
+
+<script src="../site_libs/highlightjs-1.1/highlight.js"></script>
 <script type="text/javascript">
 if (window.hljs && document.readyState && document.readyState === "complete") {
    window.setTimeout(function() {
@@ -25,9 +39,11 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
    }, 0);
 }
 </script>
-<script src="../js/toc2.js"></script>
+
+<script src="../js/doc_toc.js"></script>
 <script src="../js/docs.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script>
     MathJax.Hub.Config({
         extensions: ["tex2jax.js"],
@@ -49,6 +65,67 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
         }
     });
 </script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
 <script>
 $( document ).ready(function(){
             var cfg={'threshold':3,     // depth of toc (number of levels)
@@ -85,9 +162,10 @@ $( document ).ready(function(){
                   var name=docs[a]
                   $(".toc #toc-level0").append('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>');
             }
-            $("#toc-header").hide();
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
     });
 </script>
+
 <script>
 // manage active state of menu based on current page
 $(document).ready(function () {
@@ -111,7 +189,11 @@ $(document).ready(function () {
   window.buildTabsets("TOC");
 });
 </script>
+
+
+
 <title>m&m ash</title>
+
 <style type = "text/css">
 body {
   font-family: "Droid Sans";
@@ -120,10 +202,13 @@ body {
 }
 </style>
 </head>
+
 <body>
 <div tabindex="-1" id="notebook" class="border-box-sizing">
 <div class="container" id="notebook-container">
+
 <!-- code folding -->
+
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -136,24 +221,31 @@ body {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        
 <li>
   <a href="../index.html">Overview</a>
 </li>
+        
 <li>
   <a href="../analysis.html">Analysis</a>
 </li>
+        
 <li>
   <a href="../prototype.html">Prototype</a>
 </li>
+        
 <li>
   <a href="../writeup.html">Writeup</a>
 </li>
+        
       </ul>
+        
 <ul class="nav navbar-nav navbar-right">
 <li>
    <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
 </li>
 </ul>
+        
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -162,6 +254,7 @@ body {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Prototype-of-VEM-in-M&amp;M-ASH-model">Prototype of VEM in M&amp;M ASH model<a class="anchor-link" href="#Prototype-of-VEM-in-M&amp;M-ASH-model">&#182;</a></h1><p>This is the VEM step of M&amp;M ASH model.</p>
+
 </div>
 </div>
 </div>
@@ -182,6 +275,7 @@ $\DeclareMathOperator*{\argmax}{arg\ max}$
 $\DeclareMathOperator*{\N}{N}$
 $\DeclareMathOperator*{\gm}{Gamma}$
 $\DeclareMathOperator*{\dif}{d}$</p>
+
 </div>
 </div>
 </div>
@@ -249,6 +343,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </li>
 </ul>
 <p><strong>In this notebook we use a test data set of 2 tissues: Thyroid and Lung. As a first pass we also fix $\bs{V}$ as a null matrix plus an identity matrix, with weights and $\pi_0=0.9$.</strong></p>
+
 </div>
 </div>
 </div>
@@ -261,13 +356,20 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <span class="nb">str</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
 <span class="n">attach</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>List of 2
  $ Y:&#39;data.frame&#39;:	698 obs. of  2 variables:
@@ -280,8 +382,10 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -292,20 +396,29 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">multivariate_normal</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>Loading required package: feather
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -322,13 +435,22 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">X</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[3]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>array([[ 1.,  0.,  0., ...,  0.,  1.,  0.],
        [ 0.,  0.,  0., ...,  0.,  1.,  0.],
@@ -338,9 +460,12 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
        [ 0.,  0.,  0., ...,  0.,  1.,  0.],
        [ 0.,  0.,  0., ...,  0.,  1.,  0.]])</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -349,9 +474,11 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -360,13 +487,22 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[5]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>array([[ 0.16348104,  0.77010917],
        [ 0.43588995,  0.77798736],
@@ -376,15 +512,19 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
        [ 0.00279156, -0.05439095],
        [-0.14650835,  0.29935286]])</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Multivariate-LASSO">Multivariate LASSO<a class="anchor-link" href="#Multivariate-LASSO">&#182;</a></h2><p>For initialization of effects. Here I use implementation via <code>sklearn</code>, as documented <a href="http://scikit-learn.org/stable/modules/linear_model.html#multi-task-lasso">here</a>. It is quite slow to compute a proper CV version of LASSO, though.</p>
+
 </div>
 </div>
 </div>
@@ -399,27 +539,40 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <span class="n">model</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">MultiTaskLasso</span><span class="p">(</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.04</span><span class="p">,</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[6]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>MultiTaskLasso(alpha=0.04, copy_X=True, fit_intercept=False, max_iter=1000,
         normalize=False, random_state=None, selection=&#39;cyclic&#39;, tol=0.0001,
         warm_start=False)</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>First feature:</p>
+
 </div>
 </div>
 </div>
@@ -434,13 +587,22 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYYAAAD8CAYAAABzTgP2AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAERNJREFUeJzt3WGMXedd5/Hvj4kDJhTcEivYTsBGsowihJzuKC3aqmKh
@@ -524,15 +686,19 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Second feature:</p>
+
 </div>
 </div>
 </div>
@@ -545,13 +711,22 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYYAAAD8CAYAAABzTgP2AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAE6FJREFUeJzt3X+sV/d93/Hna9h0NMmCPTPCLxeyUSRWdbZ3S5y569bE
@@ -646,15 +821,19 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>First vs. 2nd feature:</p>
+
 </div>
 </div>
 </div>
@@ -667,13 +846,22 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYYAAAD8CAYAAABzTgP2AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAEtRJREFUeJzt3WuMnNd93/HvLysRYNyklCqa4rWkW0YBW7eRMKaFqhck
@@ -765,15 +953,19 @@ AAAAAElFTkSuQmCC
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Compare with univariate LASSO, first and 2nd features:</p>
+
 </div>
 </div>
 </div>
@@ -786,21 +978,33 @@ AAAAAElFTkSuQmCC
 <span class="n">model</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>Lasso(alpha=0.05, copy_X=True, fit_intercept=False, max_iter=1000,
    normalize=False, positive=False, precompute=False, random_state=None,
    selection=&#39;cyclic&#39;, tol=0.0001, warm_start=False)</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -811,13 +1015,22 @@ AAAAAElFTkSuQmCC
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAAD8CAYAAABkbJM/AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAFtpJREFUeJzt3X+MXfWd3vH30wFSl0RraCzH2HhtJK8rsruyyRVklR/q
@@ -927,9 +1140,12 @@ xQItPQAAAABJRU5ErkJggg==
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -941,13 +1157,22 @@ xQItPQAAAABJRU5ErkJggg==
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAAD8CAYAAABkbJM/AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAEw9JREFUeJzt3XGsnfV93/H3ZybOWFoVGJZjbKiNdIvkTBMhR4RobVR1
@@ -1040,15 +1265,19 @@ pX8AAAAASUVORK5CYII=
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="MASH-priors-and-weights">MASH priors and weights<a class="anchor-link" href="#MASH-priors-and-weights">&#182;</a></h2><p>As initialization we take univariate analysis summary statistics $\hat{\bs{B}}$ and $\bs{S}$ for fitting with <code>mashr</code>.</p>
+
 </div>
 </div>
 </div>
@@ -1057,6 +1286,7 @@ pX8AAAAASUVORK5CYII=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="VEM-implementation">VEM implementation<a class="anchor-link" href="#VEM-implementation">&#182;</a></h2><p>It is not working yet. Still trying to figure out what's going on.</p>
+
 </div>
 </div>
 </div>
@@ -1098,6 +1328,7 @@ pX8AAAAASUVORK5CYII=
         <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">Delta</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_lambda</span> <span class="o">=</span> <span class="bp">True</span>
+
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Core update</span>
@@ -1132,6 +1363,7 @@ pX8AAAAASUVORK5CYII=
             <span class="c1"># Update Lambda</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R_all</span><span class="o">.</span><span class="n">T</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_all</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Delta</span><span class="p">))</span>
+
     <span class="k">def</span> <span class="nf">vem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        Variational EM</span>
@@ -1140,6 +1372,7 @@ pX8AAAAASUVORK5CYII=
         <span class="k">while</span> <span class="n">cnt</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
             <span class="n">cnt</span> <span class="o">+=</span> <span class="mi">1</span>
+
     <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prt</span><span class="p">(</span><span class="s1">&#39;R&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prt</span><span class="p">(</span><span class="s1">&#39;E&#39;</span><span class="p">)</span>
@@ -1154,13 +1387,16 @@ pX8AAAAASUVORK5CYII=
         <span class="bp">self</span><span class="o">.</span><span class="n">prt</span><span class="p">(</span><span class="s1">&#39;Lambda&#39;</span><span class="p">)</span>
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;X @ B = </span><span class="se">\n</span><span class="s1">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">))</span>
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Y - X @ B = </span><span class="se">\n</span><span class="s1">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">))</span>
+
     <span class="k">def</span> <span class="nf">prt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
         <span class="k">print</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;self.{variable}&#39;</span><span class="p">)))</span>
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1169,9 +1405,11 @@ pX8AAAAASUVORK5CYII=
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">MNMASH</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -1186,6 +1424,7 @@ pX8AAAAASUVORK5CYII=
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>First iteration.</p>
+
 </div>
 </div>
 </div>
@@ -1196,9 +1435,11 @@ pX8AAAAASUVORK5CYII=
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1207,13 +1448,20 @@ pX8AAAAASUVORK5CYII=
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>R = array([[[ 0.16348104,  0.77010917],
         [ 0.43588995,  0.77798736],
@@ -1222,6 +1470,7 @@ pX8AAAAASUVORK5CYII=
         [ 0.62036618, -0.0035004 ],
         [ 0.00279156, -0.05439095],
         [-0.14650835,  0.29935286]],
+
        [[ 0.16348104,  0.77010917],
         [ 0.43588995,  0.77798736],
         [-0.21237311, -0.65361193],
@@ -1229,6 +1478,7 @@ pX8AAAAASUVORK5CYII=
         [ 0.62036618, -0.0035004 ],
         [ 0.00279156, -0.05439095],
         [-0.14650835,  0.29935286]],
+
        [[ 0.16348104,  0.77010917],
         [ 0.43588995,  0.77798736],
         [-0.21237311, -0.65361193],
@@ -1236,6 +1486,7 @@ pX8AAAAASUVORK5CYII=
         [ 0.62036618, -0.0035004 ],
         [ 0.00279156, -0.05439095],
         [-0.14650835,  0.29935286]],
+
        ..., 
        [[ 0.16348104,  0.77010917],
         [ 0.43588995,  0.77798736],
@@ -1244,6 +1495,7 @@ pX8AAAAASUVORK5CYII=
         [ 0.62036618, -0.0035004 ],
         [ 0.00279156, -0.05439095],
         [-0.14650835,  0.29935286]],
+
        [[ 0.16348104,  0.77010917],
         [ 0.43588995,  0.77798736],
         [-0.21237311, -0.65361193],
@@ -1251,6 +1503,7 @@ pX8AAAAASUVORK5CYII=
         [ 0.62036618, -0.0035004 ],
         [ 0.00279156, -0.05439095],
         [-0.14650835,  0.29935286]],
+
        [[ 0.16348104,  0.77010917],
         [ 0.43588995,  0.77798736],
         [-0.21237311, -0.65361193],
@@ -1258,14 +1511,20 @@ pX8AAAAASUVORK5CYII=
         [ 0.62036618, -0.0035004 ],
         [ 0.00279156, -0.05439095],
         [-0.14650835,  0.29935286]]])
+
+
 E = array([[-0.02094472, -0.06122512, -0.04164898, ...,  0.0372279 ,
         -0.00669449,  0.04083855],
        [-0.02124238, -0.05018941, -0.06105233, ..., -0.00273088,
          0.01641117,  0.00058457]])
+
+
 Rx = array([[-5.37396148, -3.67350731, -4.12385519, ...,  3.61241949,
         -3.382703  ,  4.00364293],
        [-5.45033424, -3.01136475, -6.04506932, ..., -0.26499216,
          8.29251397,  0.05730889]])
+
+
 wdE = array([[  3.27869046e+01,   1.58466800e-02],
        [  7.12124237e+00,   1.56064056e-02],
        [  1.08224143e+01,   1.57138195e-02],
@@ -1273,44 +1532,65 @@ wdE = array([[  3.27869046e+01,   1.58466800e-02],
        [  1.29907011e+01,   1.57422904e-02],
        [  6.68559977e+01,   1.58815694e-02],
        [  1.29400551e+01,   1.57417875e-02]])
+
+
 Sigma = {0: array([[[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        ..., 
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]]]), 1: array([[[ 0.00388231,  0.        ],
         [ 0.        ,  0.00388231]],
+
        [[ 0.01639344,  0.        ],
         [ 0.        ,  0.01639344]],
+
        [[ 0.00999854,  0.        ],
         [ 0.        ,  0.00999854]],
+
        ..., 
        [[ 0.01020041,  0.        ],
         [ 0.        ,  0.01020041]],
+
        [[ 0.00197513,  0.        ],
         [ 0.        ,  0.00197513]],
+
        [[ 0.01009735,  0.        ],
         [ 0.        ,  0.01009735]]])}
+
+
 Mu = array([[[ 0.        , -0.02086341],
         [ 0.        , -0.02115991]],
+
        [[ 0.        , -0.06022143],
         [ 0.        , -0.04936664]],
+
        [[ 0.        , -0.04123255],
         [ 0.        , -0.06044189]],
+
        ..., 
        [[ 0.        ,  0.03684816],
         [ 0.        , -0.00270303]],
+
        [[ 0.        , -0.00668126],
         [ 0.        ,  0.01637876]],
+
        [[ 0.        ,  0.04042619],
         [ 0.        ,  0.00057867]]])
+
+
 gamma = array([[  9.99516910e-01,   4.83089967e-04],
        [  9.97813264e-01,   2.18673620e-03],
        [  9.98550135e-01,   1.44986471e-03],
@@ -1318,6 +1598,8 @@ gamma = array([[  9.99516910e-01,   4.83089967e-04],
        [  9.98789654e-01,   1.21034552e-03],
        [  9.99762508e-01,   2.37492494e-04],
        [  9.98784962e-01,   1.21503815e-03]])
+
+
 B = array([[ -1.00789037e-05,  -1.02221414e-05],
        [ -1.31688384e-04,  -1.07951809e-04],
        [ -5.97816168e-05,  -8.76325673e-05],
@@ -1325,12 +1607,20 @@ B = array([[ -1.00789037e-05,  -1.02221414e-05],
        [  4.45990036e-05,  -3.27159859e-06],
        [ -1.58674981e-06,   3.88983158e-06],
        [  4.91193663e-05,   7.03103794e-07]])
+
+
 H = array([[ 87.01054504,   0.        ],
        [  0.        ,  36.30742391]])
+
+
 Delta = array([[ 277.28296782,   77.31960452],
        [ 190.27242279,  113.62702843]])
+
+
 Lambda = array([[ 2.51728408,  0.        ],
        [ 0.        ,  6.14290464]])
+
+
 X @ B = 
 [[ 0.03294618  0.01109255]
  [ 0.25732661  0.06390661]
@@ -1339,6 +1629,7 @@ X @ B =
  [-0.03603904 -0.03764358]
  [ 0.05910854  0.01078694]
  [-0.01833198 -0.02217391]]
+
 Y - X @ B = 
 [[ 0.13053486  0.75901662]
  [ 0.17856335  0.71408075]
@@ -1347,17 +1638,21 @@ Y - X @ B =
  [ 0.65640522  0.03414318]
  [-0.05631698 -0.06517789]
  [-0.12817637  0.32152677]]
+
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Second iteration.</p>
+
 </div>
 </div>
 </div>
@@ -1368,9 +1663,11 @@ Y - X @ B =
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1379,13 +1676,20 @@ Y - X @ B =
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>R = array([[[ 0.13052478,  0.7590064 ],
         [ 0.17856335,  0.71408075],
@@ -1394,6 +1698,7 @@ Y - X @ B =
         [ 0.65640522,  0.03414318],
         [-0.05631698, -0.06517789],
         [-0.12817637,  0.32152677]],
+
        [[ 0.13053486,  0.75901662],
         [ 0.17856335,  0.71408075],
         [ 1.71884308,  0.16868293],
@@ -1401,6 +1706,7 @@ Y - X @ B =
         [ 0.65640522,  0.03414318],
         [-0.05631698, -0.06517789],
         [-0.12817637,  0.32152677]],
+
        [[ 0.13053486,  0.75901662],
         [ 0.17856335,  0.71408075],
         [ 1.71897477,  0.16879088],
@@ -1408,6 +1714,7 @@ Y - X @ B =
         [ 0.65640522,  0.03414318],
         [-0.05631698, -0.06517789],
         [-0.12817637,  0.32152677]],
+
        ..., 
        [[ 0.13053486,  0.75901662],
         [ 0.17856335,  0.71408075],
@@ -1416,6 +1723,7 @@ Y - X @ B =
         [ 0.65640522,  0.03414318],
         [-0.05631698, -0.06517789],
         [-0.12817637,  0.32152677]],
+
        [[ 0.13053327,  0.75902051],
         [ 0.17856176,  0.71408464],
         [ 1.71897318,  0.16879477],
@@ -1423,6 +1731,7 @@ Y - X @ B =
         [ 0.65640522,  0.03414318],
         [-0.05631857, -0.065174  ],
         [-0.12817796,  0.32153066]],
+
        [[ 0.13053486,  0.75901662],
         [ 0.17856335,  0.71408075],
         [ 1.71897477,  0.16879088],
@@ -1430,14 +1739,20 @@ Y - X @ B =
         [ 0.65640522,  0.03414318],
         [-0.05631698, -0.06517789],
         [-0.12817637,  0.32152677]]])
+
+
 E = array([[ 0.21079379,  0.2094001 ,  0.24239461, ...,  0.27463481,
          0.10669409,  0.27295689],
        [ 0.11529282,  0.10257626,  0.09074612, ...,  0.1319643 ,
          0.09273926,  0.1332    ]])
+
+
 Rx = array([[ 54.08511282,  12.56400617,  24.00059538, ...,  26.64926535,
          53.91219941,  26.75956506],
        [ 29.58163476,   6.15457558,   8.98518717, ...,  12.80519295,
          46.86086273,  13.05837673]])
+
+
 wdE = array([[  2.39127280e-09,   1.54464280e-02],
        [  1.77272121e-01,   1.54191792e-02],
        [  3.01125325e-03,   1.53497452e-02],
@@ -1445,44 +1760,65 @@ wdE = array([[  2.39127280e-09,   1.54464280e-02],
        [  3.04044809e-05,   1.51524335e-02],
        [  3.25875959e-07,   1.57486222e-02],
        [  2.68711417e-05,   1.51573079e-02]])
+
+
 Sigma = {0: array([[[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        ..., 
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]]]), 1: array([[[ 0.00154588,  0.        ],
         [ 0.        ,  0.00063406]],
+
        [[ 0.00657734,  0.        ],
         [ 0.        ,  0.00270582]],
+
        [[ 0.00399604,  0.        ],
         [ 0.        ,  0.0016414 ]],
+
        ..., 
        [[ 0.00407722,  0.        ],
         [ 0.        ,  0.00167482]],
+
        [[ 0.00078556,  0.        ],
         [ 0.        ,  0.00032206]],
+
        [[ 0.00403577,  0.        ],
         [ 0.        ,  0.00165776]]])}
+
+
 Mu = array([[[ 0.        ,  0.21046793],
         [ 0.        ,  0.11521971]],
+
        [[ 0.        ,  0.20802281],
         [ 0.        ,  0.10229871]],
+
        [[ 0.        ,  0.24142599],
         [ 0.        ,  0.09059717]],
+
        ..., 
        [[ 0.        ,  0.27351507],
         [ 0.        ,  0.13174329]],
+
        [[ 0.        ,  0.10661028],
         [ 0.        ,  0.09270939]],
+
        [[ 0.        ,  0.2718553 ],
         [ 0.        ,  0.13297918]]])
+
+
 gamma = array([[  1.54810706e-07,   9.99999845e-01],
        [  9.19979889e-01,   8.00201108e-02],
        [  1.64002696e-01,   8.35997304e-01],
@@ -1490,6 +1826,8 @@ gamma = array([[  1.54810706e-07,   9.99999845e-01],
        [  2.00255584e-03,   9.97997444e-01],
        [  2.06919190e-05,   9.99979308e-01],
        [  1.76968025e-03,   9.98230320e-01]])
+
+
 B = array([[ 0.2104679 ,  0.1152197 ],
        [ 0.01664601,  0.00818595],
        [ 0.20183147,  0.07573899],
@@ -1497,12 +1835,20 @@ B = array([[ 0.2104679 ,  0.1152197 ],
        [ 0.27296734,  0.13147946],
        [ 0.10660807,  0.09270747],
        [ 0.27137421,  0.13274385]])
+
+
 H = array([[ 2626.32773972,     0.        ],
        [    0.        ,  1021.8405499 ]])
+
+
 Delta = array([[ 3013.93890421,   113.73784609],
        [  387.61116449,  1135.57839598]])
+
+
 Lambda = array([[ 0.23159063,  0.        ],
        [ 0.        ,  0.61466474]])
+
+
 X @ B = 
 [[ 453.05425944  261.73600459]
  [ 330.33889386  198.94931778]
@@ -1511,6 +1857,7 @@ X @ B =
  [ 554.50230877  309.23940148]
  [ 432.80909626  252.75380296]
  [ 350.69635873  204.41429518]]
+
 Y - X @ B = 
 [[-452.89077841 -260.96589542]
  [-329.9030039  -198.17133042]
@@ -1519,11 +1866,14 @@ Y - X @ B =
  [-553.88194259 -309.24290189]
  [-432.8063047  -252.80819391]
  [-350.84286708 -204.11494232]]
+
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1532,19 +1882,31 @@ Y - X @ B =
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">wdE</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[62]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>5.604973192572156e-166</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1553,25 +1915,38 @@ Y - X @ B =
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[63]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>1.0062197120752165e-163</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>3rd iteration.</p>
+
 </div>
 </div>
 </div>
@@ -1583,20 +1958,31 @@ Y - X @ B =
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>/home/gaow/Public/miniconda3/lib/python3.6/site-packages/ipykernel_launcher.py:57: RuntimeWarning: invalid value encountered in double_scalars
 </pre>
 </div>
 </div>
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>R = array([[[-452.68031051, -260.85067572],
         [-329.9030039 , -198.17133042],
@@ -1605,6 +1991,7 @@ Y - X @ B =
         [-553.88194259, -309.24290189],
         [-432.8063047 , -252.80819391],
         [-350.84286708, -204.11494232]],
+
        [[-452.89077841, -260.96589542],
         [-329.9030039 , -198.17133042],
         [-529.84909793, -299.98637649],
@@ -1612,6 +1999,7 @@ Y - X @ B =
         [-553.88194259, -309.24290189],
         [-432.8063047 , -252.80819391],
         [-350.84286708, -204.11494232]],
+
        [[-452.89077841, -260.96589542],
         [-329.9030039 , -198.17133042],
         [-529.86574394, -299.99456245],
@@ -1619,6 +2007,7 @@ Y - X @ B =
         [-553.88194259, -309.24290189],
         [-432.8063047 , -252.80819391],
         [-350.84286708, -204.11494232]],
+
        ..., 
        [[-452.89077841, -260.96589542],
         [-329.9030039 , -198.17133042],
@@ -1627,6 +2016,7 @@ Y - X @ B =
         [-553.88194259, -309.24290189],
         [-432.8063047 , -252.80819391],
         [-350.84286708, -204.11494232]],
+
        [[-452.78417034, -260.87318795],
         [-329.79639583, -198.07862295],
         [-529.75913586, -299.90185498],
@@ -1634,6 +2024,7 @@ Y - X @ B =
         [-553.88194259, -309.24290189],
         [-432.69969663, -252.71548644],
         [-350.736259  , -204.02223485]],
+
        [[-452.89077841, -260.96589542],
         [-329.9030039 , -198.17133042],
         [-529.86574394, -299.99456245],
@@ -1641,14 +2032,20 @@ Y - X @ B =
         [-553.88194259, -309.24290189],
         [-432.8063047 , -252.80819391],
         [-350.84286708, -204.11494232]]])
+
+
 E = array([[-425.79454062, -444.76539542, -399.88346397, ..., -463.49901197,
         -341.54679507, -461.87222838],
        [-242.91414995, -254.79852845, -228.25162772, ..., -265.39549983,
         -197.10317605, -264.50948834]])
+
+
 Rx = array([[-109249.63889953,  -26685.92372545,  -39594.28539861, ...,
          -44975.7556278 , -172582.55036628,  -45280.04314355],
        [ -62326.49936591,  -15287.91170723,  -22600.23458034, ...,
          -25752.72619077,  -99595.63169368,  -25931.41632691]])
+
+
 wdE = array([[ 0.,  0.],
        [ 0.,  0.],
        [ 0.,  0.],
@@ -1656,44 +2053,65 @@ wdE = array([[ 0.,  0.],
        [ 0.,  0.],
        [ 0.,  0.],
        [ 0.,  0.]])
+
+
 Sigma = {0: array([[[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        ..., 
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]],
+
        [[ 0.,  0.],
         [ 0.,  0.]]]), 1: array([[[ 0.0165505 ,  0.        ],
         [ 0.        ,  0.00630081]],
+
        [[ 0.06713465,  0.        ],
         [ 0.        ,  0.02639924]],
+
        [[ 0.04178708,  0.        ],
         [ 0.        ,  0.01616534]],
+
        ..., 
        [[ 0.04260312,  0.        ],
         [ 0.        ,  0.01648963]],
+
        [[ 0.00847299,  0.        ],
         [ 0.        ,  0.00320936]],
+
        [[ 0.04218664,  0.        ],
         [ 0.        ,  0.01632408]]])}
+
+
 Mu = array([[[   0.        , -418.74742735],
         [   0.        , -241.38359289]],
+
        [[   0.        , -414.90622599],
         [   0.        , -248.07204203]],
+
        [[   0.        , -383.1735033 ],
         [   0.        , -224.5618633 ]],
+
        ..., 
        [[   0.        , -443.75250932],
         [   0.        , -261.01922548]],
+
        [[   0.        , -338.65287111],
         [   0.        , -196.47060021]],
+
        [[   0.        , -442.38739125],
         [   0.        , -260.19161388]]])
+
+
 gamma = array([[ nan,  nan],
        [ nan,  nan],
        [ nan,  nan],
@@ -1701,6 +2119,8 @@ gamma = array([[ nan,  nan],
        [ nan,  nan],
        [ nan,  nan],
        [ nan,  nan]])
+
+
 B = array([[ nan,  nan],
        [ nan,  nan],
        [ nan,  nan],
@@ -1708,12 +2128,20 @@ B = array([[ nan,  nan],
        [ nan,  nan],
        [ nan,  nan],
        [ nan,  nan]])
+
+
 H = array([[ nan,   0.],
        [  0.,  nan]])
+
+
 Delta = array([[             nan,   4.88287921e+07],
        [  1.50030292e+08,              nan]])
+
+
 Lambda = array([[ nan,   0.],
        [  0.,  nan]])
+
+
 X @ B = 
 [[ nan  nan]
  [ nan  nan]
@@ -1722,6 +2150,7 @@ X @ B =
  [ nan  nan]
  [ nan  nan]
  [ nan  nan]]
+
 Y - X @ B = 
 [[ nan  nan]
  [ nan  nan]
@@ -1730,11 +2159,14 @@ Y - X @ B =
  [ nan  nan]
  [ nan  nan]
  [ nan  nan]]
+
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago

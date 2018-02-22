@@ -1,11 +1,23 @@
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+  gtag('config', 'UA-107286198-1');
+</script>
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="ipynb_website:version" content="0.9.2" />
+<meta name="ipynb_website:version" content="0.9.3" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+
 <link rel="stylesheet" type="text/css" href="../css/jt.css">
+
 <link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
 <link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
 <link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
@@ -14,10 +26,12 @@
 <script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
 <link rel="stylesheet"
-      href="../site_libs/highlight/textmate.css"
+      href="../site_libs/highlightjs-1.1/textmate.css"
       type="text/css" />
-<script src="../site_libs/highlight/highlight.js"></script>
+
+<script src="../site_libs/highlightjs-1.1/highlight.js"></script>
 <script type="text/javascript">
 if (window.hljs && document.readyState && document.readyState === "complete") {
    window.setTimeout(function() {
@@ -25,9 +39,11 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
    }, 0);
 }
 </script>
-<script src="../js/toc2.js"></script>
+
+<script src="../js/doc_toc.js"></script>
 <script src="../js/docs.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script>
     MathJax.Hub.Config({
         extensions: ["tex2jax.js"],
@@ -49,6 +65,67 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
         }
     });
 </script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
 <script>
 $( document ).ready(function(){
             var cfg={'threshold':3,     // depth of toc (number of levels)
@@ -85,9 +162,10 @@ $( document ).ready(function(){
                   var name=docs[a]
                   $(".toc #toc-level0").append('<li><a href="'+name+'.html"><font color="#073642"><b>'+name.replace(/_/g," ")+'</b></font></a></li>');
             }
-            $("#toc-header").hide();
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
     });
 </script>
+
 <script>
 // manage active state of menu based on current page
 $(document).ready(function () {
@@ -111,7 +189,11 @@ $(document).ready(function () {
   window.buildTabsets("TOC");
 });
 </script>
+
+
+
 <title>m&m ash</title>
+
 <style type = "text/css">
 body {
   font-family: "Droid Sans";
@@ -120,10 +202,13 @@ body {
 }
 </style>
 </head>
+
 <body>
 <div tabindex="-1" id="notebook" class="border-box-sizing">
 <div class="container" id="notebook-container">
+
 <!-- code folding -->
+
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
@@ -136,24 +221,31 @@ body {
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        
 <li>
   <a href="../index.html">Overview</a>
 </li>
+        
 <li>
   <a href="../analysis.html">Analysis</a>
 </li>
+        
 <li>
   <a href="../prototype.html">Prototype</a>
 </li>
+        
 <li>
   <a href="../writeup.html">Writeup</a>
 </li>
+        
       </ul>
+        
 <ul class="nav navbar-nav navbar-right">
 <li>
    <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
 </li>
 </ul>
+        
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -164,6 +256,7 @@ body {
 <h1 id="Toy-M&amp;M-analysis-on-Thyroid-and-Lung">Toy M&amp;M analysis on Thyroid and Lung<a class="anchor-link" href="#Toy-M&amp;M-analysis-on-Thyroid-and-Lung">&#182;</a></h1><p>This analysis uses some early prototypes of M&amp;M.</p>
 <p>Current implementation of M&amp;M in <a href="https://github.com/gaow/libgaow/tree/master/py/src"><code>libgaow</code></a> is coded in Python and, inspired <a href="https://github.com/gaow/libgaow/tree/master/py/src">by this version of algorithm in the univarate case</a>, encapsulates lots of computation in MASH. Also it has not implemented ELBO calculation yet.</p>
 <p>For convenience of prototyping, I use Python implementation of MASH core computations (also in <code>libgaow</code>). Also I'll do an interactive analysis rather than running pipelines.</p>
+
 </div>
 </div>
 </div>
@@ -183,6 +276,7 @@ body {
 </li>
 <li>With these updates, run step 1 - 3, and repeat this until convergence.</li>
 </ol>
+
 </div>
 </div>
 </div>
@@ -202,9 +296,11 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">input_data</span> <span class="o">=</span> <span class="s2">&quot;~/Documents/GTExV8/MASH/GTExV8.ciseQTL.4MASH.rds&quot;</span>
 <span class="n">setwd</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/MNM&#39;</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -230,9 +326,11 @@ body {
              <span class="n">sigma2</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;/tmp/mnm.max_sigma2.out&quot;</span><span class="p">),</span>
              <span class="n">alpha</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s2">&quot;/tmp/mnm.max_alpha.out&quot;</span><span class="p">)),</span> <span class="s1">&#39;TL_MASH.sfa.rds&#39;</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -264,9 +362,11 @@ body {
 <span class="n">U</span><span class="o">.</span><span class="n">can</span> <span class="o">=</span> <span class="n">mashr</span><span class="p">::</span><span class="n">cov_canonical</span><span class="p">(</span><span class="n">mash_data</span><span class="p">)</span>
 <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Ulist</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">U</span><span class="o">.</span><span class="n">ed</span><span class="p">,</span> <span class="n">U</span><span class="o">.</span><span class="n">can</span><span class="p">),</span> <span class="n">DD_raw</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">dd</span><span class="p">),</span> <span class="s1">&#39;TL_MASH.priors.rds&#39;</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -287,13 +387,20 @@ body {
 <span class="n">mash_data</span> <span class="o">=</span> <span class="n">mashr</span><span class="p">::</span><span class="n">set_mash_data</span><span class="p">(</span><span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">matrix</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nrow</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">ncol</span><span class="p">(</span><span class="n">z</span><span class="p">)),</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">V</span><span class="p">))</span>
 <span class="n">saveRDS</span><span class="p">(</span><span class="n">mashr</span><span class="p">::</span><span class="n">mash</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span> <span class="n">Ulist</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;TL_MASH.priors.rds&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">usepointmass</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">,</span> <span class="n">outputlevel</span> <span class="o">=</span> <span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;TL_MASH.fit.rds&#39;</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre> - Computing 140688 x 266 likelihood matrix.
  - Likelihood calculations took 3.97 seconds.
@@ -302,8 +409,10 @@ body {
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -313,13 +422,20 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;TL_MASH.fit.rds&#39;</span><span class="p">)</span>
 <span class="nb">str</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>List of 6
  $ result     : NULL
@@ -350,8 +466,10 @@ body {
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -367,21 +485,30 @@ body {
 <span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">Ulist</span><span class="p">))</span>
 <span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">pi_s</span><span class="p">))</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>[1] 266
 [1] 3
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -390,20 +517,29 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">Ulist</span> <span class="n">U_names</span> <span class="n">pi_s</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
 <div class="output_subarea output_stream output_stderr output_text">
 <pre>Loading required package: feather
 </pre>
 </div>
 </div>
+
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -413,9 +549,11 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="n">U</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">Ulist</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">U_names</span><span class="p">])</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -424,19 +562,31 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">pi_s</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[7]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>[0.034297587641094, 0.965702411817388, 3.21374405172067e-10]</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -445,13 +595,22 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">U</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[8]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>OrderedDict([(&#39;ED_sfa2_1.1&#39;, array([[ 0.00637227,  0.00729445],
                      [ 0.00729445,  0.00835008]])),
@@ -460,9 +619,12 @@ body {
              (&#39;Lung.1&#39;, array([[ 0.        ,  0.        ],
                      [ 0.        ,  0.00835008]]))])</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -480,9 +642,11 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds&#39;</span><span class="p">)</span>
 <span class="n">attach</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -492,9 +656,11 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">X</span> <span class="n">Y</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
 <span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -502,6 +668,7 @@ body {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Use-MASH-weights-as-is">Use MASH weights as is<a class="anchor-link" href="#Use-MASH-weights-as-is">&#182;</a></h3><p>These weights are learned from 2 tissues in the MASH EB framework, without <code>null</code> component -- because the <code>null</code> will have almost 100% weight in MASH! Need to figure out what's going on.</p>
 <p>Here, without <code>null</code>, as shown in 2 cells above, thyroid specific prior has heightest weight (over 96%).</p>
+
 </div>
 </div>
 </div>
@@ -513,9 +680,11 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">from</span> <span class="nn">libgaow.regression_data</span> <span class="kn">import</span> <span class="n">MNMASH</span>
 <span class="n">model</span> <span class="o">=</span> <span class="n">MNMASH</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -524,9 +693,11 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">pi_s</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -535,9 +706,11 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">niter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -547,9 +720,11 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
 <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;mnm_post_mean.npy&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">post_mean_mat</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -559,9 +734,11 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -572,13 +749,22 @@ body {
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYYAAAD8CAYAAABzTgP2AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAFv5JREFUeJzt3X+M3PV95/Hnm2XdLCTKQvFRe21qX2u58pUWcyt+iCq6
@@ -688,9 +874,12 @@ JKnEYJAklRgMkqQSg0GSVGIwSJJKDAZJUonBIEkq+f8KfByaI9Zc/gAAAABJRU5ErkJggg==
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -703,13 +892,22 @@ JKnEYJAklRgMkqQSg0GSVGIwSJJKDAZJUonBIEkq+f8KfByaI9Zc/gAAAABJRU5ErkJggg==
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAAD8CAYAAABkbJM/AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAEpdJREFUeJzt3X+o3fd93/Hna3KcbWmp7VkoimxXMtwGlDFU56A4rA2l
@@ -800,9 +998,12 @@ SUVORK5CYII=
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -811,13 +1012,22 @@ SUVORK5CYII=
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">post_mean_mat</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[21]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>array([[ -1.16714215e-06,  -9.57805811e-07],
        [ -1.07089187e-06,  -1.07757631e-06],
@@ -827,9 +1037,12 @@ SUVORK5CYII=
        [ -3.08697086e-08,  -3.53005829e-08],
        [  1.48079839e-05,   1.71193685e-07]])</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -845,6 +1058,7 @@ SUVORK5CYII=
 </li>
 </ul>
 <p>I then modify <code>U</code> and <code>pi_s</code> and re-fit.</p>
+
 </div>
 </div>
 </div>
@@ -856,13 +1070,22 @@ SUVORK5CYII=
 <div class=" highlight hl-sos"><pre><span></span><span class="n">U</span><span class="p">[</span><span class="s1">&#39;null&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
 <span class="n">U</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[22]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>OrderedDict([(&#39;ED_sfa2_1.1&#39;, array([[ 0.00637227,  0.00729445],
                      [ 0.00729445,  0.00835008]])),
@@ -873,9 +1096,12 @@ SUVORK5CYII=
              (&#39;null&#39;, array([[ 0.,  0.],
                      [ 0.,  0.]]))])</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -884,9 +1110,11 @@ SUVORK5CYII=
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">pi_s</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.15</span><span class="p">,</span><span class="mf">0.25</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">]</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -897,9 +1125,11 @@ SUVORK5CYII=
 <span class="n">model2</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">pi</span> <span class="o">=</span> <span class="n">pi_s</span><span class="p">)</span>
 <span class="n">model2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">niter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -908,9 +1138,11 @@ SUVORK5CYII=
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;mnm_assigned_post_mean.npy&#39;</span><span class="p">,</span> <span class="n">model2</span><span class="o">.</span><span class="n">post_mean_mat</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -921,13 +1153,22 @@ SUVORK5CYII=
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYYAAAD8CAYAAABzTgP2AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAFf5JREFUeJzt3X+M3PWd3/Hnm2V9t5A0huJyZm3H7tXyyXekMV0BUU7R
@@ -1033,9 +1274,12 @@ qfD/AYmqR6vGRg0VAAAAAElFTkSuQmCC
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1046,13 +1290,22 @@ qfD/AYmqR6vGRg0VAAAAAElFTkSuQmCC
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYwAAAD8CAYAAABkbJM/AAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAFJZJREFUeJzt3X+s3fV93/HnC2MzQqsYiuUYA7WR3FTOWhlyRInaRm1H
@@ -1152,9 +1405,12 @@ TkSuQmCC
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1163,13 +1419,22 @@ TkSuQmCC
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">U</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[43]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>OrderedDict([(&#39;ED_sfa2_1.1&#39;, array([[ 0.00637227,  0.00729445],
                      [ 0.00729445,  0.00835008]])),
@@ -1180,9 +1445,12 @@ TkSuQmCC
              (&#39;null&#39;, array([[ 0.,  0.],
                      [ 0.,  0.]]))])</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1191,19 +1459,31 @@ TkSuQmCC
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">model2</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">pi</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt output_prompt">Out[44]:</div>
+
+
+
+
 <div class="output_text output_subarea output_execute_result">
 <pre>array([ 0.15,  0.25,  0.1 ,  0.5 ])</pre>
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -1224,9 +1504,11 @@ TkSuQmCC
 <span class="n">varbvs_fit1</span> <span class="o">&lt;-</span> <span class="n">varbvs</span><span class="p">::</span><span class="n">varbvs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">NULL</span><span class="p">,</span> <span class="n">Y</span><span class="p">[,</span><span class="mi">1</span><span class="p">],</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span>
 <span class="n">varbvs_bhat1</span> <span class="o">=</span> <span class="n">rowSums</span><span class="p">(</span><span class="n">varbvs_fit1</span><span class="err">$</span><span class="n">alpha</span><span class="o">*</span><span class="n">varbvs_fit1</span><span class="err">$</span><span class="n">mu</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1236,9 +1518,11 @@ TkSuQmCC
 <div class=" highlight hl-sos"><pre><span></span><span class="n">varbvs_fit2</span> <span class="o">&lt;-</span> <span class="n">varbvs</span><span class="p">::</span><span class="n">varbvs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">NULL</span><span class="p">,</span> <span class="n">Y</span><span class="p">[,</span><span class="mi">2</span><span class="p">],</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span>
 <span class="n">varbvs_bhat2</span> <span class="o">=</span> <span class="n">rowSums</span><span class="p">(</span><span class="n">varbvs_fit2</span><span class="err">$</span><span class="n">alpha</span><span class="o">*</span><span class="n">varbvs_fit2</span><span class="err">$</span><span class="n">mu</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1248,9 +1532,11 @@ TkSuQmCC
 <div class=" highlight hl-sos"><pre><span></span><span class="n">varbvs_bhat1</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">varbvs_bhat1</span><span class="p">)</span>
 <span class="n">varbvs_bhat2</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">varbvs_bhat2</span><span class="p">)</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1259,9 +1545,11 @@ TkSuQmCC
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">varbvs_bhat1</span> <span class="n">varbvs_bhat2</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1272,13 +1560,22 @@ TkSuQmCC
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXYAAAD8CAYAAABjAo9vAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAEOBJREFUeJzt3X+MZWV9x/H3l2FWB0QHyirsAl1sdRsrltURsVit+GMR
@@ -1361,9 +1658,12 @@ l6TC/D9uc5es7H3aUgAAAABJRU5ErkJggg==
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1374,13 +1674,22 @@ l6TC/D9uc5es7H3aUgAAAABJRU5ErkJggg==
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
+
 </div>
 </div>
 </div>
+
 <div class="output_wrapper">
 <div class="output">
+
+
 <div class="output_area">
+
 <div class="prompt"></div>
+
+
+
+
 <div class="output_png output_subarea ">
 <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAXYAAAD8CAYAAABjAo9vAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
 AAALEgAACxIB0t1+/AAAD/9JREFUeJzt3X9sXeV9x/H3F8cwQ1FNh9cShzSZhjJ1hTWdRVtRdRtd
@@ -1459,9 +1768,12 @@ CmOxS1Jh/h+TzjaR9P0rWwAAAABJRU5ErkJggg==
 "
 >
 </div>
+
+</div>
+
 </div>
 </div>
-</div>
+
 </div>
 <hr>
 &copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago

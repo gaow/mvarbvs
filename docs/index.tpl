@@ -1,18 +1,26 @@
 {%- extends 'basic.tpl' -%}
 
 {%- block header -%}
+<!-- Global Site Tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-107286198-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments)};
+  gtag('js', new Date());
+  gtag('config', 'UA-107286198-1');
+</script>
 {{ super() }}
 
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="ipynb_website:version" content="0.9.2" />
+<meta name="ipynb_website:version" content="0.9.3" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <title>m&m ash</title>
-
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
 <link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
@@ -21,9 +29,9 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <link rel="stylesheet"
-      href="site_libs/highlight/textmate.css"
+      href="site_libs/highlightjs-1.1/textmate.css"
       type="text/css" />
-<script src="site_libs/highlight/highlight.js"></script>
+<script src="site_libs/highlightjs-1.1/highlight.js"></script>
 <style type="text/css">
   div.input_prompt {display: none;}
   div.output_html {
@@ -43,6 +51,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
    }, 0);
 }
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 <script>
     MathJax.Hub.Config({
         extensions: ["tex2jax.js"],
@@ -64,6 +73,7 @@ if (window.hljs && document.readyState && document.readyState === "complete") {
         }
     });
 </script>
+
 </head>
 
 <body>
@@ -110,7 +120,7 @@ h3:hover .anchor-link,
 h4:hover .anchor-link,
 h5:hover .anchor-link,
 h6:hover .anchor-link {
-  visibility: visible;
+  visibility: hidden;
 }
 
 .main-container {
@@ -225,7 +235,7 @@ $(document).ready(function () {
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>
