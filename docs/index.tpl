@@ -210,7 +210,7 @@ $(document).ready(function () {
 {%- endblock header -%}
 {% block footer %}
 <hr>
-&copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
+Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
 <!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
 
 </div>

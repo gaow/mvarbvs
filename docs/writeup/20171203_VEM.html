@@ -1,7 +1,4 @@
-{%- extends 'basic.tpl' -%}
 
-{%- block header -%}
-{{ super() }}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -123,7 +120,7 @@ function sortDataFrame(id, n, dtype) {
 
 <script>
 $( document ).ready(function(){
-            var cfg={'threshold':{{ nb.get('metadata', {}).get('toc', {}).get('threshold', '3') }},     // depth of toc (number of levels)
+            var cfg={'threshold':3,     // depth of toc (number of levels)
              'number_sections': false,
              'toc_cell': false,          // useless here
              'toc_window_display': true, // display the toc window
@@ -143,12 +140,12 @@ $( document ).ready(function(){
             st.toc_index=0;
             // fire the main function with these parameters
             table_of_contents(cfg, st);
-            var file=analysisDict[$("h1:first").attr("id")];
+            var file=writeupDict[$("h1:first").attr("id")];
             $("#toc-level0 a").css("color","#126dce");
             $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
-            var docs=analysisArray;
-            var docs_map=analysisArrayMap;
-            var pos=analysisArray.indexOf(file);
+            var docs=writeupArray;
+            var docs_map=writeupArrayMap;
+            var pos=writeupArray.indexOf(file);
             for (var a=pos;a>=0;a--){
                   $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
             }
@@ -243,14 +240,101 @@ body {
       </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Notes-on-fundamentals-of-EM-and-VEM">Notes on fundamentals of EM and VEM<a class="anchor-link" href="#Notes-on-fundamentals-of-EM-and-VEM">&#182;</a></h1><p>A refreshment of concepts based on notes from Matthew and David.</p>
 
-{%- endblock header -%}
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>$\newcommand{\bs}[1]{\boldsymbol{#1}}$
+$\DeclareMathOperator*{\diag}{diag}$
+$\DeclareMathOperator*{\cov}{cov}$
+$\DeclareMathOperator*{\rank}{rank}$
+$\DeclareMathOperator*{\var}{var}$
+$\DeclareMathOperator*{\tr}{tr}$
+$\DeclareMathOperator*{\veco}{vec}$
+$\DeclareMathOperator*{\uniform}{\mathcal{U}niform}$
+$\DeclareMathOperator*{\argmin}{arg\ min}$
+$\DeclareMathOperator*{\argmax}{arg\ max}$
+$\DeclareMathOperator*{\N}{N}$
+$\DeclareMathOperator*{\gm}{Gamma}$
+$\DeclareMathOperator*{\dif}{d}$</p>
 
-{% block footer %}
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Problem">Problem<a class="anchor-link" href="#Problem">&#182;</a></h2><p>We need to make MLE of $\theta$ for $P(Y|\theta)$. But the marginal $$\log P(Y|\theta) = \log \int P(Y,Z|\theta) \dif Z$$ is difficult to compute. 
+However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is easier. 
+<strong>Note that $P(Y|Z, \theta)$ is likelihood, $P(Z|\theta)$ is posterior</strong>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Marginal-log-likelihood">Marginal log-likelihood<a class="anchor-link" href="#Marginal-log-likelihood">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>\begin{align}
+\log P(Y|\theta) &amp; =  \log P(Y|\theta) \int_Z q(Z) \dif Z \\
+&amp; =  \int_Z \log P(Y|\theta) q(Z) \dif Z \\
+&amp; = \int_Z \log \frac{P(Y,Z|\theta)}{P(Z|Y,\theta)} q(Z) \dif Z \\
+&amp; = \int_Z \log \frac{P(Y,Z|\theta)q(Z)}{P(Z|Y,\theta)q(Z)} q(Z) \dif Z \\
+&amp; = \int_Z \log \frac{P(Y|Z,\theta)P(Z|\theta)}{q(Z)} \frac{q(Z)}{P(Z|Y,\theta)} q(Z) \dif Z \\
+&amp; = \int_Z \log P(Y|Z,\theta) q(Z) \dif Z + \int_Z  \frac{P(Z|\theta)}{q(Z)} q(Z) \dif Z + \int_Z  \frac{q(Z)}{P(Z|Y,\theta)} q(Z) \dif Z \\
+&amp; = E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{q(Z)}] - E_q[\frac{P(Z|Y,\theta)}{q(Z)}] \\
+&amp; \ge E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{q(Z)}]
+\end{align}</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="EM">EM<a class="anchor-link" href="#EM">&#182;</a></h2><ol>
+<li>$\underset{q}{max} \big( \log P(Y|\theta) \big ) $: simply set $q(Z) = P(Z|Y,\theta^{(current)})$</li>
+<li>$\underset{\theta}{max} \big( E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{P(Z|Y,\theta^{(current)}}] \big)$</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="VEM-via-mean-field">VEM via mean-field<a class="anchor-link" href="#VEM-via-mean-field">&#182;</a></h2><ol>
+<li>$\underset{q \in \Omega}{max} \big( \log P(Y|\theta) \big ) $: set $q(Z) = \prod_i q(Z_i)$</li>
+<li>$\underset{\theta}{max} \big( E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{\prod_i q(Z_i)}] \big)$</li>
+</ol>
+
+</div>
+</div>
+</div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/b2640eb92531922b205e1a207586ccc03fba9918/writeup/20171203_VEM.ipynb"><code>writeup/20171203_VEM.ipynb</code></a> committed by Gao Wang on Mon Mar 19 13:37:38 2018 <a href="http://github.com/gaow/mvarbvs/commit/b2640eb92531922b205e1a207586ccc03fba9918">revision 1, b2640eb</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
 </html>
-{% endblock %}

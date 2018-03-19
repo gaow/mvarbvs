@@ -248,7 +248,7 @@ body {
 
 {% block footer %}
 <hr>
-&copy 2016-2017 Gao Wang et al at Stephens Lab, University of Chicago
+Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
 </div>
 </div>
 </body>
