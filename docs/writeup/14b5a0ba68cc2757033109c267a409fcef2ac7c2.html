@@ -3,6 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="robots" content="noindex">
 <meta name="ipynb_website:version" content="0.9.4" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
@@ -244,7 +245,7 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Notes-on-fundamentals-of-EM-and-VEM">Notes on fundamentals of EM and VEM<a class="anchor-link" href="#Notes-on-fundamentals-of-EM-and-VEM">&#182;</a></h1><p>A refreshment of concepts based on notes from Matthew and David.</p>
+<h1 id="M&amp;M-model-for-fine-mapping">M&amp;M model for fine-mapping<a class="anchor-link" href="#M&amp;M-model-for-fine-mapping">&#182;</a></h1><p>This is the 5th version of M&amp;M attempt. The formulation of this version was inspired by conditional regression for fine-mapping.</p>
 
 </div>
 </div>
@@ -274,37 +275,38 @@ $\DeclareMathOperator*{\dif}{d}$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Problem">Problem<a class="anchor-link" href="#Problem">&#182;</a></h2><p>We need to make MLE of $\theta$ for $P(Y|\theta)$. The marginal $$\log P(Y|\theta) = \log \int P(Y,Z|\theta) \dif Z$$ is difficult to compute. 
-However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is easier. 
-<strong>Note that $P(Y|Z, \theta)$ is likelihood, $P(Z|\theta)$ is posterior</strong>.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Marginal-log-likelihood">Marginal log-likelihood<a class="anchor-link" href="#Marginal-log-likelihood">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>For any normalized distribution $q(Z)$,</p>
-<p>\begin{align}
-\log P(Y|\theta) &amp; =  \log P(Y|\theta) \int_Z q(Z) \dif Z \\
-&amp; =  \int_Z \log P(Y|\theta) q(Z) \dif Z \\
-&amp; = \int_Z \log \frac{P(Y,Z|\theta)}{P(Z|Y,\theta)} q(Z) \dif Z \\
-&amp; = \int_Z \log \frac{P(Y,Z|\theta)q(Z)}{P(Z|Y,\theta)q(Z)} q(Z) \dif Z \\
-&amp; = \int_Z \log \frac{P(Y|Z,\theta)P(Z|\theta)}{q(Z)} \frac{q(Z)}{P(Z|Y,\theta)} q(Z) \dif Z \\
-&amp; = \int_Z \log P(Y|Z,\theta) q(Z) \dif Z + \int_Z  \frac{P(Z|\theta)}{q(Z)} q(Z) \dif Z + \int_Z  \frac{q(Z)}{P(Z|Y,\theta)} q(Z) \dif Z \\
-&amp; = E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{q(Z)}] - E_q[\frac{P(Z|Y,\theta)}{q(Z)}] \\
-&amp; \ge E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{q(Z)}] \\
-&amp; = \mathcal{L}(q, \theta)
+<h2 id="M&amp;M-ASH-model">M&amp;M ASH model<a class="anchor-link" href="#M&amp;M-ASH-model">&#182;</a></h2><p>We assume the following multivariate, multiple regression model with $N$ samples, $J$ effects and $R$ conditions (and <strong>without covariates, for the time being</strong>)
+\begin{align}
+\bs{Y}_{N\times R} = \bs{X}_{N \times J}\bs{B}_{J \times R} + \bs{E}_{N \times R},
+\end{align}
+where
+\begin{align}
+\bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}),\\
+\bs{\Sigma} &amp;= \diag(\sigma_1,\ldots,\sigma_R).
 \end{align}</p>
+<p>Let $\bs{\Lambda} = \bs{\Sigma}^{-1}$, we place Gamma prior on $\bs{\Lambda}$</p>
+<p>$$\lambda_r \overset{iid}{\sim} \gm(\alpha, \beta),$$</p>
+<p>and as a first path we set $\alpha = \beta = 0$ so that it is equivalent to estimating $\bs{\Sigma}$ via maximum likelihood.</p>
+<p>Let $\omega_j := p(\zeta_j)$ be the prior probability that effect $j$ is non-zero. We assume non-zero effects $\bs{b}_j$ (rows of $\bs{B}$) are iid with prior distribution of mixtures of multivariate normals</p>
+<p>\begin{align}
+p(\bs{b}_j|\zeta_j = 1) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_j | \bs{0}, \bs{V}_p),
+\end{align}</p>
+<p>where the $\bs{V}_p$'s are $R \times R$ positive semi-definite covariance matrices and the $\pi_p$'s are their weights. We can augment the prior of $\bs{b}_j$ by indicator vector $\bs{\gamma}_j \in \mathbb{R}^P$ denoting membership of $\bs{b}_j$ into one of the $P$ mixture groups and write</p>
+<p>\begin{align}
+p(\bs{b}_j|\zeta_j = 1, \bs{\gamma}_j) &amp;= \prod_{p = 0}^P\left[\N(\bs{b}_j|\bs{0},\bs{V}_p)\right]^{\gamma_{jp}},
+\end{align}</p>
+<p>where</p>
+<p>\begin{align}
+p(\bs{\gamma}_j) &amp;= \prod_{p = 0}^{P} \pi_p^{\gamma_{jp}}
+\end{align}</p>
+<p>Let $Z := (\bs{B}, \bs{\zeta}, \bs{\Gamma})$, $\Theta := (\bs{\omega}, \bs{\pi}, \bs{V})$.
+The densities involved are</p>
+<p>\begin{align}
+p(\bs{Y}, \bs{\Sigma}, \bs{B},\bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\pi}, \bs{V}) &amp;= 
+p(\bs{Y}, \bs{\Sigma}, Z, \Theta) \\
+&amp; = p(\bs{Y}|\bs{\Sigma}, Z, \Theta) p(Z|\Theta) p(\bs{\Sigma})
+\end{align}</p>
+<p>We are interested in computing the posterior $p(Z|\Theta, \bs{Y}, \bs{\Sigma})$. Note that in solving the M&amp;M model below we assume $V_p$'s and their corresponding $\pi_p$'s are known; in practice we use <code>mashr</code> to estimate these quantities and provide them to M&amp;M.</p>
 
 </div>
 </div>
@@ -313,11 +315,13 @@ However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is ea
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="EM">EM<a class="anchor-link" href="#EM">&#182;</a></h2><p>Maximize $\mathcal{L}(q, \theta)$ iteratively between $q$ and $\theta$, in a 2-step procedure:</p>
-<ol>
-<li>$\underset{q}{max} \big( \log P(Y|\theta) \big ) $: simply set $q(Z) = P(Z|Y,\theta^{(current)})$</li>
-<li>$\underset{\theta}{max} \big( E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{P(Z|Y,\theta^{(current)})}] \big)$</li>
-</ol>
+<h2 id="Evidence-lower-bound-(ELBO)">Evidence lower bound (ELBO)<a class="anchor-link" href="#Evidence-lower-bound-(ELBO)">&#182;</a></h2><p>Following from <a href="https://gaow.github.io/mvarbvs/writeup/20171203_VEM.html">the VEM framework</a>,</p>
+<p>\begin{align}
+\log p(\bs{Y}|\bs{\Sigma}, \Theta) &amp; = E_q[\log p(\bs{Y} | Z, \bs{\Sigma}, \Theta)] + 
+E_q[\log\frac{p(Z|\Theta)}{q(Z)}] - E_q[\log \frac{p(Z|\bs{Y}, \bs{\Sigma}, \Theta)}{q(Z)}] \\
+&amp; = \mathcal{L}(q, \bs{\Sigma}, \Theta) + D_{kl}[q(Z) || p(Z|\bs{Y}, \bs{\Sigma}, \Theta)]
+\end{align}</p>
+<p>where $D_{kl}(\cdot)$ is the Kullback–Leibler (KL) divergence, and $\mathcal{L}(q, \bs{\Sigma}, \Theta) \ge 0$ is Evidence lower bound (ELBO).</p>
 
 </div>
 </div>
@@ -326,17 +330,67 @@ However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is ea
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="VEM-via-mean-field">VEM via mean-field<a class="anchor-link" href="#VEM-via-mean-field">&#182;</a></h2><ol>
-<li>$\underset{q \in \Omega}{max} \big( \log P(Y|\theta) \big ) $: set $q(Z) = \prod_i q(Z_i)$</li>
-<li>$\underset{\theta}{max} \big( E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{\prod_i q(Z_i)}] \big)$</li>
-</ol>
+<h2 id="One-effect-model">One effect model<a class="anchor-link" href="#One-effect-model">&#182;</a></h2><p>To derive the variational algorithm for fine-mapping with M&amp;M we first discuss the case when there is only one non-zero effect, then show that the results can be generalized to the case with multiple non-zero effects to natually yield fine-mapping solutions.</p>
+<p>In the event where only one row $\bs{B}_{1\cdot}$ is non-zero, that is, $\zeta_1 = 1$, $\bs{\zeta}_{-1} = 0$, M&amp;M becomes</p>
+<p>\begin{align}
+\bs{Y}_{N \times R} = \bs{x}\bs{b}_1 + \bs{E}_{N \times R},
+\end{align}</p>
+<p>a multivariate, single regressor Bayesian regression with prior</p>
+<p>\begin{align}
+p(\bs{b}_1) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_1 | \bs{0}, \bs{V}_p).
+\end{align}</p>
+<p>Let "$\propto$" denote equality up to an additive constant independent of $q$, we write ELBO of this model</p>
+<p>\begin{align}
+\mathcal{L}_1(q, \bs{\Sigma}, \Theta) &amp;= 
+E_q [\log p(\bs{Y} | \bs{b}_1, \bs{\gamma}_1, \bs{\Sigma}, \Theta)] + 
+E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1 | \Theta)}{q(\bs{b}_1, \bs{\gamma}_1)}] \\
+&amp;= -\frac{NR}{2}\log(2\pi) - 
+\frac{N}{2}E_q[\log\det (\bs{\Sigma})] - 
+\frac{1}{2}E_q \{ \tr[(\bs{Y} - \bs{xb_1}) \bs{\Sigma}^{-1} (\bs{Y} - \bs{xb_1})^\intercal] \} +
+E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1, \Theta)p(\bs{\gamma}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)q(\bs{\gamma_1})}]
+\end{align}</p>
+<p>We focus on $E_q \{ \tr[(\bs{Y} - \bs{xb_1}) \bs{\Sigma}^{-1} (\bs{Y} - \bs{xb_1})^\intercal] \}$,</p>
+<p>\begin{align}
+E_q \{ \tr[(\bs{Y} - \bs{xb_1}) \bs{\Sigma}^{-1} (\bs{Y} - \bs{xb_1})^\intercal] \} &amp;= 
+\tr\{\bs{Y} E_q[\bs{\Sigma}^{-1}] \bs{Y}^\intercal\} - 
+2\tr\{\bs{Y}E_q[\bs{\Sigma}^{-1}]E_q[\bs{b}_1]^{\intercal}\bs{x}^\intercal\} +
+E_q[\tr(\bs{x}\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}^\intercal)] \\
+&amp; \propto E_q[\tr(\bs{x}\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}^\intercal)] - 2\tr(\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{b}_1]^\intercal\bs{x}^\intercal)
+\end{align}</p>
+<p>Therefore,</p>
+<p>\begin{align}
+\mathcal{L}_1(q, \bs{\Sigma}, \Theta) &amp; \propto
+E_q[\tr(\bs{x}\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}^\intercal)] - 2\tr(\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{b}_1]^\intercal\bs{x}^\intercal) +
+E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1, \Theta)p(\bs{\gamma}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)q(\bs{\gamma_1})}]
+\end{align}</p>
+<p>In this case, we maximize $\mathcal{L}_1(q, \bs{\Sigma}, \Theta)$ by setting variational distribution to the posterior, since it can be calculated easily (FIXME: detail the computation here, along the lines of Wakefield 2009, also possibly as implemented in <code>mashr</code> package). That is, $p(Z|\Theta, \bs{Y}, \bs{\Sigma}) = \argmax \mathcal{L}_1(q, \bs{\Sigma}, \Theta)$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Two-effects-model">Two effects model<a class="anchor-link" href="#Two-effects-model">&#182;</a></h2><p>In the event where two rows of $\bs{B}$ is non-zero, that is, $\zeta_1 = \zeta_2 = 1$, $\bs{\zeta}_{-1, -2} = 0$, M&amp;M becomes</p>
+<p>\begin{align}
+\bs{Y}_{N \times R} = \bs{x}\bs{b}_1 + \bs{x}\bs{b}_2 + \bs{E}_{N \times R},
+\end{align}</p>
+<p>a multivariate, two regressor Bayesian regression with independent priors $p(\bs{b}_1, \bs{b}_2) = p(\bs{b}_1)p(\bs{b}_2)$ where</p>
+<p>\begin{align}
+p(\bs{b}_\cdot) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_\cdot | \bs{0}, \bs{V}_p).
+\end{align}</p>
+<p>we write ELBO of this model</p>
+<p>\begin{align}
+\mathcal{L}_2(q, \bs{\Sigma}, \Theta) &amp;= 
+\end{align}</p>
 
 </div>
 </div>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/8e93ab8260f2a33b63a8d4bc796601d145608b19/writeup/20171203_VEM.ipynb"><code>writeup/20171203_VEM.ipynb</code></a> committed by Gao Wang on Mon Mar 19 18:37:13 2018 <a href="http://github.com/gaow/mvarbvs/commit/8e93ab8260f2a33b63a8d4bc796601d145608b19">revision 2, 8e93ab8</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/8e93ab8260f2a33b63a8d4bc796601d145608b19/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Mon Mar 19 18:37:13 2018 <a href="http://github.com/gaow/mvarbvs/commit/8e93ab8260f2a33b63a8d4bc796601d145608b19">revision 1, 8e93ab8</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
