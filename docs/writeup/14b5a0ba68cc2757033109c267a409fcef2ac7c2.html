@@ -383,14 +383,37 @@ p(\bs{b}_\cdot) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_\cdot | \bs{0}, \bs{V}_p).
 <p>we write ELBO of this model</p>
 <p>\begin{align}
 \mathcal{L}_2(q, \bs{\Sigma}, \Theta) &amp;= 
+E_q [\log p(\bs{Y} | \bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2, \bs{\Sigma}, \Theta)] + 
+E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \Theta)}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}] \\
+&amp;= -\frac{NR}{2}\log(2\pi) - 
+\frac{N}{2}E_q[\log\det (\bs{\Sigma})] - 
+\frac{1}{2}E_q \{ \tr[(\bs{Y} - \bs{xb_1} - \bs{xb_2}) \bs{\Sigma}^{-1} (\bs{Y} - \bs{xb_1} - \bs{xb_2})^\intercal] \} +
+E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \Theta)}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}]
 \end{align}</p>
+<p>Similar to the "one effect model" we focus on</p>
+<p>\begin{align}
+E_q \{ \tr[(\bs{Y} - \bs{xb_1} - \bs{xb_2}) \bs{\Sigma}^{-1} (\bs{Y} - \bs{xb_1} - \bs{xb_2})^\intercal] \}
+\end{align}</p>
+<p>Let $q(Z_1, Z_2) = q_1(Z_1)q_2(Z_2)$ be the variational approximation to the posterior $p(Z|\Theta, \bs{\Sigma})$, ie, a "fully factorized" variational approximation, and consider the setup of "conditional regression" where we treat $q_1$ fixed and maximize over $q_2$ only,</p>
+<p>\begin{align}
+E_q \{ \tr[(\bs{Y} - \bs{xb_1} - \bs{xb_2}) \bs{\Sigma}^{-1} (\bs{Y} - \bs{xb_1} - \bs{xb_2})^\intercal] \} &amp; \propto
+E_{q_2}\{\tr(\bs{x}\bs{b}_2\bs{\Sigma}^{-1}\bs{b}_2^\intercal\bs{x}^\intercal)\} -
+2\tr\{(\bs{Y} - \bs{x}E_{q_1}[\bs{b}_1])\bs{\Sigma}^{-1}E_{q_2}[\bs{b}_2]^\intercal \bs{x}^\intercal\}
+\end{align}</p>
+<p>Let $\bs{\xi}_1 = \bs{Y} - \bs{x}E_{q_1}[\bs{b}_1]$, we have
+\begin{align}
+\mathcal{L}_2(q_2, \bs{\Sigma}, \Theta) &amp; \propto E_{q_2}\{\tr(\bs{x}\bs{b}_2\bs{\Sigma}^{-1}\bs{b}_2^\intercal\bs{x}^\intercal)\} -
+2\tr\{\bs{\xi}_1\bs{\Sigma}^{-1}E_{q_2}[\bs{b}_2]^\intercal \bs{x}^\intercal\} +
+E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2, \Theta)p(\bs{\gamma}_2)}{q(\bs{b}_2 | \bs{\gamma}_2)q(\bs{\gamma_2})}],
+\end{align}</p>
+<p>and similar to the case with "one effect model", $p(Z|\Theta, \bs{\xi}_1, \bs{\Sigma}) = \argmax \mathcal{L}_2(q_2, \bs{\Sigma}, \Theta)$. In other words we maximize $\mathcal{L}_2$ over $q_2$ with $q_1$ fixed, by applying the same posterior computation for maximizing $\mathcal{L}_1$ over $q_1$ but using residualized response $\bs{\xi}_1$ rather than the original response $\bs{Y}$.</p>
 
 </div>
 </div>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/8e93ab8260f2a33b63a8d4bc796601d145608b19/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Mon Mar 19 18:37:13 2018 <a href="http://github.com/gaow/mvarbvs/commit/8e93ab8260f2a33b63a8d4bc796601d145608b19">revision 1, 8e93ab8</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/2bd613813ee8ef263d6c86139bca7168da20ac95/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Mon Mar 19 23:41:54 2018 <a href="http://github.com/gaow/mvarbvs/commit/2bd613813ee8ef263d6c86139bca7168da20ac95">revision 2, 2bd6138</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
