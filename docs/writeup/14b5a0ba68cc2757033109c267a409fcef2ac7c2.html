@@ -434,23 +434,10 @@ E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2, \Theta)p(\bs{\gamma}_2)}{q_2(\bs{
 <p>\begin{align}
 \mathcal{L}(q, \bs{\Sigma}, \Theta; \bs{Y}) &amp; = E_q[\log p(\bs{Y} | Z, \bs{\Sigma}, \Theta)] + 
 E_q[\log\frac{p(Z|\Theta)}{q(Z)}] \\
-&amp; \propto E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} - 2\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\} +
+&amp; \propto E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} - 2\tr\{\bs{Y}\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal\bs{X}^\intercal\} +
 E_q[\log\frac{p(Z|\Theta)}{q(Z)}]
 \end{align}</p>
-<p>We will work out each of the 3 terms.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="$\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$">$\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$<a class="anchor-link" href="#$\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$">&#182;</a></h3><p>We can use posterior mean $\tilde{\bs{B}}$ to estimate $E_q[\bs{B}]$, thus</p>
-<p>\begin{align}
-\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\} &amp;= 
-\tr\{\bs{Y}\bs{\Sigma}^{-1}\tilde{\bs{B}}^\intercal\bs{X}^\intercal\}
-\end{align}</p>
+<p>where $\bar{\bs{B}}:= E_q[\bs{B}]$. As will be shown later, we estimate $\bar{\bs{B}}$ using posterior mean $\tilde{\bs{B}}$. We need to work out $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$ and $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$ next.</p>
 
 </div>
 </div>
@@ -471,14 +458,14 @@ E_q\{\tr(\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal\bs{X})\} \quad \
 [\bs{B}^\intercal\bs{S}\bs{B}]_{rr'} &amp;= \sum_j \sum_{j'} B_{jr} S_{jj'} B_{j'r'}, \\
 E_q[\bs{B}^\intercal\bs{S}\bs{B}]_{rr'} &amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{jr} B_{j'r'}] \\
 &amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{jr}] E_q[B_{j'r'}] + \sum_j \sum_{j'} S_{jj'} \cov(B_{jr}, B_{j'r'}) \\
-&amp;= \sum_j \sum_{j'} S_{jj'} \tilde{B}_{jr} \tilde{B}_{j'r'} + \sum_j \sum_{j'} S_{jj'} \rho_{jrr'}\mathbb{1}(j=j'),
+&amp;= \sum_j \sum_{j'} S_{jj'} \bar{B}_{jr} \bar{B}_{j'r'} + \sum_j \sum_{j'} S_{jj'} \rho_{jrr'}\mathbb{1}(j=j'),
 \end{align}</p>
-<p>where $\rho_{jrr'}:= \cov(B_{jr}, B_{jr'})$ is non-zero for the $j$-th effect at conditions $r$ and $r'$. For $j \ne j'$, due to the model assumption of independent effects, the correlations are zero.</p>
+<p>where $\rho_{jrr'}:= \cov(b_{jr}, b_{jr'})$ is non-zero for the $j$-th effect at conditions $r$ and $r'$, and can be estimated by posterior covariance for $$. For $j \ne j'$, due to the model assumption of independent effects, the correlations are zero.</p>
 <p>The $rr'$ element of $\big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)$ is thus</p>
 <p>\begin{align}
 \big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)_{rr'} &amp;= 
-\sum_l^R \lambda_{rl}\big(\sum_j \sum_{j'}S_{jj'}\tilde{B}_{jl}\tilde{B}_{j'r'} + \sum_j S_{jj}\rho_{jlr'}\big) \\
-&amp; = \sum_l^R\sum_j\sum_{j'}\lambda_{rl}S_{jj'}\tilde{B}_{jl}\tilde{B}_{j'r'} + 
+\sum_l^R \lambda_{rl}\big(\sum_j \sum_{j'}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + \sum_j S_{jj}\rho_{jlr'}\big) \\
+&amp; = \sum_l^R\sum_j\sum_{j'}\lambda_{rl}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + 
 \sum_l^R\sum_j \lambda_{rl} S_{jj} \rho_{jlr'},
 \end{align}</p>
 <p>and finally</p>
@@ -486,11 +473,11 @@ E_q[\bs{B}^\intercal\bs{S}\bs{B}]_{rr'} &amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{j
 E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;= 
 \tr\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\} \\
 &amp;= \sum_r^R\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\} \\
-&amp;= \sum_r \sum_l^R \sum_j \sum_{j'} \lambda_{rl} S_{jj'} \tilde{B}_{jl} \tilde{B}_{j'r} + 
+&amp;= \sum_r \sum_l^R \sum_j \sum_{j'} \lambda_{rl} S_{jj'} \bar{B}_{jl} \bar{B}_{j'r} + 
 \sum_r \sum_l^R \sum_j \lambda_{rl} S_{jj} \rho_{jlr} \\
-&amp;= \sum_r \sum_{r'} \sum_j \sum_{j'} \lambda_{rr'} S_{jj'} \tilde{B}_{jr'} \tilde{B}_{j'r} + 
+&amp;= \sum_r \sum_{r'} \sum_j \sum_{j'} \lambda_{rr'} S_{jj'} \bar{B}_{jr'} \bar{B}_{j'r} + 
 \sum_r \sum_{r'} \sum_j \lambda_{rr'} S_{jj} \rho_{jrr'} \\
-&amp;= \tr\{\bs{\Sigma}^{-1}\tilde{\bs{B}}^\intercal \bs{S} \tilde{\bs{B}}\} + 
+&amp;= \tr\{\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal \bs{S} \bar{\bs{B}}\} + 
 \sum_r \sum_{r'} \sum_j \lambda_{rr'} S_{jj} \rho_{jrr'}
 \end{align}</p>
 
@@ -523,7 +510,7 @@ E_q\big[ \sum_j \zeta_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log
 &amp; = \sum_j \sum_p \omega_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j],
 \end{align}</p>
 <p>where $\psi_{jp} := \frac{\pi_p N(\bs{b_j}; \bar{\bs{b}}_j, \bs{U}_{jp})}{\sum_p \pi_p N(\bs{b_j}; \bar{\bs{b}}_j, \bs{U}_{jp})}$, and $\omega_j$ is estimated by weight of the $j$-th Bayes Factor $\hat{\omega}_j = \frac{\text{BF}_j}{\sum_j \text{BF}_j}$. $\hat{\pi}_p$ is weight for the $p$-th component of prior covariance matrix, $\bar{\bs{b}}_j = E_q[\bs{b}_j]$ are estimated by posterior mean $\tilde{\bs{b}}_j$ and $\bs{U}_{jp}$ are estimated by posterior covariance for component $p$.</p>
-<p>Now we are left to work on $E_q(\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j)$ which is a scalar,</p>
+<p>Now we are left to work on $E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j]$ which is a scalar,</p>
 <p>\begin{align}
 E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j] &amp;= 
 E_q\big[E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j | \zeta_j,\gamma_{jp}] \big] \\
@@ -572,7 +559,7 @@ E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/9c8baab6957390268248018acb7ba92fb916ea38/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Wed Mar 21 22:48:51 2018 <a href="http://github.com/gaow/mvarbvs/commit/9c8baab6957390268248018acb7ba92fb916ea38">revision 4, 9c8baab</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7229761820901cf73b72db53a89adb95790bd57b/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Wed Mar 21 23:07:03 2018 <a href="http://github.com/gaow/mvarbvs/commit/7229761820901cf73b72db53a89adb95790bd57b">revision 5, 7229761</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
