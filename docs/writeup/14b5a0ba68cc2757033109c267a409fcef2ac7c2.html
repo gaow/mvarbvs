@@ -246,7 +246,7 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="M&amp;M-model-for-fine-mapping">M&amp;M model for fine-mapping<a class="anchor-link" href="#M&amp;M-model-for-fine-mapping">&#182;</a></h1><p>This is the 5th version of M&amp;M attempt. The formulation of this version was inspired by conditional regression for fine-mapping.</p>
+<h1 id="M&amp;M-model-for-fine-mapping">M&amp;M model for fine-mapping<a class="anchor-link" href="#M&amp;M-model-for-fine-mapping">&#182;</a></h1><p>This is the 5th version of M&amp;M. The formulation of this version was inspired by conditional regression commonly used in fine-mapping, as discussed in <a href="https://doi.org/10.1371/journal.pgen.1003486">T Flutre et al 2013</a>.</p>
 
 </div>
 </div>
@@ -276,7 +276,7 @@ $\DeclareMathOperator*{\dif}{d}$</p>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="M&amp;M-ASH-model">M&amp;M ASH model<a class="anchor-link" href="#M&amp;M-ASH-model">&#182;</a></h2><p>We assume the following multivariate, multiple regression model with $N$ samples, $J$ effects and $R$ conditions (and <strong>without covariates, for the time being</strong>)
+<h2 id="M&amp;M-ASH-model">M&amp;M ASH model<a class="anchor-link" href="#M&amp;M-ASH-model">&#182;</a></h2><p>We assume the following multivariate, multiple regression model with $N$ samples, $J$ effects and $R$ conditions (and <em>without covariates, which will be discussed separately</em>)
 \begin{align}
 \bs{Y}_{N\times R} = \bs{X}_{N \times J}\bs{B}_{J \times R} + \bs{E}_{N \times R},
 \end{align}
@@ -446,7 +446,7 @@ E_q[\log\frac{p(Z|\Theta)}{q(Z)}]
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Compute-$\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$">Compute $\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$<a class="anchor-link" href="#Compute-$\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$">&#182;</a></h3><p>We can use posterior mean $\tilde{\bs{B}}$ to estimate $E_q[\bs{B}]$, thus</p>
+<h3 id="$\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$">$\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$<a class="anchor-link" href="#$\tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\}$">&#182;</a></h3><p>We can use posterior mean $\tilde{\bs{B}}$ to estimate $E_q[\bs{B}]$, thus</p>
 <p>\begin{align}
 \tr\{\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{B}]^\intercal\bs{X}^\intercal\} &amp;= 
 \tr\{\bs{Y}\bs{\Sigma}^{-1}\tilde{\bs{B}}^\intercal\bs{X}^\intercal\}
@@ -459,7 +459,7 @@ E_q[\log\frac{p(Z|\Theta)}{q(Z)}]
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Compute-$E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$">Compute $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$<a class="anchor-link" href="#Compute-$E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$">&#182;</a></h3><p>\begin{align}
+<h3 id="$E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$">$E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$<a class="anchor-link" href="#$E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$">&#182;</a></h3><p>\begin{align}
 E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;= 
 E_q\{\tr(\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal\bs{X})\} \quad \text{Cyclic permutation of trace} \\
 &amp;= E_q\{\tr(\bs{\Sigma}^{-1}\bs{B}^\intercal \bs{S} \bs{B})\} \\
@@ -501,13 +501,78 @@ E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Compute-$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$">Compute $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$<a class="anchor-link" href="#Compute-$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$">&#182;</a></h3>
+<h3 id="$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$">$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$<a class="anchor-link" href="#$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$">&#182;</a></h3><p>By definition,</p>
+<p>\begin{align}
+E_q[\log\frac{p(Z|\Theta)}{q(Z)}] &amp;= E_q[\log p(Z|\Theta)] - E_q[\log q(Z)] \\
+&amp;= E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] - 
+E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})]
+\end{align}</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="$E_q[\log-p(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">$E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})]$<a class="anchor-link" href="#$E_q[\log-p(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">&#182;</a></h4><p>By Bishop 2006 Equation 9.36,</p>
+<p>\begin{align}
+E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;=
+E_q\big[ \sum_j \zeta_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log \det(\bs{V}_p) - \frac{1}{2} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j\} \big) | \bs{V}, \bs{\omega}, \bs{\pi}\big] \\
+&amp; = E_q\big[ \sum_j \sum_p \zeta_j \gamma_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \zeta_j (\bs{V}_p \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) \big] \\
+&amp; = \sum_j \sum_p \omega_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j],
+\end{align}</p>
+<p>where $\psi_{jp} := \frac{\pi_p N(\bs{b_j}; \bar{\bs{b}}_j, \bs{U}_{jp})}{\sum_p \pi_p N(\bs{b_j}; \bar{\bs{b}}_j, \bs{U}_{jp})}$, and $\omega_j$ is estimated by weight of the $j$-th Bayes Factor $\hat{\omega}_j = \frac{\text{BF}_j}{\sum_j \text{BF}_j}$. $\hat{\pi}_p$ is weight for the $p$-th component of prior covariance matrix, $\bar{\bs{b}}_j = E_q[\bs{b}_j]$ are estimated by posterior mean $\tilde{\bs{b}}_j$ and $\bs{U}_{jp}$ are estimated by posterior covariance for component $p$.</p>
+<p>Now we are left to work on $E_q(\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j)$ which is a scalar,</p>
+<p>\begin{align}
+E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j] &amp;= 
+E_q\big[E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j | \zeta_j,\gamma_{jp}] \big] \\
+&amp;= E_q\big[E_q[\zeta_j \gamma_{jp} \tr(\bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) | \zeta_j,\gamma_{jp}] \big] \\
+&amp;= E_q\big[E_q[\zeta_j \gamma_{jp} \tr(\bs{V}_p^{-1} \bs{b}_j \bs{b}_j^\intercal) | \zeta_j,\gamma_{jp}] \big] \\
+&amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} E_q[\zeta_j \gamma_{jp} \bs{b}_j \bs{b}_j^\intercal | \zeta_j \gamma_{jp}] \big ] \big \} \\
+&amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} \omega_j \psi_{jp} (\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})] \big ] \big \} \\
+&amp;= \omega_j\psi_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
+\end{align}</p>
+<p>Hence,
+\begin{align}
+E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;= 
+\sum_j \sum_p \omega_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} -
+\frac{1}{2} \sum_j \sum_p \omega_j\psi_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
+\end{align}</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="$E_q[\log-q(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">$E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})]$<a class="anchor-link" href="#$E_q[\log-q(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">&#182;</a></h4><p>\begin{align}
+E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;= 
+E_q\big[\sum_j \zeta_j \sum_p \gamma_{jp} \{ \log\psi_{jp} - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) - \frac{1}{2} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) \} \big] \\
+&amp; = \sum_j \omega_j \sum_p \psi_{jp} \{ \log\psi_{jp} - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) \} -
+\frac{1}{2} \sum_j \sum_p E_q\big[ \zeta_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big],
+\end{align}</p>
+<p>where the expectation term</p>
+<p>\begin{align}
+E_q\big[ \zeta_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big] &amp;= 
+E_q \big [ E_q[\zeta_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \zeta_j, \gamma_{jp} ] \big] \\
+&amp;= E_q \big [ \zeta_j \gamma_{jp} E_q[(\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \zeta_j, \gamma_{jp} ] \big] \\
+&amp;= E_q[R\zeta_j\gamma_{jp}] \quad \text{since } \bs{b}_j | \zeta_j, \gamma_{jp} \sim N_R(\bar{\bs{b}}_j, \bs{U}_{jp})\\ 
+&amp;= R\omega_j\psi_{jp}
+\end{align}</p>
+<p>Hence</p>
+<p>\begin{align}
+E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;=
+\sum_j\omega_j \sum_p\psi_{jp} \big( \log\psi_{jp} - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log\det(\bs{U}_{jp}) - \frac{R}{2}\big)
+\end{align}</p>
+
 </div>
 </div>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/f60bbe4c7d633cd8678d8a06e3b6e836e11ae6da/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Wed Mar 21 15:08:43 2018 <a href="http://github.com/gaow/mvarbvs/commit/f60bbe4c7d633cd8678d8a06e3b6e836e11ae6da">revision 3, f60bbe4</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/9c8baab6957390268248018acb7ba92fb916ea38/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Wed Mar 21 22:48:51 2018 <a href="http://github.com/gaow/mvarbvs/commit/9c8baab6957390268248018acb7ba92fb916ea38">revision 4, 9c8baab</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
