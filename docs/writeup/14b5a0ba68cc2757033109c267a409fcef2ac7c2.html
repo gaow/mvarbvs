@@ -294,22 +294,22 @@ where
 \end{align}</p>
 <p>We assume non-zero effects $\bs{b}_j$ (rows of $\bs{B}$) are iid with prior distribution of mixtures of multivariate normals</p>
 <p>\begin{align}
-p(\bs{b}_j|\zeta_j = 1) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_j | \bs{0}, \bs{V}_p),
+p(\bs{b}_j|\zeta_j = 1) = \sum_{p = 0}^P\pi_{jp}\N_R(\bs{b}_j | \bs{0}, \bs{V}_p),
 \end{align}</p>
-<p>where the $\bs{V}_p$'s are $R \times R$ positive semi-definite covariance matrices and are known (<a href="https://www.biorxiv.org/content/early/2017/05/09/096552">Urbut et al 2017</a>), with corresponding weights $\pi_p$'s to be estimated. We can augment the prior of $\bs{b}_j$ by indicator vector $\bs{\gamma}_j \in \mathbb{R}^P$ denoting membership of $\bs{b}_j$ into one of the $P$ mixture groups and write</p>
+<p>where the $\bs{V}_p$'s are $R \times R$ positive semi-definite covariance matrices and are known (<a href="https://www.biorxiv.org/content/early/2017/05/09/096552">Urbut et al 2017</a>), with corresponding weights $\pi_{\cdot,p}$'s to be estimated. We can augment the prior of $\bs{b}_j$ by indicator vector $\bs{\gamma}_j \in \mathbb{R}^P$ denoting membership of $\bs{b}_j$ into one of the $P$ mixture groups and write</p>
 <p>\begin{align}
 p(\bs{b}_j|\zeta_j = 1, \bs{\gamma}_j) &amp;= \prod_{p = 0}^P\left[\N(\bs{b}_j|\bs{0},\bs{V}_p)\right]^{\gamma_{jp}},
 \end{align}</p>
 <p>where</p>
 <p>\begin{align}
-p(\bs{\gamma}_j) &amp;= \prod_{p = 0}^{P} \pi_p^{\gamma_{jp}}
+p(\bs{\gamma}_j) &amp;= \prod_{p = 0}^{P} \pi_{jp}^{\gamma_{jp}}
 \end{align}</p>
 <p>The densities involved are</p>
 <p>\begin{align}
-p(\bs{Y}, \bs{B},\bs{\zeta}, \bs{\Gamma} | \bs{\Sigma}, \bs{\omega}, \bs{\pi}) &amp; = 
-p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\pi}, \bs{\Sigma}) p(\bs{B}|\bs{\zeta}, \bs{\Gamma})p(\bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\pi}) \\
-&amp;= p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\pi}, \bs{\Sigma}) p(\bs{B}|\bs{\zeta}, \bs{\Gamma})
-p(\bs{\Gamma}|\bs{\zeta}, \bs{\pi}) p(\bs{\zeta}|\bs{\omega})
+p(\bs{Y}, \bs{B},\bs{\zeta}, \bs{\Gamma} | \bs{\Sigma}, \bs{\omega}, \bs{\Pi}) &amp; = 
+p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}) p(\bs{B}|\bs{\zeta}, \bs{\Gamma})p(\bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi}) \\
+&amp;= p(\bs{Y}|\bs{B}, \bs{\Sigma}) p(\bs{B}|\bs{\zeta}, \bs{\Gamma})
+p(\bs{\Gamma}|\bs{\zeta}, \bs{\Pi}) p(\bs{\zeta}|\bs{\omega})
 \end{align}</p>
 
 </div>
@@ -342,13 +342,16 @@ q(\bs{B}, \bs{\zeta}, \bs{\Gamma}) &amp;= \prod_l q(\bs{B}_l, \bs{\zeta}_l, \bs{
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Evidence-lower-bound-(ELBO)">Evidence lower bound (ELBO)<a class="anchor-link" href="#Evidence-lower-bound-(ELBO)">&#182;</a></h2><p>Following from <a href="https://gaow.github.io/mvarbvs/writeup/20171203_VEM.html">the VEM framework</a> where $Z:=(\bs{B}, \bs{\zeta}, \bs{\Gamma})$ and $\theta:= (\bs{\Sigma}, \bs{\pi}, \bs{\omega})$,</p>
+<h2 id="Evidence-lower-bound-(ELBO)">Evidence lower bound (ELBO)<a class="anchor-link" href="#Evidence-lower-bound-(ELBO)">&#182;</a></h2><p>Following from <a href="https://gaow.github.io/mvarbvs/writeup/20171203_VEM.html">the VEM framework</a> where $Z:=(\bs{B}, \bs{\zeta}, \bs{\Gamma})$ and $\theta:= (\bs{\Sigma}, \bs{\Pi}, \bs{\omega})$,</p>
 <p>\begin{align}
-\log p(\bs{Y}|\bs{\Sigma}, \bs{\pi}, \bs{\omega}) &amp; \ge  \mathcal{L}(q, \bs{\Sigma}, \bs{\pi}, \bs{\omega}) \\
-&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\pi}, \bs{\Sigma})] + 
-E_q[\log\frac{p(\bs{B}, \bs{\zeta}, \bs{\Gamma}| \bs{\Sigma}, \bs{\pi}, \bs{\omega})}{q(\bs{B}, \bs{\zeta}, \bs{\Gamma})}]
+\log p(\bs{Y}|\bs{\Sigma}, \bs{\pi}, \bs{\omega}) &amp; \ge  \mathcal{L}(q, \bs{\Sigma}, \bs{\Pi}, \bs{\omega}) \\
+&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
+E_q[\log\frac{p(\bs{B}, \bs{\zeta}, \bs{\Gamma}| \bs{\Sigma}, \bs{\Pi}, \bs{\omega})}{q(\bs{B}, \bs{\zeta}, \bs{\Gamma})}] \\
+&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\Sigma})] + 
+E_q[\log\frac{p(\bs{B}|\bs{\zeta}, \bs{\Gamma})
+p(\bs{\Gamma}|\bs{\zeta}, \bs{\Pi}) p(\bs{\zeta}|\bs{\omega})}{\prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\zeta}_l)q(\bs{\zeta}_l)}]
 \end{align}</p>
-<p>where $q(\cdot)$ can be factorized as previously discussed, thus performing mean-field variational inference. In discussions hereafter we use the same notations as the original, for variational parameters. We will use tilde notation ($\tilde{}$) for posterior estimates.</p>
+<p>where $q(\cdot)$ can be factorized as previously discussed, thus performing mean-field variational inference. In discussions hereafter we use the same notations as the original for variational parameters unless in conflict. We use instead the tilde notation ($\tilde{}$) for posterior estimates.</p>
 
 </div>
 </div>
@@ -358,23 +361,23 @@ E_q[\log\frac{p(\bs{B}, \bs{\zeta}, \bs{\Gamma}| \bs{\Sigma}, \bs{\pi}, \bs{\ome
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Derivation-of-variational-M&amp;M">Derivation of variational M&amp;M<a class="anchor-link" href="#Derivation-of-variational-M&amp;M">&#182;</a></h2><h3 id="One-effect-model">One effect model<a class="anchor-link" href="#One-effect-model">&#182;</a></h3><p>To develop the variational algorithm for fine-mapping with M&amp;M we first discuss the case when there is only one non-zero effect, then show that the results can be generalized to the case with multiple non-zero effects to natually yield fine-mapping solutions.</p>
-<p>In the event where only one row $\bs{B}_{1\cdot}$ is non-zero, that is, $\zeta_1 = 1$, $\bs{\zeta}_{-1} = 0$, M&amp;M becomes</p>
+<p>In the event where only one row $\bs{B}_{1\cdot}$ is non-zero, that is, $\omega_1 = 1$, $\bs{\omega}_{-1} = \bs{0}$, M&amp;M becomes</p>
 <p>\begin{align}
 \bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{E}_{N \times R},
 \end{align}</p>
 <p>a multivariate, single regressor Bayesian regression with prior</p>
 <p>\begin{align}
-p(\bs{b}_1) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_1 | \bs{0}, \bs{V}_p).
+p(\bs{b}_1) = \sum_{p = 0}^P\pi_{1p}\N_R(\bs{b}_1 | \bs{0}, \bs{V}_p).
 \end{align}</p>
 <p>Let "$\propto$" denote equality up to an additive constant independent of $q$, we write ELBO of this model</p>
 <p>\begin{align}
-\mathcal{L}_1(q, \bs{\Sigma}, \Theta; \bs{Y}) &amp;= 
-E_q [\log p(\bs{Y} | \bs{b}_1, \bs{\gamma}_1, \bs{\Sigma}, \Theta)] + 
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1 | \Theta)}{q(\bs{b}_1, \bs{\gamma}_1)}] \\
+\mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y}) &amp;= 
+E_q [\log p(\bs{Y} | \bs{b}_1, \bs{\Sigma})] + 
+E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}] \\
 &amp;= -\frac{NR}{2}\log(2\pi) - 
 \frac{N}{2}E_q[\log\det (\bs{\Sigma})] - 
 \frac{1}{2}E_q \{ \tr[(\bs{Y} - \bs{x}_1 \bs{b}_1) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1 \bs{b}_1)^\intercal] \} +
-E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1, \Theta)p(\bs{\gamma}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)q(\bs{\gamma_1})}]
+E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}]
 \end{align}</p>
 <p>We focus on $E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1)^\intercal] \}$,</p>
 <p>\begin{align}
@@ -386,11 +389,15 @@ E_q[\tr(\bs{x}_1\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}_1^\intercal)] \\
 \end{align}</p>
 <p>Therefore,</p>
 <p>\begin{align}
-\mathcal{L}_1(q, \bs{\Sigma}, \Theta; \bs{Y}) &amp; \propto
+\mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y}) &amp; \propto
 E_q[\tr(\bs{x}_1\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}_1^\intercal)] - 2\tr(\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{b}_1]^\intercal\bs{x}_1^\intercal) +
-E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1, \Theta)p(\bs{\gamma}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)q(\bs{\gamma_1})}]
+E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}]
 \end{align}</p>
-<p>In this case, we maximize $\mathcal{L}_1(q, \bs{\Sigma}, \Theta; \bs{Y})$ by setting variational distribution to the posterior, since it can be calculated easily (FIXME: detail the computation here, along the lines of Wakefield 2009, also possibly as implemented in <code>mashr</code> package). That is, $p(Z|\Theta, \bs{Y}, \bs{\Sigma}) = \argmax \mathcal{L}_1(q, \bs{\Sigma}, \Theta; \bs{Y})$.</p>
+<p>In this case, we maximize $\mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y})$ by simply setting variational distribution $q(\cdot)$ to the posterior,</p>
+<p>\begin{align}
+p(\bs{b}_1, \bs{\gamma}_1 | \bs{Y}, \bs{\Sigma}, \bs{\pi}_1) = \argmax \mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y})
+\end{align}</p>
+<p>since it can be calculated relatively easily due to established work (FIXME: detail the computation here, along the lines of Urbut et al 2017).</p>
 
 </div>
 </div>
@@ -593,7 +600,7 @@ E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/77854af72d394991453c039d69fe7e766aaf4981/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 23 12:41:49 2018 <a href="http://github.com/gaow/mvarbvs/commit/77854af72d394991453c039d69fe7e766aaf4981">revision 6, 77854af</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/324cfd3ef5178ed546d3a362d6f513f98e1c2b6c/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 23 15:40:29 2018 <a href="http://github.com/gaow/mvarbvs/commit/324cfd3ef5178ed546d3a362d6f513f98e1c2b6c">revision 7, 324cfd3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
