@@ -283,16 +283,20 @@ $\DeclareMathOperator*{\dif}{d}$</p>
 where
 \begin{align}
 \bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}),\\
-\bs{\Sigma} &amp;= \diag(\sigma_1,\ldots,\sigma_R).
+\bs{\Sigma} &amp;= \diag(\lambda_1^{-1},\ldots,\lambda_R^{-1}).
 \end{align}</p>
 <p>Let $\bs{\Lambda} = \bs{\Sigma}^{-1}$, we place Gamma prior on $\bs{\Lambda}$</p>
 <p>$$\lambda_r \overset{iid}{\sim} \gm(\alpha, \beta),$$</p>
 <p>and as a first path we set $\alpha = \beta = 0$ so that it is equivalent to estimating $\bs{\Sigma}$ via maximum likelihood.</p>
-<p>Let $\omega_j := p(\zeta_j)$ be the prior probability that effect $j$ is non-zero. We assume non-zero effects $\bs{b}_j$ (rows of $\bs{B}$) are iid with prior distribution of mixtures of multivariate normals</p>
+<p>Let $\omega_j := p(\zeta_j)$ be the prior probability that effect $j$ is non-zero,</p>
+<p>\begin{align}
+\zeta_j \sim \text{Bernoulli}(\omega_j)
+\end{align}</p>
+<p>We assume non-zero effects $\bs{b}_j$ (rows of $\bs{B}$) are iid with prior distribution of mixtures of multivariate normals</p>
 <p>\begin{align}
 p(\bs{b}_j|\zeta_j = 1) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_j | \bs{0}, \bs{V}_p),
 \end{align}</p>
-<p>where the $\bs{V}_p$'s are $R \times R$ positive semi-definite covariance matrices and the $\pi_p$'s are their weights. We can augment the prior of $\bs{b}_j$ by indicator vector $\bs{\gamma}_j \in \mathbb{R}^P$ denoting membership of $\bs{b}_j$ into one of the $P$ mixture groups and write</p>
+<p>where the $\bs{V}_p$'s are $R \times R$ positive semi-definite covariance matrices and are known (<a href="https://www.biorxiv.org/content/early/2017/05/09/096552">Urbut et al 2017</a>), with corresponding weights $\pi_p$'s to be estimated. We can augment the prior of $\bs{b}_j$ by indicator vector $\bs{\gamma}_j \in \mathbb{R}^P$ denoting membership of $\bs{b}_j$ into one of the $P$ mixture groups and write</p>
 <p>\begin{align}
 p(\bs{b}_j|\zeta_j = 1, \bs{\gamma}_j) &amp;= \prod_{p = 0}^P\left[\N(\bs{b}_j|\bs{0},\bs{V}_p)\right]^{\gamma_{jp}},
 \end{align}</p>
@@ -300,14 +304,13 @@ p(\bs{b}_j|\zeta_j = 1, \bs{\gamma}_j) &amp;= \prod_{p = 0}^P\left[\N(\bs{b}_j|\
 <p>\begin{align}
 p(\bs{\gamma}_j) &amp;= \prod_{p = 0}^{P} \pi_p^{\gamma_{jp}}
 \end{align}</p>
-<p>Let $Z := (\bs{B}, \bs{\zeta}, \bs{\Gamma})$, $\Theta := (\bs{\omega}, \bs{\pi}, \bs{V})$.
-The densities involved are</p>
+<p>The densities involved are</p>
 <p>\begin{align}
-p(\bs{Y}, \bs{\Sigma}, \bs{B},\bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\pi}, \bs{V}) &amp;= 
-p(\bs{Y}, \bs{\Sigma}, Z, \Theta) \\
-&amp; = p(\bs{Y}|\bs{\Sigma}, Z, \Theta) p(Z|\Theta) p(\bs{\Sigma})
+p(\bs{Y}, \bs{B},\bs{\zeta}, \bs{\Gamma} | \bs{\Sigma}, \bs{\omega}, \bs{\pi}) &amp; = 
+p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\pi}, \bs{\Sigma}) p(\bs{B}|\bs{\zeta}, \bs{\Gamma})p(\bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\pi}) \\
+&amp;= p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\pi}, \bs{\Sigma}) p(\bs{B}|\bs{\zeta}, \bs{\Gamma})
+p(\bs{\Gamma}|\bs{\zeta}, \bs{\pi}) p(\bs{\zeta}|\bs{\omega})
 \end{align}</p>
-<p>We are interested in computing the posterior $p(Z|\Theta, \bs{Y}, \bs{\Sigma})$. Note that in solving the M&amp;M model below we assume $V_p$'s and their corresponding $\pi_p$'s are known; in practice we use <code>mashr</code> to estimate these quantities and provide them to M&amp;M.</p>
 
 </div>
 </div>
@@ -316,13 +319,21 @@ p(\bs{Y}, \bs{\Sigma}, Z, \Theta) \\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Evidence-lower-bound-(ELBO)">Evidence lower bound (ELBO)<a class="anchor-link" href="#Evidence-lower-bound-(ELBO)">&#182;</a></h2><p>Following from <a href="https://gaow.github.io/mvarbvs/writeup/20171203_VEM.html">the VEM framework</a>,</p>
+<h2 id="A-variational-approach-to-M&amp;M">A variational approach to M&amp;M<a class="anchor-link" href="#A-variational-approach-to-M&amp;M">&#182;</a></h2><p>Inspired by the conditional regression approach for fine mapping, we reparameterize the model as</p>
 <p>\begin{align}
-\log p(\bs{Y}|\bs{\Sigma}, \Theta) &amp; = E_q[\log p(\bs{Y} | Z, \bs{\Sigma}, \Theta)] + 
-E_q[\log\frac{p(Z|\Theta)}{q(Z)}] - E_q[\log \frac{p(Z|\bs{Y}, \bs{\Sigma}, \Theta)}{q(Z)}] \\
-&amp; = \mathcal{L}(q, \bs{\Sigma}, \Theta) + D_{kl}[q(Z) || p(Z|\bs{Y}, \bs{\Sigma}, \Theta)]
+\bs{Y}_{N\times R} = \bs{X}_{N \times J}\sum_l^L \diag(\bs{\zeta}_l) \bs{B}_{J \times R} + \bs{E}_{N \times R},
 \end{align}</p>
-<p>where $D_{kl}(\cdot)$ is the Kullback–Leibler (KL) divergence, and $\mathcal{L}(q, \bs{\Sigma}, \Theta) \ge 0$ is Evidence lower bound (ELBO).</p>
+<p>where $L$ is the number of non-zero effects, or the upper bound on the number of non-zero effects if prior distribution of $\bs{b}_j$ includes a point mass at zero. For each $l = 1,\ldots, L$ we assume that <em>exactly 1 of the $J$ effects is non-zero</em>, as indicated by $\zeta_{lj}$,</p>
+<p>\begin{align}
+\bs{\zeta}_l \sim \text{Multinomial}(1, \bs{\omega}_l)
+\end{align}</p>
+<p>The key idea behind this parameterization is to devise a fully-factorized variational approximation based on</p>
+<p>\begin{align}
+q(\bs{B}, \bs{\zeta}, \bs{\Gamma}) &amp;= \prod_l q(\bs{B}_l, \bs{\zeta}_l, \bs{\Gamma}_l) \\
+&amp;=  \prod_l q(\bs{B}_l|\bs{\zeta}_l, \bs{\Gamma}_l)q(\bs{\Gamma}_l|\bs{\zeta}_l)q(\bs{\zeta}_l) \\
+&amp;=  \prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\zeta}_l)q(\bs{\zeta}_l)
+\end{align}</p>
+<p>Crucially, we do not factorize $q(\bs{\zeta}_l)$ across its $J$ elements, that is, $\bs{\zeta}_l$ is a binary vector with exactly one non-zero element. We will reveal connection with conditional regression later as we develop the variational algorithm.</p>
 
 </div>
 </div>
@@ -331,7 +342,22 @@ E_q[\log\frac{p(Z|\Theta)}{q(Z)}] - E_q[\log \frac{p(Z|\bs{Y}, \bs{\Sigma}, \The
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="One-effect-model">One effect model<a class="anchor-link" href="#One-effect-model">&#182;</a></h2><p>To derive the variational algorithm for fine-mapping with M&amp;M we first discuss the case when there is only one non-zero effect, then show that the results can be generalized to the case with multiple non-zero effects to natually yield fine-mapping solutions.</p>
+<h2 id="Evidence-lower-bound-(ELBO)">Evidence lower bound (ELBO)<a class="anchor-link" href="#Evidence-lower-bound-(ELBO)">&#182;</a></h2><p>Following from <a href="https://gaow.github.io/mvarbvs/writeup/20171203_VEM.html">the VEM framework</a> where $Z:=(\bs{B}, \bs{\zeta}, \bs{\Gamma})$ and $\theta:= (\bs{\Sigma}, \bs{\pi}, \bs{\omega})$,</p>
+<p>\begin{align}
+\log p(\bs{Y}|\bs{\Sigma}, \bs{\pi}, \bs{\omega}) &amp; \ge  \mathcal{L}(q, \bs{\Sigma}, \bs{\pi}, \bs{\omega}) \\
+&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\pi}, \bs{\Sigma})] + 
+E_q[\log\frac{p(\bs{B}, \bs{\zeta}, \bs{\Gamma}| \bs{\Sigma}, \bs{\pi}, \bs{\omega})}{q(\bs{B}, \bs{\zeta}, \bs{\Gamma})}]
+\end{align}</p>
+<p>where $q(\cdot)$ can be factorized as previously discussed, thus performing mean-field variational inference. In discussions hereafter we use the same notations as the original, for variational parameters. We will use tilde notation ($\tilde{}$) for posterior estimates.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Derivation-of-variational-M&amp;M">Derivation of variational M&amp;M<a class="anchor-link" href="#Derivation-of-variational-M&amp;M">&#182;</a></h2><h3 id="One-effect-model">One effect model<a class="anchor-link" href="#One-effect-model">&#182;</a></h3><p>To develop the variational algorithm for fine-mapping with M&amp;M we first discuss the case when there is only one non-zero effect, then show that the results can be generalized to the case with multiple non-zero effects to natually yield fine-mapping solutions.</p>
 <p>In the event where only one row $\bs{B}_{1\cdot}$ is non-zero, that is, $\zeta_1 = 1$, $\bs{\zeta}_{-1} = 0$, M&amp;M becomes</p>
 <p>\begin{align}
 \bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{E}_{N \times R},
@@ -373,7 +399,7 @@ E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1, \Theta)p(\bs{\gamma}_1)}{q(\bs{b}_1 |
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Two-effects-model">Two effects model<a class="anchor-link" href="#Two-effects-model">&#182;</a></h2><p>In the event where two rows of $\bs{B}$ is non-zero, that is, $\zeta_1 = \zeta_2 = 1$, $\bs{\zeta}_{-1, -2} = 0$, M&amp;M becomes</p>
+<h3 id="Two-effects-model">Two effects model<a class="anchor-link" href="#Two-effects-model">&#182;</a></h3><p>In the event where two rows of $\bs{B}$ is non-zero, that is, $\zeta_1 = \zeta_2 = 1$, $\bs{\zeta}_{-1, -2} = 0$, M&amp;M becomes</p>
 <p>\begin{align}
 \bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{x}_2\bs{b}_2 + \bs{E}_{N \times R},
 \end{align}</p>
@@ -392,7 +418,7 @@ E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \Theta)}{q(\
 E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \Theta)}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}]
 \end{align}</p>
 <p>where we choose $q(Z_1, Z_2) = q_1(Z_1)q_2(Z_2)$ be the variational approximation to the posterior $p(Z|\Theta, \bs{\Sigma})$, ie, a "fully factorized" variational approximation. This allows us to use an iterative approach to maximize the ELBO.</p>
-<h3 id="Maximize-over-$q_2$-with-$q_1$-fixed">Maximize over $q_2$ with $q_1$ fixed<a class="anchor-link" href="#Maximize-over-$q_2$-with-$q_1$-fixed">&#182;</a></h3><p>Similar to the "one effect model" we focus on</p>
+<h4 id="Maximize-over-$q_2$-with-$q_1$-fixed">Maximize over $q_2$ with $q_1$ fixed<a class="anchor-link" href="#Maximize-over-$q_2$-with-$q_1$-fixed">&#182;</a></h4><p>Similar to the "one effect model" we focus on</p>
 <p>\begin{align}
 E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2)^\intercal] \},
 \end{align}</p>
@@ -412,7 +438,7 @@ E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2, \Theta)p(\bs{\gamma}_2)}{q_2(\bs{
 <p>\begin{align}
 \mathcal{L}_2(q_2, \bs{\Sigma}, \Theta; \bs{Y}) \propto \mathcal{L}_1(q_2, \bs{\Sigma}, \Theta; \bs{\xi}_1)
 \end{align}</p>
-<h3 id="Maximize-over-$q_1$-with-$q_2$-fixed">Maximize over $q_1$ with $q_2$ fixed<a class="anchor-link" href="#Maximize-over-$q_1$-with-$q_2$-fixed">&#182;</a></h3><p>Similarly we can maximize $\mathcal{L}_1$ over $q_1$ with $q_2$ fixed. The algorithm iterates until convergence.</p>
+<h4 id="Maximize-over-$q_1$-with-$q_2$-fixed">Maximize over $q_1$ with $q_2$ fixed<a class="anchor-link" href="#Maximize-over-$q_1$-with-$q_2$-fixed">&#182;</a></h4><p>Similarly we can maximize $\mathcal{L}_1$ over $q_1$ with $q_2$ fixed. The algorithm iterates until convergence.</p>
 
 </div>
 </div>
@@ -421,8 +447,16 @@ E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2, \Theta)p(\bs{\gamma}_2)}{q_2(\bs{
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Generalization-to-arbitary-number-of-effects">Generalization to arbitary number of effects<a class="anchor-link" href="#Generalization-to-arbitary-number-of-effects">&#182;</a></h2><p>The arguments above can be generalized to having $L$ non-zero effects. For the $l$-th effect we optimize $\mathcal{L}_l$ over $q_l$ with all other $q_{-l}$ fixed, by applying Bayesian multivariate regression to $\bs{\xi}_{-l} = \bs{x}_l \bs{b}_l + E $. The algorithm iterates until convergence.</p>
+<h3 id="Generalization-to-arbitary-number-of-effects">Generalization to arbitary number of effects<a class="anchor-link" href="#Generalization-to-arbitary-number-of-effects">&#182;</a></h3><p>The arguments above can be generalized to having $L$ non-zero effects. For the $l$-th effect we optimize $\mathcal{L}_l$ over $q_l$ with all other $q_{-l}$ fixed, by applying Bayesian multivariate regression to $\bs{\xi}_{-l} = \bs{x}_l \bs{b}_l + E $. The algorithm iterates until convergence.</p>
 
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Variational-updates-for-quantities-of-interest">Variational updates for quantities of interest<a class="anchor-link" href="#Variational-updates-for-quantities-of-interest">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -460,7 +494,7 @@ E_q[\bs{B}^\intercal\bs{S}\bs{B}]_{rr'} &amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{j
 &amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{jr}] E_q[B_{j'r'}] + \sum_j \sum_{j'} S_{jj'} \cov(B_{jr}, B_{j'r'}) \\
 &amp;= \sum_j \sum_{j'} S_{jj'} \bar{B}_{jr} \bar{B}_{j'r'} + \sum_j \sum_{j'} S_{jj'} \rho_{jrr'}\mathbb{1}(j=j'),
 \end{align}</p>
-<p>where $\rho_{jrr'}:= \cov(b_{jr}, b_{jr'})$ is non-zero for the $j$-th effect at conditions $r$ and $r'$, and can be estimated by posterior covariance for $$. For $j \ne j'$, due to the model assumption of independent effects, the correlations are zero.</p>
+<p>where $\rho_{jrr'}:= \cov(b_{jr}, b_{jr'})$ is non-zero for the $j$-th effect at conditions $r$ and $r'$, and can be estimated by posterior covariance for $\bs{b}_j$. For $j \ne j'$, due to the model assumption of independent effects, the correlations are zero.</p>
 <p>The $rr'$ element of $\big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)$ is thus</p>
 <p>\begin{align}
 \big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)_{rr'} &amp;= 
@@ -559,7 +593,7 @@ E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7229761820901cf73b72db53a89adb95790bd57b/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Wed Mar 21 23:07:03 2018 <a href="http://github.com/gaow/mvarbvs/commit/7229761820901cf73b72db53a89adb95790bd57b">revision 5, 7229761</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/77854af72d394991453c039d69fe7e766aaf4981/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 23 12:41:49 2018 <a href="http://github.com/gaow/mvarbvs/commit/77854af72d394991453c039d69fe7e766aaf4981">revision 6, 77854af</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
