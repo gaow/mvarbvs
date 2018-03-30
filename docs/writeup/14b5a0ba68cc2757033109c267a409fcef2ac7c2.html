@@ -418,13 +418,13 @@ p(\bs{b}_\cdot) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_\cdot | \bs{0}, \bs{V}_p).
 <p>\begin{align}
 \mathcal{L}_2(q, \bs{\Sigma}, \bs{\pi}_1, \bs{\pi}_2; \bs{Y}) &amp;= 
 E_q [\log p(\bs{Y} | \bs{b}_1, \bs{b}_2, \bs{\Sigma})] + 
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \bs{\pi_1}, \bs{\pi_2})}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}] \\
+E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \bs{\pi_1}, \bs{\pi_2})}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2| \bs{\pi_1}, \bs{\pi_2})}] \\
 &amp;= -\frac{NR}{2}\log(2\pi) - 
 \frac{N}{2}E_q[\log\det (\bs{\Sigma})] - 
 \frac{1}{2}E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2)^\intercal] \} +
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \bs{\pi_1}, \bs{\pi_2})}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}]
+E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \bs{\pi_1}, \bs{\pi_2})}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \bs{\pi_1}, \bs{\pi_2})}]
 \end{align}</p>
-<p>where we choose $q(Z_1, Z_2) = q_1(Z_1)q_2(Z_2)$ be the variational approximation to the posterior $p(Z|\bs{\pi_1}, \bs{\pi_2}, \bs{\Sigma})$, ie, a "fully factorized" variational approximation. This allows us to use an iterative approach to maximize the ELBO.</p>
+<p>where we choose $q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2|\bs{\pi_1}, \bs{\pi_2}) = q_1(\bs{b}_1, \bs{\gamma}_1|\bs{\pi_1})q_2(\bs{b}_2, \bs{\gamma}_2|\bs{\pi_2})$ be the variational approximation to the posterior $p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2|\bs{Y}, \bs{\pi_1}, \bs{\pi_2}, \bs{\Sigma})$, ie, a "fully factorized" variational approximation. This allows us to use an iterative approach to maximize the ELBO.</p>
 <h4 id="Maximize-over-$q_2$-with-$q_1$-fixed">Maximize over $q_2$ with $q_1$ fixed<a class="anchor-link" href="#Maximize-over-$q_2$-with-$q_1$-fixed">&#182;</a></h4><p>Similar to the "one effect model" we focus on</p>
 <p>\begin{align}
 E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2)^\intercal] \},
@@ -437,13 +437,13 @@ E_{q_2}\{\tr(\bs{x}_2\bs{b}_2\bs{\Sigma}^{-1}\bs{b}_2^\intercal\bs{x}_2^\interca
 \end{align}</p>
 <p>Let $\bs{\xi}_1 = \bs{Y} - \bs{x}_1E_{q_1}[\bs{b}_1]$, we have
 \begin{align}
-\mathcal{L}_2(q_2, \bs{\Sigma}, \Theta; \bs{Y}) &amp; \propto E_{q_2}\{\tr(\bs{x}_2\bs{b}_2\bs{\Sigma}^{-1}\bs{b}_2^\intercal\bs{x}_2^\intercal)\} -
+\mathcal{L}_2(q_2, \bs{\Sigma}, \bs{\pi}_2; \bs{Y}) &amp; \propto E_{q_2}\{\tr(\bs{x}_2\bs{b}_2\bs{\Sigma}^{-1}\bs{b}_2^\intercal\bs{x}_2^\intercal)\} -
 2\tr\{\bs{\xi}_1\bs{\Sigma}^{-1}E_{q_2}[\bs{b}_2]^\intercal \bs{x}_2^\intercal\} +
-E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2, \Theta)p(\bs{\gamma}_2)}{q_2(\bs{b}_2 | \bs{\gamma}_2)q_2(\bs{\gamma_2})}],
+E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2)p(\bs{\gamma}_2|\bs{\pi}_2)}{q_2(\bs{b}_2 | \bs{\gamma}_2)q_2(\bs{\gamma}_2 | \bs{\pi}_2)}],
 \end{align}</p>
-<p>and similar to the case with "one effect model", $p(Z|\Theta, \bs{\xi}_1, \bs{\Sigma}) = \argmax \mathcal{L}_2(q_2, \bs{\Sigma}, \Theta; \bs{Y})$. In other words we maximize $\mathcal{L}_2$ over $q_2$ with $q_1$ fixed, by applying the same posterior computation for maximizing $\mathcal{L}_1$ over $q_1$ but using residualized response $\bs{\xi}_1$ rather than the original response $\bs{Y}$:</p>
+<p>and similar to the case with "one effect model", $p(\bs{b}_2, \bs{\gamma}_2|\bs{\xi}_1, \bs{\pi}_2, \bs{\Sigma}) = \argmax \mathcal{L}_2(q_2, \bs{\Sigma}, \bs{\pi}_2; \bs{Y})$. In other words we maximize $\mathcal{L}_2$ over $q_2$ with $q_1$ fixed, by applying the same posterior computation for maximizing $\mathcal{L}_1$ over $q_1$ but using residualized response $\bs{\xi}_1$ rather than the original response $\bs{Y}$:</p>
 <p>\begin{align}
-\mathcal{L}_2(q_2, \bs{\Sigma}, \Theta; \bs{Y}) \propto \mathcal{L}_1(q_2, \bs{\Sigma}, \Theta; \bs{\xi}_1)
+\mathcal{L}_2(q_2, \bs{\Sigma}, \bs{\pi}_2; \bs{Y}) \propto \mathcal{L}_1(q_2, \bs{\Sigma}, \bs{\pi}_2; \bs{\xi}_1)
 \end{align}</p>
 <h4 id="Maximize-over-$q_1$-with-$q_2$-fixed">Maximize over $q_1$ with $q_2$ fixed<a class="anchor-link" href="#Maximize-over-$q_1$-with-$q_2$-fixed">&#182;</a></h4><p>Similarly we can maximize $\mathcal{L}_1$ over $q_1$ with $q_2$ fixed. The algorithm iterates until convergence.</p>
 
@@ -600,7 +600,7 @@ E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/e62f8a24f3496ff445714dd4c0b484bdd86ffdb8/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 30 10:08:25 2018 <a href="http://github.com/gaow/mvarbvs/commit/e62f8a24f3496ff445714dd4c0b484bdd86ffdb8">revision 9, e62f8a2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/0f4d3007085fa6fdc7b648c0bf62d82b1eacbe7b/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 30 14:57:26 2018 <a href="http://github.com/gaow/mvarbvs/commit/0f4d3007085fa6fdc7b648c0bf62d82b1eacbe7b">revision 10, 0f4d300</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
