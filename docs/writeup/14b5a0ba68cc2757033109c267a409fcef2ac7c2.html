@@ -473,12 +473,13 @@ E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2)p(\bs{\gamma}_2|\bs{\pi}_2)}{q_2(\
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Derivation-of-ELBO">Derivation of ELBO<a class="anchor-link" href="#Derivation-of-ELBO">&#182;</a></h2><p>As shown before, ELBO for the full variational M&amp;M model is</p>
 <p>\begin{align}
-\mathcal{L}(q, \bs{\Sigma}, \Theta; \bs{Y}) &amp; = E_q[\log p(\bs{Y} | Z, \bs{\Sigma}, \Theta)] + 
+\mathcal{L}(q, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}; \bs{Y}) &amp; = E_q[\log p(\bs{Y} | \bs{B}, \bs{\zeta}, \bs{\Lambda}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
 E_q[\log\frac{p(Z|\Theta)}{q(Z)}] \\
 &amp; \propto E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} - 2\tr\{\bs{Y}\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal\bs{X}^\intercal\} +
 E_q[\log\frac{p(Z|\Theta)}{q(Z)}]
 \end{align}</p>
-<p>where $\bar{\bs{B}}:= E_q[\bs{B}]$. As will be shown later, we estimate $\bar{\bs{B}}$ using posterior mean $\tilde{\bs{B}}$. We need to work out $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$ and $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$ next.</p>
+<p>where $\bar{\bs{B}}:= E_q[\bs{B}]$, $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]:= E_q[\log\frac{p(\bs{B}|\bs{\zeta}, \bs{\Gamma})
+p(\bs{\Gamma}|\bs{\zeta}, \bs{\Pi}) p(\bs{\zeta}|\bs{\omega})}{\prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\zeta}_l)q(\bs{\zeta}_l)}]$. As will be shown later, we estimate $\bar{\bs{B}}$ using posterior mean $\tilde{\bs{B}}$. We need to work out $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$ and $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$ next.</p>
 
 </div>
 </div>
@@ -532,8 +533,8 @@ E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;=
 <h3 id="$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$">$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$<a class="anchor-link" href="#$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$">&#182;</a></h3><p>By definition,</p>
 <p>\begin{align}
 E_q[\log\frac{p(Z|\Theta)}{q(Z)}] &amp;= E_q[\log p(Z|\Theta)] - E_q[\log q(Z)] \\
-&amp;= E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] - 
-E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})]
+&amp;= E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})] - 
+E_q[\prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\zeta}_l)q(\bs{\zeta}_l)]
 \end{align}</p>
 
 </div>
@@ -543,9 +544,9 @@ E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})]
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="$E_q[\log-p(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">$E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})]$<a class="anchor-link" href="#$E_q[\log-p(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">&#182;</a></h4><p>By Bishop 2006 Equation 9.36,</p>
+<h4 id="$E_q[\log-p(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{\omega},-\bs{\Pi})]$">$E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})]$<a class="anchor-link" href="#$E_q[\log-p(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{\omega},-\bs{\Pi})]$">&#182;</a></h4><p>By Bishop 2006 Equation 9.36,</p>
 <p>\begin{align}
-E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;=
+E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})] &amp;=
 E_q\big[ \sum_j \zeta_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log \det(\bs{V}_p) - \frac{1}{2} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j\} \big) | \bs{V}, \bs{\omega}, \bs{\pi}\big] \\
 &amp; = E_q\big[ \sum_j \sum_p \zeta_j \gamma_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \zeta_j (\bs{V}_p \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) \big] \\
 &amp; = \sum_j \sum_p \omega_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j],
@@ -600,7 +601,7 @@ E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/0f4d3007085fa6fdc7b648c0bf62d82b1eacbe7b/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 30 14:57:26 2018 <a href="http://github.com/gaow/mvarbvs/commit/0f4d3007085fa6fdc7b648c0bf62d82b1eacbe7b">revision 10, 0f4d300</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/5514360a8b0d9c1fb7045a8ba62b9274d1d66501/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 30 15:51:56 2018 <a href="http://github.com/gaow/mvarbvs/commit/5514360a8b0d9c1fb7045a8ba62b9274d1d66501">revision 11, 5514360</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
