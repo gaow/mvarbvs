@@ -373,11 +373,11 @@ p(\bs{b}_1) = \sum_{p = 0}^P\pi_{1p}\N_R(\bs{b}_1 | \bs{0}, \bs{V}_p).
 <p>\begin{align}
 \mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y}) &amp;= 
 E_q [\log p(\bs{Y} | \bs{b}_1, \bs{\Sigma})] + 
-E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}] \\
+E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)q(\bs{\gamma}_1 | \bs{\pi}_1)}] \\
 &amp;= -\frac{NR}{2}\log(2\pi) - 
 \frac{N}{2}E_q[\log\det (\bs{\Sigma})] - 
 \frac{1}{2}E_q \{ \tr[(\bs{Y} - \bs{x}_1 \bs{b}_1) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1 \bs{b}_1)^\intercal] \} +
-E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}]
+E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)q(\bs{\gamma}_1 | \bs{\pi}_1)}]
 \end{align}</p>
 <p>We focus on $E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1)^\intercal] \}$,</p>
 <p>\begin{align}
@@ -391,13 +391,13 @@ E_q[\tr(\bs{x}_1\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}_1^\intercal)] \\
 <p>\begin{align}
 \mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y}) &amp; \propto
 E_q[\tr(\bs{x}_1\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}_1^\intercal)] - 2\tr(\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{b}_1]^\intercal\bs{x}_1^\intercal) +
-E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}]
+E_q[\log \frac{p(\bs{b}_1 | \bs{\gamma}_1)p(\bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1 | \bs{\gamma}_1)q(\bs{\gamma}_1 | \bs{\pi}_1)}]
 \end{align}</p>
 <p>In this case, we maximize $\mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y})$ by simply setting variational distribution $q(\cdot)$ to the posterior,</p>
 <p>\begin{align}
 p(\bs{b}_1, \bs{\gamma}_1 | \bs{Y}, \bs{\Sigma}, \bs{\pi}_1) = \argmax \mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y})
 \end{align}</p>
-<p>since it can be calculated relatively easily due to established work (FIXME: detail the computation here, along the lines of Urbut et al 2017).</p>
+<p>since it can be calculated relatively easily due to established work (FIXME: detail the computation here for mixture model parameters, posterior and BF, along the lines of Urbut et al 2017).</p>
 
 </div>
 </div>
@@ -406,7 +406,7 @@ p(\bs{b}_1, \bs{\gamma}_1 | \bs{Y}, \bs{\Sigma}, \bs{\pi}_1) = \argmax \mathcal{
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Two-effects-model">Two effects model<a class="anchor-link" href="#Two-effects-model">&#182;</a></h3><p>In the event where two rows of $\bs{B}$ is non-zero, that is, $\zeta_1 = \zeta_2 = 1$, $\bs{\zeta}_{-1, -2} = 0$, M&amp;M becomes</p>
+<h3 id="Two-effects-model">Two effects model<a class="anchor-link" href="#Two-effects-model">&#182;</a></h3><p>In the event where two rows of $\bs{B}$ is non-zero, that is, $\omega_1 = \omega_2 = 1$, $\bs{\omega}_{-1, -2} = \bs{0}$, M&amp;M becomes</p>
 <p>\begin{align}
 \bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{x}_2\bs{b}_2 + \bs{E}_{N \times R},
 \end{align}</p>
@@ -416,15 +416,15 @@ p(\bs{b}_\cdot) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_\cdot | \bs{0}, \bs{V}_p).
 \end{align}</p>
 <p>we write ELBO of this model</p>
 <p>\begin{align}
-\mathcal{L}_2(q, \bs{\Sigma}, \Theta; \bs{Y}) &amp;= 
-E_q [\log p(\bs{Y} | \bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2, \bs{\Sigma}, \Theta)] + 
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \Theta)}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}] \\
+\mathcal{L}_2(q, \bs{\Sigma}, \bs{\pi}_1, \bs{\pi}_2; \bs{Y}) &amp;= 
+E_q [\log p(\bs{Y} | \bs{b}_1, \bs{b}_2, \bs{\Sigma})] + 
+E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \bs{\pi_1}, \bs{\pi_2})}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}] \\
 &amp;= -\frac{NR}{2}\log(2\pi) - 
 \frac{N}{2}E_q[\log\det (\bs{\Sigma})] - 
 \frac{1}{2}E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2)^\intercal] \} +
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \Theta)}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}]
+E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \bs{\pi_1}, \bs{\pi_2})}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}]
 \end{align}</p>
-<p>where we choose $q(Z_1, Z_2) = q_1(Z_1)q_2(Z_2)$ be the variational approximation to the posterior $p(Z|\Theta, \bs{\Sigma})$, ie, a "fully factorized" variational approximation. This allows us to use an iterative approach to maximize the ELBO.</p>
+<p>where we choose $q(Z_1, Z_2) = q_1(Z_1)q_2(Z_2)$ be the variational approximation to the posterior $p(Z|\bs{\pi_1}, \bs{\pi_2}, \bs{\Sigma})$, ie, a "fully factorized" variational approximation. This allows us to use an iterative approach to maximize the ELBO.</p>
 <h4 id="Maximize-over-$q_2$-with-$q_1$-fixed">Maximize over $q_2$ with $q_1$ fixed<a class="anchor-link" href="#Maximize-over-$q_2$-with-$q_1$-fixed">&#182;</a></h4><p>Similar to the "one effect model" we focus on</p>
 <p>\begin{align}
 E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2)^\intercal] \},
@@ -600,7 +600,7 @@ E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/324cfd3ef5178ed546d3a362d6f513f98e1c2b6c/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 23 15:40:29 2018 <a href="http://github.com/gaow/mvarbvs/commit/324cfd3ef5178ed546d3a362d6f513f98e1c2b6c">revision 7, 324cfd3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/e62f8a24f3496ff445714dd4c0b484bdd86ffdb8/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 30 10:08:25 2018 <a href="http://github.com/gaow/mvarbvs/commit/e62f8a24f3496ff445714dd4c0b484bdd86ffdb8">revision 9, e62f8a2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
