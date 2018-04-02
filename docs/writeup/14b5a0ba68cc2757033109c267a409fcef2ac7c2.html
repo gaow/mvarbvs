@@ -288,17 +288,17 @@ where
 <p>Let $\bs{\Lambda} = \bs{\Sigma}^{-1}$, we place Gamma prior on $\bs{\Lambda}$</p>
 <p>$$\lambda_r \overset{iid}{\sim} \gm(\alpha, \beta),$$</p>
 <p>and as a first path we set $\alpha = \beta = 0$ so that it is equivalent to estimating $\bs{\Sigma}$ via maximum likelihood.</p>
-<p>Let $\omega_j := p(\zeta_j)$ be the prior probability that effect $j$ is non-zero,</p>
+<p>Let $\omega_j := p(\alpha_j)$ be the prior probability that effect $j$ is non-zero,</p>
 <p>\begin{align}
-\zeta_j \sim \text{Bernoulli}(\omega_j)
+\alpha_j \sim \text{Bernoulli}(\omega_j)
 \end{align}</p>
 <p>We assume non-zero effects $\bs{b}_j$ (rows of $\bs{B}$) are iid with prior distribution of mixtures of multivariate normals</p>
 <p>\begin{align}
-p(\bs{b}_j|\zeta_j = 1) = \sum_{p = 0}^P\pi_{jp}\N_R(\bs{b}_j | \bs{0}, \bs{V}_p),
+p(\bs{b}_j|\alpha_j = 1) = \sum_{p = 0}^P\pi_{jp}\N_R(\bs{b}_j | \bs{0}, \bs{V}_p),
 \end{align}</p>
 <p>where the $\bs{V}_p$'s are $R \times R$ positive semi-definite covariance matrices and are known (<a href="https://www.biorxiv.org/content/early/2017/05/09/096552">Urbut et al 2017</a>), with corresponding weights $\pi_{\cdot,p}$'s to be estimated. We can augment the prior of $\bs{b}_j$ by indicator vector $\bs{\gamma}_j \in \mathbb{R}^P$ denoting membership of $\bs{b}_j$ into one of the $P$ mixture groups and write</p>
 <p>\begin{align}
-p(\bs{b}_j|\zeta_j = 1, \bs{\gamma}_j) &amp;= \prod_{p = 0}^P\left[\N(\bs{b}_j|\bs{0},\bs{V}_p)\right]^{\gamma_{jp}},
+p(\bs{b}_j|\alpha_j = 1, \bs{\gamma}_j) &amp;= \prod_{p = 0}^P\left[\N(\bs{b}_j|\bs{0},\bs{V}_p)\right]^{\gamma_{jp}},
 \end{align}</p>
 <p>where</p>
 <p>\begin{align}
@@ -306,11 +306,29 @@ p(\bs{\gamma}_j) &amp;= \prod_{p = 0}^{P} \pi_{jp}^{\gamma_{jp}}
 \end{align}</p>
 <p>The densities involved are</p>
 <p>\begin{align}
-p(\bs{Y}, \bs{B},\bs{\zeta}, \bs{\Gamma} | \bs{\Sigma}, \bs{\omega}, \bs{\Pi}) &amp; = 
-p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}) p(\bs{B}|\bs{\zeta}, \bs{\Gamma})p(\bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi}) \\
-&amp;= p(\bs{Y}|\bs{B}, \bs{\Sigma}) p(\bs{B}|\bs{\zeta}, \bs{\Gamma})
-p(\bs{\Gamma}|\bs{\zeta}, \bs{\Pi}) p(\bs{\zeta}|\bs{\omega})
+p(\bs{Y}, \bs{B},\bs{\alpha}, \bs{\Gamma} | \bs{\Sigma}, \bs{\omega}, \bs{\Pi}) &amp; = 
+p(\bs{Y}|\bs{B}, \bs{\alpha}, \bs{\Gamma}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}) p(\bs{B}|\bs{\alpha}, \bs{\Gamma})p(\bs{\alpha}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi}) \\
+&amp;= p(\bs{Y}|\bs{B}, \bs{\Sigma}) p(\bs{B}|\bs{\alpha}, \bs{\Gamma})
+p(\bs{\Gamma}|\bs{\alpha}, \bs{\Pi}) p(\bs{\alpha}|\bs{\omega})
 \end{align}</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Evidence-lower-bound-(ELBO)">Evidence lower bound (ELBO)<a class="anchor-link" href="#Evidence-lower-bound-(ELBO)">&#182;</a></h2><p>Following from <a href="https://gaow.github.io/mvarbvs/writeup/20171203_VEM.html">the VEM framework</a> where $Z:=(\bs{B}, \bs{\alpha}, \bs{\Gamma})$ and $\theta:= (\bs{\Sigma}, \bs{\Pi}, \bs{\omega})$,</p>
+<p>\begin{align}
+\log p(\bs{Y}|\bs{\Sigma}, \bs{\pi}, \bs{\omega}) &amp; \ge  \mathcal{L}(q, \bs{\Sigma}, \bs{\Pi}, \bs{\omega}) \\
+&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\alpha}, \bs{\Gamma}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
+E_q[\log\frac{p(\bs{B}, \bs{\alpha}, \bs{\Gamma}| \bs{\Sigma}, \bs{\Pi}, \bs{\omega})}{q(\bs{B}, \bs{\alpha}, \bs{\Gamma})}] \\
+&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\Sigma})] + 
+E_q[\log\frac{p(\bs{B}|\bs{\alpha}, \bs{\Gamma})
+p(\bs{\Gamma}|\bs{\alpha}, \bs{\Pi}) p(\bs{\alpha}|\bs{\omega})}{\prod_j q(\bs{b}_j|\alpha_j, \bs{\gamma}_j)q(\bs{\gamma}_j|\alpha_j)q(\alpha_j)}],
+\end{align}</p>
+<p>that is, we use a fully-fectorized variational approximation of posterior $q(\cdot)$, thus performing mean-field variational inference. In discussions hereafter we use the same notations as the original for variational parameters unless in conflict. We use instead the tilde notation ($\tilde{}$) for posterior estimates.</p>
 
 </div>
 </div>
@@ -321,37 +339,19 @@ p(\bs{\Gamma}|\bs{\zeta}, \bs{\Pi}) p(\bs{\zeta}|\bs{\omega})
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="A-variational-approach-to-M&amp;M">A variational approach to M&amp;M<a class="anchor-link" href="#A-variational-approach-to-M&amp;M">&#182;</a></h2><p>Inspired by the conditional regression approach for fine mapping, we reparameterize the model as</p>
 <p>\begin{align}
-\bs{Y}_{N\times R} = \bs{X}_{N \times J}\sum_l^L \diag(\bs{\zeta}_l) \bs{B}_{J \times R} + \bs{E}_{N \times R},
+\bs{Y}_{N\times R} = \bs{X}_{N \times J}\sum_l^L \diag(\bs{\alpha}_l) {\bs{B}_l}_{J \times R} + \bs{E}_{N \times R},
 \end{align}</p>
-<p>where $L$ is the number of non-zero effects, or the upper bound on the number of non-zero effects if prior distribution of $\bs{b}_j$ includes a point mass at zero. For each $l = 1,\ldots, L$ we assume that <em>exactly 1 of the $J$ effects is non-zero</em>, as indicated by $\zeta_{lj}$,</p>
+<p>where $L$ is the number of non-zero effects, or the upper bound on the number of non-zero effects if prior distribution of ${\bs{b}_l}_j$ includes a point mass at zero. For each $l = 1,\ldots, L$ we assume that <em>exactly 1 of the $J$ effects is non-zero</em>, as indicated by $\alpha_{lj}$,</p>
 <p>\begin{align}
-\bs{\zeta}_l \sim \text{Multinomial}(1, \bs{\omega}_l)
+\bs{\alpha}_l \sim \text{Multinomial}(1, \bs{\omega}_l)
 \end{align}</p>
-<p>The key idea behind this parameterization is to devise a fully-factorized variational approximation based on</p>
+<p>The key idea behind this parameterization is to use a variational approximation</p>
 <p>\begin{align}
-q(\bs{B}, \bs{\zeta}, \bs{\Gamma}) &amp;= \prod_l q(\bs{B}_l, \bs{\zeta}_l, \bs{\Gamma}_l) \\
-&amp;=  \prod_l q(\bs{B}_l|\bs{\zeta}_l, \bs{\Gamma}_l)q(\bs{\Gamma}_l|\bs{\zeta}_l)q(\bs{\zeta}_l) \\
-&amp;=  \prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\zeta}_l)q(\bs{\zeta}_l)
+q(\bs{B}, \bs{\alpha}, \bs{\Gamma}) &amp;= \prod_l q(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l) \\
+&amp;=  \prod_l q(\bs{B}_l|\bs{\alpha}_l, \bs{\Gamma}_l)q(\bs{\Gamma}_l|\bs{\alpha}_l)q(\bs{\alpha}_l) \\
+&amp;=  \prod_l \prod_j q({\bs{b}_l}_{j}|\bs{\alpha}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\alpha}_l)q(\bs{\alpha}_l)
 \end{align}</p>
-<p>Crucially, we do not factorize $q(\bs{\zeta}_l)$ across its $J$ elements, that is, $\bs{\zeta}_l$ is a binary vector with exactly one non-zero element. We will reveal connection with conditional regression later as we develop the variational algorithm.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Evidence-lower-bound-(ELBO)">Evidence lower bound (ELBO)<a class="anchor-link" href="#Evidence-lower-bound-(ELBO)">&#182;</a></h2><p>Following from <a href="https://gaow.github.io/mvarbvs/writeup/20171203_VEM.html">the VEM framework</a> where $Z:=(\bs{B}, \bs{\zeta}, \bs{\Gamma})$ and $\theta:= (\bs{\Sigma}, \bs{\Pi}, \bs{\omega})$,</p>
-<p>\begin{align}
-\log p(\bs{Y}|\bs{\Sigma}, \bs{\pi}, \bs{\omega}) &amp; \ge  \mathcal{L}(q, \bs{\Sigma}, \bs{\Pi}, \bs{\omega}) \\
-&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\zeta}, \bs{\Gamma}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
-E_q[\log\frac{p(\bs{B}, \bs{\zeta}, \bs{\Gamma}| \bs{\Sigma}, \bs{\Pi}, \bs{\omega})}{q(\bs{B}, \bs{\zeta}, \bs{\Gamma})}] \\
-&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\Sigma})] + 
-E_q[\log\frac{p(\bs{B}|\bs{\zeta}, \bs{\Gamma})
-p(\bs{\Gamma}|\bs{\zeta}, \bs{\Pi}) p(\bs{\zeta}|\bs{\omega})}{\prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\zeta}_l)q(\bs{\zeta}_l)}]
-\end{align}</p>
-<p>where $q(\cdot)$ can be factorized as previously discussed, thus performing mean-field variational inference. In discussions hereafter we use the same notations as the original for variational parameters unless in conflict. We use instead the tilde notation ($\tilde{}$) for posterior estimates.</p>
+<p>Crucially, we do not factorize $q(\bs{\alpha}_l)$ across its $J$ elements, that is, $\bs{\alpha}_l$ is a binary vector with exactly one non-zero element. We will reveal connection with conditional regression later as we develop the variational algorithm.</p>
 
 </div>
 </div>
@@ -363,7 +363,7 @@ p(\bs{\Gamma}|\bs{\zeta}, \bs{\Pi}) p(\bs{\zeta}|\bs{\omega})}{\prod_l \prod_j q
 <h2 id="Derivation-of-variational-M&amp;M">Derivation of variational M&amp;M<a class="anchor-link" href="#Derivation-of-variational-M&amp;M">&#182;</a></h2><h3 id="One-effect-model">One effect model<a class="anchor-link" href="#One-effect-model">&#182;</a></h3><p>To develop the variational algorithm for fine-mapping with M&amp;M we first discuss the case when there is only one non-zero effect, then show that the results can be generalized to the case with multiple non-zero effects to natually yield fine-mapping solutions.</p>
 <p>In the event where only one row $\bs{B}_{1\cdot}$ is non-zero, that is, $\omega_1 = 1$, $\bs{\omega}_{-1} = \bs{0}$, M&amp;M becomes</p>
 <p>\begin{align}
-\bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{E}_{N \times R},
+\bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{E}_{N \times R}, \quad \bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}),
 \end{align}</p>
 <p>a multivariate, single regressor Bayesian regression with prior</p>
 <p>\begin{align}
@@ -408,7 +408,7 @@ p(\bs{b}_1, \bs{\gamma}_1 | \bs{Y}, \bs{\Sigma}, \bs{\pi}_1) = \argmax \mathcal{
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Two-effects-model">Two effects model<a class="anchor-link" href="#Two-effects-model">&#182;</a></h3><p>In the event where two rows of $\bs{B}$ is non-zero, that is, $\omega_1 = \omega_2 = 1$, $\bs{\omega}_{-1, -2} = \bs{0}$, M&amp;M becomes</p>
 <p>\begin{align}
-\bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{x}_2\bs{b}_2 + \bs{E}_{N \times R},
+\bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{x}_2\bs{b}_2 + \bs{E}_{N \times R}, \quad \bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}),
 \end{align}</p>
 <p>a multivariate, two regressor Bayesian regression with independent priors $p(\bs{b}_1, \bs{b}_2) = p(\bs{b}_1)p(\bs{b}_2)$ where</p>
 <p>\begin{align}
@@ -454,7 +454,7 @@ E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2)p(\bs{\gamma}_2|\bs{\pi}_2)}{q_2(\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Generalization-to-arbitary-number-of-effects">Generalization to arbitary number of effects<a class="anchor-link" href="#Generalization-to-arbitary-number-of-effects">&#182;</a></h3><p>The arguments above can be generalized to having $L$ non-zero effects. For the $l$-th effect we optimize $\mathcal{L}_l$ over $q_l$ with all other $q_{-l}$ fixed, by applying Bayesian multivariate regression to $\bs{\xi}_{-l} = \bs{x}_l \bs{b}_l + E $. The algorithm iterates until convergence.</p>
+<h3 id="An-iterative-algorithm:-generalization-to-arbitary-number-of-effects">An iterative algorithm: generalization to arbitary number of effects<a class="anchor-link" href="#An-iterative-algorithm:-generalization-to-arbitary-number-of-effects">&#182;</a></h3><p>The arguments above can be generalized to having $L$ non-zero effects. For the $l$-th effect we optimize $\mathcal{L}_l$ over $q_l$ with all other $q_{-l}$ fixed, by applying Bayesian multivariate regression to $\bs{\xi}_{-l} = \bs{x}_l \bs{b}_l + E $. The algorithm iterates until convergence.</p>
 
 </div>
 </div>
@@ -463,7 +463,16 @@ E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2)p(\bs{\gamma}_2|\bs{\pi}_2)}{q_2(\
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Variational-updates-for-quantities-of-interest">Variational updates for quantities of interest<a class="anchor-link" href="#Variational-updates-for-quantities-of-interest">&#182;</a></h3>
+<h3 id="Variational-updates-for-quantities-of-interest">Variational updates for quantities of interest<a class="anchor-link" href="#Variational-updates-for-quantities-of-interest">&#182;</a></h3><p>As previously discussed, the core computation is making inference on Bayesian multivariate regression</p>
+<p>\begin{align}
+\bs{Y}_{N \times R} = \bs{x}_{N \times 1}\bs{b}_{1 \times R} + \bs{E}_{N \times R}, \quad \bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}),
+\end{align}</p>
+<p>with prior</p>
+<p>\begin{align}
+p(\bs{b}) = \sum_{p = 0}^P\pi_{p}\N_R(\bs{b} | \bs{0}, \bs{V}_p).
+\end{align}</p>
+<p><strong>FIXME: make connection with summary stats, then check out MASH derivations.</strong></p>
+
 </div>
 </div>
 </div>
@@ -473,13 +482,15 @@ E_{q_2}[\log \frac{p(\bs{b}_2 | \bs{\gamma}_2)p(\bs{\gamma}_2|\bs{\pi}_2)}{q_2(\
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Derivation-of-ELBO">Derivation of ELBO<a class="anchor-link" href="#Derivation-of-ELBO">&#182;</a></h2><p>As shown before, ELBO for the full variational M&amp;M model is</p>
 <p>\begin{align}
-\mathcal{L}(q, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}; \bs{Y}) &amp; = E_q[\log p(\bs{Y} | \bs{B}, \bs{\zeta}, \bs{\Lambda}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
-E_q[\log\frac{p(Z|\Theta)}{q(Z)}] \\
+\mathcal{L}(q, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}; \bs{Y}) &amp; = E_q[\log p(\bs{Y} | \bs{B}, \bs{\alpha}, \bs{\Lambda}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
+E_q[\log\frac{\prod_{l}p(\bs{B}_l|\bs{\alpha}_l, \bs{\Gamma}_l)
+p(\bs{\Gamma}_l|\bs{\alpha}_l, \bs{\Pi}_l) p(\bs{\alpha}_l|\bs{\omega}_l)}{\prod_l \prod_j q(\bs{b}_{lj}|\bs{\alpha}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\alpha}_l)q(\bs{\alpha}_l)}] \\
 &amp; \propto E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} - 2\tr\{\bs{Y}\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal\bs{X}^\intercal\} +
-E_q[\log\frac{p(Z|\Theta)}{q(Z)}]
+E_q[\log\frac{\prod_{l}p(\bs{B}_l|\bs{\alpha}_l, \bs{\Gamma}_l)
+p(\bs{\Gamma}_l|\bs{\alpha}_l, \bs{\Pi}_l) p(\bs{\alpha}_l|\bs{\omega}_l)}{\prod_l \prod_j q(\bs{b}_{lj}|\bs{\alpha}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\alpha}_l)q(\bs{\alpha}_l)}]
 \end{align}</p>
-<p>where $\bar{\bs{B}}:= E_q[\bs{B}]$, $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]:= E_q[\log\frac{p(\bs{B}|\bs{\zeta}, \bs{\Gamma})
-p(\bs{\Gamma}|\bs{\zeta}, \bs{\Pi}) p(\bs{\zeta}|\bs{\omega})}{\prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\zeta}_l)q(\bs{\zeta}_l)}]$. As will be shown later, we estimate $\bar{\bs{B}}$ using posterior mean $\tilde{\bs{B}}$. We need to work out $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$ and $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$ next.</p>
+<p>where $\bar{\bs{B}}:= E_q[\bs{B}]$, $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]:= E_q[\log\frac{p(\bs{B}|\bs{\alpha}, \bs{\Gamma})
+p(\bs{\Gamma}|\bs{\alpha}, \bs{\Pi}) p(\bs{\alpha}|\bs{\omega})}{\prod_l \prod_j q(\bs{b}_{lj}|\bs{\alpha}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\alpha}_l)q(\bs{\alpha}_l)}]$. As will be shown later, we estimate $\bar{\bs{B}}$ using posterior mean $\tilde{\bs{B}}$. We need to work out $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$ and $E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$ next.</p>
 
 </div>
 </div>
@@ -533,8 +544,8 @@ E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;=
 <h3 id="$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$">$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$<a class="anchor-link" href="#$E_q[\log\frac{p(Z|\Theta)}{q(Z)}]$">&#182;</a></h3><p>By definition,</p>
 <p>\begin{align}
 E_q[\log\frac{p(Z|\Theta)}{q(Z)}] &amp;= E_q[\log p(Z|\Theta)] - E_q[\log q(Z)] \\
-&amp;= E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})] - 
-E_q[\prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\zeta}_l)q(\bs{\zeta}_l)]
+&amp;= E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})] - 
+E_q[\prod_l \prod_j q(\bs{b}_{lj}|\bs{\alpha}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{lj}|\bs{\alpha}_l)q(\bs{\alpha}_l)]
 \end{align}</p>
 
 </div>
@@ -544,27 +555,27 @@ E_q[\prod_l \prod_j q(\bs{b}_{lj}|\bs{\zeta}_l, \bs{\gamma}_{lj})q(\bs{\gamma}_{
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="$E_q[\log-p(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{\omega},-\bs{\Pi})]$">$E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})]$<a class="anchor-link" href="#$E_q[\log-p(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{\omega},-\bs{\Pi})]$">&#182;</a></h4><p>By Bishop 2006 Equation 9.36,</p>
+<h4 id="$E_q[\log-p(\bs{B},-\bs{\alpha},-\bs{\Gamma}|\bs{\omega},-\bs{\Pi})]$">$E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})]$<a class="anchor-link" href="#$E_q[\log-p(\bs{B},-\bs{\alpha},-\bs{\Gamma}|\bs{\omega},-\bs{\Pi})]$">&#182;</a></h4><p>By Bishop 2006 Equation 9.36,</p>
 <p>\begin{align}
-E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})] &amp;=
-E_q\big[ \sum_j \zeta_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log \det(\bs{V}_p) - \frac{1}{2} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j\} \big) | \bs{V}, \bs{\omega}, \bs{\pi}\big] \\
-&amp; = E_q\big[ \sum_j \sum_p \zeta_j \gamma_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \zeta_j (\bs{V}_p \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) \big] \\
-&amp; = \sum_j \sum_p \omega_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j],
+E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})] &amp;=
+E_q\big[ \sum_j \alpha_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log \det(\bs{V}_p) - \frac{1}{2} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j\} \big) | \bs{V}, \bs{\omega}, \bs{\pi}\big] \\
+&amp; = E_q\big[ \sum_j \sum_p \alpha_j \gamma_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \alpha_j (\bs{V}_p \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) \big] \\
+&amp; = \sum_j \sum_p \omega_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j],
 \end{align}</p>
 <p>where $\psi_{jp} := \frac{\pi_p N(\bs{b_j}; \bar{\bs{b}}_j, \bs{U}_{jp})}{\sum_p \pi_p N(\bs{b_j}; \bar{\bs{b}}_j, \bs{U}_{jp})}$, and $\omega_j$ is estimated by weight of the $j$-th Bayes Factor $\hat{\omega}_j = \frac{\text{BF}_j}{\sum_j \text{BF}_j}$. $\hat{\pi}_p$ is weight for the $p$-th component of prior covariance matrix, $\bar{\bs{b}}_j = E_q[\bs{b}_j]$ are estimated by posterior mean $\tilde{\bs{b}}_j$ and $\bs{U}_{jp}$ are estimated by posterior covariance for component $p$.</p>
-<p>Now we are left to work on $E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j]$ which is a scalar,</p>
+<p>Now we are left to work on $E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j]$ which is a scalar,</p>
 <p>\begin{align}
-E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j] &amp;= 
-E_q\big[E_q[\zeta_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j | \zeta_j,\gamma_{jp}] \big] \\
-&amp;= E_q\big[E_q[\zeta_j \gamma_{jp} \tr(\bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) | \zeta_j,\gamma_{jp}] \big] \\
-&amp;= E_q\big[E_q[\zeta_j \gamma_{jp} \tr(\bs{V}_p^{-1} \bs{b}_j \bs{b}_j^\intercal) | \zeta_j,\gamma_{jp}] \big] \\
-&amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} E_q[\zeta_j \gamma_{jp} \bs{b}_j \bs{b}_j^\intercal | \zeta_j \gamma_{jp}] \big ] \big \} \\
+E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j] &amp;= 
+E_q\big[E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j | \alpha_j,\gamma_{jp}] \big] \\
+&amp;= E_q\big[E_q[\alpha_j \gamma_{jp} \tr(\bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) | \alpha_j,\gamma_{jp}] \big] \\
+&amp;= E_q\big[E_q[\alpha_j \gamma_{jp} \tr(\bs{V}_p^{-1} \bs{b}_j \bs{b}_j^\intercal) | \alpha_j,\gamma_{jp}] \big] \\
+&amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} E_q[\alpha_j \gamma_{jp} \bs{b}_j \bs{b}_j^\intercal | \alpha_j \gamma_{jp}] \big ] \big \} \\
 &amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} \omega_j \psi_{jp} (\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})] \big ] \big \} \\
 &amp;= \omega_j\psi_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
 \end{align}</p>
 <p>Hence,
 \begin{align}
-E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;= 
+E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;= 
 \sum_j \sum_p \omega_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} -
 \frac{1}{2} \sum_j \sum_p \omega_j\psi_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
 \end{align}</p>
@@ -576,23 +587,23 @@ E_q[\log p(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="$E_q[\log-q(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">$E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})]$<a class="anchor-link" href="#$E_q[\log-q(\bs{B},-\bs{\zeta},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">&#182;</a></h4><p>\begin{align}
-E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;= 
-E_q\big[\sum_j \zeta_j \sum_p \gamma_{jp} \{ \log\psi_{jp} - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) - \frac{1}{2} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) \} \big] \\
+<h4 id="$E_q[\log-q(\bs{B},-\bs{\alpha},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">$E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})]$<a class="anchor-link" href="#$E_q[\log-q(\bs{B},-\bs{\alpha},-\bs{\Gamma}|\bs{V},-\bs{\omega},-\bs{\pi})]$">&#182;</a></h4><p>\begin{align}
+E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;= 
+E_q\big[\sum_j \alpha_j \sum_p \gamma_{jp} \{ \log\psi_{jp} - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) - \frac{1}{2} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) \} \big] \\
 &amp; = \sum_j \omega_j \sum_p \psi_{jp} \{ \log\psi_{jp} - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) \} -
-\frac{1}{2} \sum_j \sum_p E_q\big[ \zeta_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big],
+\frac{1}{2} \sum_j \sum_p E_q\big[ \alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big],
 \end{align}</p>
 <p>where the expectation term</p>
 <p>\begin{align}
-E_q\big[ \zeta_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big] &amp;= 
-E_q \big [ E_q[\zeta_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \zeta_j, \gamma_{jp} ] \big] \\
-&amp;= E_q \big [ \zeta_j \gamma_{jp} E_q[(\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \zeta_j, \gamma_{jp} ] \big] \\
-&amp;= E_q[R\zeta_j\gamma_{jp}] \quad \text{since } \bs{b}_j | \zeta_j, \gamma_{jp} \sim N_R(\bar{\bs{b}}_j, \bs{U}_{jp})\\ 
+E_q\big[ \alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big] &amp;= 
+E_q \big [ E_q[\alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \alpha_j, \gamma_{jp} ] \big] \\
+&amp;= E_q \big [ \alpha_j \gamma_{jp} E_q[(\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \alpha_j, \gamma_{jp} ] \big] \\
+&amp;= E_q[R\alpha_j\gamma_{jp}] \quad \text{since } \bs{b}_j | \alpha_j, \gamma_{jp} \sim N_R(\bar{\bs{b}}_j, \bs{U}_{jp})\\ 
 &amp;= R\omega_j\psi_{jp}
 \end{align}</p>
 <p>Hence</p>
 <p>\begin{align}
-E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;=
+E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;=
 \sum_j\omega_j \sum_p\psi_{jp} \big( \log\psi_{jp} - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log\det(\bs{U}_{jp}) - \frac{R}{2}\big)
 \end{align}</p>
 
@@ -601,7 +612,7 @@ E_q[\log q(\bs{B}, \bs{\zeta}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/5514360a8b0d9c1fb7045a8ba62b9274d1d66501/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Mar 30 15:51:56 2018 <a href="http://github.com/gaow/mvarbvs/commit/5514360a8b0d9c1fb7045a8ba62b9274d1d66501">revision 11, 5514360</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/3401e02238e085db6a380bd163817c8ede6126fe/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Mon Apr 2 18:54:01 2018 <a href="http://github.com/gaow/mvarbvs/commit/3401e02238e085db6a380bd163817c8ede6126fe">revision 12, 3401e02</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
