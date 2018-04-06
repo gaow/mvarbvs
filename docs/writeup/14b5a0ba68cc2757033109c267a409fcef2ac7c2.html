@@ -364,7 +364,7 @@ q(\bs{B}, \bs{\alpha}, \bs{\Gamma}) &amp;= \prod_l q(\bs{B}_l, \bs{\alpha}_l, \b
 \end{align}</p>
 <p>a multivariate, single regressor Bayesian regression with prior</p>
 <p>\begin{align}
-p(\bs{b}_1|\gamma_1) = \sum_{p = 0}^P\pi_{1p}\N_R(\bs{b}_1 | \bs{0}, \bs{V}_p).
+p(\bs{b}_1, \bs{\gamma}_1) = \sum_{p = 0}^P\pi_{1p}\N_R(\bs{b}_1 | \bs{0}, \bs{V}_p).
 \end{align}</p>
 <p>Let "$\propto$" denote equality up to an additive constant independent of $q$, we write ELBO of this model</p>
 <p>\begin{align}
@@ -409,7 +409,7 @@ p(\bs{b}_1, \bs{\gamma}_1 | \bs{Y}, \bs{\Sigma}, \bs{\pi}_1) = \argmax \mathcal{
 \end{align}</p>
 <p>a multivariate, two regressor Bayesian regression with independent priors $p(\bs{b}_1, \gamma_1, \bs{b}_2, \gamma_2) = p(\bs{b}_1,\gamma_1)p(\bs{b}_2,\gamma_2)$ where</p>
 <p>\begin{align}
-p(\bs{b}_\cdot|\gamma_\cdot) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_\cdot | \bs{0}, \bs{V}_p).
+p(\bs{b}_\cdot, \bs{\gamma}_\cdot) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_\cdot | \bs{0}, \bs{V}_p).
 \end{align}</p>
 <p>we write ELBO of this model</p>
 <p>\begin{align}
@@ -466,9 +466,59 @@ E_{q_2}[\log \frac{p(\bs{b}_2, \bs{\gamma}_2 |\bs{\pi}_2)}{q_2(\bs{b}_2, \bs{\ga
 \end{align}</p>
 <p>with prior</p>
 <p>\begin{align}
-p(\bs{b}) = \sum_{p = 0}^P\pi_{p}\N_R(\bs{b} | \bs{0}, \bs{V}_p).
+p(\bs{b}, \bs{\gamma}) = \sum_{p = 0}^P\pi_{p}\N_R(\bs{b} | \bs{0}, \bs{V}_p).
 \end{align}</p>
-<p><strong>FIXME: make connection with summary stats, then check out MASH derivations: mixture model parameters, posterior and BF, along the lines of Urbut et al 2017.</strong></p>
+<p>We compute OLS estimates for $\bs{b}$,</p>
+<p>\begin{align}
+\hat{\bs{B}}_{jr} &amp; = (\bs{x}_j^\intercal\bs{x}_j)^{-1}(\bs{X}^\intercal\bs{Y})_{jr} \\
+&amp; = (\bs{x}_j^\intercal\bs{x}_j)^{-1}\bs{x}_j\bs{y}_{r}
+\end{align}</p>
+<p>We assume 
+\begin{align}
+\bs{\Sigma} = \bs{\Lambda}\bs{C}\bs{\Lambda}
+\end{align}</p>
+<p>where $\bs{\Lambda} = \diag(\sigma_1, \ldots, \sigma_R)$ and $\bs{V}$ is constant matrix (eg. identity for starters). Using plug-in estimate $\hat{\sigma}^2_r = Var(\bs{y}_r)$, we estimate standard error for $\bs{b}$,</p>
+<p>\begin{align}
+\hat{\bs{S}} = (\bs{x}_j^\intercal\bs{x}_j)^{-1} \hat{\bs{\Sigma}})
+\end{align}</p>
+<p>Therefore the likelihood can be formulated using summary statistics,</p>
+<p>\begin{align}
+\hat{\bs{b}} | \bs{b} \sim N_R(\bs{b}, \hat{\bs{S}})
+\end{align}</p>
+<p>This conjugate prior leads us to the posterior distributed also as a mixture of multivariate normal,</p>
+<p>\begin{align}
+p(\bs{b}|\hat{\bs{b}}, \hat{\bs{S}}, \hat{\bs{\pi}}) &amp; = \sum_p p(\bs{b}|\hat{\bs{b}}, \hat{\bs{S}}, \gamma_p)p(\gamma_p |\hat{\bs{b}}, \hat{\bs{S}}, \hat{\pi}_p) \\
+&amp;= \sum_p p(\bs{b}|\hat{\bs{b}}, \hat{\bs{S}}, \gamma_p) \tilde{\pi}_p
+\end{align}</p>
+<p>For a multivariate normal distrubtion, <a href="https://learnbayes.org/index.php?option=com_content&amp;view=article&amp;id=77:completesquare&amp;catid=83&amp;Itemid=479&amp;showall=1&amp;limitstart=">we know that</a> the posterior on $\bs{b}|\hat{\bs{b}}, \hat{\bs{S}}, \gamma_p$ is</p>
+<p>\begin{align}
+\bs{b} | \hat{\bs{b}}, \hat{\bs{S}}, \gamma_p \sim N_R(\bar{\bs{b}}, \bs{U}_p)
+\end{align}</p>
+<p>where 
+\begin{align}
+\bar{\bs{b}} &amp;= \bs{U}_p(\hat{\bs{S}}^{-1}\hat{\bs{b}})\\
+\bs{U}_p &amp;= (\bs{V}_p^{-1} + \hat{\bs{S}}^{-1})^{-1} \\
+&amp;= ((\bs{V}_p^{-1} + \hat{\bs{S}}^{-1})\bs{V}_p\bs{V}_p^{-1})^{-1} \\
+&amp;= ((\bs{I} + \hat{\bs{S}}^{-1}\bs{V}_p)\bs{V}_p^{-1})^{-1} \\
+&amp;= \bs{V}_p(\bs{I} + \hat{\bs{S}}^{-1}\bs{V}_p)^{-1}
+\end{align}</p>
+<p>We also know that marginal likelihood of $\hat{\bs{b}}$ in this setting is also normal (cite <em>Statistical decision theory and Bayesian analysis 2nd edition by James Berger, Section 4.2 Example 1</em>), with</p>
+<p>\begin{align}
+E[\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p] &amp;= E_{\bs{b}}\big [E[\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p, \bs{b}]\big ] \\
+&amp;= E_{\bs{b}}[\bs{b}|\gamma_p] \\
+&amp;= \bs{0}, \\
+Var(\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p) &amp;= E_{\bs{b}}\big [Var[\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p, \bs{b}]\big ] + Var_{\bs{b}}\big [E[\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p, \bs{b}]\big ] \\
+&amp;= E_{\bs{b}}[\hat{\bs{S}}] + Var_{\bs{b}}[\bs{b}|\gamma_p] \\
+&amp;= \hat{\bs{S}} + \bs{V}_{p}
+\end{align}</p>
+<p>The posterior weights $\tilde{\pi}_p$ can the be estimated by 
+\begin{align}
+\hat{\tilde{\pi}}_{p} &amp;= \frac{\hat{\pi}_p N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}} + \bs{V}_{p})}{\sum_p \hat{\pi}_p N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}} + \bs{V}_{p})}
+\end{align}</p>
+<h4 id="Bayes-factor">Bayes factor<a class="anchor-link" href="#Bayes-factor">&#182;</a></h4><p>Bayes factor is the ratio of the likelihood of alternative vs null,</p>
+<p>\begin{align}
+\text{BF} = \frac{\sum_p \hat{\pi}_p N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}} + \bs{V}_{p})}{N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}})}
+\end{align}</p>
 
 </div>
 </div>
@@ -552,15 +602,15 @@ E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \b
 <p>\begin{align}
 E_q[\log p(\bs{B},\bs{\alpha},\bs{\Gamma}|\bs{\Pi}, \bs{\omega})] &amp;=
 E_q\big[ \sum_j \alpha_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log \det(\bs{V}_p) - \frac{1}{2} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j\} \big) \big | \bs{\alpha}, \bs{\Gamma}\big] \\
-&amp; = \sum_j \sum_p \phi_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p \phi_j \psi_{jp} E_q[\bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j|\alpha_j, \gamma_{jp}],
+&amp; = \sum_j \sum_p \tilde{\omega}_j \tilde{\pi}_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p \tilde{\omega}_j \tilde{\pi}_{jp} E_q[\bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j|\alpha_j, \gamma_{jp}],
 \end{align}</p>
 <p>\begin{align}
 E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})] &amp;=
 E_q\big[ \sum_j \alpha_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log \det(\bs{V}_p) - \frac{1}{2} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j\} \big) | \bs{\omega}, \bs{\Pi}\big] \\
 &amp; = E_q\big[ \sum_j \sum_p \alpha_j \gamma_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \alpha_j (\bs{V}_p \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) \big] \\
-&amp; = \sum_j \sum_p \phi_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j],
+&amp; = \sum_j \sum_p \tilde{\omega}_j \tilde{\pi}_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j],
 \end{align}</p>
-<p>where variational parameters $\psi_{jp}$ is estimated by $\hat{\psi}_{jp} = \frac{\pi_p N(\bs{b_j}; \bar{\bs{b}}_j, \bs{U}_{jp})}{\sum_p \pi_p N(\bs{b_j}; \bar{\bs{b}}_j, \bs{U}_{jp})}$, and $\phi_j$ is estimated by weight of the $j$-th Bayes Factor $\hat{\phi}_j = \frac{\text{BF}_j}{\sum_j \text{BF}_j}$. $\pi_p$ is weight for the $p$-th component of prior covariance matrix, $\bar{\bs{b}}_j = E_q[\bs{b}_j]$ are estimated by posterior mean $\tilde{\bs{b}}_j$ and $\bs{U}_{jp}$ are estimated by posterior covariance for component $p$, from varational distributions.</p>
+<p>where posterior weight $\tilde{\pi}_{jp}$ is estimated by $\hat{\tilde{\pi}}_{jp}$ which has been derived previously, and $\tilde{\omega}_j$ is estimated by weight of the $j$-th Bayes Factor $\hat{\tilde{\omega}}_j = \frac{\text{BF}_j}{\sum_j \text{BF}_j}$, where $\text{BF}_j$ has also been derived previously.</p>
 <p>Now we are left to work on $E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j]$ which is a scalar,</p>
 <p>\begin{align}
 E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j] &amp;= 
@@ -568,14 +618,14 @@ E_q\big[E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j | \al
 &amp;= E_q\big[E_q[\alpha_j \gamma_{jp} \tr(\bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) | \alpha_j,\gamma_{jp}] \big] \\
 &amp;= E_q\big[E_q[\alpha_j \gamma_{jp} \tr(\bs{V}_p^{-1} \bs{b}_j \bs{b}_j^\intercal) | \alpha_j,\gamma_{jp}] \big] \\
 &amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} E_q[\alpha_j \gamma_{jp} \bs{b}_j \bs{b}_j^\intercal | \alpha_j \gamma_{jp}] \big ] \big \} \\
-&amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} \phi_j \psi_{jp} (\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})] \big ] \big \} \\
-&amp;= \phi_j\psi_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
+&amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} \tilde{\omega}_j \tilde{\pi}_{jp} (\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})] \big ] \big \} \\
+&amp;= \tilde{\omega}_j\tilde{\pi}_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
 \end{align}</p>
 <p>Hence,
 \begin{align}
 E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;= 
-\sum_j \sum_p \phi_j \psi_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} -
-\frac{1}{2} \sum_j \sum_p \phi_j\psi_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
+\sum_j \sum_p \tilde{\omega}_j \tilde{\pi}_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} -
+\frac{1}{2} \sum_j \sum_p \tilde{\omega}_j\tilde{\pi}_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
 \end{align}</p>
 
 </div>
@@ -587,22 +637,22 @@ E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 <div class="text_cell_render border-box-sizing rendered_html">
 <h4 id="$E_q[\log-q(\bs{b}_j,-\bs{\alpha},-\bs{\gamma}_j)]$">$E_q[\log q(\bs{b}_j, \bs{\alpha}, \bs{\gamma}_j)]$<a class="anchor-link" href="#$E_q[\log-q(\bs{b}_j,-\bs{\alpha},-\bs{\gamma}_j)]$">&#182;</a></h4><p>\begin{align}
 E_q[\log q(\bs{b}_j, \bs{\alpha}, \bs{\gamma}_j)] &amp; = 
-E_q\big[\alpha_j \sum_p \gamma_{jp} \{ \log(\psi_{jp}) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) - \frac{1}{2} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) \} \big] \\
-&amp; = \phi_j \sum_p \psi_{jp} \{ \log(\psi_{jp}) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) \} -
+E_q\big[\alpha_j \sum_p \gamma_{jp} \{ \log(\tilde{\pi}_{jp}) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) - \frac{1}{2} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) \} \big] \\
+&amp; = \tilde{\omega}_j \sum_p \tilde{\pi}_{jp} \{ \log(\tilde{\pi}_{jp}) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) \} -
 \frac{1}{2} \sum_p E_q\big[ \alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big],
 \end{align}</p>
-<p>where the expectation term</p>
+<p>where $\bs{U}_{jp}$ and $\bar{\bs{b}}_j$ have been derived previously, and the expectation term</p>
 <p>\begin{align}
 E_q\big[ \alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big] &amp;= 
 E_q \big [ E_q[\alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \alpha_j, \gamma_{jp} ] \big] \\
 &amp;= E_q \big [ \alpha_j \gamma_{jp} E_q[(\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \alpha_j, \gamma_{jp} ] \big] \\
 &amp;= E_q[R\alpha_j\gamma_{jp}] \quad \text{since } \bs{b}_j | \alpha_j, \gamma_{jp} \sim N_R(\bar{\bs{b}}_j, \bs{U}_{jp})\\ 
-&amp;= R\phi_j\psi_{jp}
+&amp;= R\tilde{\omega}_j\tilde{\pi}_{jp}
 \end{align}</p>
 <p>Hence</p>
 <p>\begin{align}
 E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;=
-\phi_j \sum_p\psi_{jp} \big( \log(\psi_{jp}) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log\det(\bs{U}_{jp}) - \frac{R}{2}\big)
+\tilde{\omega}_j \sum_p\tilde{\pi}_{jp} \big( \log(\tilde{\pi}_{jp}) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log\det(\bs{U}_{jp}) - \frac{R}{2}\big)
 \end{align}</p>
 
 </div>
@@ -610,7 +660,7 @@ E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/87cadeae2171f39b28be47adf80cdab2cd905cb8/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Thu Apr 5 18:59:58 2018 <a href="http://github.com/gaow/mvarbvs/commit/87cadeae2171f39b28be47adf80cdab2cd905cb8">revision 14, 87cadea</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/f33b466ddab24f8bdffc1fde3b34a5b739bbafd6/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Apr 6 13:32:11 2018 <a href="http://github.com/gaow/mvarbvs/commit/f33b466ddab24f8bdffc1fde3b34a5b739bbafd6">revision 15, f33b466</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
