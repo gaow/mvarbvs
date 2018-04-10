@@ -21,6 +21,7 @@ init_model: init_mnm.R
   $model: model
 
 fit: fit_mnm.R
+  maxL: 5
   data: $data
   model: $model
   $model: model

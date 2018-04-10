@@ -7,8 +7,8 @@ if (Sigma == 'empirical') {
   ## FIXME: add other methods to compute Sigma
   data$V = cor(data$Y)
 }
-reg = univariate_regression(data$X, data$Y)
-mash_data = mashr::mash_set_data(as.matrix(reg$betahat), Shat = as.matrix(reg$sebetahat), V = as.matrix(data$V))
+reg = mm_regression(data$X, data$Y)
+mash_data = mashr::mash_set_data(reg[1,,], Shat = reg[2,,], V = as.matrix(data$V))
 if (U == 'auto') {
   U = mashr::cov_canonical(mash_data)
 } else {
@@ -17,8 +17,8 @@ if (U == 'auto') {
 }
 model = list()
 if (p == 'auto') {
-  model$fitted_g = mashr::mash(mash_data, Ulist=U, outputlevel = 1)$fitted_g
+  model$fitted_g = mashr::mash(mash_data, Ulist=U, outputlevel=1, usepointmass=TRUE)$fitted_g
 } else {
   ## FIXME: need to use pre-fitted pi on larger data from mash procedure
-  model$fitted_g = list(pi=p, Ulist=U, grid=grid, usepointmass=F)
+  model$fitted_g = list(pi=p, Ulist=U, grid=grid, usepointmass=TRUE)
 }
