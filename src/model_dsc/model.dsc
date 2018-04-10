@@ -22,14 +22,16 @@ init_model: init_mnm.R
 
 fit: fit_mnm.R
   maxL: 5
+  maxI: 10
   data: $data
   model: $model
-  $model: model
+  $fitted: fitted_track
 
 diagnose: elbo_mnm.py
   data: $data
   model: $model
-  $summary: summary
+  fitted: $fitted
+  $diagnosed: elbo
 
 DSC:
   run:
