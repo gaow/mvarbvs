@@ -1,15 +1,22 @@
-univariate_regression = function(X, y, Z = NULL){
-  if (!is.null(Z)) {
-    y = .lm.fit(Z, y)$residuals
-  }
-  calc_stderr = function(X, residuals) { sqrt(diag(sum(residuals^2) / (nrow(X) - 2) * chol2inv(chol(t(X) %*% X)))) }
-  output = do.call(rbind,
-                   lapply(c(1:ncol(X)), function(i) {
-                     g = .lm.fit(cbind(1, X[,i]), y)
-                     return(c(coef(g)[2], calc_stderr(cbind(1, X[,i]), g$residuals)[2]))
-                   })
-                   )
-  return(list(betahat = output[,1], sebetahat = output[,2],
-              residuals = y))
-}
-
+source("utils.R")
+reg = univariate_regression(data$X, data$Y)
+mash_data = mashr::mash_set_data(as.matrix(reg$betahat), Shat = as.matrix(reg$sebetahat), V = as.matrix(data$V))
+posterior = mashr::mash_compute_posterior_matrices(data$fitted_g, mash_data)
+model = posterior
+                                        # model = {'post_mean_mat' : np.zeros(R),
+                                        #         'post_mean2_mat' : None
+                                        #         'neg_prob_mat' : None
+                                        #         'zero_prob_mat' : None
+                                        #         'is_common_cov' : None
+                                        #         'Sigma : Sigma
+                                        #         'V : None
+                                        #         'pi : None
+                                        #         'posterior_weights : None
+                                        #         'grid : None
+                                        #         'l10bf : None
+                                        #         'lik : {'relative_likelihood' : None,
+                                        #                          'lfactor': None,
+                                        #                          'marginal_loglik': None,
+                                        #                          'loglik': None,
+                                        #                          'null_loglik': None,
+                                        #                          'alt_loglik': None}

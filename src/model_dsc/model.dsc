@@ -11,18 +11,22 @@ original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
   data: $data
   $data: data
 
-init_model: init_mnm.py
+init_model: init_mnm.R + R(model = list())
   data: $data
-  (U, grid, pi): (raw({'identity':np.identity(2),'single_1':np.array([[1,0],[0,0]]),'single_2':np.array([[0,0], [0,1]]), 'all_in':np.ones((2,2))}), (0.9,0.01,0.01,0.01,0.01,0.01,0.01,0.02,0.02), (0.5,1))
-  V: empirical
-  pi0: 0
+  # FIXME: these quantities are to be computed seperately and globally using mashr procedure
+  # See http://stephenslab.github.io/gtex-eqtls/analysis/20171002_MASH_V8.html
+  Sigma: empirical
+  (U, grid, p): (auto, (0.9,0.01,0.01,0.01,0.01,0.01,0.01,0.02,0.02), auto)
   $data: data
+  $model: model
 
 fit: fit_mnm.R
   data: $data
+  model: $model
   $model: model
 
 diagnose: elbo_mnm.py
+  data: $data
   model: $model
   $summary: summary
 
@@ -31,5 +35,7 @@ DSC:
     first_pass: get_data * original_Y * init_model * fit * diagnose
   output: mnm_model
   exec_path: modules
+  lib_path: libs
+  R_libs: mashr
   global:
     data_file: ~/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds
