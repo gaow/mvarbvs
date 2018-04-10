@@ -11,7 +11,7 @@ original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
   data: $data
   $data: data
 
-init_model: init_mnm.R + R(model = list())
+init_model: init_mnm.R
   data: $data
   # FIXME: these quantities are to be computed seperately and globally using mashr procedure
   # See http://stephenslab.github.io/gtex-eqtls/analysis/20171002_MASH_V8.html

@@ -15,9 +15,10 @@ if (U == 'auto') {
   ## FIXME: add other methods to get U
   U = mashr::cov_canonical(mash_data)
 }
+model = list()
 if (p == 'auto') {
-  data$fitted_g = mashr::mash(mash_data, Ulist=U, outputlevel = 1)$fitted_g
+  model$fitted_g = mashr::mash(mash_data, Ulist=U, outputlevel = 1)$fitted_g
 } else {
   ## FIXME: need to use pre-fitted pi on larger data from mash procedure
-  data$fitted_g = list(pi=p, Ulist=U, grid=grid, usepointmass=F)
+  model$fitted_g = list(pi=p, Ulist=U, grid=grid, usepointmass=F)
 }
