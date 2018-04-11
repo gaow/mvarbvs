@@ -39,6 +39,6 @@ DSC:
   output: mnm_model
   exec_path: modules
   lib_path: libs
-  R_libs: mashr
+  R_libs: mashr, abind
   global:
     data_file: ~/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds
