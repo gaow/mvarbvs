@@ -1,664 +1,154 @@
-
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/d3bec36c2f29441dd2b5e6431a8c00d135f98bb7/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Tue Apr 10 20:58:48 2018 <a href="http://github.com/gaow/mvarbvs/commit/d3bec36c2f29441dd2b5e6431a8c00d135f98bb7">revision 17, d3bec36</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <head>
+        <title>Password Protected</title>
 <meta name="robots" content="noindex">
-<meta name="ipynb_website:version" content="0.9.4" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<link rel="stylesheet" type="text/css" href="../css/jt.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex, nofollow">
 
-<link rel="stylesheet" type="text/css" href="../css/toc2.css">
-
-<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
-<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
-<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
-<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
-<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-
-<link rel="stylesheet"
-      href="../site_libs/highlightjs/null.min.css"
-      type="text/css" />
-
-<script src="../site_libs/highlightjs/highlight.null.js"></script>
-<script>hljs.initHighlightingOnLoad();</script>
-<script type="text/javascript">
-if (window.hljs && document.readyState && document.readyState === "complete") {
-   window.setTimeout(function() {
-      hljs.initHighlighting();
-   }, 0);
-}
-</script>
-
-<script src="../js/doc_toc.js"></script>
-<script src="../js/docs.js"></script>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
-<script>
-    MathJax.Hub.Config({
-        extensions: ["tex2jax.js"],
-        jax: ["input/TeX", "output/HTML-CSS"],
-        tex2jax: {
-        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-        processEscapes: true
-        },
-        "HTML-CSS": {
-            preferredFont: "TeX",
-            availableFonts: ["TeX"],
-            styles: {
-                scale: 110,
-                ".MathJax_Display": {
-                    "font-size": "110%",
-                }
+        <style>
+            *,
+            *:after,
+            *:before {
+                box-sizing: border-box;
             }
-        }
-    });
-</script>
-<script>
-function filterDataFrame(id) {
-    var input = document.getElementById("search_" + id);
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("dataframe_" + id);
-    var tr = table.getElementsByTagName("tr");
-    // Loop through all table rows, and hide those who don't match the search query
-    for (var i = 1; i < tr.length; i++) {
-        for (var j = 0; j < tr[i].cells.length; ++j) {
-            var matched = false;
-            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
-                tr[i].style.display = "";
-                matched = true
-                break;
+            body,
+            html {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+                font-weight: 300;
+                font-size: 16px;
+                background: #f2f2f2;
+                color: #2D3737;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100%;
             }
-            if (!matched)
-                tr[i].style.display = "none";
-        }
-    }
-}
-function sortDataFrame(id, n, dtype) {
-    var table = document.getElementById("dataframe_" + id);
-    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
-    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
-    if (dtype === 'numeric') {
-        var fn = function(a, b) { 
-            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
-        }
-    } else {
-        var fn = function(a, b) {
-            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
-            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
-    }
-    var isSorted = function(array, fn) {
-        if (array.length < 2)
-            return 1;
-        var direction = fn(array[0], array[1]); 
-        for (var i = 1; i < array.length - 1; ++i) {
-            var d = fn(array[i], array[i+1]);
-            if (d == 0)
-                continue;
-            else if (direction == 0)
-                direction = d;
-            else if (direction != d)
-                return 0;
+
+            .protected {
+                background: #fff;
+                -webkit-box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
+                box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
+                border-radius: 3px;
+                min-width: 500px;
+
             }
-        return direction;
-    }
-    var sorted = isSorted(tr, fn);
-    if (sorted == 1 || sorted == -1) {
-        // if sorted already, reverse it
-        for(var i = tr.length - 1; i >= 0; --i)
-            tb.appendChild(tr[i]); // append each row in order
-    } else {
-        tr = tr.sort(fn);
-        for(var i = 0; i < tr.length; ++i)
-            tb.appendChild(tr[i]); // append each row in order
-    }
-}
-</script>
-
-<script>
-$( document ).ready(function(){
-            var cfg={'threshold':3,     // depth of toc (number of levels)
-             'number_sections': false,
-             'toc_cell': false,          // useless here
-             'toc_window_display': true, // display the toc window
-             "toc_section_display": "block", // display toc contents in the window
-             'sideBar':true,       // sidebar or floating window
-             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            .protected__content {
+                padding: 24px 28px;
             }
-            var st={};                  // some variables used in the script
-            st.rendering_toc_cell = false;
-            st.config_loaded = false;
-            st.extension_initialized=false;
-            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
-            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
-            st.nbcontainer_width = $('#notebook-container').css('width')
-            st.oldTocHeight = undefined
-            st.cell_toc = undefined;
-            st.toc_index=0;
-            // fire the main function with these parameters
-            table_of_contents(cfg, st);
-            var file=writeupDict[$("h1:first").attr("id")];
-            $("#toc-level0 a").css("color","#126dce");
-            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
-            var docs=writeupArray;
-            var docs_map=writeupArrayMap;
-            var pos=writeupArray.indexOf(file);
-            for (var a=pos;a>=0;a--){
-                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            .protected__content__heading {
+                font-size: 16px;
+                font-weight: 500;
+                margin: 0 0 12px;
+                line-height: 1;
             }
-            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
-            for (var a=pos+1;a<docs.length;a++){
-                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            .protected__alert {
+                display: none;
+                border-bottom: 1px solid transparent;
+                border-radius: 3px 3px 0 0;
+                padding: 12px 14px;
+                color: #a94442;
+                background-color: #f2dede;
+                border-color: #ebccd1;
             }
-            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
-    });
-</script>
+            .protected__content__input {
+                display: block;
+                border: solid 1px #ccc;
+                padding: 12px 14px;
+                -webkit-box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
+                box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
+                font-size: 16px;
+                width: 100%;
+                border-radius: 3px;
 
-<script>
-// manage active state of menu based on current page
-$(document).ready(function () {
-  // active menu anchor
-  href = window.location.pathname
-  href = href.substr(href.lastIndexOf('/') + 1)
-  if (href === "")
-    href = "index.html";
-  var menuAnchor = $('a[href="' + href + '"]');
-  // mark it active
-  menuAnchor.parent().addClass('active');
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
-});
-</script>
-<div class="container-fluid main-container">
-<!-- tabsets -->
-<script src="../site_libs/navigation-1.1/tabsets.js"></script>
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-</script>
+                margin-bottom: 12px;
+            }
+            .protected__content__input:focus {
+                outline: none;
+                border-color: #228843;
+            }
+            .protected__content__btn {
+                background-color: #228843;
+                border-radius: 3px;
+                cursor: pointer;
+                border: none;
+                color: #fff;
+                padding: 12px 14px;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+                font-weight: 500;
+                font-size: 16px;
 
+            }
+            .protected__content__btn:hover {
+                background-color: #1C6D36;
+            }
 
+        </style>
 
-<title>m&m ash</title>
+    </head>
 
-<style type = "text/css">
-body {
-  font-family: "Droid Sans";
-  padding-top: 66px;
-  padding-bottom: 40px;
-}
-</style>
-</head>
+    <body>
 
-<body>
-<div tabindex="-1" id="notebook" class="border-box-sizing">
-<div class="container" id="notebook-container">
+        <div class="protected">
+            <div class="protected__alert" data-id="alert">Something is wrong</div>
+            <div class="protected__content">
+                <h1 class="protected__content__heading">You need a password to continue</h1>
+                <input class="protected__content__input" data-id="password" type="password" placeholder="password"/>
+                <button data-id="button" type="button" class="protected__content__btn">Continue</button>
+            </div>
+        </div>
 
-<!-- code folding -->
+        <script type="text/javascript" src="https://cdn.rawgit.com/vatlab/jnbinder/master/docs/js/sha1.js"></script>
+        <script type="text/javascript">
+         "use strict"
+         var button = document.querySelectorAll('[data-id="button"]')
+         var password = document.querySelectorAll('[data-id="password"]')
 
-<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <a class="navbar-brand" href="../index.html">m&m ash</a>
-    </div>
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-        
-<li>
-  <a href="../index.html">Overview</a>
-</li>
-        
-<li>
-  <a href="../analysis.html">Analysis</a>
-</li>
-        
-<li>
-  <a href="../prototype.html">Prototype</a>
-</li>
-        
-<li>
-  <a href="../writeup.html">Writeup</a>
-</li>
-        
-      </ul>
-        
-<ul class="nav navbar-nav navbar-right">
-<li>
-   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
-</li>
-</ul>
-        
-      </div><!--/.nav-collapse -->
-  </div><!--/.container -->
-</div><!--/.navbar -->
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="M&amp;M-model-for-fine-mapping">M&amp;M model for fine-mapping<a class="anchor-link" href="#M&amp;M-model-for-fine-mapping">&#182;</a></h1><p>This is the 5th version of M&amp;M. The formulation of this version was inspired by conditional regression commonly used in fine-mapping, as discussed in <a href="https://doi.org/10.1371/journal.pgen.1003486">T Flutre et al 2013</a>.</p>
+         function login(secret) {
+             const dirname = "writeup/20171215_MNMModel_Finemap.html"
+             var hash = Sha1.hash(secret + dirname)
+             var path = window.location.pathname.replace(/\/[^\/]*$/, '/')
+             var url = path + hash + '.html'
+             var alert = document.querySelectorAll('[data-id="alert"]')
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>$\newcommand{\bs}[1]{\boldsymbol{#1}}$
-$\DeclareMathOperator*{\diag}{diag}$
-$\DeclareMathOperator*{\cov}{cov}$
-$\DeclareMathOperator*{\rank}{rank}$
-$\DeclareMathOperator*{\var}{var}$
-$\DeclareMathOperator*{\tr}{tr}$
-$\DeclareMathOperator*{\veco}{vec}$
-$\DeclareMathOperator*{\uniform}{\mathcal{U}niform}$
-$\DeclareMathOperator*{\argmin}{arg\ min}$
-$\DeclareMathOperator*{\argmax}{arg\ max}$
-$\DeclareMathOperator*{\N}{N}$
-$\DeclareMathOperator*{\gm}{Gamma}$
-$\DeclareMathOperator*{\dif}{d}$</p>
+             var request = new XMLHttpRequest()
+             request.open('GET', url, true)
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="M&amp;M-ASH-model">M&amp;M ASH model<a class="anchor-link" href="#M&amp;M-ASH-model">&#182;</a></h2><p>We assume the following multivariate, multiple regression model with $N$ samples, $J$ effects and $R$ conditions (and <em>without covariates, which will be discussed separately</em>)
-\begin{align}
-\bs{Y}_{N\times R} = \bs{X}_{N \times J}\bs{B}_{J \times R} + \bs{E}_{N \times R},
-\end{align}
-where
-\begin{align}
-\bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}).
-\end{align}</p>
-<p>As a first path we assume $\bs{\Sigma}$ is known (or use estimates from elsewhere).</p>
-<p>Let $\omega_j := p(\alpha_j)$ be the prior probability that effect $j$ is non-zero,</p>
-<p>\begin{align}
-\alpha_j \sim \text{Bernoulli}(\omega_j)
-\end{align}</p>
-<p>We assume non-zero effects $\bs{b}_j$ (rows of $\bs{B}$) are iid with prior distribution of mixtures of multivariate normals</p>
-<p>\begin{align}
-p(\bs{b}_j|\alpha_j = 1) = \sum_{p = 0}^P\pi_{jp}\N_R(\bs{b}_j | \bs{0}, \bs{V}_p),
-\end{align}</p>
-<p>where the $\bs{V}_p$'s are $R \times R$ positive semi-definite covariance matrices and are known, with corresponding weights $\pi_{\cdot,p}$'s to be estimated (<a href="https://www.biorxiv.org/content/early/2017/05/09/096552">Urbut et al 2017</a>). We can augment the prior of $\bs{b}_j$ by indicator vector $\bs{\gamma}_j \in \mathbb{R}^P$ denoting membership of $\bs{b}_j$ into one of the $P$ mixture groups and write</p>
-<p>\begin{align}
-p(\bs{b}_j|\alpha_j = 1, \bs{\gamma}_j) &amp;= \prod_{p = 0}^P\left[\N(\bs{b}_j|\bs{0},\bs{V}_p)\right]^{\gamma_{jp}},
-\end{align}</p>
-<p>where</p>
-<p>\begin{align}
-p(\bs{\gamma}_j) &amp;= \prod_{p = 0}^{P} \pi_{jp}^{\gamma_{jp}}
-\end{align}</p>
-<p>The densities involved are</p>
-<p>\begin{align}
-p(\bs{Y}, \bs{B},\bs{\alpha}, \bs{\Gamma} | \bs{\Sigma}, \bs{\omega}, \bs{\Pi}) &amp; = 
-p(\bs{Y}|\bs{B}, \bs{\alpha}, \bs{\Gamma}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}) p(\bs{B}, \bs{\alpha}, \bs{\Gamma} |\bs{\omega}, \bs{\Pi}) \\
-&amp;= p(\bs{Y}|\bs{B}, \bs{\Sigma}) p(\bs{B}, \bs{\alpha}, \bs{\Gamma} |\bs{\omega}, \bs{\Pi}) 
-\end{align}</p>
+             request.onload = function () {
+                 if (request.status >= 200 && request.status < 400) {
+                     window.location = url
+                 } else {
+                     parent.location.hash = hash
+                     alert[0].style.display = 'block'
+                     password[0].setAttribute('placeholder', 'Incorrect password')
+                     password[0].value = ''
+                 }
+             }
+             request.onerror = function () {
+                 parent.location.hash = hash
+                 alert[0].style.display = 'block'
+                 var msg = "ERROR: XMLHttpRequest()"
+                 if (window.location.protocol == 'file:') {
+                     msg = 'file:// protocol not supported. Please upload page to webserver.'
+                 }
+                 password[0].setAttribute('placeholder', msg)
+                 password[0].value = ''
+             }
+             request.send()
+         }
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Variational-EM-and-evidence-lower-bound-(ELBO)">Variational EM and evidence lower bound (ELBO)<a class="anchor-link" href="#Variational-EM-and-evidence-lower-bound-(ELBO)">&#182;</a></h2><p>Following from <a href="https://gaow.github.io/mvarbvs/writeup/20171203_VEM.html">the VEM framework</a> where $Z:=(\bs{B}, \bs{\alpha}, \bs{\Gamma})$ and $\theta:= (\bs{\Sigma}, \bs{\Pi}, \bs{\omega})$,</p>
-<p>\begin{align}
-\log p(\bs{Y}|\bs{\Sigma}, \bs{\pi}, \bs{\omega}) &amp; \ge  \mathcal{L}(q, \bs{\Sigma}, \bs{\Pi}, \bs{\omega}) \\
-&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\alpha}, \bs{\Gamma}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
-E_q[\log\frac{p(\bs{B}, \bs{\alpha}, \bs{\Gamma}| \bs{\Sigma}, \bs{\Pi}, \bs{\omega})}{q(\bs{B}, \bs{\alpha}, \bs{\Gamma})}] \\
-&amp;= E_q[\log p(\bs{Y}|\bs{B}, \bs{\Sigma})] + 
-E_q[\log\frac{p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{\Sigma}, \bs{\Pi}, \bs{\omega})}{\prod_j q(\bs{b}_j, \alpha_j, \bs{\gamma}_j)}],
-\end{align}</p>
-<p>that is, we use a fully-fectorized variational approximation of posterior $q(\cdot)$, thus performing mean-field variational inference.</p>
+         button[0].addEventListener("click", function () {
+             login(password[0].value)
+         })
 
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="An-alternative-variational-algorithm">An alternative variational algorithm<a class="anchor-link" href="#An-alternative-variational-algorithm">&#182;</a></h2><p>Inspired by the conditional regression approach for fine mapping, we reparameterize the model as</p>
-<p>\begin{align}
-\bs{Y}_{N\times R} = \bs{X}_{N \times J}\sum_l^L \diag(\bs{\alpha}_l) {\bs{B}_l}_{J \times R} + \bs{E}_{N \times R},
-\end{align}</p>
-<p>where $L$ is the number of non-zero effects, or the upper bound on the number of non-zero effects if prior distribution of ${\bs{b}_l}_j$ includes a point mass at zero. For each $l = 1,\ldots, L$ we assume that <em>exactly 1 of the $J$ effects is non-zero</em>, as indicated by $\alpha_{lj}$,</p>
-<p>\begin{align}
-\bs{\alpha}_l \sim \text{Multinomial}(1, \bs{\omega}_l)
-\end{align}</p>
-<p>The key idea behind this parameterization is to use a variational approximation</p>
-<p>\begin{align}
-q(\bs{B}, \bs{\alpha}, \bs{\Gamma}) &amp;= \prod_l q(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l) \\
-&amp;=  \prod_l \prod_j q({\bs{b}_l}_{j}, \bs{\alpha}_l, {\bs{\gamma}_l}_j)
-\end{align}</p>
-<p>Crucially, we do not factorize $q(\bs{\alpha}_l)$ across its $J$ elements, that is, $\bs{\alpha}_l$ is a binary vector with exactly one non-zero element. We will reveal connection with conditional regression later as we develop the variational algorithm.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Derivation-of-variational-M&amp;M">Derivation of variational M&amp;M<a class="anchor-link" href="#Derivation-of-variational-M&amp;M">&#182;</a></h2><h3 id="One-effect-model">One effect model<a class="anchor-link" href="#One-effect-model">&#182;</a></h3><p>To develop the variational algorithm for fine-mapping with M&amp;M we first discuss the case when there is only one non-zero effect, then show that the results can be generalized to the case with multiple non-zero effects to natually yield fine-mapping solutions.</p>
-<p>In the event where only one row $\bs{B}_{1\cdot}$ is non-zero, that is, $\omega_1 = 1$, $\bs{\omega}_{-1} = \bs{0}$, M&amp;M becomes</p>
-<p>\begin{align}
-\bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{E}_{N \times R}, \quad \bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}),
-\end{align}</p>
-<p>a multivariate, single regressor Bayesian regression with prior</p>
-<p>\begin{align}
-p(\bs{b}_1, \bs{\gamma}_1) = \sum_{p = 0}^P\pi_{1p}\N_R(\bs{b}_1 | \bs{0}, \bs{V}_p).
-\end{align}</p>
-<p>Let "$\propto$" denote equality up to an additive constant independent of $q$, we write ELBO of this model</p>
-<p>\begin{align}
-\mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y}) &amp;= 
-E_q [\log p(\bs{Y} | \bs{b}_1, \bs{\Sigma})] + 
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1, \bs{\gamma}_1)}] \\
-&amp;= -\frac{NR}{2}\log(2\pi) - 
-\frac{N}{2}E_q[\log\det (\bs{\Sigma})] - 
-\frac{1}{2}E_q \{ \tr[(\bs{Y} - \bs{x}_1 \bs{b}_1) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1 \bs{b}_1)^\intercal] \} +
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1, \bs{\gamma}_1)}]
-\end{align}</p>
-<p>We focus on $E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1)^\intercal] \}$,</p>
-<p>\begin{align}
-E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1)^\intercal] \} &amp;= 
-\tr\{\bs{Y} E_q[\bs{\Sigma}^{-1}] \bs{Y}^\intercal\} - 
-2\tr\{\bs{Y}E_q[\bs{\Sigma}^{-1}]E_q[\bs{b}_1]^{\intercal}\bs{x}_1^\intercal\} +
-E_q[\tr(\bs{x}_1\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}_1^\intercal)] \\
-&amp; \propto E_q[\tr(\bs{x}_1\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}_1^\intercal)] - 2\tr(\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{b}_1]^\intercal\bs{x}_1^\intercal)
-\end{align}</p>
-<p>Therefore,</p>
-<p>\begin{align}
-\mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y}) &amp; \propto
-E_q[\tr(\bs{x}_1\bs{b}_1\bs{\Sigma}^{-1}\bs{b}^\intercal \bs{x}_1^\intercal)] - 2\tr(\bs{Y}\bs{\Sigma}^{-1}E_q[\bs{b}_1]^\intercal\bs{x}_1^\intercal) +
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1 | \bs{\pi}_1)}{q(\bs{b}_1, \bs{\gamma}_1)}]
-\end{align}</p>
-<p>In this case, we maximize $\mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y})$ by simply setting variational distribution $q(\cdot)$ to the posterior,</p>
-<p>\begin{align}
-p(\bs{b}_1, \bs{\gamma}_1 | \bs{Y}, \bs{\Sigma}, \bs{\pi}_1) = \argmax \mathcal{L}_1(q, \bs{\Sigma}, \bs{\pi}_1; \bs{Y})
-\end{align}</p>
-<p>since it can be calculated relatively easily due to established work, as will be revealed later.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Two-effects-model">Two effects model<a class="anchor-link" href="#Two-effects-model">&#182;</a></h3><p>In the event where two rows of $\bs{B}$ is non-zero, that is, $\omega_1 = \omega_2 = 1$, $\bs{\omega}_{-1, -2} = \bs{0}$, M&amp;M becomes</p>
-<p>\begin{align}
-\bs{Y}_{N \times R} = \bs{x}_1\bs{b}_1 + \bs{x}_2\bs{b}_2 + \bs{E}_{N \times R}, \quad \bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}),
-\end{align}</p>
-<p>a multivariate, two regressor Bayesian regression with independent priors $p(\bs{b}_1, \gamma_1, \bs{b}_2, \gamma_2) = p(\bs{b}_1,\gamma_1)p(\bs{b}_2,\gamma_2)$ where</p>
-<p>\begin{align}
-p(\bs{b}_\cdot, \bs{\gamma}_\cdot) = \sum_{p = 0}^P\pi_p\N_R(\bs{b}_\cdot | \bs{0}, \bs{V}_p).
-\end{align}</p>
-<p>we write ELBO of this model</p>
-<p>\begin{align}
-\mathcal{L}_2(q, \bs{\Sigma}, \bs{\pi}_1, \bs{\pi}_2; \bs{Y}) &amp;= 
-E_q [\log p(\bs{Y} | \bs{b}_1, \bs{b}_2, \bs{\Sigma})] + 
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}] \\
-&amp;= -\frac{NR}{2}\log(2\pi) - 
-\frac{N}{2}E_q[\log\det (\bs{\Sigma})] - 
-\frac{1}{2}E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2)^\intercal] \} +
-E_q[\log \frac{p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2 | \bs{\pi_1}, \bs{\pi_2})}{q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2)}]
-\end{align}</p>
-<p>where we choose $q(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2) = q_1(\bs{b}_1, \bs{\gamma}_1)q_2(\bs{b}_2, \bs{\gamma}_2)$ be the variational approximation to the posterior $p(\bs{b}_1, \bs{\gamma}_1, \bs{b}_2, \bs{\gamma}_2|\bs{Y}, \bs{\pi_1}, \bs{\pi_2}, \bs{\Sigma})$, ie, a "fully factorized" variational approximation. This allows us to use an iterative approach to maximize the ELBO.</p>
-<h4 id="Maximize-over-$q_2$-with-$q_1$-fixed">Maximize over $q_2$ with $q_1$ fixed<a class="anchor-link" href="#Maximize-over-$q_2$-with-$q_1$-fixed">&#182;</a></h4><p>Similar to the "one effect model" we focus on</p>
-<p>\begin{align}
-E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2)^\intercal] \},
-\end{align}</p>
-<p>and analogous to the setup of "conditional regression", we treat $q_1$ fixed and maximize over $q_2$ only,</p>
-<p>\begin{align}
-E_q \{ \tr[(\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2) \bs{\Sigma}^{-1} (\bs{Y} - \bs{x}_1\bs{b}_1 - \bs{x}_2\bs{b}_2)^\intercal] \} &amp; \propto
-E_{q_2}\{\tr(\bs{x}_2\bs{b}_2\bs{\Sigma}^{-1}\bs{b}_2^\intercal\bs{x}_2^\intercal)\} -
-2\tr\{(\bs{Y} - \bs{x}_1E_{q_1}[\bs{b}_1])\bs{\Sigma}^{-1}E_{q_2}[\bs{b}_2]^\intercal \bs{x}_2^\intercal\}
-\end{align}</p>
-<p>Let $\bs{\xi}_1 = \bs{Y} - \bs{x}_1E_{q_1}[\bs{b}_1]$, we have
-\begin{align}
-\mathcal{L}_2(q_2, \bs{\Sigma}, \bs{\pi}_2; \bs{Y}) &amp; \propto E_{q_2}\{\tr(\bs{x}_2\bs{b}_2\bs{\Sigma}^{-1}\bs{b}_2^\intercal\bs{x}_2^\intercal)\} -
-2\tr\{\bs{\xi}_1\bs{\Sigma}^{-1}E_{q_2}[\bs{b}_2]^\intercal \bs{x}_2^\intercal\} +
-E_{q_2}[\log \frac{p(\bs{b}_2, \bs{\gamma}_2 |\bs{\pi}_2)}{q_2(\bs{b}_2, \bs{\gamma}_2)}],
-\end{align}</p>
-<p>and similar to the case with "one effect model", $p(\bs{b}_2, \bs{\gamma}_2|\bs{\xi}_1, \bs{\pi}_2, \bs{\Sigma}) = \argmax \mathcal{L}_2(q_2, \bs{\Sigma}, \bs{\pi}_2; \bs{Y})$. In other words we maximize $\mathcal{L}_2$ over $q_2$ with $q_1$ fixed, by applying the same posterior computation for maximizing $\mathcal{L}_1$ over $q_1$ but using residualized response $\bs{\xi}_1$ rather than the original response $\bs{Y}$:</p>
-<p>\begin{align}
-\mathcal{L}_2(q_2, \bs{\Sigma}, \bs{\pi}_2; \bs{Y}) \propto \mathcal{L}_1(q_2, \bs{\Sigma}, \bs{\pi}_2; \bs{\xi}_1)
-\end{align}</p>
-<h4 id="Maximize-over-$q_1$-with-$q_2$-fixed">Maximize over $q_1$ with $q_2$ fixed<a class="anchor-link" href="#Maximize-over-$q_1$-with-$q_2$-fixed">&#182;</a></h4><p>Similarly we can maximize $\mathcal{L}_1$ over $q_1$ with $q_2$ fixed. The algorithm iterates until convergence.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="An-iterative-algorithm:-generalization-to-arbitary-number-of-effects">An iterative algorithm: generalization to arbitary number of effects<a class="anchor-link" href="#An-iterative-algorithm:-generalization-to-arbitary-number-of-effects">&#182;</a></h3><p>The arguments above can be generalized to having $L$ non-zero effects. For the $l$-th effect we optimize $\mathcal{L}_l$ over $q_l$ with all other $q_{-l}$ fixed, by applying Bayesian multivariate regression to $\bs{\xi}_{-l} = \bs{x}_l \bs{b}_l + E $. The algorithm iterates until convergence.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Variational-updates-for-quantities-of-interest">Variational updates for quantities of interest<a class="anchor-link" href="#Variational-updates-for-quantities-of-interest">&#182;</a></h3><h4 id="Posterior-of-multivariate-analysis">Posterior of multivariate analysis<a class="anchor-link" href="#Posterior-of-multivariate-analysis">&#182;</a></h4><p>As previously discussed, the core computation is making inference on Bayesian multivariate regression</p>
-<p>\begin{align}
-\bs{Y}_{N \times R} = \bs{x}_{N \times 1}\bs{b}_{1 \times R} + \bs{E}_{N \times R}, \quad \bs{E} &amp;\sim \N_{N \times R}(\bs{0}, \bs{I}_N, \bs{\Sigma}),
-\end{align}</p>
-<p>with prior</p>
-<p>\begin{align}
-p(\bs{b}, \bs{\gamma}) = \sum_{p = 0}^P\pi_{p}\N_R(\bs{b} | \bs{0}, \bs{V}_p).
-\end{align}</p>
-<p>We compute OLS estimates for $\bs{b}$,</p>
-<p>\begin{align}
-\hat{\bs{B}}_{jr} &amp; = (\bs{x}_j^\intercal\bs{x}_j)^{-1}(\bs{X}^\intercal\bs{Y})_{jr} \\
-&amp; = (\bs{x}_j^\intercal\bs{x}_j)^{-1}\bs{x}_j\bs{y}_{r}
-\end{align}</p>
-<p>We assume 
-\begin{align}
-\bs{\Sigma} = \bs{\Lambda}\bs{C}\bs{\Lambda}
-\end{align}</p>
-<p>where $\bs{\Lambda} = \diag(\sigma_1, \ldots, \sigma_R)$ and $\bs{V}$ is constant matrix (eg. identity for starters). Using plug-in estimate $\hat{\sigma}^2_r = Var(\bs{y}_r)$, we estimate standard error for $\hat{\bs{b}}$,</p>
-<p>\begin{align}
-\hat{\bs{S}} = (\bs{x}_j^\intercal\bs{x}_j)^{-1} \hat{\bs{\Sigma}}
-\end{align}</p>
-<p>Therefore the likelihood can be formulated using summary statistics,</p>
-<p>\begin{align}
-\hat{\bs{b}} | \bs{b} \sim N_R(\bs{b}, \hat{\bs{S}})
-\end{align}</p>
-<p>The conjugate prior leads us to the posterior distributed also as a mixture of multivariate normal,</p>
-<p>\begin{align}
-p(\bs{b}|\hat{\bs{b}}, \hat{\bs{S}}, \hat{\bs{\pi}}) &amp; = \sum_p p(\bs{b}|\hat{\bs{b}}, \hat{\bs{S}}, \gamma_p)p(\gamma_p |\hat{\bs{b}}, \hat{\bs{S}}, \hat{\pi}_p) \\
-&amp;= \sum_p p(\bs{b}|\hat{\bs{b}}, \hat{\bs{S}}, \gamma_p) \tilde{\pi}_p,
-\end{align}</p>
-<p>where $\hat{\bs{\pi}}$ for the Gaussian mixture can be estimated using established procedures (<a href="https://www.biorxiv.org/content/early/2017/05/09/096552">Urbut et al 2017</a>). For a multivariate normal distrubtion, <a href="https://learnbayes.org/index.php?option=com_content&amp;view=article&amp;id=77:completesquare&amp;catid=83&amp;Itemid=479&amp;showall=1&amp;limitstart=">we know that</a> the posterior on $\bs{b}|\hat{\bs{b}}, \hat{\bs{S}}, \gamma_p$ is</p>
-<p>\begin{align}
-\bs{b} | \hat{\bs{b}}, \hat{\bs{S}}, \gamma_p \sim N_R(\bar{\bs{b}}, \bs{U}_p)
-\end{align}</p>
-<p>where 
-\begin{align}
-\bar{\bs{b}} &amp;= \bs{U}_p(\hat{\bs{S}}^{-1}\hat{\bs{b}})\\
-\bs{U}_p &amp;= (\bs{V}_p^{-1} + \hat{\bs{S}}^{-1})^{-1} \\
-&amp;= ((\bs{V}_p^{-1} + \hat{\bs{S}}^{-1})\bs{V}_p\bs{V}_p^{-1})^{-1} \\
-&amp;= ((\bs{I} + \hat{\bs{S}}^{-1}\bs{V}_p)\bs{V}_p^{-1})^{-1} \\
-&amp;= \bs{V}_p(\bs{I} + \hat{\bs{S}}^{-1}\bs{V}_p)^{-1}
-\end{align}</p>
-<p>We also know that marginal likelihood of $\hat{\bs{b}}$ in this setting is also normal (cite <em>Statistical decision theory and Bayesian analysis 2nd edition by James Berger, Section 4.2 Example 1</em>), with</p>
-<p>\begin{align}
-E[\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p] &amp;= E_{\bs{b}}\big [E[\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p, \bs{b}]\big ] \\
-&amp;= E_{\bs{b}}[\bs{b}|\gamma_p] \\
-&amp;= \bs{0}, \\
-Var(\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p) &amp;= E_{\bs{b}}\big [Var[\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p, \bs{b}]\big ] + Var_{\bs{b}}\big [E[\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p, \bs{b}]\big ] \\
-&amp;= E_{\bs{b}}[\hat{\bs{S}}] + Var_{\bs{b}}[\bs{b}|\gamma_p] \\
-&amp;= \hat{\bs{S}} + \bs{V}_{p}
-\end{align}</p>
-<p>The posterior weights $\tilde{\pi}_p$ can the be estimated by 
-\begin{align}
-\hat{\tilde{\pi}}_{p} &amp;= \frac{\hat{\pi}_p N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}} + \bs{V}_{p})}{\sum_p \hat{\pi}_p N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}} + \bs{V}_{p})}
-\end{align}</p>
-<h4 id="Bayes-factor">Bayes factor<a class="anchor-link" href="#Bayes-factor">&#182;</a></h4><p>Bayes factor is the ratio of the likelihood of alternative vs null,</p>
-<p>\begin{align}
-\text{BF} = \frac{\sum_p \hat{\pi}_p N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}} + \bs{V}_{p})}{N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}})}
-\end{align}</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Derivation-of-ELBO">Derivation of ELBO<a class="anchor-link" href="#Derivation-of-ELBO">&#182;</a></h2><p>ELBO for the new variational M&amp;M model is</p>
-<p>\begin{align}
-\mathcal{L}(q, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}; \bs{Y}) &amp; = E_q[\log p(\bs{Y} | \bs{B}, \bs{\alpha}, \bs{\Lambda}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
-E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}] \\
-&amp; \propto E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} - 2\tr\{\bs{Y}\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal\bs{X}^\intercal\} +
-E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}] 
-\end{align}</p>
-<p>where $\bar{\bs{B}}:= E_q[\bs{B}]$. As shown previously we estimate $\bar{\bs{B}}$ using variational approximation to posterior mean $\tilde{\bs{B}}$. We need to work out $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$ and $E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}] $ next.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="$E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$">$E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$<a class="anchor-link" href="#$E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$">&#182;</a></h3><p>\begin{align}
-E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;= 
-E_q\{\tr(\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal\bs{X})\} \quad \text{Cyclic permutation of trace} \\
-&amp;= E_q\{\tr(\bs{\Sigma}^{-1}\bs{B}^\intercal \bs{S} \bs{B})\} \\
-&amp;= \tr\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\},
-\end{align}</p>
-<p>where $\bs{S}:=\bs{X}^\intercal\bs{X}$. Now we focus on element-wise computations for $\big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)$. Recall that $\bs{B} \in \mathbb{R}^{J\times R}$, $\bs{S} \in \mathbb{R}^{J\times J}$, $\bs{\Sigma}^{-1} \in \mathbb{R}^{R\times R}$,</p>
-<p>\begin{align}
-[\bs{B}^\intercal\bs{S}]_{rj'} &amp;= \sum_j^J B_{jr} S_{jj'}, \\
-[\bs{B}^\intercal\bs{S}\bs{B}]_{rr'} &amp;= \sum_j \sum_{j'} B_{jr} S_{jj'} B_{j'r'}, \\
-E_q[\bs{B}^\intercal\bs{S}\bs{B}]_{rr'} &amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{jr} B_{j'r'}] \\
-&amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{jr}] E_q[B_{j'r'}] + \sum_j \sum_{j'} S_{jj'} \cov(B_{jr}, B_{j'r'}) \\
-&amp;= \sum_j \sum_{j'} S_{jj'} \bar{B}_{jr} \bar{B}_{j'r'} + \sum_j \sum_{j'} S_{jj'} \rho_{jrr'}\mathbb{1}(j=j'),
-\end{align}</p>
-<p>where $\rho_{jrr'}:= \cov(b_{jr}, b_{jr'})$ is non-zero for the $j$-th effect at conditions $r$ and $r'$, and can be estimated by posterior covariance for $\bs{b}_j$. For $j \ne j'$, due to the model assumption of independent effects, the correlations are zero.</p>
-<p>The $rr'$ element of $\big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)$ is thus</p>
-<p>\begin{align}
-\big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)_{rr'} &amp;= 
-\sum_l^R \lambda_{rl}\big(\sum_j \sum_{j'}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + \sum_j S_{jj}\rho_{jlr'}\big) \\
-&amp; = \sum_l^R\sum_j\sum_{j'}\lambda_{rl}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + 
-\sum_l^R\sum_j \lambda_{rl} S_{jj} \rho_{jlr'},
-\end{align}</p>
-<p>and finally</p>
-<p>\begin{align}
-E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;= 
-\tr\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\} \\
-&amp;= \sum_r^R\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\} \\
-&amp;= \sum_r \sum_l^R \sum_j \sum_{j'} \lambda_{rl} S_{jj'} \bar{B}_{jl} \bar{B}_{j'r} + 
-\sum_r \sum_l^R \sum_j \lambda_{rl} S_{jj} \rho_{jlr} \\
-&amp;= \sum_r \sum_{r'} \sum_j \sum_{j'} \lambda_{rr'} S_{jj'} \bar{B}_{jr'} \bar{B}_{j'r} + 
-\sum_r \sum_{r'} \sum_j \lambda_{rr'} S_{jj} \rho_{jrr'} \\
-&amp;= \tr\{\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal \bs{S} \bar{\bs{B}}\} + 
-\sum_r \sum_{r'} \sum_j \lambda_{rr'} S_{jj} \rho_{jrr'}
-\end{align}</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="$E_q[\log\frac{\prod_{l}p(\bs{B}_l,-\bs{\alpha}_l,-\bs{\Gamma}_l-|-\bs{\Pi}_l,-\bs{\omega}_l)}{\prod_l-\prod_j-q({\bs{b}_l}_j,-\bs{\alpha}_l,-{\bs{\gamma}_l}_j)}]$">$E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}]$<a class="anchor-link" href="#$E_q[\log\frac{\prod_{l}p(\bs{B}_l,-\bs{\alpha}_l,-\bs{\Gamma}_l-|-\bs{\Pi}_l,-\bs{\omega}_l)}{\prod_l-\prod_j-q({\bs{b}_l}_j,-\bs{\alpha}_l,-{\bs{\gamma}_l}_j)}]$">&#182;</a></h3><p>\begin{align}
-E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}] &amp;= 
-\sum_l E_q[\log p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)] - \sum_l \sum_j E_q[\log q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)]
-\end{align}</p>
-<p>Without loss of generality in the calculations below we drop the subscript $l$.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="$E_q[\log-p(\bs{B},\bs{\alpha},\bs{\Gamma}|\bs{\Pi},-\bs{\omega})]$">$E_q[\log p(\bs{B},\bs{\alpha},\bs{\Gamma}|\bs{\Pi}, \bs{\omega})]$<a class="anchor-link" href="#$E_q[\log-p(\bs{B},\bs{\alpha},\bs{\Gamma}|\bs{\Pi},-\bs{\omega})]$">&#182;</a></h4><p>By Bishop 2006 Equation 9.36,</p>
-<p>\begin{align}
-E_q[\log p(\bs{B},\bs{\alpha},\bs{\Gamma}|\bs{\Pi}, \bs{\omega})] &amp;=
-E_q\big[ \sum_j \alpha_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log \det(\bs{V}_p) - \frac{1}{2} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j\} \big) \big | \bs{\alpha}, \bs{\Gamma}\big] \\
-&amp; = \sum_j \sum_p \tilde{\omega}_j \tilde{\pi}_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p \tilde{\omega}_j \tilde{\pi}_{jp} E_q[\bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j|\alpha_j, \gamma_{jp}],
-\end{align}</p>
-<p>\begin{align}
-E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{\omega}, \bs{\Pi})] &amp;=
-E_q\big[ \sum_j \alpha_j \big( \sum_p \gamma_{jp} \{\log(\pi_p) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log \det(\bs{V}_p) - \frac{1}{2} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j\} \big) | \bs{\omega}, \bs{\Pi}\big] \\
-&amp; = E_q\big[ \sum_j \sum_p \alpha_j \gamma_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \alpha_j (\bs{V}_p \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) \big] \\
-&amp; = \sum_j \sum_p \tilde{\omega}_j \tilde{\pi}_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} - \frac{1}{2} \sum_j \sum_p E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j],
-\end{align}</p>
-<p>where posterior weight $\tilde{\pi}_{jp}$ is estimated by $\hat{\tilde{\pi}}_{jp}$ which has been derived previously, and $\tilde{\omega}_j$ is estimated by weight of the $j$-th Bayes Factor $\hat{\tilde{\omega}}_j = \frac{\text{BF}_j}{\sum_j \text{BF}_j}$, where $\text{BF}_j$ has also been derived previously.</p>
-<p>Now we are left to work on $E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j]$ which is a scalar,</p>
-<p>\begin{align}
-E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j] &amp;= 
-E_q\big[E_q[\alpha_j \gamma_{jp} \bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j | \alpha_j,\gamma_{jp}] \big] \\
-&amp;= E_q\big[E_q[\alpha_j \gamma_{jp} \tr(\bs{b}_j^\intercal \bs{V}_p^{-1} \bs{b}_j) | \alpha_j,\gamma_{jp}] \big] \\
-&amp;= E_q\big[E_q[\alpha_j \gamma_{jp} \tr(\bs{V}_p^{-1} \bs{b}_j \bs{b}_j^\intercal) | \alpha_j,\gamma_{jp}] \big] \\
-&amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} E_q[\alpha_j \gamma_{jp} \bs{b}_j \bs{b}_j^\intercal | \alpha_j \gamma_{jp}] \big ] \big \} \\
-&amp;= \tr \big \{ E_q \big [ \bs{V}_p^{-1} \tilde{\omega}_j \tilde{\pi}_{jp} (\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})] \big ] \big \} \\
-&amp;= \tilde{\omega}_j\tilde{\pi}_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
-\end{align}</p>
-<p>Hence,
-\begin{align}
-E_q[\log p(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;= 
-\sum_j \sum_p \tilde{\omega}_j \tilde{\pi}_{jp} \{ \log(\pi_p) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det (\bs{V}_p) \} -
-\frac{1}{2} \sum_j \sum_p \tilde{\omega}_j\tilde{\pi}_{jp} \tr[\bs{V}_p^{-1}(\bar{\bs{b}}_j \bar{\bs{b}}_j^\intercal + \bs{U}_{jp})]
-\end{align}</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="$E_q[\log-q(\bs{b}_j,-\bs{\alpha},-\bs{\gamma}_j)]$">$E_q[\log q(\bs{b}_j, \bs{\alpha}, \bs{\gamma}_j)]$<a class="anchor-link" href="#$E_q[\log-q(\bs{b}_j,-\bs{\alpha},-\bs{\gamma}_j)]$">&#182;</a></h4><p>\begin{align}
-E_q[\log q(\bs{b}_j, \bs{\alpha}, \bs{\gamma}_j)] &amp; = 
-E_q\big[\alpha_j \sum_p \gamma_{jp} \{ \log(\tilde{\pi}_{jp}) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) - \frac{1}{2} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) \} \big] \\
-&amp; = \tilde{\omega}_j \sum_p \tilde{\pi}_{jp} \{ \log(\tilde{\pi}_{jp}) - \frac{R}{2} \log(2\pi) - \frac{1}{2} \log \det(\bs{U}_{jp}) \} -
-\frac{1}{2} \sum_p E_q\big[ \alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big],
-\end{align}</p>
-<p>where $\bs{U}_{jp}$ and $\bar{\bs{b}}_j$ have been derived previously, and the expectation term</p>
-<p>\begin{align}
-E_q\big[ \alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j)\big] &amp;= 
-E_q \big [ E_q[\alpha_j \gamma_{jp} (\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \alpha_j, \gamma_{jp} ] \big] \\
-&amp;= E_q \big [ \alpha_j \gamma_{jp} E_q[(\bs{b}_j - \bar{\bs{b}}_j)^\intercal \bs{U}_{jp}^{-1} (\bs{b}_j - \bar{\bs{b}}_j) | \alpha_j, \gamma_{jp} ] \big] \\
-&amp;= E_q[R\alpha_j\gamma_{jp}] \quad \text{since } \bs{b}_j | \alpha_j, \gamma_{jp} \sim N_R(\bar{\bs{b}}_j, \bs{U}_{jp})\\ 
-&amp;= R\tilde{\omega}_j\tilde{\pi}_{jp}
-\end{align}</p>
-<p>Hence</p>
-<p>\begin{align}
-E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp;=
-\tilde{\omega}_j \sum_p\tilde{\pi}_{jp} \big( \log(\tilde{\pi}_{jp}) - \frac{R}{2}\log(2\pi) - \frac{1}{2}\log\det(\bs{U}_{jp}) - \frac{R}{2}\big)
-\end{align}</p>
-
-</div>
-</div>
-</div>
-<hr>
-Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/8919b63aeacdde4b621623c64f454b9e7c581386/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Fri Apr 6 13:44:09 2018 <a href="http://github.com/gaow/mvarbvs/commit/8919b63aeacdde4b621623c64f454b9e7c581386">revision 16, 8919b63</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
-</div>
-</div>
-</body>
+         document.onkeydown = function (e) {
+             e = e || window.event
+             if (e.keyCode == 13) {
+                 login(password[0].value)
+             }
+         }
+        </script>
+    </body>
 </html>
