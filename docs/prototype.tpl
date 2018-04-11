@@ -26,7 +26,7 @@
       href="../site_libs/highlightjs/null.min.css"
       type="text/css" />
 
-<script src="../site_libs/highlightjs/highlight.null.js"></script>
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
 <script type="text/javascript">
 if (window.hljs && document.readyState && document.readyState === "complete") {
