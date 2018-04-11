@@ -472,9 +472,9 @@ p(\bs{b}, \bs{\gamma}) = \sum_{p = 0}^P\pi_{p}\N_R(\bs{b} | \bs{0}, \bs{V}_p).
 \end{align}</p>
 <p>We assume 
 \begin{align}
-\bs{\Sigma} = \bs{\Lambda}\bs{C}\bs{\Lambda}
+\bs{\Sigma} = \bs{D}\bs{C}\bs{D}
 \end{align}</p>
-<p>where $\bs{\Lambda} = \diag(\sigma_1, \ldots, \sigma_R)$ and $\bs{V}$ is constant matrix (eg. identity for starters). Using plug-in estimate $\hat{\sigma}^2_r = Var(\bs{y}_r)$, we estimate standard error for $\hat{\bs{b}}$,</p>
+<p>where $\bs{D} = \diag(\sigma_1, \ldots, \sigma_R)$ and $\bs{C}$ is constant matrix. As a first pass we let $\bs{C} = \bs{I}_R$. Using plug-in estimate $\hat{\sigma}^2_r = Var(\bs{y}_r)$, we estimate standard error for $\hat{\bs{b}}$,</p>
 <p>\begin{align}
 \hat{\bs{S}} = (\bs{x}_j^\intercal\bs{x}_j)^{-1} \hat{\bs{\Sigma}}
 \end{align}</p>
@@ -535,7 +535,7 @@ Var(\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p) &amp;= E_{\bs{b}}\big [Var[\hat{\bs{b
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Variational-updates-for-quantities-of-interest">Variational updates for quantities of interest<a class="anchor-link" href="#Variational-updates-for-quantities-of-interest">&#182;</a></h3><p>As indicated by our model, define $\bs{B}:=\sum_l \diag(\bs{\alpha}_l)\bs{B}_l$, we want to compute $\tilde{\bs{B}}$, the variational mean for $\bs{B}$ and $\bs{\rho}: = \{\bs{\rho}_j\}$, a $J$ vector of $R \times R$ matrix for variational standard deviation of each rwo of $\bs{B}$.</p>
+<h3 id="Variational-updates-for-quantities-of-interest">Variational updates for quantities of interest<a class="anchor-link" href="#Variational-updates-for-quantities-of-interest">&#182;</a></h3><p>As indicated by our model, define $\bs{B}:=\sum_l \diag(\bs{\alpha}_l)\bs{B}_l$, we want to compute $\tilde{\bs{B}}$, the variational mean for $\bs{B}$ and $\bs{\rho}: = \{\bs{\rho}_j\}$, a $J$ vector of $R \times R$ matrix for variational standard deviation of each row of $\bs{B}$.</p>
 <p>Applying the core computation for multivariate regression in the iterative algorithm to each $l$ and $j$ as derived above, $\tilde{\bs{B}}_l$ and $\bs{\rho}_l$ can be estimated. 
 Posterior mean of the $J$ vector $\bs{\alpha}_l$ can be estimated by Bayes Factor averaging:</p>
 <p>\begin{align}
@@ -597,21 +597,21 @@ E_q[\bs{B}^\intercal\bs{S}\bs{B}]_{rr'} &amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{j
 <p>The $rr'$ element of $\big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)$ is thus</p>
 <p>\begin{align}
 \big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)_{rr'} &amp;= 
-\sum_l^R \frac{1}{\sigma^2_{rl}}\big(\sum_j \sum_{j'}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + \sum_j S_{jj}\rho^2_{jlr'}\big) \\
-&amp; = \sum_l^R\sum_j\sum_{j'}\frac{1}{\sigma^2_{rl}}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + 
-\sum_l^R\sum_j \frac{1}{\sigma^2_{rl}} S_{jj} \rho^2_{jlr'},
+\sum_l^R \lambda_{rl}\big(\sum_j \sum_{j'}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + \sum_j S_{jj}\rho^2_{jlr'}\big) \\
+&amp; = \sum_l^R\sum_j\sum_{j'}\lambda_{rl}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + 
+\sum_l^R\sum_j \lambda_{rl} S_{jj} \rho^2_{jlr'},
 \end{align}</p>
-<p>and finally</p>
+<p>where $\lambda_{rl}:=[\bs{\Sigma}^{-1}]_{rl}$. Finally,</p>
 <p>\begin{align}
 E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;= 
 \tr\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\} \\
 &amp;= \sum_r^R\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\} \\
-&amp;= \sum_r \sum_l^R \sum_j \sum_{j'} \frac{1}{\sigma^2_{rl}} S_{jj'} \bar{B}_{jl} \bar{B}_{j'r} + 
-\sum_r \sum_l^R \sum_j \frac{1}{\sigma^2_{rl}} S_{jj} \rho^2_{jlr} \\
-&amp;= \sum_r \sum_{r'} \sum_j \sum_{j'} \frac{1}{\sigma^2_{rr'}} S_{jj'} \bar{B}_{jr'} \bar{B}_{j'r} + 
-\sum_r \sum_{r'} \sum_j \frac{1}{\sigma^2_{rr'}} S_{jj} \rho^2_{jrr'} \\
+&amp;= \sum_r \sum_l^R \sum_j \sum_{j'} \lambda_{rl} S_{jj'} \bar{B}_{jl} \bar{B}_{j'r} + 
+\sum_r \sum_l^R \sum_j \lambda_{rl} S_{jj} \rho^2_{jlr} \\
+&amp;= \sum_r \sum_{r'} \sum_j \sum_{j'}\lambda_{rr'} S_{jj'} \bar{B}_{jr'} \bar{B}_{j'r} + 
+\sum_r \sum_{r'} \sum_j \lambda_{rr'} S_{jj} \rho^2_{jrr'} \\
 &amp;= \tr\{\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal \bs{S} \bar{\bs{B}}\} + 
-\sum_r \sum_{r'} \sum_j \frac{1}{\sigma^2_{rr'}} S_{jj} \rho^2_{jrr'}
+\sum_r \sum_{r'} \sum_j \lambda_{rr'} S_{jj} \rho^2_{jrr'}
 \end{align}</p>
 
 </div>
@@ -696,7 +696,7 @@ E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/ac6a9b3a4fcc5e89532d43819d6a23846fca31a5/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Tue Apr 10 21:24:06 2018 <a href="http://github.com/gaow/mvarbvs/commit/ac6a9b3a4fcc5e89532d43819d6a23846fca31a5">revision 18, ac6a9b3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/b9bba283babcaa8ef1fb4675d83233f27185cd31/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Wed Apr 11 08:00:31 2018 <a href="http://github.com/gaow/mvarbvs/commit/b9bba283babcaa8ef1fb4675d83233f27185cd31">revision 19, b9bba28</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
