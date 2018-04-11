@@ -597,21 +597,21 @@ E_q[\bs{B}^\intercal\bs{S}\bs{B}]_{rr'} &amp;= \sum_j \sum_{j'} S_{jj'} E_q[B_{j
 <p>The $rr'$ element of $\big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)$ is thus</p>
 <p>\begin{align}
 \big(\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\big)_{rr'} &amp;= 
-\sum_l^R \sigma^{-1}_{rl}\big(\sum_j \sum_{j'}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + \sum_j S_{jj}\rho_{jlr'}\big) \\
-&amp; = \sum_l^R\sum_j\sum_{j'}\sigma^{-1}_{rl}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + 
-\sum_l^R\sum_j \sigma^{-1}_{rl} S_{jj} \rho_{jlr'},
+\sum_l^R \frac{1}{\sigma^2_{rl}}\big(\sum_j \sum_{j'}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + \sum_j S_{jj}\rho^2_{jlr'}\big) \\
+&amp; = \sum_l^R\sum_j\sum_{j'}\frac{1}{\sigma^2_{rl}}S_{jj'}\bar{B}_{jl}\bar{B}_{j'r'} + 
+\sum_l^R\sum_j \frac{1}{\sigma^2_{rl}} S_{jj} \rho^2_{jlr'},
 \end{align}</p>
 <p>and finally</p>
 <p>\begin{align}
 E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;= 
 \tr\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\} \\
 &amp;= \sum_r^R\{\bs{\Sigma}^{-1}E_q[\bs{B}^\intercal \bs{S} \bs{B}]\} \\
-&amp;= \sum_r \sum_l^R \sum_j \sum_{j'} \sigma^{-1}_{rl} S_{jj'} \bar{B}_{jl} \bar{B}_{j'r} + 
-\sum_r \sum_l^R \sum_j \sigma^{-1}_{rl} S_{jj} \rho_{jlr} \\
-&amp;= \sum_r \sum_{r'} \sum_j \sum_{j'} \sigma^{-1}_{rr'} S_{jj'} \bar{B}_{jr'} \bar{B}_{j'r} + 
-\sum_r \sum_{r'} \sum_j \sigma^{-1}_{rr'} S_{jj} \rho_{jrr'} \\
+&amp;= \sum_r \sum_l^R \sum_j \sum_{j'} \frac{1}{\sigma^2_{rl}} S_{jj'} \bar{B}_{jl} \bar{B}_{j'r} + 
+\sum_r \sum_l^R \sum_j \frac{1}{\sigma^2_{rl}} S_{jj} \rho^2_{jlr} \\
+&amp;= \sum_r \sum_{r'} \sum_j \sum_{j'} \frac{1}{\sigma^2_{rr'}} S_{jj'} \bar{B}_{jr'} \bar{B}_{j'r} + 
+\sum_r \sum_{r'} \sum_j \frac{1}{\sigma^2_{rr'}} S_{jj} \rho^2_{jrr'} \\
 &amp;= \tr\{\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal \bs{S} \bar{\bs{B}}\} + 
-\sum_r \sum_{r'} \sum_j \sigma^{-1}_{rr'} S_{jj} \rho_{jrr'}
+\sum_r \sum_{r'} \sum_j \frac{1}{\sigma^2_{rr'}} S_{jj} \rho^2_{jrr'}
 \end{align}</p>
 
 </div>
@@ -696,7 +696,7 @@ E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/d3bec36c2f29441dd2b5e6431a8c00d135f98bb7/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Tue Apr 10 20:58:48 2018 <a href="http://github.com/gaow/mvarbvs/commit/d3bec36c2f29441dd2b5e6431a8c00d135f98bb7">revision 17, d3bec36</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/ac6a9b3a4fcc5e89532d43819d6a23846fca31a5/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Tue Apr 10 21:24:06 2018 <a href="http://github.com/gaow/mvarbvs/commit/ac6a9b3a4fcc5e89532d43819d6a23846fca31a5">revision 18, ac6a9b3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
