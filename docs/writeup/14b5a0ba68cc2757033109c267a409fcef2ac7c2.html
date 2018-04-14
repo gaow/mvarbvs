@@ -515,13 +515,13 @@ Var(\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p) &amp;= E_{\bs{b}}\big [Var[\hat{\bs{b
 <p>$\tilde{\bs{b}}$, posterior mean of $\bs{b}$ is then estimated by $\hat{\tilde{\bs{b}}} = \sum_p \hat{\tilde{\pi}}_p \bar{\bs{b}}_p$.</p>
 <p>To compute $\tilde{\bs{S}}$, posterior standard deviation of $\bs{b}$,</p>
 <p>\begin{align}
-\tilde{\bs{S}} = \sqrt{Var(\bs{b})} &amp;= \sqrt{E[\bs{b}^2] - E^2[\bs{b}]} \\
-&amp;= \sqrt{\tilde{\bs{b}^2} - \tilde{\bs{b}}^2}
+\tilde{\bs{S}} = \sqrt{Var(\bs{b})} &amp;= \sqrt{E[\bs{b} \bs{b}^\intercal] - E[\bs{b}]E[\bs{b}]^\intercal} \\
+&amp;= \sqrt{\tilde{\bs{b}^2} - \tilde{\bs{b}}\tilde{\bs{b}}^\intercal}
 \end{align}</p>
 <p>where</p>
 <p>\begin{align}
-\tilde{\bs{b}^2} &amp;= \sum_p \tilde{\pi}_p \bar{\bs{b}^2}_p \\
-\bar{\bs{b}^2}_p &amp;= \bar{\bs{b}}_p^\intercal \bar{\bs{b}}_p + \bs{U}_p
+\tilde{\bs{b}^2} &amp;:= \sum_p \tilde{\pi}_p \bar{\bs{b}^2}_p \\
+\bar{\bs{b}^2}_p &amp;:= \bar{\bs{b}}_p\bar{\bs{b}}_p^\intercal + \bs{U}_p
 \end{align}</p>
 <h4 id="Bayes-factor">Bayes factor<a class="anchor-link" href="#Bayes-factor">&#182;</a></h4><p>Bayes factor is the ratio of the likelihood of alternative vs null,</p>
 <p>\begin{align}
@@ -547,12 +547,12 @@ Posterior mean of the $J$ vector $\bs{\alpha}_l$ can be estimated by Bayes Facto
 \end{align}</p>
 <p>$\bs{\rho}_j$, variational standard deviation of $\bs{b}_j$, is computed by</p>
 <p>\begin{align}
-\tilde{\bs{\rho}}_j = \sqrt{\tilde{\bs{b}_j^2} - \tilde{\bs{b}_j}^2}
+\tilde{\bs{\rho}}_j = \sqrt{\tilde{\bs{b}_j^2} - \tilde{\bs{b}_j} \tilde{\bs{b}_j}^\intercal}
 \end{align}</p>
 <p>where</p>
 <p>\begin{align}
-\tilde{\bs{b}_j^2} &amp;= \sum_l \tilde{\omega_j}_l \tilde{\bs{b}_j^2}_l \\
-\tilde{\bs{b}_j^2}_l &amp;= \tilde{\bs{b}_j}_l^\intercal\tilde{\bs{b}_j}_l  + {\tilde{\bs{S}}^2_j}_l
+\tilde{\bs{b}_j^2} &amp;:= \sum_l \tilde{\omega_j}_l \tilde{\bs{b}_j^2}_l \\
+\tilde{\bs{b}_j^2}_l &amp;:= \tilde{\bs{b}_j}_l\tilde{\bs{b}_j}_l^\intercal  + {\tilde{\bs{S}}^2_j}_l
 \end{align}</p>
 
 </div>
@@ -696,7 +696,7 @@ E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/fd163275fb7ab22d00d728d3ad66b29cc3b6a350/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Wed Apr 11 12:44:00 2018 <a href="http://github.com/gaow/mvarbvs/commit/fd163275fb7ab22d00d728d3ad66b29cc3b6a350">revision 20, fd16327</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/87e8b5251c87496eb2a49e4b9363dcc85a518b40/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Sat Apr 14 00:27:13 2018 <a href="http://github.com/gaow/mvarbvs/commit/87e8b5251c87496eb2a49e4b9363dcc85a518b40">revision 21, 87e8b52</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
