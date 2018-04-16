@@ -21,16 +21,18 @@ init_model: init_mnm.R
   $model: model
 
 fit: fit_mnm.R
-  maxL: 5
+  maxL: 8
   maxI: 10
   data: $data
   model: $model
   $fitted: fitted_track
+  $posterior: list(PosteriorMean=post_mean, PosteriorCov=post_cov)
 
 diagnose: elbo_mnm.py
   data: $data
   model: $model
   fitted: $fitted
+  posterior: $posterior
   $diagnosed: elbo
 
 DSC:
