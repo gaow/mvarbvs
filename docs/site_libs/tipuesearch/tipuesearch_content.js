@@ -134,6 +134,7 @@ var tipuesearch = {"pages": [
 {"mainTitle": "Meetings", "title": "Meetings", "text": "Meetings ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Meetings.html", "url": "http://gaow.github.io/mvarbvs/writeup/Meetings.html#Meetings"},
 {"mainTitle": "Meetings", "title": "20180417", "text": "20180417 ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Meetings.html", "url": "http://gaow.github.io/mvarbvs/writeup/Meetings.html#20180417"},
 {"mainTitle": "Meetings", "title": "Aganda", "text": "Aganda ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Meetings.html", "url": "http://gaow.github.io/mvarbvs/writeup/Meetings.html#Aganda"},
+{"mainTitle": "Meetings", "title": "Next steps", "text": "Next steps ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Meetings.html", "url": "http://gaow.github.io/mvarbvs/writeup/Meetings.html#Next-steps"},
 {"mainTitle": "Meetings", "title": "20171210", "text": "20171210 ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Meetings.html", "url": "http://gaow.github.io/mvarbvs/writeup/Meetings.html#20171210"},
 {"mainTitle": "Meetings", "title": "Agenda", "text": "Agenda ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Meetings.html", "url": "http://gaow.github.io/mvarbvs/writeup/Meetings.html#Agenda"},
 {"mainTitle": "Meetings", "title": "20171127", "text": "20171127 ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Meetings.html", "url": "http://gaow.github.io/mvarbvs/writeup/Meetings.html#20171127"},
