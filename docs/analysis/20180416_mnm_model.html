@@ -2843,6 +2843,32 @@ mm_regression = function(X, Y, Z=NULL) {
   return(aperm(reg, c(3,2,1)))
 }
 
+#find how many variables in the 95% CI
+# x is a probability vector
+n_in_CI_x = function(x){
+  sum(cumsum(sort(x,decreasing = TRUE))<0.95)+1
+}
+
+# return binary vector indicating if each point is in CI
+# x is a probability vector
+in_CI_x = function(x){
+  n = n_in_CI_x(x)
+  o = order(x,decreasing=TRUE)
+  result = rep(0,length(x))
+  result[o[1:n]] = 1
+  return(result)
+}
+
+# Return binary matrix indicating which variables are in CI of each
+# of effect
+in_CI = function(alpha){
+  t(apply(alpha,1,in_CI_x))
+}
+
+n_in_CI = function(alpha){
+  apply(alpha,1,n_in_CI_x)
+}
+
 </code></pre></div>
 </div></div></div></div>
 <div class="accodion-section">
@@ -2853,7 +2879,7 @@ mm_regression = function(X, Y, Z=NULL) {
 <li class="active"><a href="#get_data-original_y-init_mnm-fit_mnm-diagnose_r-6aad3b49">R (6aad3b49)</a></li>
 <li><a href="#get_data-original_y-init_mnm-fit_mnm-diagnose_python-6aa3779c">Python (6aa3779c)</a></li>
 <li><a href="#get_data-original_y-init_mnm-fit_mnm-diagnose_init_mnmr-87c6ace5">init_mnm.R (87c6ace5)</a></li>
-<li><a href="#get_data-original_y-init_mnm-fit_mnm-diagnose_fit_mnmr-b3ada403">fit_mnm.R (b3ada403)</a></li>
+<li><a href="#get_data-original_y-init_mnm-fit_mnm-diagnose_fit_mnmr-7f4ee994">fit_mnm.R (7f4ee994)</a></li>
 <li><a href="#get_data-original_y-init_mnm-fit_mnm-diagnose_elbo_mnmr-f14b4eae">elbo_mnm.R (f14b4eae)</a></li>
 </ul>
 <div class="tab-content">
@@ -2891,7 +2917,7 @@ if (p == 'auto') {
   model$fitted_g = list(pi=p, Ulist=U, grid=grid, usepointmass=TRUE)
 }
 </code></pre></div>
-<div id="get_data-original_y-init_mnm-fit_mnm-diagnose_fit_mnmr-b3ada403" class="tab">
+<div id="get_data-original_y-init_mnm-fit_mnm-diagnose_fit_mnmr-7f4ee994" class="tab">
 <pre><code class="language-r; line-numbers; left-trim; right-trim;">
 
 source("utils.R")
@@ -2946,7 +2972,9 @@ for (j in 1:ncol(data$X)) {
 posterior <- list(PosteriorMean=post_mean,
                   PosteriorCov=post_cov,
                   lfdr=post_zero,
-                  lfsr=ifelse(post_neg > 0.5 * (1 - post_zero), 1 - post_neg, post_neg + post_zero)
+                  lfsr=ifelse(post_neg > 0.5 * (1 - post_zero), 1 - post_neg, post_neg + post_zero),
+                  n_in_CI=n_in_CI(t(fitted$alpha)),
+                  in_CI=in_CI(t(fitted$alpha))
                   )
 </code></pre></div>
 <div id="get_data-original_y-init_mnm-fit_mnm-diagnose_elbo_mnmr-f14b4eae" class="tab">
