@@ -64,5 +64,7 @@ for (j in 1:ncol(data$X)) {
 posterior <- list(PosteriorMean=post_mean,
                   PosteriorCov=post_cov,
                   lfdr=post_zero,
-                  lfsr=ifelse(post_neg > 0.5 * (1 - post_zero), 1 - post_neg, post_neg + post_zero)
+                  lfsr=ifelse(post_neg > 0.5 * (1 - post_zero), 1 - post_neg, post_neg + post_zero),
+                  n_in_CI=n_in_CI(t(fitted$alpha)),
+                  in_CI=in_CI(t(fitted$alpha))
                   )
