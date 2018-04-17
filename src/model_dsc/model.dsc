@@ -36,8 +36,10 @@ diagnose: elbo_mnm.R
   $diagnosed: elbo
 
 DSC:
+  define:
+    get_Y: original_Y
   run:
-    first_pass: get_data * original_Y * init_model * fit * diagnose
+    first_pass: get_data * get_Y * init_model * fit * diagnose
   output: mnm_model
   exec_path: modules
   lib_path: libs

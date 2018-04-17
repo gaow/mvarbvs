@@ -1,6 +1,7 @@
 # Initialize model data: priors and init values
 source("utils.R")
 
+data$r2 = cor(data$X)^2
 if (Sigma == 'empirical') {
   data$V = cor(data$Y)
 } else {
