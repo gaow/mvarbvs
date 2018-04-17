@@ -256,17 +256,28 @@ body {
 <h2 id="20180417">20180417<a class="anchor-link" href="#20180417">&#182;</a></h2><p>Meeting with Matthew</p>
 <h3 id="Aganda">Aganda<a class="anchor-link" href="#Aganda">&#182;</a></h3><ul>
 <li><a href="https://gaow.github.io/mvarbvs/analysis/20180415_MNMASH_FMO2.html">M&amp;M results</a>, compared with <a href="https://gaow.github.io/mvarbvs/analysis/20180416_SingleCondition_FMO2.html">univeraite methods</a>.</li>
-<li><a href="https://gaow.github.io/mvarbvs/analysis/20180416_mnm_model.html">Output of M&amp;M</a>: quantites of interest. Check if they are right.<ul>
-<li><a href="https://github.com/stephenslab/susieR/blob/master/R/susie_utils.R">95% CI define</a></li>
-</ul>
-</li>
+<li><a href="https://gaow.github.io/mvarbvs/analysis/20180416_mnm_model.html">Output of M&amp;M</a>: quantites of interest. Check if they are right.</li>
 <li><a href="https://gaow.github.io/mvarbvs/analysis/20180416_mnm_model.html">Initialization with mash</a>: use of point mass.</li>
 <li><a href="https://gaow.github.io/mvarbvs/writeup/14b5a0ba68cc2757033109c267a409fcef2ac7c2.html#Derivation-of-ELBO-15">ELBO computation</a> difficuty: low rank mash prior matrices.</li>
 <li>MASH paper revision</li>
 </ul>
+<h3 id="Need-to-fix">Need to fix<a class="anchor-link" href="#Need-to-fix">&#182;</a></h3><ul>
+<li>Computation of lfsr. Currently I'm conceptually wrong. The lfsr we report for the new model should be per value per set of SNPs (per condition). "Set of SNPs" is reflected by the $L$ effects in our model. When there is only one SNP in the set of SNPs the lfsr natually becomes lfsr for this SNP</li>
+<li>We can compute lfdr for our own information but should not report</li>
+</ul>
+<h3 id="What-to-report-from-M&amp;M?">What to report from M&amp;M?<a class="anchor-link" href="#What-to-report-from-M&amp;M?">&#182;</a></h3><p>To convey the core idea of our new fine-mapping approach we'd like to report these quantities:</p>
+<ol>
+<li><p>SNP level: Identify for each of the $L$ effects 95% HPD interval, report its size (number of SNPs in the set), purity (smallest pair-wise LD means higher purity) and lfsr (or, minimum lfsr). There should be high correlation between small size, high purity and low lfsr. We can visualize this, and determine a threshold of $L_0$ to report.</p>
+</li>
+<li><p>Finemapping results: Once we have determined $L_0$ above, we can imaging having a browser of these sets where we report for SNPs posterior probability of being an eQTL by plotting those HPD identified above. The posterior probability is just posterior of $\alpha$. In normal cases these sets should not overlap.</p>
+</li>
+<li><p>Effect estimate: For tissue level summary, we can click on each of the sets plotted and display a metaplot for averaged effect size and standard error bars.</p>
+</li>
+</ol>
 <h3 id="Next-steps">Next steps<a class="anchor-link" href="#Next-steps">&#182;</a></h3><ul>
-<li>Get ELBO work</li>
-<li>Add in FINEMAP, DAP and </li>
+<li>Get ELBO work -- deal with low rank matrix computations in the prior and KL part.</li>
+<li>Make M&amp;M report as discussed above.</li>
+<li>More comparisons?</li>
 </ul>
 
 </div>
@@ -543,7 +554,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/ba7c94b3deb023e4d899c7befb9378452d14077b/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Tue Apr 17 15:49:53 2018 <a href="http://github.com/gaow/mvarbvs/commit/ba7c94b3deb023e4d899c7befb9378452d14077b">revision 11, ba7c94b</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/b55249fd96381f98adcb0000f17f7979b4da6ddb/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Tue Apr 17 18:01:46 2018 <a href="http://github.com/gaow/mvarbvs/commit/b55249fd96381f98adcb0000f17f7979b4da6ddb">revision 12, b55249f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
