@@ -11,7 +11,7 @@ original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
   data: $data
   $data: data
 
-init_model: init_mnm.R
+init_mnm: init_mnm.R
   data: $data
   # FIXME: these quantities are to be computed seperately and globally using mashr procedure
   # See http://stephenslab.github.io/gtex-eqtls/analysis/20171002_MASH_V8.html
@@ -20,13 +20,24 @@ init_model: init_mnm.R
   $data: data
   $model: model
 
-fit: fit_mnm.R
+fit_mnm: fit_mnm.R
   maxL: 5
   maxI: 10
   data: $data
   model: $model
   $fitted: fitted_track
   $posterior: posterior
+
+fit_varbvs: setup_varbvs.R + fit_varbvs.R
+  # Prior variance of nonzero effects.
+  sa: 1
+  maxL: 5
+  maxI: 50
+  data: $data
+  $posterior: posterior
+  $fitted: fitted
+
+fit_susie(fit_varbvs): fit_susie.R
 
 diagnose: elbo_mnm.R
   data: $data
@@ -38,11 +49,13 @@ diagnose: elbo_mnm.R
 DSC:
   define:
     get_Y: original_Y
+    init: init_mnm
+    fit: fit_mnm, fit_susie, fit_varbvs
   run:
-    first_pass: get_data * get_Y * init_model * fit * diagnose
+    first_pass: get_data * get_Y * init * fit * diagnose
   output: mnm_model
   exec_path: modules
   lib_path: libs
-  R_libs: mashr, abind
+  R_libs: mashr, abind, varbvs@pcarbo/varbvs/varbvs-R, susieR@stephenslab/susieR
   global:
     data_file: ~/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds
