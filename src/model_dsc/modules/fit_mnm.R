@@ -46,14 +46,9 @@ for (i in 1:maxI) {
 
 ## Compute posterior mean and covariances
 post_mean <- matrix(0, ncol(data$X), ncol(data$Y))
-post_nonzero <- matrix(0, ncol(data$X), ncol(data$Y))
-post_neg <- matrix(0, ncol(data$X), ncol(data$Y))
 for (l in 1:maxL) {
   post_mean <- post_mean + fitted$mu[[l]] * fitted$alpha[,l]
-  post_nonzero <- post_nonzero + (1 - fitted$zero[[l]]) * fitted$alpha[,l]
-  post_neg <- post_neg + fitted$neg[[l]] * fitted$alpha[,l]
 }
-post_zero <- 1 - post_nonzero
 post_cov <- array(0, dim=c(ncol(data$Y), ncol(data$Y), ncol(data$X)))
 for (j in 1:ncol(data$X)) {
   for (l in 1:maxL) {
@@ -61,10 +56,12 @@ for (j in 1:ncol(data$X)) {
   }
   post_cov[,,j] <- post_cov[,,j] - post_mean[j,] %*% t(post_mean[j,])
 }
+
+## Compute lfsr
+lfsr = NULL
 posterior <- list(PosteriorMean=post_mean,
                   PosteriorCov=post_cov,
-                  lfdr=post_zero,
-                  lfsr=ifelse(post_neg > 0.5 * (1 - post_zero), 1 - post_neg, post_neg + post_zero),
+                  lfsr=lfsr,
                   n_in_CI=n_in_CI(t(fitted$alpha)),
                   in_CI=in_CI(t(fitted$alpha))
                   )
