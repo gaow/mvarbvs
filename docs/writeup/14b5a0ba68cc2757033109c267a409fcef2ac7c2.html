@@ -527,6 +527,11 @@ Var(\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p) &amp;= E_{\bs{b}}\big [Var[\hat{\bs{b
 <p>\begin{align}
 \text{BF} = \frac{\sum_p \hat{\pi}_p N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}} + \bs{V}_{p})}{N(\hat{\bs{b}}; \bs{0}, \hat{\bs{S}})}
 \end{align}</p>
+<h4 id="Local-false-sign-rate-(lfsr)">Local false sign rate (lfsr)<a class="anchor-link" href="#Local-false-sign-rate-(lfsr)">&#182;</a></h4><p>To measure statistical significance of estimated effect we use local false sign rate, defined as:</p>
+<p>\begin{align}
+\text{lfsr}_{jr} := \text{min}[p(\tilde{\beta}_{jr} \ge 0), p(\tilde{\beta}_{jr} \le 0)]
+\end{align}</p>
+<p>Similar to (but more conservative than) local false discovery rate (lfdr), a small lfsr indicates high confidence in the sign of an effect.</p>
 
 </div>
 </div>
@@ -536,7 +541,7 @@ Var(\hat{\bs{b}} | \hat{\bs{S}}, \gamma_p) &amp;= E_{\bs{b}}\big [Var[\hat{\bs{b
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Variational-updates-for-quantities-of-interest">Variational updates for quantities of interest<a class="anchor-link" href="#Variational-updates-for-quantities-of-interest">&#182;</a></h3><p>As indicated by our model, define $\bs{B}:=\sum_l \diag(\bs{\alpha}_l)\bs{B}_l$, we want to compute $\tilde{\bs{B}}$, the variational mean for $\bs{B}$ and $\bs{\rho}: = \{\bs{\rho}_j\}$, a $J$ vector of $R \times R$ matrix for variational standard deviation of each row of $\bs{B}$.</p>
-<p>Applying the core computation for multivariate regression in the iterative algorithm to each $l$ and $j$ as derived above, $\tilde{\bs{B}}_l$ and $\bs{\rho}_l$ can be estimated. 
+<h4 id="Posterior-inference">Posterior inference<a class="anchor-link" href="#Posterior-inference">&#182;</a></h4><p>Applying the core computation for multivariate regression in the iterative algorithm to each $l$ and $j$ as derived above, $\tilde{\bs{B}}_l$ and $\bs{\rho}_l$ can be estimated. 
 Posterior mean of the $J$ vector $\bs{\alpha}_l$ can be estimated by Bayes Factor averaging:</p>
 <p>\begin{align}
 \hat{\tilde{{\omega_l}}}_j = \frac{{\omega_l}_j{\text{BF}_l}_j}{\sum_j {\omega_l}_j{\text{BF}_l}_j}
@@ -554,6 +559,12 @@ Posterior mean of the $J$ vector $\bs{\alpha}_l$ can be estimated by Bayes Facto
 \tilde{\bs{b}_j^2} &amp;:= \sum_l \tilde{\omega_j}_l \tilde{\bs{b}_j^2}_l \\
 \tilde{\bs{b}_j^2}_l &amp;:= \tilde{\bs{b}_j}_l\tilde{\bs{b}_j}_l^\intercal  + {\tilde{\bs{S}}^2_j}_l
 \end{align}</p>
+<h4 id="Local-false-sign-rate-(lfsr)">Local false sign rate (lfsr)<a class="anchor-link" href="#Local-false-sign-rate-(lfsr)">&#182;</a></h4><p>For each of the $l$-th fit, we have previously obtained lfsr for effect $j$ under condition $r$. To collectively measure statistical significance of the set of effects discovered in the $l$-th fit, we define lfsr as:</p>
+<p>\begin{align}
+{\text{lfsr}_l}_r &amp; := 1 - \sum_j \tilde{{\omega_l}}_j (1-\text{lfsr}_{jr}) \\
+&amp; = \sum_j \tilde{{\omega_l}}_j \text{lfsr}_{jr}
+\end{align}</p>
+<p>A smaller lfsr indicates high confidence in the $l$-th fit, that the sets of effects discovered in $l$-th fit are "mappable".</p>
 
 </div>
 </div>
@@ -696,7 +707,7 @@ E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/87e8b5251c87496eb2a49e4b9363dcc85a518b40/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Sat Apr 14 00:27:13 2018 <a href="http://github.com/gaow/mvarbvs/commit/87e8b5251c87496eb2a49e4b9363dcc85a518b40">revision 21, 87e8b52</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/94bd6dd97ddb56392968146135ecca0e5224711f/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Tue Apr 24 10:30:48 2018 <a href="http://github.com/gaow/mvarbvs/commit/94bd6dd97ddb56392968146135ecca0e5224711f">revision 23, 94bd6dd</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
