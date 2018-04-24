@@ -19,7 +19,7 @@ update_mnmash_model <- function(X, Y, V, fitted_g, fitted) {
     fitted$mu[[l]] <- mout$result$PosteriorMean
     fitted$s[[l]] <- mout$result$PosteriorCov
     fitted$eb[[l]] <- mout$result$elbo_base
-    fitted$zero[[l]] <- mout$result$lfdr
+    fitted$lfsr[[l]] <- mout$result$lfsr
     fitted$neg[[l]] <- mout$result$NegativeProb
     l10bf <- mashr::get_log10bf(mout)
     alpha_post <- exp((l10bf - max(l10bf)) * log(10)) * fitted$p_alpha
@@ -35,7 +35,7 @@ p_alpha <- rep(1, ncol(data$X)) / ncol(data$X)
 alpha <- matrix(0, ncol(data$X), maxL)
 mu <- lapply(1:maxL, function(i) matrix(0, ncol(data$X), ncol(data$Y)))
 Xr <- matrix(0, nrow(data$Y), ncol(data$Y))
-fitted <- list(p_alpha=p_alpha, alpha=alpha, mu=mu, s=list(), Xr=Xr, eb=list(), zero=list(), neg=list())
+fitted <- list(p_alpha=p_alpha, alpha=alpha, mu=mu, s=list(), Xr=Xr, eb=list(), lfsr=list(), neg=list())
 fitted_track <- list()
 
 ## Fit m&m model
@@ -58,9 +58,10 @@ for (j in 1:ncol(data$X)) {
 }
 
 ## Compute lfsr
-lfsr = NULL
+lfsr <- do.call(rbind, lapply(1:maxL, function(l) colSums(fitted$alpha[,l] * fitted$lfsr[[l]])))
 posterior <- list(PosteriorMean=post_mean,
                   PosteriorCov=post_cov,
+                  alpha = fitted$alpha,
                   lfsr=lfsr,
                   n_in_CI=n_in_CI(t(fitted$alpha)),
                   in_CI=in_CI(t(fitted$alpha))
