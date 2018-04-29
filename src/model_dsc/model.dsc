@@ -1,15 +1,19 @@
 #!/usr/bin/env dsc
 
-get_data: R(dat = readRDS(data_file))
+get_data: Shell(cp $(data_file) $data)
   # FIXME: see 20171103_MNMASH_Data.ipynb for GTEx multitissue data preparation
   # and implement it more formally here
-  data_file: $(data_file)
-  $data: dat
+  data_in: $(data_file)
+  $data: file(rds)
 
 original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
   # do not simulate data, just use original
   data: $data
   $data: data
+
+get_sumstats: regression.R + R(res = mm_regression(data$X, data$Y); res$ld = cor(data$X))
+  data: $data
+  $sumstats: res
 
 init_mnm: init_mnm.R
   data: $data
@@ -39,6 +43,20 @@ fit_varbvs: setup_varbvs.R + fit_varbvs.R
 
 fit_susie(fit_varbvs): fit_susie.R
 
+fit_finemap: fit_finemap.R + \
+             R(posterior = finemapM(
+                         data$X,
+                         data$Y,
+                         sumstats$betahat/sumstats$sebetahat,
+                         sumstats$ld,
+                         sa, k, cache))
+  data: $data
+  sumstats: $sumstats
+  k: -9, (0,0,0,1)
+  sa: 0.4
+  cache: file(FM)
+  $posterior: posterior
+
 diagnose: elbo_mnm.R
   data: $data
   model: $model
@@ -52,10 +70,9 @@ DSC:
     init: init_mnm
     fit: fit_mnm, fit_susie, fit_varbvs
   run:
-    first_pass: get_data * get_Y * init * fit * diagnose
+    first_pass: get_data * get_Y * get_sumstats * init * fit * diagnose
   output: mnm_model
   exec_path: modules
-  lib_path: libs
   R_libs: mashr, abind, varbvs@pcarbo/varbvs/varbvs-R, susieR@stephenslab/susieR
   global:
     data_file: ~/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds
