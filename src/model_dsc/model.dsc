@@ -1,9 +1,8 @@
 #!/usr/bin/env dsc
 
-get_data: Shell(cp $(data_file) $data)
+get_data: Shell(cp ${data_file} $data)
   # FIXME: see 20171103_MNMASH_Data.ipynb for GTEx multitissue data preparation
   # and implement it more formally here
-  data_in: $(data_file)
   $data: file(rds)
 
 original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
