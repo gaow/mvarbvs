@@ -48,11 +48,13 @@ fit_finemap: fit_finemap.R + \
              R(posterior = finemapM(
                          data$X,
                          data$Y,
-                         sumstats$betahat/sumstats$sebetahat,
-                         sumstats$ld,
-                         sa, k, cache))
+                         sumstats[1,,]/sumstats[2,,],
+                         ld,
+                         sa, k,
+                         prefix=cache))
   data: $data
   sumstats: $sumstats
+  ld: $ld
   k: -9, (0,0,0,1)
   sa: 0.4
   cache: file(FM)
@@ -72,6 +74,7 @@ DSC:
     fit: fit_mnm, fit_susie, fit_varbvs
   run:
     first_pass: get_data * get_Y * get_sumstats * init * fit * diagnose
+    finemap: get_data * get_Y * get_sumstats * fit_finemap
   output: mnm_model
   exec_path: modules
   R_libs: mashr, abind, varbvs@pcarbo/varbvs/varbvs-R, susieR@stephenslab/susieR
