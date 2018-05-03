@@ -1,6 +1,6 @@
 #!/usr/bin/env dsc
 
-get_data: Shell(cp ${data_file} $data)
+get_data: Shell(ln -sf `realpath ${data_file}` $data)
   # FIXME: see 20171103_MNMASH_Data.ipynb for GTEx multitissue data preparation
   # and implement it more formally here
   $data: file(rds)
@@ -10,12 +10,14 @@ original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
   data: $data
   $data: data
 
-get_sumstats: regression.R + R(res = mm_regression(data$X, data$Y); res$ld = cor(data$X))
+get_sumstats: regression.R + R(res = mm_regression(data$X, data$Y); r2 = cor(data$X)^2)
   data: $data
   $sumstats: res
+  $ld: r2
 
 init_mnm: init_mnm.R
   data: $data
+  reg: $sumstats
   # FIXME: these quantities are to be computed seperately and globally using mashr procedure
   # See http://stephenslab.github.io/gtex-eqtls/analysis/20171002_MASH_V8.html
   Sigma: empirical
@@ -23,7 +25,7 @@ init_mnm: init_mnm.R
   $data: data
   $model: model
 
-fit_mnm: fit_mnm.R
+fit_mnm: regression.R + fit_mnm.R
   maxL: 5
   maxI: 10
   data: $data
@@ -31,16 +33,16 @@ fit_mnm: fit_mnm.R
   $fitted: fitted_track
   $posterior: posterior
 
-fit_varbvs: setup_varbvs.R + fit_varbvs.R
+fit_susie: fit_susie.R
   # Prior variance of nonzero effects.
-  sa: 1
   maxL: 5
   maxI: 50
   data: $data
   $posterior: posterior
   $fitted: fitted
 
-fit_susie(fit_varbvs): fit_susie.R
+fit_varbvs(fit_susie): setup_varbvs.R + fit_varbvs.R
+  sa: 1
 
 fit_finemap: fit_finemap.R + \
              R(posterior = finemapM(

@@ -1,14 +1,11 @@
 # Initialize model data: priors and init values
-source("utils.R")
 
-data$r2 = cor(data$X)^2
 if (Sigma == 'empirical') {
   data$V = cor(data$Y)
 } else {
   ## FIXME: add other methods to compute Sigma
   data$V = cor(data$Y)
 }
-reg = mm_regression(data$X, data$Y)
 mash_data = mashr::mash_set_data(reg[1,,], Shat = reg[2,,], V = as.matrix(data$V))
 if (U == 'auto') {
   U = mashr::cov_canonical(mash_data)

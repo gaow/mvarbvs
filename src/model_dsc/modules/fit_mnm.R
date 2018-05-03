@@ -1,5 +1,3 @@
-source("utils.R")
-
 update_mash_model <- function(X, Y, V, fitted_g) {
   ## result contains 'PosteriorMean' 'PosteriorSD' 'lfdr' 'NegativeProb' 'lfsr'
   reg <- mm_regression(X, Y)
@@ -63,6 +61,6 @@ posterior <- list(PosteriorMean=post_mean,
                   PosteriorCov=post_cov,
                   alpha = fitted$alpha,
                   lfsr=lfsr,
-                  n_in_CI=n_in_CI(t(fitted$alpha)),
-                  in_CI=in_CI(t(fitted$alpha))
+                  n_in_CI=susieR:::n_in_CI(t(fitted$alpha)),
+                  in_CI=susieR:::in_CI(t(fitted$alpha))
                   )

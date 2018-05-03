@@ -1,7 +1,7 @@
 fitted <- list()
 n <- nrow(data$X)
 for (r in 1:ncol(data$Y)) {
-  fitted[[r]] <- susieR::susie(data$X,data$Y[,r],sa2=sa^2, L=maxL,max_iter=maxI)
+  fitted[[r]] <- susieR::susie(data$X,data$Y[,r],L=maxL,max_iter=maxI)
   fitted[[r]]$lfsr <- susieR:::lfsr_fromfit(fitted[[r]])
   fitted[[r]]$n_in_CI <- susieR:::n_in_CI(fitted[[r]])
   fitted[[r]]$in_CI <- susieR:::in_CI(fitted[[r]])
