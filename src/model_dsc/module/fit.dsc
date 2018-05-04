@@ -47,8 +47,6 @@ fit_varbvs(fit_susie): setup_varbvs.R + fit_varbvs.R
 
 fit_finemap: fit_finemap.R + \
              R(posterior = finemapM(
-                         data$X,
-                         data$Y,
                          sumstats[1,,]/sumstats[2,,],
                          ld,
                          sa, k,
@@ -61,9 +59,9 @@ fit_finemap: fit_finemap.R + \
   $posterior: posterior
 
 fit_dap: fit_dap.py
+  use_ss: 1, 0
   data: $data
   $posterior: posterior
 
-fit_dap_ss: fit_dap.py
-  sumstats: $sumstats
-  $posterior: posterior
+fit_dap_mnm(fit_dap):
+  joint: 1
