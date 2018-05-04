@@ -63,5 +63,5 @@ fit_dap: fit_dap.py
   data: $data
   $posterior: posterior
 
-fit_dap_mnm(fit_dap):
+fit_dap_mv(fit_dap):
   joint: 1

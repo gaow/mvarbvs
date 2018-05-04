@@ -8,7 +8,7 @@ DSC:
   define:
     get_Y: original_Y
     init: init_mnm
-    fit: fit_mnm, fit_susie, fit_varbvs, fit_finemap, fit_dap, fit_dap_mnm
+    fit: fit_mnm, fit_susie, fit_varbvs, fit_finemap, fit_dap, fit_dap_mv
   run:
     first_pass: get_data * get_Y * get_sumstats * init * fit
     dap: get_data * get_Y * get_sumstats * init * fit_dap
