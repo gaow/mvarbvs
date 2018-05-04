@@ -30,5 +30,5 @@ finemap <- function(z,LD_file,sa=0.4,k=c(0,0,0,1),niter=1000000,prefix='data') {
 finemapM <- function(zscore,ld,sa=0.4,k=c(0,0,0,1),niter=1000000,prefix='data') {
   LD_file <- paste0(prefix,".ld")
   write.table(ld,LD_file,quote=F,col.names=F,row.names=F)
-  return(do.call(cbind, lapply(1:ncol(zscore), function(r) finemap(zscore[,r],LD_file,sa,k,niter,prefix))))
+  return(do.call(cbind, lapply(1:ncol(zscore), function(r) finemap(zscore[,r],LD_file,sa,k,niter,paste0(prefix, '_condition_', r)))))
 }

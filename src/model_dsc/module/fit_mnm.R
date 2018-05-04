@@ -38,7 +38,7 @@ fitted_track <- list()
 
 ## Fit m&m model
 for (i in 1:maxI) {
-  fitted <- update_mnmash_model(data$X, data$Y, data$V, model$fitted_g, fitted)
+  fitted <- update_mnmash_model(data$X, data$Y, V, model$fitted_g, fitted)
   fitted_track[[i]] <- fitted
 }
 

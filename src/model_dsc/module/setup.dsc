@@ -16,8 +16,9 @@ original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
   data: $data
   $data: data
 
-get_sumstats: regression.R + R(res = mm_regression(data$X, data$Y); r2 = cor(data$X)^2)
+get_sumstats: regression.R + R(res = mm_regression(data$X, data$Y); r2 = cor(data$X)^2; V = cor(data$Y))
   @CONF: R_libs = abind
   data: $data
   $sumstats: res
   $ld: r2
+  $V: V

@@ -14,14 +14,14 @@
 init_mnm: init_mnm.R
   # mashr comes from `dev` branch on github
   @CONF: R_libs = mashr
-  data: $data
+  V: $V
   reg: $sumstats
   # FIXME: these quantities are to be computed seperately and globally using mashr procedure
   # See http://stephenslab.github.io/gtex-eqtls/analysis/20171002_MASH_V8.html
   Sigma: empirical
   (U, grid, p): (auto, (0.9,0.01,0.01,0.01,0.01,0.01,0.01,0.02,0.02), auto)
-  $data: data
   $model: model
+  $V: V
 
 fit_mnm: regression.R + fit_mnm.R
   @CONF: R_libs = mashr
@@ -29,6 +29,7 @@ fit_mnm: regression.R + fit_mnm.R
   maxI: 10
   data: $data
   model: $model
+  V: $V
   $fitted: fitted_track
   $posterior: posterior
 
@@ -58,10 +59,15 @@ fit_finemap: fit_finemap.R + \
   cache: file(FM)
   $posterior: posterior
 
-fit_dap: fit_dap.py
-  use_ss: 1, 0
+fit_dap: fit_dap.py + Python(posterior = dap_batch(data['X'], data['Y'], cache, args))
   data: $data
+  args: '-ld_control 0.25'
+  cache: file(DAP)
   $posterior: posterior
 
-fit_dap_mv(fit_dap):
-  joint: 1
+fit_dap_mv(fit_dap): fit_dap.py + Python(res = dap_mv())
+
+fit_dap_ss(fit_dap): fit_dap.py + Python(res = dap_batch_ss())
+  data: $sumstats
+
+fit_dap_mv_ss(fit_dap): fit_dap.py + Python(res = dap_mv_ss())

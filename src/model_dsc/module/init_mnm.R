@@ -1,12 +1,10 @@
 # Initialize model data: priors and init values
 
-if (Sigma == 'empirical') {
-  data$V = cor(data$Y)
-} else {
-  ## FIXME: add other methods to compute Sigma
-  data$V = cor(data$Y)
+if (Sigma != 'empirical') {
+  # FIXME data$V has to be changed
+  V = diag(nrow(V))
 }
-mash_data = mashr::mash_set_data(reg[1,,], Shat = reg[2,,], V = as.matrix(data$V))
+mash_data = mashr::mash_set_data(reg[1,,], Shat = reg[2,,], V = as.matrix(V))
 if (U == 'auto') {
   U = mashr::cov_canonical(mash_data)
 } else {
