@@ -1,5 +1,5 @@
-write_finemap_sumstats <- function(X,y,z,LD_file,k,prefix='data') {
-  n = length(y)
+write_finemap_sumstats <- function(z,LD_file,k,prefix='data') {
+  n = nrow(y)
   cfg = list(z=paste0(prefix,".z"),
              ld=LD_file,
              snp=paste0(prefix,".snp"),
@@ -29,8 +29,8 @@ finemap <- function(X,y,z,LD_file,sa=0.4,k=c(0,0,0,1),niter=1000000,prefix='data
   return(read.table(cfg$snp,header=TRUE,sep=" "))
 }
 
-finemapM <- function(X,Y,zscore,ld,sa=0.4,k=c(0,0,0,1),niter=1000000,prefix='data') {
+finemapM <- function(zscore,ld,sa=0.4,k=c(0,0,0,1),niter=1000000,prefix='data') {
   LD_file <- paste0(prefix,".ld")
   write.table(ld,LD_file,quote=F,col.names=F,row.names=F)
-  return(do.call(cbind, lapply(1:ncol(Y), function(r) finemap(X,Y[,r],zscore[,r],LD_file,sa,k,niter,prefix))))
+  return(do.call(cbind, lapply(1:ncol(Y), function(r) finemap(zscore[,r],LD_file,sa,k,niter,prefix))))
 }

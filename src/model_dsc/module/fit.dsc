@@ -1,21 +1,19 @@
-#!/usr/bin/env dsc
+# workhorse(s) for finemapping-m
 
-get_data: Shell(ln -sf `realpath ${data_file}` $data)
-  # FIXME: see 20171103_MNMASH_Data.ipynb for GTEx multitissue data preparation
-  # and implement it more formally here
-  $data: file(rds)
+# Module input
+# ============
+# $data: full data; or
+# $sumstats: summary statistics; or / and
+# $ld: LD information
 
-original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
-  # do not simulate data, just use original
-  data: $data
-  $data: data
-
-get_sumstats: regression.R + R(res = mm_regression(data$X, data$Y); r2 = cor(data$X)^2)
-  data: $data
-  $sumstats: res
-  $ld: r2
+# Module output
+# =============
+# $fitted: for diagnostics
+# $posterior: for inference
 
 init_mnm: init_mnm.R
+  # mashr comes from `dev` branch on github
+  @CONF: R_libs = mashr
   data: $data
   reg: $sumstats
   # FIXME: these quantities are to be computed seperately and globally using mashr procedure
@@ -26,6 +24,7 @@ init_mnm: init_mnm.R
   $model: model
 
 fit_mnm: regression.R + fit_mnm.R
+  @CONF: R_libs = mashr
   maxL: 5
   maxI: 10
   data: $data
@@ -35,6 +34,7 @@ fit_mnm: regression.R + fit_mnm.R
 
 fit_susie: fit_susie.R
   # Prior variance of nonzero effects.
+  @CONF: R_libs = susieR@stephenslab/susieR
   maxL: 5
   maxI: 50
   data: $data
@@ -42,6 +42,7 @@ fit_susie: fit_susie.R
   $fitted: fitted
 
 fit_varbvs(fit_susie): setup_varbvs.R + fit_varbvs.R
+  @CONF: R_libs = varbvs@pcarbo/varbvs/varbvs-R
   sa: 1
 
 fit_finemap: fit_finemap.R + \
@@ -52,7 +53,6 @@ fit_finemap: fit_finemap.R + \
                          ld,
                          sa, k,
                          prefix=cache))
-  data: $data
   sumstats: $sumstats
   ld: $ld
   k: -9, (0,0,0,1)
@@ -60,24 +60,10 @@ fit_finemap: fit_finemap.R + \
   cache: file(FM)
   $posterior: posterior
 
-diagnose: elbo_mnm.R
+fit_dap: fit_dap.py
   data: $data
-  model: $model
-  fitted: $fitted
-  posterior: $posterior
-  $diagnosed: elbo
+  $posterior: posterior
 
-DSC:
-  define:
-    get_Y: original_Y
-    init: init_mnm
-    fit: fit_mnm, fit_susie, fit_varbvs, fit_finemap, fit_dap
-  run:
-    first_pass: get_data * get_Y * get_sumstats * init * fit
-    dap: get_data * get_Y * get_sumstats * init * fit_dap
-  output: mnm_model
-  exec_path: modules
-  R_libs: mashr, abind, varbvs@pcarbo/varbvs/varbvs-R, susieR@stephenslab/susieR
-  python_modules: pandas
-  global:
-    data_file: ~/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds
+fit_dap_ss: fit_dap.py
+  sumstats: $sumstats
+  $posterior: posterior
