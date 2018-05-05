@@ -61,20 +61,17 @@ def dap_single(x, y, prefix, args):
     for line in out:
         if len(line) == 0:
             continue
-        if still_pip and not line[0].startswith('(('):
-            continue
         if len(line) > 2 and line[2] == 'cluster_pip':
             still_pip = False
             continue
+        if still_pip and (not line[0].startswith('((') or int(line[-1]) < 0):
+            continue
         if still_pip:
-            if int(line[-1]) < 0:
-                # insignificant cluster
-                continue
             pips.append([line[1], float(line[2]), float(line[3]), int(line[4])])
         else:
             clusters.append([float(line[2]), float(line[3])])
-        pips = pd.DataFrame(pips, columns = ['x', 'pip', 'bf', 'cluster'])
-        clusters = pd.DataFrame(clusters, columns = ['cluster_pip', 'avg_r2'])
+    pips = pd.DataFrame(pips, columns = ['x', 'pip', 'bf', 'cluster'])
+    clusters = pd.DataFrame(clusters, columns = ['cluster_pip', 'avg_r2'])
     return {'pips': pips, 'clusters': clusters}
 
 def dap_batch(X, Y, prefix, *args):
