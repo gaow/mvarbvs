@@ -7,15 +7,17 @@ in SoS Notebook. To edit the notebook please use Jupyter Lab:
 pip install sos-notebook jupyterlab
 conda install nodejs
 jupyter labextension install jupyterlab-toc
+jupyter labextension install jupyterlab-sos
 ```
 
-Then clone and install an alpha version of `jupyterlab-sos`:
+Then open the notebook with:
 
 ```
-git clone https://github.com/vatlab/jupyterlab-sos
-cd jupyterlab-sos
-./build.sh
+jupyter-lab finemapping.ipynb
 ```
+
+Look for the `Contents` vertical tab in JupyterLab's GUI to bring up the table
+of contents for navigation.
 
 To run the benchmark, after editing the notebook first save them to module files
 
