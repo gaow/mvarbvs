@@ -4,7 +4,7 @@ This benchmark is written in DSC with all DSC configurations and module scripts
 in SoS Notebook. To edit the notebook please use Jupyter Lab:
 
 ```
-pip install jupyterlab
+pip install sos-notebook jupyterlab
 conda install nodejs
 jupyter labextension install jupyterlab-toc
 ```
