@@ -1,17 +1,19 @@
 #!/usr/bin/env dsc
 
 %include modules/setup
+%include modules/simulate
 %include modules/fit
 %include modules/evaluate
 
 DSC:
   define:
-    get_data: full_data, lite_data, two_effect
+    get_data: full_data, lite_data, liter_data, two_effect
     get_Y: original_Y
     fit: (init_mnm * fit_mnm), fit_susie, fit_varbvs, 
         (fit_finemap * plot_finemap), 
         (fit_dap * plot_dap)
   run:
+    setup: liter_data * summarize_ld
     benchmark: full_data * get_Y * get_sumstats * fit
     debug_mnm_1: lite_data * get_Y * get_sumstats * init_mnm * fit_mnm_debug
     debug_mnm_2: liter_data * get_Y * get_sumstats * init_mnm * fit_mnm_debug   

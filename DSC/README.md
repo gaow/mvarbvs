@@ -28,5 +28,7 @@ To run the benchmark, after editing the notebook first save them to module files
 Then run the benchmark from `mnm.sh`. To see what are available for example,
 
 ```
-dsc mnm.sh -h
+dsc mnm.dsc -h
 ```
+
+**Do not edit `mnm.dsc` or any scripts under `modules/` folder. Always use Jupyter Lab to edit and export.**

@@ -30,17 +30,20 @@ two_effect(full_data):
   tag: two
   start, end: (3500, 3501)
 
-original_Y: Python(data['Y'] = numpy.vstack(data['Y'].values()).T)
-  # do not simulate data, just use original
-  data: $data
-  $data: data
-
 get_sumstats: regression.R + R(res = mm_regression(as.matrix(data$X), 
                                                    as.matrix(data$Y));
                                V = cov(data$Y);
-                               N = nrow(data$Y);)
+                               N = nrow(data$Y))
   @CONF: R_libs = abind
   data: $data
   $sumstats: res
   $V: V
   $N: N
+                                                   
+summarize_ld: lib_regression_simulator.py + \
+                regression_simulator.py + \
+                Python(res = summarize_LD(data['X'], ld_mat, ld_plot))
+  data: $data
+  ld_mat: $ld_mat
+  $ld_plot: file(png)
+  $top_eff: res
