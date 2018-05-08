@@ -12,9 +12,10 @@ full_data: R(data =readRDS(${data_file});
             r2 = cor(data$X);
             saveRDS(r2 ^ 2 * sign(r2), ld_mat);
             write.table(r2,ld_file,quote=F,col.names=F,row.names=F))
-  $data: data
   tag: full
   start, end: (0, 0)
+  $data: data
+  $top_idx: 0
   $ld_file: file(ld)
   $ld_mat: file(rds)
         
@@ -46,4 +47,4 @@ summarize_ld: lib_regression_simulator.py + \
   data: $data
   ld_mat: $ld_mat
   $ld_plot: file(png)
-  $top_eff: res
+  $top_idx: res
