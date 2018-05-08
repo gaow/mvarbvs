@@ -228,6 +228,10 @@ body {
 </li>
         
 <li>
+  <a href="../DSC.html">DSC</a>
+</li>
+        
+<li>
   <a href="../writeup.html">Writeup</a>
 </li>
         
@@ -633,7 +637,8 @@ E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} &amp;=
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="$E_q[\log\frac{\prod_{l}p(\bs{B}_l,-\bs{\alpha}_l,-\bs{\Gamma}_l-|-\bs{\Pi}_l,-\bs{\omega}_l)}{\prod_l-\prod_j-q({\bs{b}_l}_j,-\bs{\alpha}_l,-{\bs{\gamma}_l}_j)}]$">$E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}]$<a class="anchor-link" href="#$E_q[\log\frac{\prod_{l}p(\bs{B}_l,-\bs{\alpha}_l,-\bs{\Gamma}_l-|-\bs{\Pi}_l,-\bs{\omega}_l)}{\prod_l-\prod_j-q({\bs{b}_l}_j,-\bs{\alpha}_l,-{\bs{\gamma}_l}_j)}]$">&#182;</a></h3><p>\begin{align}
+<h3 id="$E_q[\log\frac{\prod_{l}p(\bs{B}_l,-\bs{\alpha}_l,-\bs{\Gamma}_l-|-\bs{\Pi}_l,-\bs{\omega}_l)}{\prod_l-\prod_j-q({\bs{b}_l}_j,-\bs{\alpha}_l,-{\bs{\gamma}_l}_j)}]$,-method-1">$E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}]$, method 1<a class="anchor-link" href="#$E_q[\log\frac{\prod_{l}p(\bs{B}_l,-\bs{\alpha}_l,-\bs{\Gamma}_l-|-\bs{\Pi}_l,-\bs{\omega}_l)}{\prod_l-\prod_j-q({\bs{b}_l}_j,-\bs{\alpha}_l,-{\bs{\gamma}_l}_j)}]$,-method-1">&#182;</a></h3><p><strong>Note: I did not realize until written in code that this approach does not work because $\bs{V}_p$ can be low-rank thus the prior does not have a density. However in FLASH paper there is an alternative to computer this KL divergence using marginal log-likelihood and posterior expected log-likelihood from normal-means problem such as this (distribution of prior no longer matters). See method 2 for details</strong>.</p>
+<p>\begin{align}
 E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}] &amp;= 
 \sum_l E_q[\log p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)] - \sum_l \sum_j E_q[\log q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)]
 \end{align}</p>
@@ -706,9 +711,17 @@ E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="$E_q[\log\frac{\prod_{l}p(\bs{B}_l,-\bs{\alpha}_l,-\bs{\Gamma}_l-|-\bs{\Pi}_l,-\bs{\omega}_l)}{\prod_l-\prod_j-q({\bs{b}_l}_j,-\bs{\alpha}_l,-{\bs{\gamma}_l}_j)}]$,-method-2">$E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}]$, method 2<a class="anchor-link" href="#$E_q[\log\frac{\prod_{l}p(\bs{B}_l,-\bs{\alpha}_l,-\bs{\Gamma}_l-|-\bs{\Pi}_l,-\bs{\omega}_l)}{\prod_l-\prod_j-q({\bs{b}_l}_j,-\bs{\alpha}_l,-{\bs{\gamma}_l}_j)}]$,-method-2">&#182;</a></h3>
+</div>
+</div>
+</div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/9a3a0729944be5772ce9e8b859b6347f2554dcbc/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Mon May 7 21:57:19 2018 <a href="http://github.com/gaow/mvarbvs/commit/9a3a0729944be5772ce9e8b859b6347f2554dcbc">revision 26, 9a3a072</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/67ed7b45f286709903429dfb654f54093872e5b5/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Tue May 8 11:55:06 2018 <a href="http://github.com/gaow/mvarbvs/commit/67ed7b45f286709903429dfb654f54093872e5b5">revision 27, 67ed7b4</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
