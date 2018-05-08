@@ -474,11 +474,12 @@ p(\bs{b}, \bs{\gamma}) = \sum_{p = 0}^P\pi_{p}\N_R(\bs{b} | \bs{0}, \bs{V}_p).
 \begin{align}
 \bs{\Sigma} = \bs{D}\bs{C}\bs{D}
 \end{align}</p>
-<p>where $\bs{D} = \diag(\sigma_1, \ldots, \sigma_R)$ and $\bs{C}$ is constant matrix. As a first pass we let $\bs{C} = \bs{I}_R$. Using plug-in estimate $\hat{\sigma}^2_r = Var(\bs{y}_r)$, we estimate standard error for $\hat{\bs{b}}$,</p>
+<p>where $\bs{D} = \diag(\sigma_1, \ldots, \sigma_R)$ and $\bs{C}$ is a given constant matrix. Choices of $\bs{C}$ can be some estimate of correlations between conditions eg, $\bs{C} = \text{cor}(\bs{Y})$, or simply $\bs{C} = \bs{I}_R$. Using MLE estimate $\hat{\sigma}^2_r = \text{Var}(\bs{y}_r)$, we estimate standard error for $\hat{\bs{b}}$,</p>
 <p>\begin{align}
 \hat{\bs{S}} = (\bs{x}_j^\intercal\bs{x}_j)^{-1} \hat{\bs{\Sigma}}
 \end{align}</p>
-<p>Therefore the likelihood can be formulated using summary statistics,</p>
+<p>Alternatively we can also possibly estimate $\bs{\Sigma}$ by computing $$E[\frac{1}{N}(\bs{Y}-\bs{Xb})^\intercal (\bs{Y}-\bs{Xb})]$$, which involves dealing with 2nd posterior moment (see computation below in ELBO calculation section). It is doable but we argue that using plug-in estimate is potentially more beneficial as one can provide better pre-computed $\bs{C}$.</p>
+<p>The likelihood can be formulated using summary statistics,</p>
 <p>\begin{align}
 \hat{\bs{b}} | \bs{b} \sim N_R(\bs{b}, \hat{\bs{S}})
 \end{align}</p>
@@ -577,11 +578,11 @@ Posterior mean of the $J$ vector $\bs{\alpha}_l$ can be estimated by Bayes Facto
 <p>\begin{align}
 \mathcal{L}(q, \bs{\omega}, \bs{\Pi}, \bs{\Sigma}; \bs{Y}) &amp; = E_q[\log p(\bs{Y} | \bs{B}, \bs{\alpha}, \bs{\Lambda}, \bs{\omega}, \bs{\Pi}, \bs{\Sigma})] + 
 E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}] \\
-&amp; \propto E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} - 2\tr\{\bs{Y}\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal\bs{X}^\intercal\} +
+&amp; = -\frac{NR}{2}\log(2\pi) - \frac{N}{2}\det{\bs{\Sigma}} - \frac{1}{2} \big\{E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\} - 2\tr\{\bs{Y}\bs{\Sigma}^{-1}\bar{\bs{B}}^\intercal\bs{X}^\intercal\} + \tr\{\bs{Y}\bs{\Sigma}^{-1}\bs{Y}^\intercal\} \big\} +
 E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}] 
 \end{align}</p>
 <p>where $\bs{B}:=\sum_l \diag(\bs{\alpha}_l)\bs{B}_l$, $\bar{\bs{B}}:= E_q[\bs{B}]$.</p>
-<p>We estimate $\bar{\bs{B}}$ using $\hat{\tilde{\bs{B}}}$ as shown above. We work out $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$ and $E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}]$ next.</p>
+<p>We estimate $\bar{\bs{B}}$ using $\hat{\tilde{\bs{B}}}$ as shown above. As a first pass we estimate $\bs{\Sigma}$ using $\hat{\bs{\Sigma}} = \frac{1}{N}(\bs{Y} - \bs{X}\bar{\bs{B}})^\intercal (\bs{Y} - \bs{X}\bar{\bs{B}})$. We work out $E_q\{\tr(\bs{X}\bs{B}\bs{\Sigma}^{-1}\bs{B}^\intercal\bs{X}^\intercal)\}$ and $E_q[\log\frac{\prod_{l}p(\bs{B}_l, \bs{\alpha}_l, \bs{\Gamma}_l | \bs{\Pi}_l, \bs{\omega}_l)}{\prod_l \prod_j q({\bs{b}_l}_j, \bs{\alpha}_l, {\bs{\gamma}_l}_j)}]$ next.</p>
 
 </div>
 </div>
@@ -707,7 +708,7 @@ E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/94bd6dd97ddb56392968146135ecca0e5224711f/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Tue Apr 24 10:30:48 2018 <a href="http://github.com/gaow/mvarbvs/commit/94bd6dd97ddb56392968146135ecca0e5224711f">revision 23, 94bd6dd</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/c8c49936c8b833261432eb156413ca3ef3a5f616/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Mon May 7 21:35:50 2018 <a href="http://github.com/gaow/mvarbvs/commit/c8c49936c8b833261432eb156413ca3ef3a5f616">revision 24, c8c4993</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
