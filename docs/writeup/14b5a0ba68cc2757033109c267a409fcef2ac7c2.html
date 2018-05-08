@@ -474,11 +474,11 @@ p(\bs{b}, \bs{\gamma}) = \sum_{p = 0}^P\pi_{p}\N_R(\bs{b} | \bs{0}, \bs{V}_p).
 \begin{align}
 \bs{\Sigma} = \bs{D}\bs{C}\bs{D}
 \end{align}</p>
-<p>where $\bs{D} = \diag(\sigma_1, \ldots, \sigma_R)$ and $\bs{C}$ is a given constant matrix. Choices of $\bs{C}$ can be some estimate of correlations between conditions eg, $\bs{C} = \text{cor}(\bs{Y})$, or simply $\bs{C} = \bs{I}_R$. Using MLE estimate $\hat{\sigma}^2_r = \text{Var}(\bs{y}_r)$, we estimate standard error for $\hat{\bs{b}}$,</p>
+<p>where $\bs{D} = \diag(\sigma_1, \ldots, \sigma_R)$ and $\bs{C}$ is a given constant matrix. Choices of $\bs{C}$ can be some estimate of correlations between conditions eg, $\bs{C} = \text{cor}(\bs{Y})$, or simply $\bs{C} = \bs{I}_R$. We plug-in $\hat{\sigma}^2_r = \text{Var}(\bs{y}_r)$, and estimate standard error for $\hat{\bs{b}}$,</p>
 <p>\begin{align}
 \hat{\bs{S}} = (\bs{x}_j^\intercal\bs{x}_j)^{-1} \hat{\bs{\Sigma}}
 \end{align}</p>
-<p>Alternatively we can also possibly estimate $\bs{\Sigma}$ by computing $$E[\frac{1}{N}(\bs{Y}-\bs{Xb})^\intercal (\bs{Y}-\bs{Xb})]$$, which involves dealing with 2nd posterior moment (see computation below in ELBO calculation section). It is doable but we argue that using plug-in estimate is potentially more beneficial as one can provide better pre-computed $\bs{C}$.</p>
+<p>Alternatively we can also possibly estimate $\bs{\Sigma}$ by computing $E[\frac{1}{N}(\bs{Y}-\bs{Xb})^\intercal (\bs{Y}-\bs{Xb})]$, which involves dealing with 2nd posterior moment (see formula ?? below in ELBO calculation section). It is doable but we argue that using plug-in estimate is potentially more beneficial as one can provide better pre-computed $\bs{C}$.</p>
 <p>The likelihood can be formulated using summary statistics,</p>
 <p>\begin{align}
 \hat{\bs{b}} | \bs{b} \sim N_R(\bs{b}, \hat{\bs{S}})
@@ -708,7 +708,7 @@ E_q[\log q(\bs{B}, \bs{\alpha}, \bs{\Gamma}|\bs{V}, \bs{\omega}, \bs{\pi})] &amp
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/c8c49936c8b833261432eb156413ca3ef3a5f616/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Mon May 7 21:35:50 2018 <a href="http://github.com/gaow/mvarbvs/commit/c8c49936c8b833261432eb156413ca3ef3a5f616">revision 24, c8c4993</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/bf3e96306edaa20e803f3ea45863331ab84a8d87/writeup/20171215_MNMModel_Finemap.ipynb"><code>writeup/20171215_MNMModel_Finemap.ipynb</code></a> committed by Gao Wang on Mon May 7 21:49:29 2018 <a href="http://github.com/gaow/mvarbvs/commit/bf3e96306edaa20e803f3ea45863331ab84a8d87">revision 25, bf3e963</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
