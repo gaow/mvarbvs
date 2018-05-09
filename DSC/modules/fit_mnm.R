@@ -15,6 +15,8 @@ mnm_update_model <- function(X, Y, V, fitted_g, fitted, get_kl = FALSE) {
     fitted$lfsr[[l]] <- mout$result$lfsr
     fitted$neg[[l]] <- mout$result$NegativeProb
     l10bf <- mashr::get_log10bf(mout)
+    ## FIXME: mashr issue 35
+    l10bf[is.infinite(l10bf)] <- range(l10bf, finite=TRUE)[2] * 100
     alpha_post <- exp((l10bf - max(l10bf)) * log(10)) * fitted$p_alpha
     fitted$alpha[,l] <- alpha_post / sum(alpha_post)
     ## add back the updated lth effect

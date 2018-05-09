@@ -66,7 +66,7 @@ class RegressionData(dotdict):
 
     def set_xcorr(self, xcorr):
         if xcorr is not None:
-            self.xcorr = xcorr
+            self.xcorr = np.array(xcorr)
         else:
             self.xcorr = np.corrcoef(self.X, rowvar = False)
             self.xcorr = (np.square(self.xcorr) * np.sign(self.xcorr)).astype(np.float16)
@@ -103,18 +103,24 @@ class RegressionData(dotdict):
         xaxis = [x+1 for x in range(len(yaxis))]
         cmap = sns.cubehelix_palette(start=2.8, rot=.1, as_cmap=True)
         f, ax = plt.subplots(figsize=(18,5))
-        points = ax.scatter(xaxis, yaxis, c=zaxis, cmap=cmap)
-        f.colorbar(points, label=conf['zlabel'])
-        if xz_cutoff is not None:
+        if zaxis is not None:
+            points = ax.scatter(xaxis, yaxis, c=zaxis, cmap=cmap)
+            f.colorbar(points, label=conf['zlabel'])
+        else:
+            points = ax.scatter(xaxis, yaxis, cmap=cmap)
+        if xz_cutoff is not None and zaxis is not None:
             c1, c2 = xz_cutoff
-            for idx, item in enumerate(zaxis):
-                if item > c2:
-                    ax.scatter(xaxis[idx], yaxis[idx], s=80, 
-                               facecolors='none', edgecolors='r')
-                    for ii, xx in enumerate(self.corr[idx,:]):
-                        if xx > c1 and xx < 1.0:
-                            ax.scatter(xaxis[ii], yaxis[ii], 
-                                       color='y', marker='+')
+            if len([i for i in zaxis if i > c2]) > 100:
+                print('Too many to highlight!')
+            else:
+                for idx, item in enumerate(zaxis):
+                    if item > c2:
+                        ax.scatter(xaxis[idx], yaxis[idx], s=80, 
+                                   facecolors='none', edgecolors='r')
+                        for ii, xx in enumerate(self.xcorr[idx,:]):
+                            if xx > c1 and xx < 1.0:
+                                ax.scatter(xaxis[ii], yaxis[ii], 
+                                           color='y', marker='+')
         ax.set_title(conf['title'])
         ax.set_ylabel(conf['ylabel'])
         plt.gca()

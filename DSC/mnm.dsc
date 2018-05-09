@@ -9,7 +9,8 @@ DSC:
   define:
     get_data: full_data, lite_data, liter_data, two_effect
     get_Y: original_Y
-    fit: (init_mnm * fit_mnm), fit_susie, fit_varbvs, 
+    fit: (init_mnm * fit_mnm * plot_sse), 
+        fit_susie, fit_varbvs, 
         (fit_finemap * plot_finemap), 
         (fit_dap * plot_dap)
   run:

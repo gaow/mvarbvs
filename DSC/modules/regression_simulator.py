@@ -27,22 +27,24 @@ def simulate_main(data, c, plot_prefix):
             raise ValueError(f'Cannot simulate {c["n_traits"]} under mode {eff_mode}')
         data['true_coef'] = mash_low_het(data, reg, c)
     elif eff_mode == 'original':
-        data['true_coef'] = original_y(data, c)
+        data['true_coef'] = original_y(data, reg, c)
     else:
         raise ValueError(f'Mode {eff_mode} is not implemented.')
     if c['center_data']:
         reg.center_data()
     data['X'] = reg.X
     data['Y'] = reg.Y
-    for j in range(data['true_coef'].shape[1]):
-        plot_file = f'{plot_prefix}.{j+1}.pdf'
-        reg.plot_property_vector(data['true_coef'][:,j], 
-                             [np.absolute(x)>0 for x in data['true_coef'][:,j]], 
-                             xz_cutoff = None, out = plot_file,
-                            conf = {'title': '', 'ylabel': '', 'zlabel': ''})
+    if data['true_coef'] is not None:
+        for j in range(data['true_coef'].shape[1]):
+            plot_file = f'{plot_prefix}.{j+1}.pdf'
+            reg.plot_property_vector(data['true_coef'][:,j], 
+                                 [np.absolute(x)>0 for x in data['true_coef'][:,j]], 
+                                 xz_cutoff = None, out = plot_file,
+                                conf = {'title': f'Response {j+1}', 
+                                        'ylabel': 'effect size', 'zlabel': ''})
     return data
         
-def original_y(data, c):
+def original_y(data, reg, c):
     reg.Y = np.vstack(data['Y'].values()).T
     return None
     

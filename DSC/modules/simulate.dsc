@@ -7,7 +7,7 @@
 
 base_sim: lib_regression_simulator.py + \
                 regression_simulator.py + \
-                Python(data['Y'] = simulate_main(data, conf, conf['cache']))
+                Python(data = simulate_main(data, conf, conf['cache']))
   @CONF: python_modules = (seaborn, matplotlib, pprint)
   data: $data
   top_idx: $top_idx
@@ -22,6 +22,8 @@ base_sim: lib_regression_simulator.py + \
   tag: sim1
   @ALIAS: conf = Dict(!data, !eff_mode)
   $data: data
+  $V: np.cov(data['Y'], rowvar = False)
+  $N: data['Y'].shape[0]
 
 original_Y(base_sim):
   eff_mode: original

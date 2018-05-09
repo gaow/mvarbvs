@@ -32,14 +32,10 @@ two_effect(full_data):
   start, end: (3500, 3501)
 
 get_sumstats: regression.R + R(res = mm_regression(as.matrix(data$X), 
-                                                   as.matrix(data$Y));
-                               V = cov(data$Y);
-                               N = nrow(data$Y))
+                                                   as.matrix(data$Y)))
   @CONF: R_libs = abind
   data: $data
   $sumstats: res
-  $V: V
-  $N: N
                                                    
 summarize_ld: lib_regression_simulator.py + \
                 regression_simulator.py + \
