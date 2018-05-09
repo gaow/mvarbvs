@@ -7,13 +7,18 @@
 
 base_sim: lib_regression_simulator.py + \
                 regression_simulator.py + \
-                Python(data['Y'] = simulate_main(data, conf))
+                Python(data['Y'] = simulate_main(data, conf, conf['cache']))
+  @CONF: python_modules = (seaborn, matplotlib, pprint)
   data: $data
   top_idx: $top_idx
   n_signal: 3
   n_traits: 2
   eff_mode: mash_low_het
+  residual_mode: identity
   swap_eff: raw(True)
+  keep_ld: raw(True)
+  center_data: raw(True)
+  cache: file(sim)
   tag: sim1
   @ALIAS: conf = Dict(!data, !eff_mode)
   $data: data

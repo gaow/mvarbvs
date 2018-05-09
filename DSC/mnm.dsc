@@ -14,10 +14,10 @@ DSC:
         (fit_dap * plot_dap)
   run:
     setup: liter_data * summarize_ld
-    benchmark: full_data * get_Y * get_sumstats * fit
-    debug_mnm_1: lite_data * get_Y * get_sumstats * init_mnm * fit_mnm_debug
-    debug_mnm_2: liter_data * get_Y * get_sumstats * init_mnm * fit_mnm_debug   
-    caviar: lite_data * get_Y * get_sumstats * (fit_caviar * plot_caviar)
+    benchmark: full_data * summarize_ld * get_Y * get_sumstats * fit
+    debug_mnm_1: lite_data * summarize_ld * get_Y * get_sumstats * init_mnm * fit_mnm_debug
+    debug_mnm_2: liter_data * summarize_ld * get_Y * get_sumstats * init_mnm * fit_mnm_debug   
+    caviar: lite_data * summarize_ld * get_Y * get_sumstats * (fit_caviar * plot_caviar)
   output: benchmark
   exec_path: modules
   global:
