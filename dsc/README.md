@@ -31,4 +31,5 @@ Then run the benchmark from `mnm.sh`. To see what are available for example,
 dsc mnm.dsc -h
 ```
 
-**Do not edit `mnm.dsc` or any scripts under `modules/` folder. Always use Jupyter Lab to edit and export.**
+**Do not edit `*.dsc` under this folder, or any scripts under `modules/` folder. 
+Always use JupyterLab to edit and export.**

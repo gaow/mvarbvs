@@ -8,4 +8,4 @@ for (r in 1:ncol(Y)) {
 
 post_mean <- do.call(cbind, lapply(1:length(fitted), function(i) fitted[[i]]$alpha * fitted[[i]]$mu))
 lfdr <- do.call(cbind, lapply(1:length(fitted), function(i) 1 - fitted[[i]]$alpha))
-posterior <- list(PosteriorMean=post_mean, lfdr=lfdr)
+posterior <- list(PosteriorMean=post_mean, lfdr=lfdr, in_CI=NULL)
