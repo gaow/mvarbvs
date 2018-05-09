@@ -60,6 +60,9 @@ finemap_extract_ncausal <- function(logfile)
 }
 
 finemap_mvar <- function(zscore, LD_file, n, k, args, prefix) {
+  if (is.null(dim(zscore))) {
+      zscore = matrix(ncol=1,zscore)
+  }
   return(parallel::mclapply(1:ncol(zscore), function(r) 
           run_finemap(zscore[,r], LD_file, n, k, args, 
                       paste0(prefix, '_condition_', r)),

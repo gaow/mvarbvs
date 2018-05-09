@@ -30,6 +30,13 @@ liter_data(full_data):
 two_effect(full_data):
   tag: two
   start, end: (3500, 3501)
+             
+dap_g_data(full_data): R(X = readRDS(${dap_g_data})$X;
+              r2 = cor(X);
+              saveRDS(r2 ^ 2 * sign(r2), ld_mat);
+              write.table(r2,ld_file,quote=F,col.names=F,row.names=F)) + \
+              dap_g_paper.R + R(data = list(X=X,Y=Y,true_coef=B))  
+  tag: dap_g
 
 get_sumstats: regression.R + R(res = mm_regression(as.matrix(data$X), 
                                                    as.matrix(data$Y)))

@@ -19,7 +19,9 @@ def simulate_main(data, c, plot_prefix):
     $data: data
     '''
     reg = RegressionData()
-    reg.X = data['X']
+    reg.X = data['X'].astype(float)
+    if eff_mode == 'original':
+        c['swap_eff'] = False
     if c['swap_eff'] and c['top_idx'] is None:
         raise ValueError(f'"top_idx" variable is not set by an upstream module')
     if eff_mode == 'mash_low_het':
@@ -42,11 +44,18 @@ def simulate_main(data, c, plot_prefix):
                                  xz_cutoff = None, out = plot_file,
                                 conf = {'title': f'Response {j+1}', 
                                         'ylabel': 'effect size', 'zlabel': ''})
+    if data['Y'].shape[1] == 1:
+        data['V'] = np.cov(data['Y'][:,0])
+    else:
+        data['V'] = np.cov(data['Y'], rowvar = False)
     return data
         
 def original_y(data, reg, c):
-    reg.Y = np.vstack(data['Y'].values()).T
-    return None
+    if isinstance(data['Y'], pd.DataFrame):
+        reg.Y = np.vstack(data['Y'].values()).T
+    else:
+        reg.Y = data['Y']
+    return None if 'true_coef' not in data else data['true_coef']
     
 def mash_low_het(data, reg, c):
     if not c['keep_ld']:

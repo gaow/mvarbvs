@@ -22,7 +22,7 @@ base_sim: lib_regression_simulator.py + \
   tag: sim1
   @ALIAS: conf = Dict(!data, !eff_mode)
   $data: data
-  $V: np.cov(data['Y'], rowvar = False)
+  $V: data['V']
   $N: data['Y'].shape[0]
 
 original_Y(base_sim):

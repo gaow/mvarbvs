@@ -46,6 +46,9 @@ rank_snp <- function(snp) {
 }
 
 finemap_mcaviar <- function(zscore, LD_file, args, prefix) {
+  if (is.null(dim(zscore))) {
+      zscore = matrix(ncol=1,zscore)
+  }
   return(parallel::mclapply(1:ncol(zscore), function(r)
           run_caviar(zscore[,r], LD_file, args, 
                      paste0(prefix, '_condition_', r)), 
