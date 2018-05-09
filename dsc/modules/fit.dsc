@@ -76,9 +76,13 @@ fit_dap: fit_dap.py + Python(posterior = dap_batch(data['X'], data['Y'], cache, 
   cache: file(DAP)
   $posterior: posterior
 
+fit_dap_z: fit_dap.py + Python(posterior = dap_batch_z(sumstats[0,:,:]/sumstats[1,:,:],
+                                                       ld, cache, args))
+  sumstats: $sumstats
+  ld: $ld_file
+  args: -t 4
+  cache: file(DAP)
+  $posterior: posterior
+
 # fit_dap_mv(fit_dap): fit_dap.py + Python(res = dap_mv())
-
-# fit_dap_ss(fit_dap): fit_dap.py + Python(res = dap_batch_ss())
-#   data: $sumstats
-
 # fit_dap_mv_ss(fit_dap): fit_dap.py + Python(res = dap_mv_ss())
