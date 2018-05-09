@@ -8,6 +8,7 @@ DSC:
   run:
     run_finemap: setup * get_response * get_sumstats * fit_finemap * plot_finemap
     run_finemap_uni: dap_g_data * original_Y * get_sumstats * fit_finemap * plot_finemap
+    run_caviar_uni: dap_g_data * original_Y * get_sumstats * fit_caviar * plot_caviar
   output: benchmark
   exec_path: modules
   global:
