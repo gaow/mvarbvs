@@ -1,0 +1,146 @@
+\documentclass[oneside]{article}
+\usepackage[text={6.5in,8.9in}, marginparwidth=0.5in]{geometry}
+\usepackage{lineno}
+\usepackage{algorithm, algorithmic}
+\usepackage{amsthm, amsmath, amsfonts, commath, mathtools, amssymb, mathabx}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage[warn]{textcomp}
+\newcommand\hmmax{0} % default 3
+\usepackage{bm}
+\usepackage{fixltx2e}
+\usepackage{fancyhdr}
+\usepackage{fancyvrb}
+\usepackage{shadow}
+%%\usepackage{graphicx}
+\usepackage[pdftex]{graphicx}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{minted}
+\usepackage{upquote}
+%%\usepackage[utf8]{inputenc}
+%%\usepackage{ucs}
+\usepackage[explicit]{titlesec}
+\usepackage{sectsty}
+\usepackage{longtable}
+\usepackage{seqsplit}
+\usepackage{array}
+\usepackage{subfigure}
+\usepackage[multidot]{grffile}
+\usepackage{float}
+\usepackage{varwidth}
+\usepackage{tikz}
+\usepackage[tikz]{bclogo}
+$if(chinese)$
+\usepackage[fontset=windowsnew,UTF8]{ctex}
+$endif$
+
+% keep figure ratio
+\usepackage{grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+\renewcommand\refname{References}
+
+\DeclareMathOperator*{\defeq}{\xlongequal{\text{def}}}
+\newcolumntype{x}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcommand{\ie}{\textit{i.e.}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+
+%% Colored Blocks
+\newcommand{\CBc}[2]{\tikz \node[circle,scale=0.5,color=white,fill=#1]{\textbf{#2}};}
+\newcommand{\CBr}[2]{\tikz \node[rectangle,scale=0.9,color=white,fill=#1]{\textbf{#2}};}
+
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+
+\newcommand*\circled[1]{\kern-2.5em
+  \put(0,4){\color{black}\circle*{18}}\put(0,4){\circle{16}}
+  \put(-3,0){\color{white}\\bfseries\large#1}}
+\linespread{1.2}
+\setlength{\parskip}{8pt plus 1pt minus 1pt}
+\parindent 0ex
+\geometry{left=0.8in,right=0.8in,top=0.8in,bottom=0.8in}
+\makeatletter
+\renewcommand\@biblabel[1]{#1.}
+\renewcommand\@cite[1]{\textsuperscript{#1}}
+\makeatother
+\makeatletter
+\renewcommand{\fps@figure}{!ht}
+\renewcommand{\fps@table}{!ht}
+\makeatother
+\renewcommand{\thesubfigure}{\thefigure.\arabic{subfigure}}
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\definecolor{rblue}{RGB}{16,183,179}
+\definecolor{rred}{RGB}{255,87,87}
+\definecolor{rgray}{RGB}{94,96,98}
+\definecolor{dblue}{rgb}{0,0.2,0.6}
+\newcommand*\chapterlabel{}
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\titleformat{\chapter}
+  {\gdef\chapterlabel{}
+   \normalfont\sffamily\Huge\bfseries\scshape}
+  {\gdef\chapterlabel{\thechapter\ }}{0pt}
+  {\begin{tikzpicture}[remember picture,overlay]
+    \node[yshift=-3cm] at (current page.north west)
+      {\begin{tikzpicture}[remember picture, overlay]
+        \draw[fill=rgray] (0,0) rectangle
+          (\paperwidth,3cm);
+        \node[anchor=east,xshift=.9\paperwidth,rectangle,
+              rounded corners=20pt,inner sep=11pt,
+              fill=rblue]
+              {\color{white}\chapterlabel#1};
+       \end{tikzpicture}
+      };
+   \end{tikzpicture}
+  }
+\sectionfont{\color{rgray}\normalfont\huge\bfseries}
+\subsubsectionfont{\color{dblue}\normalfont\bfseries}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{3}
+\setlength{\LTpre}{0pt}
+\setlength{\LTpost}{0pt}
+\setlist[itemize]{noitemsep, topsep=0pt}
+\usepackage[bookmarksnumbered=true,pdfstartview=FitH]{hyperref}
+\hypersetup{colorlinks, breaklinks, urlcolor=dblue, linkcolor=dblue, citecolor=MidnightBlue}
+
+$if(title)$
+\title{$title$}
+$endif$
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+$if(date)$
+\date{$date$}
+$endif$
+\raggedbottom
+
+\begin{document}
+\fontsize{11}{13}\selectfont
+$if(title)$
+\maketitle
+$endif$
+
+\bigskip
+
+$for(include-before)$
+$include-before$
+
+$endfor$
+$body$
+
+$if(biblio-files)$
+\bibliographystyle{model1-num-names}
+\bibliography{$biblio-files$}
+$endif$
+$for(include-after)$
+$include-after$
+
+$endfor$
+\end{document}

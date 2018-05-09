@@ -1,0 +1,167 @@
+% %\documentclass[handout]{beamer}
+% \documentclass[evncountsect]{beamer}
+% \usepackage{amsmath,algorithm,algorithmic,graphicx,amsfonts,amsthm,color,pgf,tikz,wrapfig,amsfonts,multicol,wasysym,animate}
+% \usepackage[absolute,overlay]{textpos}
+% \usetikzlibrary{arrows}
+% \beamertemplatenavigationsymbolsempty
+% \setbeamercovered{transparent = 0}
+% \useoutertheme[subsection=false]{miniframes}
+% \bibliographystyle{apalike}
+% \setlength{\fboxrule}{1pt}
+\documentclass[
+    $if(aspectratio)$
+    aspectratio=$aspectratio$,
+    $endif$
+    professionalfont,
+    $if(fontsize)$
+    $fontsize$,
+    $else$
+    12pt,
+    $endif$
+    default]{beamer}
+% available at https://github.com/matze/mtheme
+% should be found in /usr/share/texlive/texmf-dist/tex/latex/beamertheme-metropolis
+\beamertemplatenavigationsymbolsempty
+\setbeamercovered{transparent = 0}
+%\setbeamercovered{dynamic} % slightly displaying not highlight
+\useoutertheme[progressbar=frametitle]{metropolis}
+\usetheme{metropolis}
+
+\usepackage{mathpazo}
+\usepackage{longtable}
+$if(chinese)$
+\usepackage[fontset=windowsnew,UTF8]{ctex}
+$endif$
+
+% keep figure ratio
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+
+%\setbeamertemplate{footline}[page number]
+
+\setbeamercolor{structure}{fg=white!20!gray}
+\mathversion{bold}
+\usepackage{amsmath, amssymb, cite, url}
+\usepackage{etex}
+
+$if(natbib)$
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+$endif$
+$if(biblatex)$
+\usepackage{biblatex}
+$if(biblio-files)$
+\bibliography{$biblio-files$}
+$endif$
+$endif$
+$if(listings)$
+\usepackage{listings}
+$endif$
+$if(lhs)$
+\lstnewenvironment{code}{\lstset{language=Haskell,basicstyle=\small\ttfamily}}{}
+$endif$
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+$if(verbatim-in-note)$
+\usepackage{fancyvrb}
+$endif$
+$if(fancy-enums)$
+\usepackage{enumerate}
+$endif$
+$if(tables)$
+\usepackage{ctable}
+\usepackage{float} % provides the H option for float placement
+$endif$
+% Comment these out if you don't want a slide with just the
+% part/section/subsection/subsubsection title:
+% \AtBeginPart{\frame{\partpage}}
+% \AtBeginSection{\frame{\sectionpage}}
+% \AtBeginSubsection{\frame{\subsectionpage}}
+% \AtBeginSubsubsection{\frame{\subsubsectionpage}}
+$if(strikeout)$
+\usepackage[normalem]{ulem}
+% avoid problems with \sout in headers with hyperref:
+\pdfstringdefDisableCommands{\renewcommand{\sout}{}}
+$endif$
+\setlength{\parindent}{0pt}
+% \setlength{\parskip}{6pt plus 2pt minus 1pt}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+$if(numbersections)$
+$else$
+\setcounter{secnumdepth}{0}
+$endif$
+$if(verbatim-in-note)$
+\VerbatimFootnotes % allows verbatim text in footnotes
+$endif$
+$if(lang)$
+\usepackage[$lang$]{babel}
+$endif$
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+$if(title)$
+\title{$title$}
+$endif$
+$if(author)$
+\author{$for(author)$$author$$sep$ \and $endfor$}
+$endif$
+$if(date)$
+\date{$date$}
+$endif$
+
+\InputIfFileExists{macro.tex}{}{}
+% macro
+\def\BeginColumn#1{\begin{columns}\column{#1\textwidth}}
+\def\Column#1{\column{#1\textwidth}}
+\def\EndColumn{\end{columns}}
+\providecommand{\tightlist}{%
+    \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\begin{document}
+$if(title)$
+\frame{\titlepage}
+$endif$
+
+$for(include-before)$
+$include-before$
+
+$endfor$
+$if(toc)$
+\begin{frame}
+\tableofcontents[hideallsubsections]
+\end{frame}
+
+$endif$
+$body$
+
+$if(natbib)$
+$if(biblio-files)$
+$if(biblio-title)$
+$if(book-class)$
+\renewcommand\bibname{$biblio-title$}
+$else$
+\renewcommand\refname{$biblio-title$}
+$endif$
+$endif$
+\bibliography{$biblio-files$}
+
+$endif$
+$endif$
+$if(biblatex)$
+\printbibliography$if(biblio-title)$[title=$biblio-title$]$endif$
+
+$endif$
+$for(include-after)$
+$include-after$
+
+$endfor$
+\end{document}

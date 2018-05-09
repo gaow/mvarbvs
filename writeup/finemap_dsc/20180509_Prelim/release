@@ -1,0 +1,40 @@
+#!/usr/bin/env sos-runner
+#fileformat=SOS1.0
+
+parameter: theme = path('themes/metro.tex')
+parameter: notebook = path()
+parameter: bsize = 169
+parameter: purge = 0
+parameter: chinese = 0
+beamer = [f'{theme:b}' == 'labnotes.tex', '-t beamer', f'-V aspectratio={bsize}' if bsize > 0 else '', f'-V chinese={chinese}' if chinese else '']
+beamer = ' '.join(beamer[1:]) if not beamer[0] else ''
+
+[1]
+depends: Py_Module('ipyrmd')
+fail_if(not notebook.is_file(), msg = 'Need input parameter ``--notebook``')
+input: notebook
+output: f'{_input:n}.md' if len(beamer) else f'{_input:n}.print.md'
+run: expand = True
+     ipyrmd --from ipynb --to Rmd -y -o {_output} {_input}
+
+[2]
+depends: executable('pandoc')
+output: f'{_input:n}.tex'
+run: docker_image = "gaow/debian-texlive", expand = True
+     pandoc {beamer} --template {theme} -s -o {_output} {_input}
+
+[3]
+depends: executable('pdflatex')
+output: f'{_input:n}.pdf'
+run: docker_image = "gaow/debian-texlive", expand = True
+     pdflatex -shell-escape -output-directory={_input:d} {_input}
+     pdflatex -shell-escape -output-directory={_input:d} {_input}
+     if [ -f "{_input:n}.bib" ]; then
+        openout_any=a bibtex {_input:n}.aux
+        pdflatex -shell-escape -output-directory={_input:d} {_input}
+     fi
+
+[4]
+to_remove = paths([f'{_input:n}.' + x for x in ['aux', 'bbl', 'blg', 'log', 'out', 'nav', 'snm', 'toc', 'vrb', 'spl'] + (['md', 'tex'] if purge else [])] + [f'{_input:d}/_minted-{_input:bn}'])
+run: expand = True
+  rm -rf {to_remove}
