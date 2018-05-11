@@ -25,5 +25,9 @@ base_sim: lib_regression_simulator.py + \
   $V: data['V']
   $N: data['Y'].shape[0]
 
+simple_lm(base_sim):
+  eff_mode: simple_lm
+  amplitude: 0.5
+
 original_Y(base_sim):
   eff_mode: original

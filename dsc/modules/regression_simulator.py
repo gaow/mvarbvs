@@ -30,6 +30,8 @@ def simulate_main(data, c, plot_prefix):
         data['true_coef'] = mash_low_het(data, reg, c)
     elif eff_mode == 'original':
         data['true_coef'] = original_y(data, reg, c)
+    elif eff_mode == 'simple_lm':
+        data['true_coef'] = simple_lm(data, reg, c)
     else:
         raise ValueError(f'Mode {eff_mode} is not implemented.')
     if c['center_data']:
@@ -55,7 +57,20 @@ def original_y(data, reg, c):
         reg.Y = np.vstack(data['Y'].values()).T
     else:
         reg.Y = data['Y']
-    return None if 'true_coef' not in data else data['true_coef']
+    return None if 'true_coef' not in data else np.array(data['true_coef'])
+
+def simple_lm(data, reg, c):
+    eff = UnivariateMixture(reg.X.shape[1])
+    eff.set_vanilla(c['amplitude'])
+    Y = []
+    coef = []
+    for i in range(c['n_traits']):
+        eff.get_effects()
+        eff.sparsify_effects(c['n_signal'])
+        Y.append(eff.get_y(reg, ResidualVariance(c['residual_mode']).apply()))
+        coef.append(eff.coef)
+    reg.Y = np.hstack(Y)
+    return np.array(coef).T
     
 def mash_low_het(data, reg, c):
     if not c['keep_ld']:
@@ -68,5 +83,5 @@ def mash_low_het(data, reg, c):
     if c['swap_eff']:
         eff.swap_top_effects(c['top_idx'])
     eff.sparsify_effects(c['n_signal'])
-    reg.Y = eff.get_y(reg, ResidualVariance(c['residual_mode']).apply(eff))
+    reg.Y = eff.get_y(reg, ResidualVariance(c['residual_mode'], eff.R).apply())
     return eff.coef

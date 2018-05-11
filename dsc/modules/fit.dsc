@@ -43,6 +43,7 @@ fit_susie: fit_susie.R
   @CONF: R_libs = susieR@stephenslab/susieR
   maxL: 5
   maxI: 50
+  estimate_s2: raw(TRUE)
   data: $data
   $posterior: posterior
   $fitted: fitted

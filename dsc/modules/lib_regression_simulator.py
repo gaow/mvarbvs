@@ -89,7 +89,7 @@ class RegressionData(dotdict):
         '''
         Permute X columns, i.e. break blocked correlation structure
         '''
-        np.random.shuffle(self.X) 
+        np.random.shuffle(self.X)
         
     def plot_property_vector(self, yaxis, zaxis, xz_cutoff = None, out = '/tmp/1.pdf',
                             conf = {'title': '', 'ylabel': '', 'zlabel': ''}):
@@ -157,12 +157,22 @@ class RegressionData(dotdict):
         return pformat(self.__dict__, indent = 4)
     
 class ResidualVariance:
-    def __init__(self, mode):
+    def __init__(self, mode, dim = 1):
         self.mode = mode
+        self.dim = dim
         
-    def apply(self, eff_obj):
+    def apply(self):
         if self.mode == 'identity':
-            return np.identity(eff_obj.R)
+            return self.set_identity()
+        else:
+            raise ValueError(f"Residual mode {self.mode} not implemented.")
+
+    def set_identity(self):
+        if self.dim > 1:
+            # multivariate case
+            return np.identity(self.dim)
+        else:
+            return 1
     
 class UnivariateMixture:
     '''Simulated distributions of Stephens 2017 (ASH paper)'''
@@ -173,6 +183,11 @@ class UnivariateMixture:
         self.mus = []
         self.sigmas = []
         self.coef = []
+        
+    def set_vanilla(self, amplitude):
+        self.pis = [1]
+        self.mus = [0]
+        self.sigmas = [amplitude]
         
     def set_pi0(self, pi0):
         self.pi0 = pi0
@@ -227,28 +242,31 @@ class UnivariateMixture:
         beta = sorted(self.coef, key=abs, reverse=True)
         for idx in given_infex:
             nb[idx] = beta.pop(0)
-        random.shuffle(beta)
+        np.random.shuffle(beta)
         for idx in range(len(nb)):
             if not idx in given_index:
                 nb[idx] = beta.pop(0)
         assert len(beta) == 0
         self.coef = np.array(nb)
         
-    def sparsify_effects(self, num_non_zero):
+    def sparsify_effects(self, num_non_zero, top_only = False):
         '''
-        only keep top `num_non_zero` effects
+        top_only: only keep top `num_non_zero` effects
         '''
-        nb = np.zeros(len(self.coef))
-        big_beta_index = [i[0] for i in sorted(enumerate(self.coef), key = lambda x: np.absolute(x[1]), reverse = True)]
-        selected_index = big_beta_index[:min(len(big_beta_index), num_non_zero)]
-        for j in self.size:
+        nb = np.zeros(self.size)
+        if top_only:
+            big_beta_index = [i[0] for i in sorted(enumerate(self.coef), key = lambda x: np.absolute(x[1]), reverse = True)]
+            selected_index = big_beta_index[:min(len(big_beta_index), num_non_zero)]
+        else:
+            selected_index = np.random.choice(np.arange(self.size), size=num_non_zero)
+        for j in range(self.size):
             if j not in selected_index:
                 self.coef[j] = 0
                 
     def get_y(self, regression_data, sigma):
         y = np.dot(regression_data.X, self.coef.T) + np.random.normal(0, sigma, regression_data.X.shape[0])
-        y.reshape(len(y), 1)
-        return y
+        # y.reshape(len(y), 1)
+        return y.T
         
     def __str__(self):
         params = ' + '.join(["{} N({}, {}^2)".format(x,y,z) for x, y, z in zip(self.pis, self.mus, self.sigmas)])
@@ -353,13 +371,16 @@ class MultivariateMixture:
             name = list(self.pis.keys())[dist_index]
             self.coef[j,:] = np.random.multivariate_normal(self.mus['zeros'], self.Us[name], 1)
         
-    def sparsify_effects(self, num_non_zero):
+    def sparsify_effects(self, num_non_zero, top_only = False):
         '''
-        only keep top `num_non_zero` effects
+        top_only: only keep top `num_non_zero` effects
         '''
-        beta_max = np.amax(np.absolute(self.coef), axis = 1)
-        big_beta_index = [i[0] for i in sorted(enumerate(beta_max), key = lambda x: x[1], reverse = True)]
-        selected_index = big_beta_index[:min(len(big_beta_index), num_non_zero)]
+        if top_only:
+            beta_max = np.amax(np.absolute(self.coef), axis = 1)
+            big_beta_index = [i[0] for i in sorted(enumerate(beta_max), key = lambda x: x[1], reverse = True)]
+            selected_index = big_beta_index[:min(len(big_beta_index), num_non_zero)]
+        else:
+            selected_index = np.random.choice(np.arange(self.size), size=num_non_zero)
         for j in range(self.J):
             if j not in selected_index:
                 self.coef[j,:] = self.mus['zeros']
