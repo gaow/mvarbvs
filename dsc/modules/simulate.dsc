@@ -15,9 +15,9 @@ base_sim: lib_regression_simulator.py + \
   n_traits: 2
   eff_mode: mash_low_het
   residual_mode: identity
-  swap_eff: raw(True)
-  keep_ld: raw(True)
-  center_data: raw(True)
+  swap_eff: True
+  keep_ld: True
+  center_data: True
   cache: file(sim)
   tag: sim1
   @ALIAS: conf = Dict(!data, !eff_mode)

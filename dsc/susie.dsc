@@ -8,6 +8,7 @@ DSC:
   run: 
     run_susie: setup * get_response * fit_susie * plot_sse
     run_varbvs: setup * get_response * fit_varbvs * plot_sse
+    run_finemap: setup * get_response * get_sumstats * fit_finemap * plot_finemap
   output: benchmark
   exec_path: modules
   global:

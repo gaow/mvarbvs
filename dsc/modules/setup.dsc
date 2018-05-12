@@ -15,7 +15,7 @@ full_data: R(data =readRDS(${data_file});
   tag: full
   start, end: (0, 0)
   $data: data
-  $top_idx: raw(NULL)
+  $top_idx: NULL
   $ld_file: file(ld)
   $ld_mat: file(rds)
         

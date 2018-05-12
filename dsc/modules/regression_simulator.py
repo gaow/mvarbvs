@@ -12,8 +12,8 @@ def simulate_main(data, c, plot_prefix):
     n_signal: 3
     n_traits: 2
     eff_mode: mash_low_het
-    swap_eff: raw(True)
-    keep_ld: raw(True)
+    swap_eff: True
+    keep_ld: True
     tag: sim1
     @ALIAS: conf = Dict(!data, !eff_mode)
     $data: data

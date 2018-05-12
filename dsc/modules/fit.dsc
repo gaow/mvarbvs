@@ -27,7 +27,7 @@ fit_mnm_debug: regression.R + elbo_mnm.R + fit_mnm.R
   @CONF: R_libs = mashr
   maxL: 5
   maxI: 20
-  get_elbo: raw(T)
+  get_elbo: TRUE
   data: $data
   model: $model
   V: $V
@@ -36,14 +36,14 @@ fit_mnm_debug: regression.R + elbo_mnm.R + fit_mnm.R
 
 fit_mnm(fit_mnm_debug):
   maxI: 10
-  get_elbo: raw(F)
+  get_elbo: FALSE
 
 fit_susie: fit_susie.R
   # Prior variance of nonzero effects.
   @CONF: R_libs = susieR@stephenslab/susieR
   maxL: 5
   maxI: 50
-  estimate_s2: raw(TRUE)
+  estimate_s2: TRUE
   data: $data
   $posterior: posterior
   $fitted: fitted
@@ -58,7 +58,7 @@ fit_caviar: fit_caviar.R + \
   @CONF: R_libs = (dplyr, magrittr)
   sumstats: $sumstats
   ld: $ld_file
-  args: -c 1, -c 2
+  args: -c 1, -c 3
   cache: file(CAVIAR)
   $posterior: posterior
 
@@ -68,7 +68,7 @@ fit_finemap(fit_caviar): fit_finemap.R + \
                                         args, prefix=cache))
   N: $N
   k: R(rep(1/5,5)), (0.6,0.25,0.1,0.05)
-  args: --regions 1 --prior-std 0.4 --n-causal-max 5
+  args: --n-causal-snps 5
   cache: file(FM)
 
 fit_dap: fit_dap.py + Python(posterior = dap_batch(data['X'], data['Y'], cache, args))
