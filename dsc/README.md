@@ -6,8 +6,7 @@ in SoS Notebook. To edit the notebook please use Jupyter Lab:
 ```
 pip install sos-notebook jupyterlab
 conda install nodejs
-jupyter labextension install jupyterlab-toc
-jupyter labextension install jupyterlab-sos
+jupyter labextension install --no-build jupyterlab-toc jupyterlab-sos
 ```
 
 Then open the notebook with:
@@ -25,10 +24,10 @@ To run the benchmark, after editing the notebook first save them to module files
 ./run.sos convert
 ```
 
-Then run the benchmark from `mnm.sh`. To see what are available for example,
+Then run the benchmark from `*.dsc`. To see what are available for example,
 
 ```
-dsc mnm.dsc -h
+dsc susie.dsc -h
 ```
 
 **Do not edit `*.dsc` under this folder, or any scripts under `modules/` folder. 

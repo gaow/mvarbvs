@@ -13,21 +13,21 @@ base_sim: lib_regression_simulator.py + \
   top_idx: $top_idx
   n_signal: 3
   n_traits: 2
-  eff_mode: mash_low_het
-  residual_mode: identity
+  eff_mode: "mash_low_het"
+  residual_mode: "identity"
   swap_eff: True
   keep_ld: True
   center_data: True
   cache: file(sim)
-  tag: sim1
+  tag: "sim1"
   @ALIAS: conf = Dict(!data, !eff_mode)
   $data: data
   $V: data['V']
   $N: data['Y'].shape[0]
 
 simple_lm(base_sim):
-  eff_mode: simple_lm
+  eff_mode: "simple_lm"
   amplitude: 0.5
 
 original_Y(base_sim):
-  eff_mode: original
+  eff_mode: "original"

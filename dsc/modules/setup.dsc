@@ -12,7 +12,7 @@ full_data: R(data =readRDS(${data_file});
             r2 = cor(data$X);
             saveRDS(r2 ^ 2 * sign(r2), ld_mat);
             write.table(r2,ld_file,quote=F,col.names=F,row.names=F))
-  tag: full
+  tag: "full"
   start, end: (0, 0)
   $data: data
   $top_idx: NULL
@@ -20,15 +20,15 @@ full_data: R(data =readRDS(${data_file});
   $ld_mat: file(rds)
         
 lite_data(full_data):
-  tag: 2k
+  tag: "2k"
   start, end: (2500, 4500)
              
 liter_data(full_data):
-  tag: 1k
+  tag: "1k"
   start, end: (3000, 4000)           
             
 two_effect(full_data):
-  tag: two
+  tag: "two"
   start, end: (3500, 3501)
              
 dap_g_data(full_data): R(X = readRDS(${dap_g_data})$X;
@@ -36,7 +36,7 @@ dap_g_data(full_data): R(X = readRDS(${dap_g_data})$X;
               saveRDS(r2 ^ 2 * sign(r2), ld_mat);
               write.table(r2,ld_file,quote=F,col.names=F,row.names=F)) + \
               dap_g_paper.R + R(data = list(X=X,Y=Y,true_coef=B))  
-  tag: dap_g
+  tag: "dap_g"
 
 get_sumstats: regression.R + R(res = mm_regression(as.matrix(data$X), 
                                                    as.matrix(data$Y)))

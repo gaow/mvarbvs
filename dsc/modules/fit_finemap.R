@@ -9,7 +9,7 @@ write_finemap_sumstats <- function(z, LD_file, n, k, prefix) {
              meta=paste0(prefix,".master"))
   write.table(z,cfg$z,quote=F,col.names=F)
   write.table(t(k),cfg$k,quote=F,col.names=F,row.names=F)
-  write("z;ld;snp;config;k;log;n-ind",file=cfg$meta)
+  write("z;ld;snp;config;k;log;n_samples",file=cfg$meta)
   write(paste(cfg$z, cfg$ld, cfg$snp, cfg$config, cfg$k, cfg$log, n, sep=";"),
         file=cfg$meta,append=TRUE)
   return(cfg)

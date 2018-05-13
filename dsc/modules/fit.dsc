@@ -18,8 +18,8 @@ init_mnm: init_mnm.R
   reg: $sumstats
   # FIXME: these quantities are to be computed seperately and globally using mashr procedure
   # See http://stephenslab.github.io/gtex-eqtls/analysis/20171002_MASH_V8.html
-  Sigma: empirical
-  (U, grid, p): (auto, (0.9,0.01,0.01,0.01,0.01,0.01,0.01,0.02,0.02), auto)
+  Sigma: "empirical"
+  (U, grid, p): ("auto", (0.9,0.01,0.01,0.01,0.01,0.01,0.01,0.02,0.02), "auto")
   $model: model
   $V: V
 
@@ -58,7 +58,7 @@ fit_caviar: fit_caviar.R + \
   @CONF: R_libs = (dplyr, magrittr)
   sumstats: $sumstats
   ld: $ld_file
-  args: -c 1, -c 3
+  args: "-c 1", "-c 3"
   cache: file(CAVIAR)
   $posterior: posterior
 
@@ -68,12 +68,12 @@ fit_finemap(fit_caviar): fit_finemap.R + \
                                         args, prefix=cache))
   N: $N
   k: R(rep(1/5,5)), (0.6,0.25,0.1,0.05)
-  args: --n-causal-snps 5
+  args: "--n-causal-snps 5"
   cache: file(FM)
 
 fit_dap: fit_dap.py + Python(posterior = dap_batch(data['X'], data['Y'], cache, args))
   data: $data
-  args: -ld_control 0.25
+  args: "-ld_control 0.25"
   cache: file(DAP)
   $posterior: posterior
 
@@ -81,7 +81,7 @@ fit_dap_z: fit_dap.py + Python(posterior = dap_batch_z(sumstats[0,:,:]/sumstats[
                                                        ld, cache, args))
   sumstats: $sumstats
   ld: $ld_file
-  args: -t 4
+  args: "-t 4"
   cache: file(DAP)
   $posterior: posterior
 

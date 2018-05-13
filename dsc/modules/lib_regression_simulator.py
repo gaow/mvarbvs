@@ -24,7 +24,7 @@ class RegressionData(dotdict):
     def __init__(self, X = None, Y = None, Z = None):
         # FIXME: check if inputs are indeed numpy arrays
         self.debug = dotdict()
-        self.x_centered = self.y_centered = self.z_centered = False
+        self.x_mean = self.y_mean = self.z_mean = None
         self.X = None
         self.Y = None
         self.Z = None
@@ -54,15 +54,15 @@ class RegressionData(dotdict):
     def center_data(self):
         # for np.array: np.mean(Z, axis=0, keepdims=True)
         # for np.matrix, no keepdims argument
-        if self.X is not None and not self.x_centered:
-            self.X -= np.mean(self.X, axis=0)
-            self.x_centered = True
-        if self.Y is not None and not self.y_centered:
-            self.Y -= np.mean(self.Y, axis=0)
-            self.y_centered = True
-        if self.Z is not None and not self.z_centered:
-            self.Z -= np.mean(self.Z, axis=0)
-            self.z_centered = True
+        if self.X is not None and self.x_mean is None:
+            self.x_mean = np.mean(self.X, axis=0)
+            self.X -= self.x_mean
+        if self.Y is not None and self.y_mean is None:
+            self.y_mean = np.mean(self.Y, axis=0)
+            self.Y -= self.y_mean
+        if self.Z is not None and self.z_mean is None:
+            self.z_mean = np.mean(self.Z, axis=0)
+            self.Z -= self.z_mean
 
     def set_xcorr(self, xcorr):
         if xcorr is not None:
