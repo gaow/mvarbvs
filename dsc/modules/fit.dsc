@@ -63,11 +63,13 @@ fit_caviar: fit_caviar.R + \
   $posterior: posterior
 
 fit_finemap(fit_caviar): fit_finemap.R + \
-             R(posterior = finemap_mvar(sumstats[1,,]/sumstats[2,,], 
+             R(posterior = finemap_mvar(sumstats[1,,], sumstats[2,,],
+                                        data$allele_freq,
                                         ld, N, k,
                                         args, prefix=cache))
   N: $N
   k: R(rep(1/5,5)), (0.6,0.25,0.1,0.05)
+  data: $data
   args: "--n-causal-snps 5"
   cache: file(FM)
 

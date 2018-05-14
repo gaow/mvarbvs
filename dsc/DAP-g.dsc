@@ -10,5 +10,5 @@ DSC:
   output: benchmark
   exec_path: modules
   global:
-    data_file: ~/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds
-    dap_g_data: ../data/sim.r.geno.rds
+    data_file: "~/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds"
+    dap_g_data: "../data/sim.r.geno.rds"

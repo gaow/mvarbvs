@@ -38,7 +38,8 @@ def simulate_main(data, c, plot_prefix):
         reg.center_data()
     data['X'] = reg.X
     data['Y'] = reg.Y
-    data['allele_freq'] = reg.x_mean / 2
+    data['allele_freq'] = (reg.x_mean / 2) if reg.x_mean is not None else (np.mean(reg.X, axis=0) / 2)
+    data['allele_freq'] = data['allele_freq'].T
     if data['true_coef'] is not None:
         for j in range(data['true_coef'].shape[1]):
             plot_file = f'{plot_prefix}.{j+1}.pdf'
