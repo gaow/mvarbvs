@@ -70,7 +70,7 @@ plot_snp <- function(x, lim_prob, label_size, top_rank, ...)
     scale_y_continuous(limits  = c(top_rank + 0.5, 0.5), trans = "reverse")
 }
 
-pdf(plot_file)
+png(plot_file)
 for (r in 1:length(result)) {
     print(plot_dap(result[[r]], top_rank = top_rank))
 }

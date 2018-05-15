@@ -29,7 +29,7 @@ plot_snp <- function(x, label_size, top_rank, lim_prob, ...)
     scale_y_continuous(limits  = c(top_rank + 0.5, 0.5), trans = "reverse")
 }
 
-pdf(plot_file)
+png(plot_file)
 for (r in 1:length(result)) {
     print(plot_caviar(result[[r]], top_rank = top_rank))
 }

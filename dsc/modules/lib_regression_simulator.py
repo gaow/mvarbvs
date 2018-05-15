@@ -91,7 +91,7 @@ class RegressionData(dotdict):
         '''
         np.random.shuffle(self.X)
         
-    def plot_property_vector(self, yaxis, zaxis, xz_cutoff = None, out = '/tmp/1.pdf',
+    def plot_property_vector(self, yaxis, zaxis, xz_cutoff = None, out = '/tmp/1.png',
                             conf = {'title': '', 'ylabel': '', 'zlabel': ''}):
         '''
         - yaxis can be eg $\beta$ or log10BF or -log10Prob

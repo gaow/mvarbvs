@@ -42,7 +42,7 @@ def simulate_main(data, c, plot_prefix):
     data['allele_freq'] = data['allele_freq'].T
     if data['true_coef'] is not None:
         for j in range(data['true_coef'].shape[1]):
-            plot_file = f'{plot_prefix}.{j+1}.pdf'
+            plot_file = f'{plot_prefix}.{j+1}.png'
             reg.plot_property_vector(data['true_coef'][:,j], 
                                  [np.absolute(x)>0 for x in data['true_coef'][:,j]], 
                                  xz_cutoff = None, out = plot_file,

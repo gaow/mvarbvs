@@ -14,7 +14,7 @@ plot_finemap: plot_finemap.R
   @CONF: R_libs = (dplyr, ggplot2, cowplot)
   result: $posterior
   top_rank: 10
-  $plot_file: file(pdf)
+  $plot_file: file(png)
 
 plot_caviar(plot_finemap): plot_caviar.R
 plot_dap(plot_finemap): plot_dap.R
@@ -27,4 +27,17 @@ plot_sse: lib_regression_simulator.py + \
   data: $data
   result: $posterior
   ld_mat: $ld_mat
-  $plot_file: file(SSE)
+  $plot_file: file(plot_file)
+
+plot_susie: plot_susie.py + Python(plot_sets(result['in_CI'], 
+                                             result['n_in_CI'],
+                                             result['set_lfsr'],
+                                             ld_mat,
+                                             data['true_coef'],
+                                             seg, purity))
+  @CONF: python_modules = seaborn
+  data: $data
+  result: $posterior
+  ld_mat: $ld_mat
+  $purity: file(purity) 
+  $seg: file(seg)

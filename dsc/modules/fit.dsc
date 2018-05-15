@@ -38,19 +38,12 @@ fit_mnm(fit_mnm_debug):
   maxI: 10
   get_elbo: FALSE
 
-fit_susie: fit_susie.R
-  # Prior variance of nonzero effects.
-  @CONF: R_libs = susieR@stephenslab/susieR
-  maxL: 5
-  maxI: 50
-  estimate_s2: TRUE
+fit_varbvs: setup_varbvs.R + fit_varbvs.R
+  @CONF: R_libs = varbvs@pcarbo/varbvs/varbvs-R
+  sa: 1
   data: $data
   $posterior: posterior
   $fitted: fitted
-
-fit_varbvs(fit_susie): setup_varbvs.R + fit_varbvs.R
-  @CONF: R_libs = varbvs@pcarbo/varbvs/varbvs-R
-  sa: 1
 
 fit_caviar: fit_caviar.R + \
              R(posterior = finemap_mcaviar(sumstats[1,,]/sumstats[2,,], 
