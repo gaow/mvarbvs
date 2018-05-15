@@ -13,4 +13,4 @@ def plot_sse(coef, true_coef, in_set, ld, plot_prefix):
                                  xz_cutoff = (0, 0.8), out = plot_file,
                                  conf = {'title': f'Response {j+1}', 
                                     'ylabel': 'effect size estimate', 
-                                    'zlabel': 'In 95 CI set'})
+                                    'zlabel': 'In 95% CS'})
