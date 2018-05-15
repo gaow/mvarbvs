@@ -29,15 +29,15 @@ plot_sse: lib_regression_simulator.py + \
   ld_mat: $ld_mat
   $plot_file: file(plot_file)
 
-plot_susie: plot_susie.py + Python(purity = plot_sets(result['in_CI'], 
-                                             result['n_in_CI'],
-                                             result['set_lfsr'],
-                                             data['true_coef'],
-                                             ld_mat,
-                                             seg))
+plot_susie: plot_susie.py + Python(purity, signal = plot_sets(result['in_CI'], 
+                                                              result['set_lfsr'],
+                                                              data['true_coef'],
+                                                              ld_mat,
+                                                              seg))
   @CONF: python_modules = seaborn
   data: $data
   result: $posterior
   ld_mat: $ld_mat
   $seg: file(seg)
   $purity: purity
+  $signal: signal
