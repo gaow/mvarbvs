@@ -27,11 +27,12 @@ def simulate_main(data, c, plot_prefix):
     if eff_mode == 'mash_low_het':
         if c['n_traits'] < 2:
             raise ValueError(f'Cannot simulate {c["n_traits"]} under mode {eff_mode}')
-        data['true_coef'] = mash_low_het(data, reg, c)
+        data['true_coef'], data['residual_variance'] = mash_low_het(data, reg, c)
     elif eff_mode == 'original':
         data['true_coef'] = original_y(data, reg, c)
+        data['residual_variance'] = None
     elif eff_mode == 'simple_lm':
-        data['true_coef'] = simple_lm(data, reg, c)
+        data['true_coef'], data['residual_variance'] = simple_lm(data, reg, c)
     else:
         raise ValueError(f'Mode {eff_mode} is not implemented.')
     if c['center_data']:
@@ -66,13 +67,15 @@ def simple_lm(data, reg, c):
     eff.set_vanilla(c['amplitude'])
     Y = []
     coef = []
+    sigma = []
     for i in range(c['n_traits']):
         eff.get_effects()
         eff.sparsify_effects(c['n_signal'])
-        Y.append(eff.get_y(reg, ResidualVariance(c['residual_mode']).apply()))
+        Y.append(eff.get_y(reg, pve = c['pve']))
         coef.append(eff.coef)
+        sigma.append(eff.residual_variance)
     reg.Y = np.hstack(Y)
-    return np.array(coef).T
+    return np.array(coef).T, np.array(sigma)
     
 def mash_low_het(data, reg, c):
     if not c['keep_ld']:
@@ -86,4 +89,4 @@ def mash_low_het(data, reg, c):
         eff.swap_top_effects(c['top_idx'])
     eff.sparsify_effects(c['n_signal'])
     reg.Y = eff.get_y(reg, ResidualVariance(c['residual_mode'], eff.R).apply())
-    return eff.coef
+    return eff.coef, eff.residual_variance

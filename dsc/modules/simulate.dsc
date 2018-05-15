@@ -28,6 +28,7 @@ base_sim: lib_regression_simulator.py + \
 simple_lm(base_sim):
   eff_mode: "simple_lm"
   amplitude: 0.5
+  pve: 0.15
 
 original_Y(base_sim):
   eff_mode: "original"
