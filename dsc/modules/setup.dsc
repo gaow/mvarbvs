@@ -7,13 +7,14 @@
 # $data: full data
 # $sumstats: summary statistics
 
-full_data: R(data =readRDS(${data_file});
-            if (end>start) data$X = as.matrix(data$X[,start:end]);
+full_data: sim_utils.R + R(data =readRDS(dataset);
+            data$X = as.matrix(data$X[,get_center(subset, ncol(data$X))]);
             r2 = cor(data$X);
             saveRDS(r2 ^ 2 * sign(r2), ld_mat);
             write.table(r2,ld_file,quote=F,col.names=F,row.names=F))
   tag: "full"
-  start, end: (0, 0)
+  dataset: Shell{head -50 ${data_file}}
+  subset: NULL
   $data: data
   $top_idx: NULL
   $ld_file: file(ld)
@@ -21,23 +22,24 @@ full_data: R(data =readRDS(${data_file});
         
 lite_data(full_data):
   tag: "2k"
-  start, end: (2500, 4500)
+  subset: 2000
              
 liter_data(full_data):
   tag: "1k"
-  start, end: (3000, 4000)           
+  subset: 1000
             
 two_effect(full_data):
   tag: "two"
-  start, end: (3500, 3501)
+  subset: 2
              
-dap_g_data(full_data): R(X = readRDS(${dap_g_data})$X;
+dap_g_data(full_data): R(X = readRDS(dataset)$X;
               r2 = cor(X);
               saveRDS(r2 ^ 2 * sign(r2), ld_mat);
               write.table(r2,ld_file,quote=F,col.names=F,row.names=F)) + \
               dap_g_paper.R + R(data = list(X=X,Y=Y,true_coef=B))  
   tag: "dap_g"
-
+  dataset: Shell{cat ${dap_g_data}}
+             
 get_sumstats: regression.R + R(res = mm_regression(as.matrix(data$X), 
                                                    as.matrix(data$Y)))
   @CONF: R_libs = abind

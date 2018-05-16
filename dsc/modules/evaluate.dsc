@@ -33,11 +33,15 @@ plot_susie: plot_susie.py + Python(purity, signal = plot_sets(result['in_CI'],
                                                               result['set_lfsr'],
                                                               data['true_coef'],
                                                               ld_mat,
-                                                              seg))
+                                                              seg, save_plot))
   @CONF: python_modules = seaborn
   data: $data
   result: $posterior
   ld_mat: $ld_mat
+  save_plot: True                                                            
   $seg: file(seg)
   $purity: purity
   $signal: signal
+                                                              
+eval_susie(plot_susie):
+  save_plot: False

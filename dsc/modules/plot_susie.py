@@ -104,7 +104,7 @@ class SusieReporter:
                 lds.append((1,1,1,1))
         return np.array(lds), {'min': 0, 'mean': 1, 'median': 2, 'max': 3}
     
-def plot_sets(in_cs, lfsr, true_coef, ld_mat, seg_prefix):
+def plot_sets(in_cs, lfsr, true_coef, ld_mat, seg_prefix, save_plot):
     ld_status = dict()
     signal_status = dict()
     for idx, k in enumerate(in_cs.keys()):
@@ -112,7 +112,8 @@ def plot_sets(in_cs, lfsr, true_coef, ld_mat, seg_prefix):
                                  np.array(lfsr)[:, idx], 
                                  np.array(true_coef)[:, idx], 
                                  ld_mat)
-        reporter.plot_segments(f'{seg_prefix}.{idx+1}.png')
+        if save_plot:
+            reporter.plot_segments(f'{seg_prefix}.{idx+1}.png')
         ld_status[idx+1] = reporter.purity
         signal_status[idx+1] = reporter.signal_captured
     return ld_status, signal_status
