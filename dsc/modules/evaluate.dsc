@@ -30,7 +30,7 @@ plot_sse: lib_regression_simulator.py + \
   $plot_file: file(plot_file)
 
 plot_susie: plot_susie.py + Python(purity, signal = plot_sets(result['in_CI'], 
-                                                              result['set_lfsr'],
+                                                              result['lfsr'],
                                                               data['true_coef'],
                                                               ld_mat,
                                                               seg, save_plot))
