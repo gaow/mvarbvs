@@ -230,10 +230,6 @@ body {
 </li>
         
 <li>
-  <a href="../DSC.html">DSC</a>
-</li>
-        
-<li>
   <a href="../writeup.html">Writeup</a>
 </li>
         
