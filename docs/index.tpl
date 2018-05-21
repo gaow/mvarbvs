@@ -194,6 +194,10 @@ $(document).ready(function () {
 </li>
         
 <li>
+  <a href="./dsc.html">Dsc</a>
+</li>
+        
+<li>
   <a href="./writeup.html">Writeup</a>
 </li>
         
