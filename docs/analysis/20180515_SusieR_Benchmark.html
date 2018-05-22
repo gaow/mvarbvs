@@ -340,13 +340,13 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">get_combined</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">ld_col</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">out_files</span> <span class="o">=</span> <span class="n">sub</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_susie.output.file&quot;</span><span class="p">,</span> <span class="s2">&quot;eval_susie.output.file&quot;</span><span class="p">)]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">get_combined</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">ld_col</span><span class="p">,</span> <span class="n">ld_cutoff</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">lfsr_cutoff</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">out_files</span> <span class="o">=</span> <span class="n">sub</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_susie.output.file&quot;</span><span class="p">,</span> <span class="s2">&quot;plot_susie.output.file&quot;</span><span class="p">)]</span>
     <span class="n">combined</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">purity</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">lfsr</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> 
-                    <span class="n">captures</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">total_captures</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">)</span>
+                    <span class="n">captures</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">total_captures</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">pip</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">)</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span> <span class="p">{</span>
         <span class="n">fit</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">posterior</span>
         <span class="n">purity</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span>
@@ -359,6 +359,11 @@ body {
         <span class="c1">#</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">lfsr</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">lfsr</span> <span class="o">=</span> <span class="n">fit</span><span class="err">$</span><span class="n">set_lfsr</span><span class="p">[,</span><span class="mi">1</span><span class="p">]</span>
         <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">lfsr</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">lfsr</span><span class="p">,</span> <span class="n">fit</span><span class="err">$</span><span class="n">set_lfsr</span><span class="p">[,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="c1">#</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">fit</span><span class="err">$</span><span class="n">alpha</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="err">$</span><span class="n">V1</span><span class="p">[,</span><span class="n">ld_col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">ld_cutoff</span><span class="p">),,</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+        <span class="n">pip</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nb">apply</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">prod</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">pip</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">pip</span>
+        <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">pip</span><span class="p">,</span> <span class="n">pip</span><span class="p">)</span>        
         <span class="c1">#</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">captures</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">captures</span> <span class="o">=</span> <span class="n">rowSums</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">signal</span><span class="err">$</span><span class="n">V1</span><span class="p">)</span>
         <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">captures</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">captures</span><span class="p">,</span> <span class="n">rowSums</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">signal</span><span class="err">$</span><span class="n">V1</span><span class="p">))</span>
@@ -443,11 +448,11 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="s1">&#39;benchmark&#39;</span><span class="p">,</span> 
-                    <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset simple_lm.pve simple_lm.n_signal fit_susie.estimate_residual_variance fit_susie.prior_var fit_susie eval_susie&quot;</span><span class="p">)</span>
+                    <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset simple_lm.pve simple_lm.n_signal fit_susie.estimate_residual_variance fit_susie.prior_var fit_susie plot_susie&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -571,7 +576,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">pve</span> <span class="o">=</span> <span class="mf">0.2</span>
@@ -591,7 +596,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">combined</span> <span class="o">=</span> <span class="n">get_combined</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">ld_col</span><span class="p">)</span>
@@ -599,77 +604,6 @@ body {
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<dl>
-	<dt>$purity</dt>
-		<dd><table>
-<tbody>
-	<tr><td>1.000000e+00</td><td>1.000000e+00</td><td>1.000000e+00</td><td>1           </td><td>9.381204e-01</td><td>1           </td><td>8.645951e-01</td><td>9.794020e-01</td><td>9.598763e-01</td><td>0.9249755   </td><td>⋯           </td><td>1.000000e+00</td><td>7.892258e-01</td><td>9.564520e-01</td><td>8.177256e-01</td><td>0.9472561   </td><td>9.392101e-01</td><td>1           </td><td>7.964152e-01</td><td>3.224397e-01</td><td>5.097050e-01</td></tr>
-	<tr><td>1.000000e+00</td><td>2.982717e-01</td><td>8.847574e-41</td><td>1           </td><td>1.923051e-41</td><td>1           </td><td>8.458120e-01</td><td>3.422445e-43</td><td>1.000000e+00</td><td>0.0000000   </td><td>⋯           </td><td>9.586628e-01</td><td>1.000000e+00</td><td>4.835524e-01</td><td>2.793974e-42</td><td>0.9399980   </td><td>1.433117e-41</td><td>0           </td><td>8.743901e-01</td><td>3.464381e-41</td><td>6.663029e-39</td></tr>
-	<tr><td>8.118888e-01</td><td>2.736181e-41</td><td>8.847574e-41</td><td>0           </td><td>1.923051e-41</td><td>0           </td><td>8.602727e-41</td><td>3.422445e-43</td><td>2.657076e-40</td><td>0.0000000   </td><td>⋯           </td><td>7.734674e-42</td><td>6.084654e-43</td><td>1.120709e-41</td><td>2.793974e-42</td><td>0.0000000   </td><td>1.433117e-41</td><td>0           </td><td>8.319693e-39</td><td>3.464381e-41</td><td>4.972767e-11</td></tr>
-	<tr><td>1.193006e-13</td><td>2.736181e-41</td><td>8.847574e-41</td><td>0           </td><td>1.923051e-41</td><td>0           </td><td>8.602727e-41</td><td>3.422445e-43</td><td>2.657076e-40</td><td>0.0000000   </td><td>⋯           </td><td>7.734674e-42</td><td>6.084654e-43</td><td>1.120709e-41</td><td>2.793974e-42</td><td>0.0000000   </td><td>1.433117e-41</td><td>0           </td><td>1.330441e-39</td><td>3.464381e-41</td><td>6.663029e-39</td></tr>
-	<tr><td>1.193006e-13</td><td>2.736181e-41</td><td>8.847574e-41</td><td>0           </td><td>1.923051e-41</td><td>0           </td><td>8.602727e-41</td><td>3.422445e-43</td><td>2.657076e-40</td><td>0.0000000   </td><td>⋯           </td><td>7.734674e-42</td><td>6.084654e-43</td><td>1.120709e-41</td><td>2.793974e-42</td><td>0.0000000   </td><td>1.433117e-41</td><td>0           </td><td>1.330441e-39</td><td>3.464381e-41</td><td>6.663029e-39</td></tr>
-</tbody>
-</table>
-</dd>
-	<dt>$lfsr</dt>
-		<dd><table>
-<tbody>
-	<tr><td>0.000000e+00 </td><td>1.110223e-16 </td><td>0.0000000    </td><td>0.000000e+00 </td><td>4.314191e-07 </td><td>0.0000000    </td><td>0.000000e+00 </td><td>0.0000000    </td><td>0.0000000    </td><td>1.110223e-16 </td><td>⋯            </td><td>-2.220446e-16</td><td>1.110223e-16 </td><td>0.000000000  </td><td>1.387779e-14 </td><td>0.000000e+00 </td><td>0.0000000    </td><td>1.110223e-16 </td><td>4.002132e-12 </td><td>7.252782e-06 </td><td>0.0006636412 </td></tr>
-	<tr><td>1.110223e-16 </td><td>1.051624e-02 </td><td>0.2042303    </td><td>1.110223e-16 </td><td>2.307441e-02 </td><td>0.0000000    </td><td>5.064476e-08 </td><td>0.2166895    </td><td>0.0000000    </td><td>2.983107e-01 </td><td>⋯            </td><td> 5.397127e-12</td><td>1.032507e-14 </td><td>0.002415923  </td><td>2.138793e-01 </td><td>3.909645e-10 </td><td>0.3008102    </td><td>2.483189e-01 </td><td>9.811422e-07 </td><td>2.930031e-01 </td><td>0.0831008771 </td></tr>
-	<tr><td>3.968579e-07 </td><td>2.907259e-01 </td><td>0.2009671    </td><td>3.515603e-01 </td><td>2.453586e-01 </td><td>0.2696713    </td><td>3.663734e-01 </td><td>0.2160695    </td><td>0.3846569    </td><td>2.976791e-01 </td><td>⋯            </td><td> 2.128599e-01</td><td>2.833277e-01 </td><td>0.302773290  </td><td>2.103535e-01 </td><td>2.787650e-01 </td><td>0.3011567    </td><td>2.474620e-01 </td><td>1.504939e-01 </td><td>2.933054e-01 </td><td>0.0274480533 </td></tr>
-	<tr><td>4.348645e-01 </td><td>2.905872e-01 </td><td>0.2006130    </td><td>3.514377e-01 </td><td>2.461852e-01 </td><td>0.2689490    </td><td>3.680002e-01 </td><td>0.2159145    </td><td>0.3844345    </td><td>2.974607e-01 </td><td>⋯            </td><td> 2.119697e-01</td><td>2.829136e-01 </td><td>0.303269431  </td><td>2.108869e-01 </td><td>2.786586e-01 </td><td>0.3026100    </td><td>2.474810e-01 </td><td>2.551203e-01 </td><td>2.939670e-01 </td><td>0.2652196603 </td></tr>
-	<tr><td>4.357395e-01 </td><td>2.906602e-01 </td><td>0.2027403    </td><td>3.513787e-01 </td><td>2.474014e-01 </td><td>0.2678285    </td><td>3.704126e-01 </td><td>0.2163372    </td><td>0.3840299    </td><td>2.978265e-01 </td><td>⋯            </td><td> 2.111652e-01</td><td>2.831244e-01 </td><td>0.304354536  </td><td>2.138997e-01 </td><td>2.796414e-01 </td><td>0.3049636    </td><td>2.481342e-01 </td><td>2.559523e-01 </td><td>2.950045e-01 </td><td>0.2692259465 </td></tr>
-</tbody>
-</table>
-</dd>
-	<dt>$size</dt>
-		<dd><table>
-<tbody>
-	<tr><td>  1</td><td>  1</td><td>  1</td><td>  1</td><td>  7</td><td>  1</td><td> 16</td><td> 20</td><td> 14</td><td> 10</td><td>⋯  </td><td>  1</td><td> 51</td><td> 62</td><td>  9</td><td> 10</td><td> 27</td><td>  1</td><td> 40</td><td> 55</td><td> 62</td></tr>
-	<tr><td>  1</td><td>  2</td><td>920</td><td>  4</td><td>359</td><td>  1</td><td> 48</td><td>924</td><td>  1</td><td>939</td><td>⋯  </td><td> 11</td><td>  1</td><td> 40</td><td>925</td><td>  5</td><td>941</td><td>932</td><td>  4</td><td>939</td><td>777</td></tr>
-	<tr><td> 44</td><td>938</td><td>919</td><td>945</td><td>931</td><td>937</td><td>948</td><td>923</td><td>948</td><td>939</td><td>⋯  </td><td>922</td><td>936</td><td>940</td><td>924</td><td>934</td><td>941</td><td>932</td><td>888</td><td>939</td><td>417</td></tr>
-	<tr><td>950</td><td>938</td><td>919</td><td>945</td><td>931</td><td>936</td><td>948</td><td>923</td><td>948</td><td>939</td><td>⋯  </td><td>922</td><td>936</td><td>940</td><td>924</td><td>934</td><td>941</td><td>932</td><td>931</td><td>939</td><td>935</td></tr>
-	<tr><td>950</td><td>938</td><td>920</td><td>945</td><td>932</td><td>936</td><td>948</td><td>923</td><td>948</td><td>939</td><td>⋯  </td><td>922</td><td>936</td><td>940</td><td>925</td><td>935</td><td>942</td><td>932</td><td>931</td><td>939</td><td>936</td></tr>
-</tbody>
-</table>
-</dd>
-	<dt>$captures</dt>
-		<dd><table>
-<tbody>
-	<tr><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td>⋯</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>2</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
-	<tr><td>1</td><td>1</td><td>2</td><td>1</td><td>1</td><td>1</td><td>1</td><td>2</td><td>1</td><td>2</td><td>⋯</td><td>1</td><td>1</td><td>1</td><td>2</td><td>1</td><td>2</td><td>2</td><td>1</td><td>2</td><td>2</td></tr>
-	<tr><td>0</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>⋯</td><td>1</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
-	<tr><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>⋯</td><td>1</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
-	<tr><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>⋯</td><td>1</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td></tr>
-</tbody>
-</table>
-</dd>
-	<dt>$total_captures</dt>
-		<dd><ol class=list-inline>
-	<li>41</li>
-	<li>39</li>
-</ol>
-</dd>
-</dl>
-
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -749,56 +683,9 @@ body {
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[28]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-<span class="n">cs_capture_status</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;captures&#39;</span><span class="p">][</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;purity&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">0.2</span><span class="p">)])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">cs_capture_status</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">cs_capture_status</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt output_prompt">Out[29]:</div>
-
-
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>0.96</pre>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7d8e7a30dcd756d435022e51b4be8ecf3272c1a1/analysis/20180515_SusieR_Benchmark.ipynb"><code>analysis/20180515_SusieR_Benchmark.ipynb</code></a> committed by Gao Wang on Mon May 21 11:02:42 2018 <a href="http://github.com/gaow/mvarbvs/commit/7d8e7a30dcd756d435022e51b4be8ecf3272c1a1">revision 6, 7d8e7a3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/fde6c245446b45dd09776d7cc607303fccececc4/analysis/20180515_SusieR_Benchmark.ipynb"><code>analysis/20180515_SusieR_Benchmark.ipynb</code></a> committed by Gao Wang on Mon May 21 23:41:07 2018 <a href="http://github.com/gaow/mvarbvs/commit/fde6c245446b45dd09776d7cc607303fccececc4">revision 8, fde6c24</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
