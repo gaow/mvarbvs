@@ -6,9 +6,9 @@ DSC:
       get_data: liter_data 
       get_response: simple_lm
   run: 
-    run_susie: get_data * summarize_ld * get_response * fit_susie * (plot_sse, plot_susie), get_data * summarize_ld * get_response * get_sumstats * fit_dap
+    run_susie: get_data * summarize_ld * get_response * fit_susie * (plot_sse, plot_susie), 
+        get_data * summarize_ld * get_response * get_sumstats * (fit_dap_z, fit_finemap)
     run_varbvs: get_data * summarize_ld * get_response * fit_varbvs * plot_sse
-    run_finemap: get_data * summarize_ld * get_response * get_sumstats * fit_finemap * plot_finemap
   output: benchmark
   exec_path: modules
   global:
