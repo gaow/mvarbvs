@@ -15,10 +15,16 @@ write_finemap_sumstats <- function(bhat, se, allele_freq, LD_file, n, k, prefix)
   colnames(z) = c('rsid', 'chromosome', 'position', 'noneff_allele', 'eff_allele',
                   'maf', 'beta', 'se')
   write.table(z,cfg$z,quote=F,col.names=T, row.names=F)
-  write.table(t(k),cfg$k,quote=F,col.names=F,row.names=F)
-  write("z;ld;snp;config;k;log;n_samples",file=cfg$meta)
-  write(paste(cfg$z, cfg$ld, cfg$snp, cfg$config, cfg$k, cfg$log, n, sep=";"),
+  if (!is.null(k)) {
+      write.table(t(k),cfg$k,quote=F,col.names=F,row.names=F)
+      write("z;ld;snp;config;k;log;n_samples",file=cfg$meta)
+      write(paste(cfg$z, cfg$ld, cfg$snp, cfg$config, cfg$k, cfg$log, n, sep=";"),
         file=cfg$meta,append=TRUE)
+  } else {
+      write("z;ld;snp;config;log;n_samples",file=cfg$meta)
+      write(paste(cfg$z, cfg$ld, cfg$snp, cfg$config, cfg$log, n, sep=";"),
+            file=cfg$meta,append=TRUE)
+  }
   return(cfg)
 }
 

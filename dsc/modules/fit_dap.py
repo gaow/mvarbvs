@@ -5,21 +5,21 @@ import numpy as np
 def write_dap_full(x,y,prefix,r):
     names = np.array([('geno', i+1, f'group{r}') for i in range(x.shape[1])])
     with open(f'{prefix}.data', 'w') as f:
-        print(*(['pheno', 'pheno', f'group{r}'] + list(y.ravel())), file=f)
+        print(*(['pheno', 'pheno', f'group{r}'] + list(np.array(y).ravel())), file=f)
         np.savetxt(f, np.hstack((names, x.T)), fmt = '%s', delimiter = ' ')
-    grid = '''         
-        0.0000  0.1000
-        0.0000  0.2000
-        0.0000  0.4000
-        0.0000  0.8000
-        0.0000  1.6000
-        '''
-    grid = '\n'.join([x.strip() for x in grid.strip().split('\n')])
-    with open(f'{prefix}.grid', 'w') as f:
-        print(grid, file=f)
+#     grid = '''         
+#         0.0000  0.1000
+#         0.0000  0.2000
+#         0.0000  0.4000
+#         0.0000  0.8000
+#         0.0000  1.6000
+#         '''
+#     grid = '\n'.join([x.strip() for x in grid.strip().split('\n')])
+#     with open(f'{prefix}.grid', 'w') as f:
+#         print(grid, file=f)
         
 def run_dap_full(prefix, args):
-    cmd = ['dap-g', '-d', f'{prefix}.data', '-g', f'{prefix}.grid', '-o', f'{prefix}.result', '--all'] + ' '.join(args).split()
+    cmd = ['dap-g', '-d', f'{prefix}.data', '-o', f'{prefix}.result', '--output_all'] + ' '.join(args).split()
     subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()    
            
 def write_dap_ss(z,prefix):
@@ -43,7 +43,7 @@ def extract_dap_output(prefix):
         if len(line) > 2 and line[2] == 'cluster_pip':
             still_pip = False
             continue
-        if still_pip and (not line[0].startswith('((') or int(line[-1]) < 0):
+        if still_pip and (not line[0].startswith('((')):
             continue
         if still_pip:
             pips.append([line[1], float(line[2]), float(line[3]), int(line[4])])

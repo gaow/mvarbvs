@@ -51,7 +51,7 @@ fit_caviar: fit_caviar.R + \
   @CONF: R_libs = (dplyr, magrittr)
   sumstats: $sumstats
   ld: $ld_file
-  args: "-c 1", "-c 3"
+  args: "-c 2", "-c 3"
   cache: file(CAVIAR)
   $posterior: posterior
 
@@ -61,14 +61,14 @@ fit_finemap(fit_caviar): fit_finemap.R + \
                                         ld, N, k,
                                         args, prefix=cache))
   N: $N
-  k: R(rep(1/5,5)), (0.6,0.25,0.1,0.05)
+  k: NULL #, (0.6,0.2,0.1,0.05,0.05)
   data: $data
   args: "--n-causal-snps 5"
   cache: file(FM)
 
 fit_dap: fit_dap.py + Python(posterior = dap_batch(data['X'], data['Y'], cache, args))
   data: $data
-  args: "-ld_control 0.25"
+  args: "-ld_control 0.20 --all"
   cache: file(DAP)
   $posterior: posterior
 

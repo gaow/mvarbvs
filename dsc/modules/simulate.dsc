@@ -31,5 +31,9 @@ simple_lm(base_sim):
   pve: 0.05, 0.1, 0.2, 0.4
   n_signal: 1, 2, 3, 4, 5
 
+lm_less(simple_lm):
+  pve: 0.2
+  n_signal: 2, 3
+
 original_Y(base_sim):
   eff_mode: "original"

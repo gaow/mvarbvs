@@ -12,7 +12,6 @@ DSC:
     run_varbvs: setup * get_response * fit_varbvs * plot_sse
     run_susie_uni: dap_g_data * original_Y * fit_susie * plot_sse
     run_varbvs_uni: dap_g_data * original_Y * fit_varbvs * plot_sse
-  output: benchmark
   exec_path: modules
   global:
     data_file: ../data/gtex-manifest.txt
