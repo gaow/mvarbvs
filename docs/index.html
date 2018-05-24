@@ -183,6 +183,10 @@ $(document).ready(function () {
 </li>
         
 <li>
+  <a href="./details.html">Details</a>
+</li>
+        
+<li>
   <a href="./analysis.html">Analysis</a>
 </li>
         
@@ -239,9 +243,11 @@ $(document).ready(function () {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This project is mainly aimed at <a href="Modular_MNMASH.html#Motivation">fine-mapping for eQTL discovery in multiple tissues</a>. From methodology point of view it introduces an Empirical Bayes approach, ie, <a href="https://doi.org/10.1093/biostatistics/kxw041">adaptive shrinkage</a> for solving multivariate, multiple regression problem; hence the project code name <code>m&amp;m ash</code> (credit to <a href="http://home.uchicago.edu/~dcgerard/home.html">David</a>).</p>
+<p>This project is mainly aimed at <a href="Modular_MNMASH.html#Motivation">fine-mapping for eQTL discovery in multiple tissues</a>. From methodology point of view it introduces an Empirical Bayes approach, ie, <a href="https://doi.org/10.1093/biostatistics/kxw041">adaptive shrinkage</a> for solving multivariate, multiple regression problem; hence the project code name <code>m&amp;m ash</code>.</p>
 <p>We started building the m&amp;m model in summer 2016. It is essentially a multivariate version of the variational algorithm that does <a href="https://github.com/stephenslab/mvash">univariate regression with adaptive shrinkage method</a> (credit to <a href="http://github.com/NKweiwang">Wei</a> and <a href="https://pcarbo.github.io/">Peter</a>). We have developed a version assuming <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/identity_cov">identity covariance</a> and a version assuming <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/lr_diag_cov">diagonal + low rank covariance</a> (credit to <a href="http://home.uchicago.edu/~dcgerard/home.html">David</a>), along with <a href="https://github.com/gaow/mnmashr">an implementation</a>. We then realized several limitations to it, from modeling and computational espects, that made us reconsider the design after some attempts to alleviate these issues (<a href="Start_Simple.html">limiting to a simpler problem</a> and <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/lr_diag_cov/dirichlet_ml">combine genome-wide information efficiently</a>).</p>
-<p>In early 2017 we decide to take a <a href="Modular_MNMASH.html#Step-one:-deconvoluted-effect-size-estimation">modular approach</a> to the problem. Essentially it involves combing in a smart way the univariate <code>mr-ash</code> (multiple regression with adaptive shrinkage, under development) for model selection and <a href="http://dx.doi.org/10.1101/096552"><code>mash</code></a> for multivariate analysis. With the release of <a href="GTEx7_Analysis_Plan.html">GTEx V7</a> data our new method can be applied and demonstrated.</p>
+<p>In early 2017 we decide to take a <a href="Modular_MNMASH.html#Step-one:-deconvoluted-effect-size-estimation">modular approach</a> to the problem. Essentially it involves combing in a smart way the univariate <code>mr-ash</code> (multiple regression with adaptive shrinkage, under development) for model selection and <a href="http://dx.doi.org/10.1101/096552"><code>mash</code></a> for multivariate analysis. With the release of <a href="GTEx7_Analysis_Plan.html">GTEx V7</a> data (<a href="../analysis/20170518_Imputation_Summary.html">imputation</a>, <a href="../analysis/20170515_V7_RNASeq_Preprocessing.html">annotation + formatting</a> and a number of other <a href="../pipeline/Pipelines.html">bioinformatics steps</a>) our new method can be applied and demonstrated.</p>
+<p>During our exploration of the modular approach we realized that the variational algorithm behind <code>mr-ash</code> has various issues, among which the most obvious are sensitivity to initialization and producing produces false positives. It is a large scale variable selection model good for prediction, but not fine-mapping. Again we got stuck.</p>
+<p>Finally in late 2017 Matthew has came up with <a href="https://stephens999.github.io/misc/newVB.html">a new variational algorithm</a>, inspired by <a href="https://arxiv.org/abs/1802.06931">FLASH</a>, that natually result in fine-mapping results by design, with similar intuition as "conditional regression" (a simple ad hoc approach to do preliminary fine-mapping in the early days). <a href="https://stephens999.github.io/misc/newVB.ss.html">A connection with single effect analysis</a> was later made: turns out updating each effect, conditional on others, is a normal-means problem we are familiar with -- in the M&amp;M setting the <code>MASH</code> updates. We thus call the fine-mapping model SuSiE, for Sum of Single Effects.</p>
 
 </div>
 </div>
@@ -258,7 +264,7 @@ $(document).ready(function () {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="figures/m-red.png" alt=""></p>
+<p><img src="figures/m-green.jpg" alt=""></p>
 
 </div>
 </div>
@@ -267,8 +273,13 @@ $(document).ready(function () {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The first module is to perform multiple regression with adaptive shrinkage for variable selection, ie., <code>mr-ash</code>. This is being developed and implemented in the <a href="https://github.com/pcarbo/varbvs"><code>varbvs</code></a> package. We also have worked on getting GTEx data ready, including <a href="../analysis/20170518_Imputation_Summary.html">imputation</a>, <a href="../analysis/20170515_V7_RNASeq_Preprocessing.html">annotation + formatting</a> and a number of other <a href="../pipeline/Pipelines.html">bioinformatics steps</a>. We also have created <a href="../analysis/MR_ASH_Simulation.html">simulation data</a> based on GTEx. <a href="../analysis/MR_ASH_Example.html">Here</a> is how to run <code>mr-ash</code> on these real / simulated data-sets we created.</p>
-<p><a href="../analysis/20170630_Simulation_Results.html">Initial results</a> from simulated data is mostly encouraging but we've observed that <code>mr-ash</code> tend to over-shrinks when the signals are dense.</p>
+<p>The first module is to perform multiple regression with adaptive shrinkage for variable selection and fine-mapping</p>
+<h2 id="mr-ash-model"><code>mr-ash</code> model<a class="anchor-link" href="#mr-ash-model">&#182;</a></h2><p>This is being developed and implemented in the <a href="https://github.com/pcarbo/varbvs"><code>varbvs</code></a> package. We have created <a href="../analysis/MR_ASH_Simulation.html">simulation data</a> based on GTEx. <a href="../analysis/MR_ASH_Example.html">Here</a> is how to run <code>mr-ash</code> on these real / simulated data-sets we created. Here are some results:</p>
+<ul>
+<li><a href="../analysis/20170630_Simulation_Results.html">Simulation study results</a> -- we've observed that <code>mr-ash</code> tend to over-shrink signals.</li>
+<li>Real-data analysis <a href="http://stephenslab.github.io/gtex-eqtls/analysis/20170814_MR_ASH_V7.html">code</a> and <a href="http://stephenslab.github.io/gtex-eqtls/analysis/20170824_MR_ASH_Lung.html">result</a> -- sensitive to initialization and false positives.</li>
+</ul>
+<h2 id="SSE-(SuSiE)-model"><code>SSE</code> (SuSiE) model<a class="anchor-link" href="#SSE-(SuSiE)-model">&#182;</a></h2><p>We tried to understand property of susie using <a href="../details/20180515_SuSiE_Benchmark.html">simulation study with various settings focusing on flavors of susie</a>. The results are mostly encouraging. We then benchmark it with other fine-mapping methods as a reassurance that it works fine -- our claim is that susie and all other methods identify the same sets of potentially causal variates because they all fit the same model; but susie does it at low computational cost and naturally results in interpretable confidences sets.</p>
 
 </div>
 </div>

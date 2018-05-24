@@ -186,6 +186,10 @@ $(document).ready(function () {
 </li>
         
 <li>
+  <a href="./details.html">Details</a>
+</li>
+        
+<li>
   <a href="./analysis.html">Analysis</a>
 </li>
         
