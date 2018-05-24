@@ -7,7 +7,7 @@ DSC:
   run: 
     run_susie: get_data * summarize_ld * simple_lm * fit_susie * (plot_sse, plot_susie)
     run_varbvs: get_data * summarize_ld * simple_lm * fit_varbvs * plot_sse
-    run_comparison: get_data * summarize_ld * lm_less * get_sumstats * (fit_finemap, fit_dap)
+    run_comparison: get_data * summarize_ld * lm_less * get_sumstats * (fit_finemap * plot_finemap, fit_dap * plot_dap, fit_caviar * plot_caviar)
   exec_path: modules
   global:
     data_file: ../data/gtex-manifest.txt
