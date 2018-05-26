@@ -258,6 +258,52 @@ body {
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">--</span><span class="n">source</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/d4e8a8cd3ad151e98bb6644d7fe5ddf721fd9e5b/details/20180515_SuSiE_Benchmark.ipynb"><span class="revision_id">d4e8a8c<span></a></td>
+<td>Gao Wang</td>
+<td>2018-05-24</td>
+<td>Update documentation</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/ff41e212aad4daf1acfa53addd3ea9e149d9e060/details/20180515_SuSiE_Benchmark.ipynb"><span class="revision_id">ff41e21<span></a></td>
+<td>Gao Wang</td>
+<td>2018-05-24</td>
+<td>Add benchmark results comment</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
 <div class="inner_cell">
@@ -278,7 +324,11 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Data-used">Data used<a class="anchor-link" href="#Data-used">&#182;</a></h2><p>We use data from GTEx for eQTL mapping. <a href="../analysis/20171103_MNMASH_Data.html">Here is how the real-data are prepared</a> and <a href="../analysis/20180515_Extract_Benchmark_Data.html">extracted</a>.</p>
+<h2 id="Data-used">Data used<a class="anchor-link" href="#Data-used">&#182;</a></h2><p>We use data from GTEx for eQTL mapping.</p>
+<ul>
+<li><a href="../analysis/20171103_MNMASH_Data.html">Data preparation</a> </li>
+<li><a href="../analysis/20180515_Extract_Benchmark_Data.html">Data extraction</a>.</li>
+</ul>
 
 </div>
 </div>
@@ -338,7 +388,7 @@ body {
 <li><a href="../analysis/20180516_SusieR_Benchmark_Plot.html">Here</a> is the workflow that generates the table. </li>
 <li><a href="../analysis/20180515_SusieR_Benchmark.html">Here</a> are some interactive analysis of the workflow above.</li>
 </ul>
-<p><strong>FIXME: comment on some interesting observations.</strong></p>
+<p><strong>FIXME: comment on some interesting observations.</strong> eg #552.</p>
 <h3 id="For-purity-of-fits">For purity of fits<a class="anchor-link" href="#For-purity-of-fits">&#182;</a></h3><p>For each susie fit, we can evaluate each CS identified the minimum LD vs the size of set. We can plot this for each $L$. We pool results from all genes into one plot. Here is a <a href="http://shiny.stephenslab.uchicago.edu/gaow/purity_html_20180516/">160 row table</a> of the said plots.</p>
 <p><strong>FIXME: comment on some interesting observations.</strong></p>
 <h2 id="How-do-we-define-mappable-CS?">How do we define mappable CS?<a class="anchor-link" href="#How-do-we-define-mappable-CS?">&#182;</a></h2><p><strong>FIXME: more justification?</strong></p>
@@ -407,15 +457,42 @@ body {
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Here on average we do have 95% CS that contains signals. However the variance seems big. For the outlier case, it means that in some scenarios when we only keep very "pure" CS we will miss all signals -- in other words the pure CS is false positive; or, for some senarios (the one with zero%) there is no power, or simply nothing, at all.</p>
-<p><a href="../analysis/20180516_SusieR_Benchmark_Plot.html">Here</a> is the workflow that generates the figure.</p>
-<p><strong>FIXME: identify which scenario are those, point to some figures. Then focus on LD = 0.25 cutoff, plot by scenario and methods to see what are those under 95% line.</strong></p>
+<ul>
+<li><a href="../analysis/20180516_SusieR_Benchmark_Plot.html">The workflow that generates the figure</a></li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Focus-on-LD-cutoff-0.25">Focus on LD cutoff 0.25<a class="anchor-link" href="#Focus-on-LD-cutoff-0.25">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In plot above we found that there seem "outlier" cases that our CS has very low capture rate, or in other words, high false positive.</p>
+<p>So for eg LD cutoff 0.25, we show above what the 160 scenarios x methods combinations look like, for "acceptables" (over 90% CS captures something) vs outliers (otherwise).</p>
+<ul>
+<li><a href="../analysis/20180525_CS_Outliers.html">The codes and plot</a></li>
+</ul>
+<p>What we learned:</p>
+<ol>
+<li>indeed we see that the false positives are near null cases</li>
+<li>being "conservative" in residual (est_residual=False) is better</li>
+</ol>
 
 </div>
 </div>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/d4e8a8cd3ad151e98bb6644d7fe5ddf721fd9e5b/details/20180515_SuSiE_Benchmark.ipynb"><code>details/20180515_SuSiE_Benchmark.ipynb</code></a> committed by Gao Wang on Thu May 24 10:17:15 2018 <a href="http://github.com/gaow/mvarbvs/commit/d4e8a8cd3ad151e98bb6644d7fe5ddf721fd9e5b">revision 2, d4e8a8c</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/c9aa43c1bbf26f5418b3d80e5cbbb2f8981a01ae/details/20180515_SuSiE_Benchmark.ipynb"><code>details/20180515_SuSiE_Benchmark.ipynb</code></a> committed by Gao Wang on Thu May 24 10:24:14 2018 <a href="http://github.com/gaow/mvarbvs/commit/c9aa43c1bbf26f5418b3d80e5cbbb2f8981a01ae">revision 3, c9aa43c</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
