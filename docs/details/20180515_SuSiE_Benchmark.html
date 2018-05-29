@@ -490,9 +490,46 @@ body {
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Comparison-with-DAP-and-CAVIAR">Comparison with DAP and CAVIAR<a class="anchor-link" href="#Comparison-with-DAP-and-CAVIAR">&#182;</a></h2><p>We compare susie with DAP and CAVIAR in terms of PIP of SNPs and ROC from pulled simulations.</p>
+<h3 id="PIP">PIP<a class="anchor-link" href="#PIP">&#182;</a></h3><p>For the PIP comparsion we want to check if susie provides "reasonable" PIP, computed by the variational parameters $\mathbf{\alpha}$: $$\text{PIP}:= 1 - \prod_l(1-\alpha_l)$$</p>
+<p>We select which SNPs to compare:</p>
+<ol>
+<li>SNPs must be "mappable": that is, we used min(LD) threshold 0.2 to filter CS</li>
+<li><p>For SNPs inside CS thus generated, we look at their PIP, and extract PIP for these SNPs from DAP and CAVIAR, and make scattered plot with correlation annotated.</p>
+</li>
+<li><p><a href="../analysis/20180527_PIP_Comparison.html">The codes and plot</a></p>
+</li>
+</ol>
+<p>The trends largely agree, but it is difficult to make a quantitive evaluation because here we do not distinguish between true and false signals.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="ROC">ROC<a class="anchor-link" href="#ROC">&#182;</a></h3><p>From simulation setting we know the true underlying "signal". For all sets identifyed by DAP (defined by cluster prob &gt; 0.95) and susie (defined by mappable 95% CS) we count for each analysis replicate (simulated gene):</p>
+<ol>
+<li>Number of times a true signal is captured by a set (true positives)</li>
+<li>Number of times that a set does not capture any true signals (false positives)</li>
+</ol>
+<p>We see that susie performs better in terms of both sensitivity and specificity. Choice of susie prior does not seem to matter big deal:</p>
+<ul>
+<li><a href="../analysis/20180527_PIP_Comparison.html">The codes and result</a></li>
+</ul>
+<p><strong>FIXME: will have to double-check my code, or to look into DAP results deeper, in case it is a mistake I made that discredits DAP</strong></p>
+
+</div>
+</div>
+</div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/a32e84387e104351aa448cab20678b5ddf781420/details/20180515_SuSiE_Benchmark.ipynb"><code>details/20180515_SuSiE_Benchmark.ipynb</code></a> committed by Gao Wang on Mon May 28 07:19:06 2018 <a href="http://github.com/gaow/mvarbvs/commit/a32e84387e104351aa448cab20678b5ddf781420">revision 5, a32e843</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/185fff845fdccd65eda754c89fa85932fc4128b6/details/20180515_SuSiE_Benchmark.ipynb"><code>details/20180515_SuSiE_Benchmark.ipynb</code></a> committed by Gao Wang on Tue May 29 10:09:29 2018 <a href="http://github.com/gaow/mvarbvs/commit/185fff845fdccd65eda754c89fa85932fc4128b6">revision 6, 185fff8</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
