@@ -51,7 +51,7 @@ fit_caviar: fit_caviar.R + \
   @CONF: R_libs = (dplyr, magrittr)
   sumstats: $sumstats
   ld: $ld_file
-  args: "-c 2", "-c 3"
+  args: "-c 1", "-c 2", "-c 3"
   cache: file(CAVIAR)
   $posterior: posterior
 
