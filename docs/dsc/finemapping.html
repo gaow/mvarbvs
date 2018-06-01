@@ -293,7 +293,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">n</span> <span class="mi">5</span> <span class="o">--</span><span class="n">source</span>
@@ -322,7 +322,10 @@ body {
         <th>Date</th>
         <th>Message</th>
         <tr>
-        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/d9e5ceb4f6c307f003a263ec75ecb85f9ae129c8/dsc/finemapping.ipynb"><span class="revision_id">d9e5ceb<span></a></td>
+        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/9dc22d01b5ab00b4b26262d328c628c8bc145dd8/dsc/finemapping.ipynb"><span class="revision_id">9dc22d0<span></a></td>
+<td>Gao Wang</td>
+<td>2018-05-31</td>
+<td>Update revision history for benchmark</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/d9e5ceb4f6c307f003a263ec75ecb85f9ae129c8/dsc/finemapping.ipynb"><span class="revision_id">d9e5ceb<span></a></td>
 <td>Gao Wang</td>
 <td>2018-05-30</td>
 <td>Add one more for caviar</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/6ac6528277a5547347078c2f5fefadf4445d8dce/dsc/finemapping.ipynb"><span class="revision_id">6ac6528<span></a></td>
@@ -334,10 +337,7 @@ body {
 <td>Add benchmark results comment</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/ee8200f26924fe306a723a9e15e4742006d58f88/dsc/finemapping.ipynb"><span class="revision_id">ee8200f<span></a></td>
 <td>Gao Wang</td>
 <td>2018-05-23</td>
-<td>Include caviar to susie comparison</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/51f18add6b90d5cf6e6c06ff82e0441d76fc57e2/dsc/finemapping.ipynb"><span class="revision_id">51f18ad<span></a></td>
-<td>Gao Wang</td>
-<td>2018-05-23</td>
-<td>Fix dap-g output</td></tr></table>
+<td>Include caviar to susie comparison</td></tr></table>
 </div>
 
 </div>
@@ -1016,14 +1016,14 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">save</span> <span class="o">-</span><span class="n">f</span> <span class="n">modules</span><span class="o">/</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">dsc</span>
 <span class="kn">fit_susie:</span> <span class="n">fit_susie</span><span class="o">.</span><span class="n">R</span>
   <span class="c1"># Prior variance of nonzero effects.</span>
   <span class="nd">@CONF</span><span class="p">:</span> <span class="n">R_libs</span> <span class="o">=</span> <span class="n">susieR</span><span class="nd">@stephenslab</span><span class="o">/</span><span class="n">susieR</span>
-  <span class="n">maxI</span><span class="p">:</span> <span class="mi">50</span>
+  <span class="n">maxI</span><span class="p">:</span> <span class="mi">200</span>
   <span class="n">maxL</span><span class="p">:</span> <span class="mi">5</span>
   <span class="n">estimate_residual_variance</span><span class="p">:</span> <span class="n">FALSE</span><span class="p">,</span> <span class="n">TRUE</span>
   <span class="n">prior_var</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span>
@@ -1751,7 +1751,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">save</span> <span class="o">-</span><span class="n">f</span> <span class="n">modules</span><span class="o">/</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">R</span>
@@ -1765,17 +1765,20 @@ body {
                                <span class="n">max_iter</span><span class="o">=</span><span class="n">maxI</span><span class="p">,</span>
                                <span class="n">estimate_residual_variance</span> <span class="o">=</span> <span class="n">estimate_residual_variance</span><span class="p">,</span> 
                                <span class="n">prior_variance</span><span class="o">=</span><span class="n">prior_var</span><span class="p">,</span> 
-                               <span class="n">intercept</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
+                               <span class="n">intercept</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span>
+                               <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
   <span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">lfsr</span> <span class="o">&lt;-</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_get_lfsr</span><span class="p">(</span><span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]])</span>
   <span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">n_in_CI</span> <span class="o">&lt;-</span> <span class="n">susieR</span><span class="p">:::</span><span class="n">n_in_CS</span><span class="p">(</span><span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]])</span>
   <span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">in_CI</span> <span class="o">&lt;-</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_in_CS</span><span class="p">(</span><span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]])</span>
+  <span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">niter</span> <span class="o">&lt;-</span> <span class="n">susieR</span><span class="p">:::</span><span class="n">susie_get_niter</span><span class="p">(</span><span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]])</span>
 <span class="p">}</span>
 
 <span class="n">posterior</span> <span class="o">&lt;-</span> <span class="nb">list</span><span class="p">(</span><span class="n">PosteriorMean</span><span class="o">=</span><span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">susieR</span><span class="p">:::</span><span class="n">coef</span><span class="o">.</span><span class="n">susie</span><span class="p">(</span><span class="n">fitted</span><span class="p">[[</span><span class="n">i</span><span class="p">]]))),</span>
                   <span class="n">lfsr</span><span class="o">=</span><span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">fitted</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">lfsr</span><span class="p">)),</span>
                   <span class="n">alpha</span><span class="o">=</span><span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">fitted</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">alpha</span><span class="p">),</span>
                   <span class="n">in_CI</span><span class="o">=</span><span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">fitted</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">in_CI</span><span class="p">),</span>
-                  <span class="n">n_in_CI</span><span class="o">=</span><span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">fitted</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">n_in_CI</span><span class="p">))</span>
+                  <span class="n">n_in_CI</span><span class="o">=</span><span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">fitted</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">n_in_CI</span><span class="p">)),</span>
+                  <span class="n">niter</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">fitted</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">niter</span><span class="p">)</span>                              
                   <span class="p">)</span>
 </pre></div>
 
@@ -3410,7 +3413,7 @@ rs3 10 1 G A 0.18 0.0228 0.0199</code></pre>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/9dc22d01b5ab00b4b26262d328c628c8bc145dd8/dsc/finemapping.ipynb"><code>dsc/finemapping.ipynb</code></a> committed by Gao Wang on Thu May 31 10:34:16 2018 <a href="http://github.com/gaow/mvarbvs/commit/9dc22d01b5ab00b4b26262d328c628c8bc145dd8">revision 28, 9dc22d0</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/ed3a7fe1d20393d8b7f27cc0174859994d1dc571/dsc/finemapping.ipynb"><code>dsc/finemapping.ipynb</code></a> committed by Gao Wang on Thu May 31 21:18:30 2018 <a href="http://github.com/gaow/mvarbvs/commit/ed3a7fe1d20393d8b7f27cc0174859994d1dc571">revision 29, ed3a7fe</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
