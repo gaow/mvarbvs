@@ -297,7 +297,10 @@ body {
         <th>Date</th>
         <th>Message</th>
         <tr>
-        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/4324e0d36c937eae2add9c56b73b3d644c7c7d1a/20180527_PIP_Comparison.ipynb"><span class="revision_id">4324e0d<span></a></td>
+        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/7b277dcccdd0076de75d04cb6d1a6f3cef0b098e/20180527_PIP_Comparison.ipynb"><span class="revision_id">7b277dc<span></a></td>
+<td>Gao Wang</td>
+<td>2018-05-31</td>
+<td>Explore CAVIAR vs susie PIP for n = 1</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/4324e0d36c937eae2add9c56b73b3d644c7c7d1a/20180527_PIP_Comparison.ipynb"><span class="revision_id">4324e0d<span></a></td>
 <td>Gao Wang</td>
 <td>2018-05-31</td>
 <td>Add data-set names that created DAP issues</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/a0a3c0b2b4211e8bfacb5dc7c3b569ba9ae3a3b9/20180527_PIP_Comparison.ipynb"><span class="revision_id">a0a3c0b<span></a></td>
@@ -377,7 +380,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
@@ -395,7 +398,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">pip_1</span><span class="p">,</span> <span class="n">fdr_1</span><span class="p">]</span>
@@ -420,7 +423,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">pip_2</span><span class="p">]</span>
@@ -464,9 +467,9 @@ body {
               <span class="n">alpha</span> <span class="o">=</span> <span class="n">fit</span><span class="err">$</span><span class="n">alpha</span><span class="p">[[</span><span class="mi">1</span><span class="p">]]</span>
             <span class="p">}</span>
             <span class="n">pip</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nb">apply</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">prod</span><span class="p">))</span>
-            <span class="n">in_CI</span> <span class="o">=</span> <span class="n">fit</span><span class="err">$</span><span class="n">in_CI</span><span class="p">[[</span><span class="mi">1</span><span class="p">]]</span>
-            <span class="n">in_CI</span> <span class="o">=</span> <span class="n">in_CI</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="err">$</span><span class="n">V1</span><span class="p">[,</span><span class="n">ld_col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">ld_cutoff</span><span class="p">),,</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
-            <span class="n">in_CI</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">colSums</span><span class="p">(</span><span class="n">in_CI</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="n">in_CI_raw</span> <span class="o">=</span> <span class="n">fit</span><span class="err">$</span><span class="n">in_CI</span><span class="p">[[</span><span class="mi">1</span><span class="p">]]</span>
+            <span class="n">in_CI_raw</span> <span class="o">=</span> <span class="n">in_CI_raw</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="err">$</span><span class="n">V1</span><span class="p">[,</span><span class="n">ld_col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">ld_cutoff</span><span class="p">),,</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+            <span class="n">in_CI</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">colSums</span><span class="p">(</span><span class="n">in_CI_raw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">pip</span> <span class="o">=</span> <span class="n">pip</span><span class="p">[</span><span class="n">in_CI</span><span class="p">]</span>
             <span class="n">out_files</span> <span class="o">=</span> <span class="n">dap_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dap_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">dap_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_dap.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
             <span class="n">dap</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">posterior</span>
@@ -502,7 +505,7 @@ body {
                   <span class="k">print</span><span class="p">(</span><span class="n">caviar</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">caviar</span><span class="err">$</span><span class="n">snp_prob</span><span class="o">&gt;</span><span class="mf">0.95</span><span class="p">),])</span>
                   <span class="k">print</span><span class="p">(</span><span class="s2">&quot;susie&quot;</span><span class="p">)</span>
                   <span class="k">print</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="err">$</span><span class="n">V1</span><span class="p">[,</span><span class="n">ld_col</span><span class="p">])</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">in_CI</span><span class="p">))</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">rowSums</span><span class="p">(</span><span class="n">in_CI_raw</span><span class="p">))</span>
               <span class="p">}</span>
             <span class="p">}</span>
             <span class="c1">## END debug  </span>
@@ -576,7 +579,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">fdr_2</span><span class="p">]</span>
@@ -682,23 +685,6 @@ body {
 </div>
 </div>
 
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Workflow can only be executed with magic %run or %sosrun.</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div>
@@ -718,7 +704,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">susie_comparison</span><span class="o">/</span><span class="n">PIP_comparison_0528</span><span class="o">.</span><span class="n">susie_dap_filter_true_0</span><span class="o">.</span><span class="n">png</span>
@@ -764,7 +750,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">susie_comparison</span><span class="o">/</span><span class="n">PIP_comparison_0528</span><span class="o">.</span><span class="n">susie_dap_filter_false_0</span><span class="o">.</span><span class="n">png</span>
@@ -818,7 +804,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">susie_comparison</span><span class="o">/</span><span class="n">PIP_comparison_0528</span><span class="o">.</span><span class="n">susie_caviar_filter_true_0</span><span class="o">.</span><span class="n">png</span>
@@ -872,7 +858,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">susie_comparison</span><span class="o">/</span><span class="n">PIP_comparison_0528</span><span class="o">.</span><span class="n">dap_caviar_filter_true_0</span><span class="o">.</span><span class="n">png</span>
@@ -937,11 +923,11 @@ body {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="susie-vs-CAVIAR">susie vs CAVIAR<a class="anchor-link" href="#susie-vs-CAVIAR">&#182;</a></h3><p>Under 1-causal signal situation, susie CS indeed captures all the simulated causal variables. So it is indeed some "gold standard". What looks puzzling are the 3 signals having susie PIP &lt; 0.95 but CAVIAR PIP &gt; 0.95. I document these 3 instances in the workflow <code>pip_2</code>'s log file.</p>
 <ul>
-<li><p>For instance 1, CAVIAR PIP reports exactly 1 for that one single variable. The corresponding susie CS has 8 variables, with minimum LD 0.969</p>
+<li><p>For instance 1, CAVIAR PIP reports exactly 1 for that one single variable. The corresponding susie CS has 8 variables, with minimum LD 0.969 (ENSG00000144445)</p>
 </li>
-<li><p>For instance 2, CAVIAR PIP is 0.9996 for a single variable. The corresponding susie CS has 944 variables, with minimum LD 0.967</p>
+<li><p>For instance 2, CAVIAR PIP is 0.9996 for a single variable. The corresponding susie CS has 6 variables, with minimum LD 0.967 (ENSG00000155324)</p>
 </li>
-<li><p>For instance 3, CAVIAR PIP is 1 for a single variable. The corresponding susie CS has 951 variables, with minimum LD 0.993</p>
+<li><p>For instance 3, CAVIAR PIP is 1 for a single variable. The corresponding susie CS has 15 variables, with minimum LD 0.993 (ENSG00000156738)</p>
 </li>
 </ul>
 
@@ -959,7 +945,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span>
@@ -969,10 +955,27 @@ body {
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/home/gaow/GIT/github/mvarbvs/dsc</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;susie_comparison/FDR_comparison_0528_cluster_prob.rds&#39;</span><span class="p">)</span>
@@ -1113,7 +1116,7 @@ DAP
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7b277dcccdd0076de75d04cb6d1a6f3cef0b098e/analysis/20180527_PIP_Comparison.ipynb"><code>analysis/20180527_PIP_Comparison.ipynb</code></a> committed by Gao Wang on Thu May 31 21:19:35 2018 <a href="http://github.com/gaow/mvarbvs/commit/7b277dcccdd0076de75d04cb6d1a6f3cef0b098e">revision 9, 7b277dc</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/d1835be178f91a439884554e23db1eed9cbe273f/analysis/20180527_PIP_Comparison.ipynb"><code>analysis/20180527_PIP_Comparison.ipynb</code></a> committed by Gao Wang on Thu May 31 22:51:51 2018 <a href="http://github.com/gaow/mvarbvs/commit/d1835be178f91a439884554e23db1eed9cbe273f">revision 10, d1835be</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
