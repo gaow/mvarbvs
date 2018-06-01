@@ -9,3 +9,6 @@ fit_susie: fit_susie.R
   data: $data
   $posterior: posterior
   $fitted: fitted
+
+fit_susie01(fit_susie):
+  maxL: 1
