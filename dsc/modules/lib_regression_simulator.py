@@ -269,15 +269,10 @@ class UnivariateMixture:
         if not (pve > 0 and pve < 1):
             raise ValueError(f'PVE has to be between 0 and 1, not {pve}.')
         if pve is not None:
-            if regression_data.x_mean is None:
-                x_mean = np.array(np.mean(regression_data.X, axis=0)).flatten()
-            else:
-                x_mean = np.array(regression_data.x_mean).flatten()
-            x_var = x_mean * (1 - x_mean / 2)
-            genetic_var = np.sum(x_var * np.square(self.coef))
+            genetic_var = np.var(np.dot(regression_data.X, self.coef.T))
             pheno_var = genetic_var / pve
             self.residual_variance = pheno_var - genetic_var
-        y = np.dot(regression_data.X, self.coef.T) + np.random.normal(0, self.residual_variance, regression_data.X.shape[0])
+        y = np.dot(regression_data.X, self.coef.T) + np.random.normal(0, np.sqrt(self.residual_variance), regression_data.X.shape[0])
         # y.reshape(len(y), 1)
         return y.T
         
