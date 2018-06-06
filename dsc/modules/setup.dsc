@@ -9,8 +9,8 @@
 
 full_data: sim_utils.R + R(data =readRDS(dataset);
             data$X = as.matrix(data$X[,get_center(subset, ncol(data$X))]);
-            r2 = cor(data$X);
-            saveRDS(r2 ^ 2 * sign(r2), ld_mat);
+            r2 = cor(data$X); r2 = r2 ^ 2 * sign(r2);
+            saveRDS(r2, ld_mat);
             write.table(r2,ld_file,quote=F,col.names=F,row.names=F))
   tag: "full"
   dataset: Shell{head -50 ${data_file}}
@@ -33,8 +33,8 @@ two_effect(full_data):
   subset: 2
              
 dap_g_data(full_data): R(X = readRDS(dataset)$X;
-              r2 = cor(X);
-              saveRDS(r2 ^ 2 * sign(r2), ld_mat);
+              r2 = cor(X); r2 ^ 2 * sign(r2);
+              saveRDS(r2, ld_mat);
               write.table(r2,ld_file,quote=F,col.names=F,row.names=F)) + \
               dap_g_paper.R + R(data = list(X=X,Y=Y,true_coef=B))  
   tag: "dap_g"
