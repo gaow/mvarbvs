@@ -12,8 +12,9 @@ class SusieReporter:
         self.cs = self.get_cs(in_cs)
         self.lfsr = lfsr
         self.signal_captured = []
-        for value in self.cs:
-            self.signal_captured.append([len([s for s in value if item >= s[0] and item <= s[1]]) > 0 for item in self.nonzeros])
+        if len(self.nonzeros):
+            for value in self.cs:
+                self.signal_captured.append([len([s for s in value if item >= s[0] and item <= s[1]]) > 0 for item in self.nonzeros])
         self.n_in_cs = np.sum(in_cs, axis=1)
         self.purity, self.purity_label = self.get_cs_purity()
 
