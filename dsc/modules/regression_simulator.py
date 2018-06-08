@@ -56,13 +56,17 @@ def simulate_main(data, c, plot_prefix):
     return data
         
 def original_y(data, reg, c):
-    if isinstance(data['Y'], pd.DataFrame):
+    if 'y' in data:
+        reg.Y = data.pop('y')
+    elif isinstance(data['Y'], pd.DataFrame):
         reg.Y = np.vstack(data['Y'].values()).T
     else:
         reg.Y = data['Y']
     return None if 'true_coef' not in data else np.array(data['true_coef'])
 
 def simple_lm(data, reg, c):
+    del data['Z']
+    del data['y']
     eff = UnivariateMixture(reg.X.shape[1])
     eff.set_vanilla(c['amplitude'])
     Y = []

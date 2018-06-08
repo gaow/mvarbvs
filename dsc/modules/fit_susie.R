@@ -1,5 +1,8 @@
 fitted <- list()
 for (r in 1:ncol(data$Y)) {
+  if ('Z' %in% names(data)) {
+      data$Y[,r] = .lm.fit(Z, data$Y[,r])$residuals
+  }
   if (auto)
       fitted[[r]] <- susieR::susie_auto(data$X,data$Y[,r])
   else
