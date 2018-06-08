@@ -703,6 +703,55 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="GTEx.dsc"><code>GTEx.dsc</code><a class="anchor-link" href="#GTEx.dsc">&#182;</a></h3><p>GTEx data analysis, using susie and DAP</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">save</span> <span class="o">-</span><span class="n">f</span> <span class="n">GTEx</span><span class="o">.</span><span class="n">dsc</span>
+<span class="c1">#!/usr/bin/env dsc</span>
+<span class="o">%</span><span class="n">include</span> <span class="n">modules</span><span class="o">/</span><span class="n">zzz</span>
+
+<span class="kn">DSC:</span>
+  <span class="n">run</span><span class="p">:</span> <span class="n">full_data</span> <span class="o">*</span> <span class="n">summarize_ld</span> <span class="o">*</span> <span class="n">original_Y</span> <span class="o">*</span> <span class="p">(</span><span class="n">fit_susie</span> <span class="o">*</span> <span class="n">plot_susie</span><span class="p">,</span> <span class="n">fit_dap</span> <span class="o">*</span> <span class="n">plot_dap</span><span class="p">)</span>
+  <span class="n">exec_path</span><span class="p">:</span> <span class="n">modules</span>
+  <span class="k">global</span><span class="p">:</span>
+    <span class="n">data_file</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">gtex</span><span class="o">-</span><span class="n">manifest</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">Cell content saved to <a href="GTEx.dsc" target="_blank">GTEx.dsc</a></div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="DSC-modules">DSC modules<a class="anchor-link" href="#DSC-modules">&#182;</a></h2>
 </div>
 </div>
@@ -1698,12 +1747,15 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">save</span> <span class="o">-</span><span class="n">f</span> <span class="n">modules</span><span class="o">/</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">R</span>
 <span class="n">fitted</span> <span class="o">&lt;-</span> <span class="nb">list</span><span class="p">()</span>
 <span class="k">for</span> <span class="p">(</span><span class="n">r</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">data</span><span class="err">$</span><span class="n">Y</span><span class="p">))</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;Z&#39;</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">names</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">data</span><span class="err">$</span><span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">]</span> <span class="o">=</span> <span class="o">.</span><span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">data</span><span class="err">$</span><span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">])</span><span class="err">$</span><span class="n">residuals</span>
+  <span class="p">}</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">auto</span><span class="p">)</span>
       <span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span> <span class="o">&lt;-</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_auto</span><span class="p">(</span><span class="n">data</span><span class="err">$</span><span class="n">X</span><span class="p">,</span><span class="n">data</span><span class="err">$</span><span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">])</span>
   <span class="k">else</span>
@@ -3219,7 +3271,7 @@ rs3 10 1 G A 0.18 0.0228 0.0199</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">save</span> <span class="o">-</span><span class="n">f</span> <span class="n">modules</span><span class="o">/</span><span class="n">regression_simulator</span><span class="o">.</span><span class="n">py</span>
@@ -3281,13 +3333,17 @@ rs3 10 1 G A 0.18 0.0228 0.0199</code></pre>
     <span class="k">return</span> <span class="n">data</span>
         
 <span class="k">def</span> <span class="nf">original_y</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s1">&#39;y&#39;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="n">reg</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
         <span class="n">reg</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">())</span><span class="o">.</span><span class="n">T</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">reg</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">]</span>
     <span class="k">return</span> <span class="bp">None</span> <span class="k">if</span> <span class="s1">&#39;true_coef&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;true_coef&#39;</span><span class="p">])</span>
 
 <span class="k">def</span> <span class="nf">simple_lm</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">reg</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+    <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;Z&#39;</span><span class="p">]</span>
+    <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
     <span class="n">eff</span> <span class="o">=</span> <span class="n">UnivariateMixture</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">eff</span><span class="o">.</span><span class="n">set_vanilla</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="s1">&#39;amplitude&#39;</span><span class="p">])</span>
     <span class="n">Y</span> <span class="o">=</span> <span class="p">[]</span>
@@ -3412,7 +3468,7 @@ rs3 10 1 G A 0.18 0.0228 0.0199</code></pre>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/83dcd84fbd8a92209f710377e666c33ba57b2d7d/dsc/finemapping.ipynb"><code>dsc/finemapping.ipynb</code></a> committed by Gao Wang on Wed Jun 6 16:20:24 2018 <a href="http://github.com/gaow/mvarbvs/commit/83dcd84fbd8a92209f710377e666c33ba57b2d7d">revision 33, 83dcd84</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/b9b1bfaa74dd197b2f9be1440d407b0cf18cc0c5/dsc/finemapping.ipynb"><code>dsc/finemapping.ipynb</code></a> committed by Gao Wang on Fri Jun 8 08:34:53 2018 <a href="http://github.com/gaow/mvarbvs/commit/b9b1bfaa74dd197b2f9be1440d407b0cf18cc0c5">revision 34, b9b1bfa</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
