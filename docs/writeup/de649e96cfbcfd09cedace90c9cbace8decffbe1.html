@@ -1,0 +1,624 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="robots" content="noindex">
+<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=writeupDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=writeupArray;
+            var docs_map=writeupArrayMap;
+            var pos=writeupArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>m&m ash</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">m&m ash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../details.html">Details</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../dsc.html">Dsc</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Meetings">Meetings<a class="anchor-link" href="#Meetings">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20180607">20180607<a class="anchor-link" href="#20180607">&#182;</a></h2><p>Meeting with Matthew.</p>
+<h3 id="Aganda">Aganda<a class="anchor-link" href="#Aganda">&#182;</a></h3><ul>
+<li>Look together sets comparison between DAP and Susie in "Power" and FDP.</li>
+<li>Discuss data applications.</li>
+<li>Discuss additional simulation.</li>
+</ul>
+<h3 id="TODO">TODO<a class="anchor-link" href="#TODO">&#182;</a></h3><ul>
+<li>Double-check DAP's reported LD agree with what I compute, for the 1 causal case in particular</li>
+<li>Re-plot PIP-based ROC focusing on PIP thresholds of interest (zoom-in on X-axis)</li>
+<li>Create simulation using ~7K variants with 10 causal, show susie method scales but DAP's heuristics may have issues</li>
+<li>Bring back FINEMAP version &lt; May 9, 2018 to the DSC -- the goal is to reassure that DAP indeed outperforms CAVIAR and FINEMAP<ul>
+<li>make plots of susie vs FINEMAP and DAP vs FINEMAP</li>
+</ul>
+</li>
+<li>Rerun all DSC -- fix that "dollar bet" mistake on <code>random.normal(mean, sd)</code> issue ...</li>
+<li>Take that single example from CAVIAR paper (or other single examples) just quickly checkout if anything interesting shows up</li>
+<li>Talk to Kevin on his molecular QTL data. We decide to do data application outside GTEx eQTL for various reasons.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20180529">20180529<a class="anchor-link" href="#20180529">&#182;</a></h2><p>Meeting with Matthew.</p>
+<h3 id="Aganda">Aganda<a class="anchor-link" href="#Aganda">&#182;</a></h3><ul>
+<li>Project status: simulation studies mostly done. Starting to analyzing data.</li>
+<li>Mostly done -- get some more CAVIAR results, double-check DAP. Maybe get an old version of FINEMAP to work? Or just ignore it and move on?</li>
+</ul>
+<h3 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h3><ul>
+<li>Show why the VB removes those in LD by putting them in one CS. But not eleminating signals -- need some proof, or at least some quantification<ul>
+<li>Input: LD. (maybe also say why 0.2 is good enough?)</li>
+<li>Output: weights in set 1, weights in set 2.</li>
+<li>When can two truely independent and significant signals go into one set?</li>
+</ul>
+</li>
+<li><a href="http://shiny.stephenslab.uchicago.edu/gaow/susie_html_20180516/liter_data_4_summarize_ld_1_simple_lm_13_fit_susie_6_plot_susie_1.seg.1.png">This case</a>: it is just what it is?</li>
+<li>Goal of project: finemapping, heritability estimate, prediction. What if people are interested in the others?</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20180417">20180417<a class="anchor-link" href="#20180417">&#182;</a></h2><p>Meeting with Matthew</p>
+<h3 id="Aganda">Aganda<a class="anchor-link" href="#Aganda">&#182;</a></h3><ul>
+<li><a href="https://gaow.github.io/mvarbvs/analysis/20180415_MNMASH_FMO2.html">M&amp;M results</a>, compared with <a href="https://gaow.github.io/mvarbvs/analysis/20180416_SingleCondition_FMO2.html">univeraite methods</a>.</li>
+<li><a href="https://gaow.github.io/mvarbvs/analysis/20180416_mnm_model.html">Output of M&amp;M</a>: quantites of interest. Check if they are right.</li>
+<li><a href="https://gaow.github.io/mvarbvs/analysis/20180416_mnm_model.html">Initialization with mash</a>: use of point mass.</li>
+<li><a href="https://gaow.github.io/mvarbvs/writeup/14b5a0ba68cc2757033109c267a409fcef2ac7c2.html#Derivation-of-ELBO-15">ELBO computation</a> difficuty: low rank mash prior matrices.</li>
+<li>MASH paper revision</li>
+</ul>
+<h3 id="Need-to-fix">Need to fix<a class="anchor-link" href="#Need-to-fix">&#182;</a></h3><ul>
+<li>Computation of lfsr. Currently I'm conceptually wrong. The lfsr we report for the new model should be per value per set of SNPs (per condition). "Set of SNPs" is reflected by the $L$ effects in our model. When there is only one SNP in the set of SNPs the lfsr natually becomes lfsr for this SNP</li>
+<li>We can compute lfdr for our own information but should not report</li>
+</ul>
+<h3 id="To-catch-up-in-writing">To catch up in writing<a class="anchor-link" href="#To-catch-up-in-writing">&#182;</a></h3><ul>
+<li>How lfsr are computed and interpreted</li>
+<li>How and why are the 3 quantities of interest defined (maybe use a separate notebook to explain the motivations)</li>
+<li>New method to computer ELBO</li>
+</ul>
+<h3 id="What-to-report-from-M&amp;M?">What to report from M&amp;M?<a class="anchor-link" href="#What-to-report-from-M&amp;M?">&#182;</a></h3><p>To convey the core idea of our new fine-mapping approach we'd like to report these quantities:</p>
+<ol>
+<li><p>SNP level: Identify for each of the $L$ effects 95% HPD interval, report its size (number of SNPs in the set), purity (smallest pair-wise LD means higher purity) and lfsr (or, minimum lfsr). There should be high correlation between small size, high purity and low lfsr. We can visualize this, and determine a threshold of $L_0$ to report.</p>
+</li>
+<li><p>Finemapping results: Once we have determined $L_0$ above, we can imaging having a browser of these sets where we report for SNPs posterior probability of being an eQTL by plotting those HPD identified above. The posterior probability is just posterior of $\alpha$. In normal cases these sets should not overlap.</p>
+</li>
+<li><p>Effect estimate: For tissue level summary, we can click on each of the sets plotted and display a metaplot for averaged effect size and standard error bars.</p>
+</li>
+</ol>
+<h3 id="Next-steps">Next steps<a class="anchor-link" href="#Next-steps">&#182;</a></h3><ul>
+<li>Get ELBO work -- deal with low rank matrix computations in the prior and KL part.</li>
+<li>Make M&amp;M report as discussed above.</li>
+<li>More comparisons?</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20171210">20171210<a class="anchor-link" href="#20171210">&#182;</a></h2><p>Meeting with Matthew</p>
+<h3 id="Agenda">Agenda<a class="anchor-link" href="#Agenda">&#182;</a></h3><p>GTEx related</p>
+<ul>
+<li>New genotype uploaded along with updated results (including eQTL results); will be ready mid-week<ul>
+<li>MASH results: to wait for Zarlab or to produce results as is.</li>
+</ul>
+</li>
+<li><a href="https://github.com/stephenslab/gtex-eqtls/blob/master/writeup/Meetings.ipynb">Summary of GTEx fine-mapping group meeting</a><ul>
+<li>Relevance to new-vb (or Susie)</li>
+<li>Relevance to DSC (results exploration)</li>
+</ul>
+</li>
+</ul>
+<p>M&amp;M related:</p>
+<ul>
+<li><a href="https://www.overleaf.com/12276327wvnnmbmpwzbw#/46670603/">Algorithm</a><ul>
+<li><a href="https://stephens999.github.io/misc/newVB.ss.html">Derive ELBO</a></li>
+</ul>
+</li>
+<li><a href="https://notebooks.azure.com/n/3F9GLgPZuZY/notebooks/20171210_Simulation_Multivariate.ipynb#Multivariate-simulation">Simulation plan</a>: scenarios and scores<ul>
+<li>Scenarios<ul>
+<li>Is the current theme good enough to include all special cases?</li>
+<li>What other simulations will be needed?</li>
+</ul>
+</li>
+<li>Scores<ul>
+<li>Check CI</li>
+<li>Check lfsr</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Computation</li>
+</ul>
+<h2 id="20171127">20171127<a class="anchor-link" href="#20171127">&#182;</a></h2><p>Meeting with Matthew and Abhishek. Mostly we discussed big pictures of motivation and intuition of this proposed VB algorithm / parameterization based on the spike-slab model, and action lists for the next steps.</p>
+<p>We discussed comparison with MCMC based methods. One big selling point with the VB method is the novelty in defining and interpreting the term "fine-mapping". We believe our definition is more reasonable, and our method will natually lead to easily interpreable results. We envisage that by re-defining fine-mapping our way, we avoid situations that conventional methods may struggle with when doing fine-mapping the way they define it.</p>
+<p>We also discussed intuition behind the proposed parameterization and the VB algorithm that results in the particular structure of posterior distribution that we can exploit, i.e., posteriors at $L$ blocks. In this case, the model (parameterization of prior) was in fact motivated by the form of the algorithm deviced to result in the posterior structure.</p>
+<p>There are a few things in single-tissue application that we will consider next:</p>
+<ol>
+<li>Estimating (or fix?) hyper-parameters $\sigma$, $\sigma_b$</li>
+<li>Incorporate prior $\pi_j$: estimate or plug-in?</li>
+<li>Work with summary statistics</li>
+</ol>
+<p>We believe these are good enough (even without 3) as first pass to figuring out the foundamentals of this approach, and readily apply to eQTL mapping. Other actions are needed to extand to other contexts (GWAS, variationQTL, etc) that we can worry about next.</p>
+<p>We have not discussed multivariate applications in this meeting. But we agree that multivariate application can be done in parallel with single tissue analysis, and we focus on harvesting low-hanging fruits in GTEx data as first pass. The proposed method can utilize existing MASH computations. I also have implemented a version (in Python) following Matthew's outline; hopefully I'll get it to work later this week.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20171120">20171120<a class="anchor-link" href="#20171120">&#182;</a></h2><p>Meeting with Matthew</p>
+<p>Discussions on <a href="https://stephens999.github.io/misc/newVB.ss.html">this derivation</a></p>
+<ul>
+<li>Exactly one element is zero -- because sum of $\pi$'s for $p$ SNPs is 1?</li>
+<li>What to choose for $L$? </li>
+<li>"Similarly we can optimize F2 over q1 with q2 fixed the same way." -- for multiple SNP case, each time we fix all other $q$'s except for one? does the ordering of $L$ imply "importance"</li>
+<li>function <code>single_snp</code> is not sparse?</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20171115">20171115<a class="anchor-link" href="#20171115">&#182;</a></h2><p>Meeting with Matthew</p>
+<h3 id="mr-ash">mr-ash<a class="anchor-link" href="#mr-ash">&#182;</a></h3><p>Showed results of analysis on 3 tissues. We have simulation and some real data results so far on mr-ash. But real data results has "stability" or "inconsistency" issues.</p>
+<p>We decide to move from mr-ash for now. Eventually it can be used (in comparison with other methods) as a tool for prediction. The real data example is precisely the reason why it is not good for fine-mapping (I think we wanted to do fine-mapping differently anyways by adding an additional MCMC step).</p>
+<h3 id="m&amp;m-model">m&amp;m model<a class="anchor-link" href="#m&amp;m-model">&#182;</a></h3><p>Comments on current model implementation</p>
+<ul>
+<li>Change notation: $t$ to $p$, $V$ to $\Sigma$, to match with MASH notation</li>
+<li>Notation: $\xi_j$ vs $\hat{b}_j$. The latter is both more clear and confusing in its own way</li>
+<li>We remove prior on $\Lambda$. Just say it's MLE</li>
+<li>Missing values: do not attempt to impute in the updates. Just ignore them in computing updates <ul>
+<li>by properly setting elements in matrices &amp; vectors to zeros</li>
+</ul>
+</li>
+<li>Numeric issue: use difference of log of multivariate normal densities, rather than ratio of densities.</li>
+</ul>
+<p>Tips on debugging current model</p>
+<ul>
+<li>Use one tissue special case to debug, compare with mr-ash</li>
+<li>Maybe give up this model (which is a multivariate version of mr-ash) and use the <code>finemap-vb</code> model instead as the basis<ul>
+<li>Check out this <a href="https://stephens999.github.io/misc/newVB.html">outline</a> and generalize to multivariate case</li>
+<li>Also checkout Abhishek's <a href="https://aksarkar.github.io/nwas/finemap.html">this</a> and <a href="https://aksarkar.github.io/nwas/prior.html#orgec6e69e">that</a>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Next-move">Next move<a class="anchor-link" href="#Next-move">&#182;</a></h3><p>I'm tempted to go over Matthew's newVB vignette, try to write up the basic model in a separate prototying Jupyter notebook and move my code for <a href="https://gaow.github.io/mvarbvs/prototype/20171103_MNMASH_Model.html">the model I have</a> to this new framework. As discussed I'll keep track of and integrate to it progress on Abhishek and Peter's ends, and setup the GTEx data analysis infrastructure like we did for mash and mr-ash.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20171005-m&amp;m-fine-mapping-meeting">20171005 m&amp;m fine mapping meeting<a class="anchor-link" href="#20171005-m&amp;m-fine-mapping-meeting">&#182;</a></h2><p>With Peter (mostly) and Matthew (briefly). We discussed various stuff on current modeling steps 1 and 2, making sure we are on the same page.</p>
+<p><img src="figures/IMG_20171005_1.jpg" alt=""></p>
+<p>We then discussed a simple MH sampling scheme. The key is, as suggested by Matthew and formalized by Peter, to sample 2 SNPs jointly at each move.</p>
+<p><img src="figures/IMG_20171005_2.jpg" alt=""></p>
+<p>Gao will work out the algorithm details and a draft implementation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Project-meeting-20170630">Project meeting 20170630<a class="anchor-link" href="#Project-meeting-20170630">&#182;</a></h2><p>With Matthew and Wei on simulation and some real data results. We mostly finished discussing <a href="../analysis/20170630_Simulation_Results.html">this notebook</a>. We've mostly focused on the situation when there is very dense true signal yet <code>mr-ash</code> cannot recover any of them.</p>
+<p>Some interesting discussions are:</p>
+<ol>
+<li>Why do we see ASH over-shrink the effect size? One intuition is that the $s$ we feed to ash are estimates from univariate regresiosn, which is different from the (proper) estimate of residual variance comparing the model with/without the corresponding SNP. It may be an over-estimate thus effectively over-shrink $\hat{\beta}$</li>
+<li>Relevant to 1: when using ASH estimates either as initialization values for <code>mr-ash</code>, or for prediction of response, we should scale it by a factor of $c$ such that $||Y-c\hat{\beta}||^2$ is minimized.</li>
+<li>To rule out any potential convergence issue, we should initialize at some "good" estimates, eg, from <code>ash</code> (scaled), and look at the variational lower bound to see if it improves. Another initialization would be result from ridge regression -- none of the effects will be zero.</li>
+<li>We can try to simulate from a simple model, the LMM, which has close form solution. We can see how well we fit. In fact this seemingly simple model can be a difficult problem to solve in given circumstances! Suppose we have $$Y=X\beta+E$$ $$\beta \sim N(0, \sigma_\beta^2I)$$ then $$Y \sim N(0, \sigma_\beta^2XX^T+\sigma_e^2I)$$ When $XX^T$ is identity, estimates for $\sigma_\beta$ and $\sigma_e$ are not identifiable. This may explain why <code>mr-ash</code> failed to recover any signal when there is no correlation between columns of $X$. </li>
+</ol>
+<p>Next steps:</p>
+<ol>
+<li>Simulate and fit under LMM model, also fit that simple simulation to <code>mr-ash</code>. Check out <code>BoltLMM</code> paper from Price Lab.</li>
+<li>Try make predictions with <code>mr-ash</code> and <code>ash</code> results and see how well it works</li>
+<li>Minor fix: include z-scores in diagnostic plots</li>
+</ol>
+<h2 id="Project-meeting-20170615">Project meeting 20170615<a class="anchor-link" href="#Project-meeting-20170615">&#182;</a></h2><p>With Matthew on simulation results</p>
+<ul>
+<li>Analyze with ASH and see what to exploit</li>
+<li>Try simulation with very big \sigma$ and observe the distribution of estimates</li>
+</ul>
+<p>Diagnostics:</p>
+<ul>
+<li>Distribution of effects</li>
+<li>Use averaged CDF: see ASH paper</li>
+<li>Simulate scenarios where there is qualitative differences and see if mr-ash can capture that</li>
+<li>Look at estimate of $\sigma^2$</li>
+</ul>
+<p>Comparison with other methods:</p>
+<ul>
+<li>Simulate 2 mixture normal and compare with GEMMA</li>
+<li>Compare with rss-ash</li>
+</ul>
+<h2 id="Project-meeting-20170518">Project meeting 20170518<a class="anchor-link" href="#Project-meeting-20170518">&#182;</a></h2><p>With Matthew on issues with GTEx V7 preprocessing.</p>
+<p>Questions:</p>
+<ul>
+<li>Normalization: why qnorm? should I standardize it? should I do per-tissue qnorm then standardize them?</li>
+<li>PEER: should I do per-tissue or altogether? If altogether should I add tissue as a covariate? <ul>
+<li>Variable number of PEER with GTEx V6 -- what's the deal with V7 now?</li>
+</ul>
+</li>
+<li>Analysis: should I remove PEER + covariates first for each gene and then run mr-ash?</li>
+<li>Any additional concerns with imputed genotypes?</li>
+</ul>
+<p>Feedback:</p>
+<ul>
+<li>We do quantile normalization because it is the most robust. And our model assumes normal.<ul>
+<li>potential issue with RPKM: if some genes are extremely highly expressed they will impact other genes's RPKM</li>
+</ul>
+</li>
+<li>No good answer to whether or not we adopt alternative stretagy. We should stick to one defensible strategy which easily is the <a href="https://gtexportal.org/home/documentationPage#staticTextAnalysisMethods">official GTEx guideline</a>.</li>
+<li>We can use multiple regression to remove residue first. Potential issue is that we may over-correct but the gain in power is well worth the possible loss. Just make sure we keep P &lt;&lt; N so that degree of freedom change is not that big. GTEx official procedure has some guideline on how many PEER to use.</li>
+</ul>
+<h2 id="Project-meeting-20170502">Project meeting 20170502<a class="anchor-link" href="#Project-meeting-20170502">&#182;</a></h2><p>With Matthew and Wei. We discussed mostly the fine-mapping step of m&amp;m, and some mr-ash related issues. First and foremost, we make it clear that focus of m&amp;m should be constrained to eQTL fine mapping for now because it is an important problem that has not been answered in the multivariate framework we propose.</p>
+<p>Although we are interested in fine mapping eventually, it is perhaps too premature to make very concrete plan until we see the data analysis outcome from Step 2 the mash step (this comment was made in response to my initial request to finalize the fine mapping MCMC algorithm, and instead we brainstormed on what can be possibly done to perform fine mapping).</p>
+<h3 id="How-to-summarize-fine-mapping-results?">How to summarize fine mapping results?<a class="anchor-link" href="#How-to-summarize-fine-mapping-results?">&#182;</a></h3><p>Sparse vs non-sparse result:</p>
+<ul>
+<li>If we adopt a none sparse model it is not good idea to evaluate whether $\beta=0$ -- we may want to look at correctness of the sign instead. </li>
+<li>Result under a sparse model is potentially computationally easy. Example see Wen 2016 DAP paper. Or we can even look at one eQTL per gene model, or two eQTL per gene (thus a combination of ~2000 cis SNPs choose 2 pairs), at the fine-mapping step.</li>
+</ul>
+<p>What should be the output of fine mapping?</p>
+<ul>
+<li>One version is to output each SNP's LD with the eQTL</li>
+<li>We can also output the 95% CI for the LD estimate with eQTL and see if it covers complete LD<ul>
+<li>But which one is the eQTL?</li>
+</ul>
+</li>
+<li>Or we can output the set of SNPs that we have 95% confidence that the set includes the eQTL (see Eskin)</li>
+<li>We want to show that for given SNP, what is the nearest eQTL: what is the distance of this SNP to the nearest eQTL? what is the highest LD between this SNP and an eQTL?</li>
+<li>Given MCMC result, how do we summarize it? <ul>
+<li>What should we do if we want to use the results for data intergration? </li>
+<li>We may want a mode, not a flat PIP from MCMC</li>
+<li>We can take samples from posterior, then for each sample perform intergation analysis, and access the variance / sensitivity of results (how robust the conclusion is). And somehow combine the results. This is similar to the idea of multiple imputation.</li>
+</ul>
+</li>
+</ul>
+<p>What can we learn directly from Step 2 the mash step?</p>
+<ul>
+<li>If we go a bit further computing the lfsr and posterior mean of effects, we can get the "mode" candidate for eQTL, ie, we can then perform fine mapping around the mode. </li>
+</ul>
+<p>It is also perhaps too early to make any meaningful envision on what to do with finemapping, before looking into the data:</p>
+<ul>
+<li>How uncertain are the results we'll end up getting? Maybe LD is not a big issue in many of the new eQTLs we identify, which by itself would be exciting results.</li>
+</ul>
+<h3 id="Where-do-we-stop-for-mr-ash-application">Where do we stop for mr-ash application<a class="anchor-link" href="#Where-do-we-stop-for-mr-ash-application">&#182;</a></h3><p>We want to start the mr-ash paper by saying that there is great interest in introducing sparsity in regression, and recently there is a method called ash that introduces it in a "smart" way, and how it is relatively straightforward to use the ash idea in the context of regression.</p>
+<p>The strength of mr-ash is the computational efficiency (VEM) and the flexibility (ASH compared to spike-slab), but there are disadvantages (PIP is too concentrated, see Carbonatto 2012).</p>
+<p>In data application we can show how different the distribution of effect size of eQTL is, across genes. We can focus on a single tissue, fit separate mr-ash for each gene, and comment on interesting patterns that emerges; or we can use meta-analysis for multiple tissues on genes of interest, if there is not enough power from single tissue analysis.</p>
+<h2 id="Project-meeting-20170417">Project meeting 20170417<a class="anchor-link" href="#Project-meeting-20170417">&#182;</a></h2><p>Meeting with Matthew. We went through the m&amp;m procedure on overleaf, revisited issue 8 on github and talked about next steps on data analysis + simulations. The discussion has led to minor changes in the overleaf write up.</p>
+<p>Additionally we decide that the next step should be getting <em>Step 1</em> done, ie, mr-ash on GTEx data. We will start with analyzing GTEx V6 and verify with mash result, then move on to V7 data. <em>Step 1</em> would be an interesting application by itself as it is some form of univariate fine-mapping.</p>
+<h2 id="Project-meeting-20170330">Project meeting 20170330<a class="anchor-link" href="#Project-meeting-20170330">&#182;</a></h2><p>Meeting with Matthew and Wei, to revive the project, by looking at what we have and what to be done.</p>
+<h3 id="Tentative-agenda">Tentative agenda<a class="anchor-link" href="#Tentative-agenda">&#182;</a></h3><h4 id="Connected-work">Connected work<a class="anchor-link" href="#Connected-work">&#182;</a></h4><ul>
+<li>varbvs</li>
+<li>rss</li>
+<li>ash</li>
+<li>mash</li>
+<li>mrash</li>
+<li>BMASS</li>
+</ul>
+<h3 id="Questions">Questions<a class="anchor-link" href="#Questions">&#182;</a></h3><ul>
+<li>How can m&amp;m ash generalize all theses work<ul>
+<li>We have to think carefully what to incorperate in the generalized framework, and how to incorporate them</li>
+<li>In particular how can we combine mrash / rss + mash?</li>
+</ul>
+</li>
+<li>Do we start from summary statistics or full data?</li>
+<li>Do we need MCMC in addition to VEM?</li>
+</ul>
+<p>Implementation-wise, shall we not write any code until we finalize on how the generalized framework is formulated? We should think "modularly" and we make contributions directly to other modules whenever possible, then build m&amp;m ash with these modules.</p>
+<h3 id="What-to-do-with-mrash-as-a-standalone-work?">What to do with <code>mrash</code> as a standalone work?<a class="anchor-link" href="#What-to-do-with-mrash-as-a-standalone-work?">&#182;</a></h3><p>If we start from full data then finalizing <code>mrash</code> is a natural first step. It is then just a discussion of whether to create a separate package or to make it part of varbvs.</p>
+<h3 id="Minutes">Minutes<a class="anchor-link" href="#Minutes">&#182;</a></h3><p>The meeting has outlined the approach we take towards a modularized m&amp;m. Most items on the agenda has been covered. See <a href="Modular_MNMASH.html">this document</a> for details.</p>
+<h2 id="Project-meeting-20161103">Project meeting 20161103<a class="anchor-link" href="#Project-meeting-20161103">&#182;</a></h2><p>Meeting with Matthew. We started from recap on the motivation of project, then discussed the M&amp;M ASH model with practical considerations.</p>
+<h3 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h3><p>M&amp;M ASH model is motivated by what we have noticed in the MASH project. We have observed effect of a SNP (eQTL) positive in one tissue yet negative in another tissue. This bothers us. We suspect this type of observation is most likely due to negative LD between two causal SNPs both having positive effect in two separate tissues yet if we make the one eQTL per gene assumption as made in MASH we will observe opposite effects. So if we assume SNPs are independent in association analysis we obtain $\hat{\beta}$ convoluted by LD of all SNPs.</p>
+<p>Let's consider univariate association analysis for a moment. Because of LD, $g(.)$, the distribution of $\beta$ we estimate via univariate methods, would have long tails. In other words $g(.)$ is inflated by LD with other SNPs. Estimates of $g(.)$ from multiple regression with ASH prior via variantional EM (currently called MVASH) will not have this problem. However when we want to make inference on $\beta$ the effect size, there will be identifiability issue with MVASH because VEM can reach local optima and the effect size it reports for the SNP identified may not be the SNP that in fact has an effect. The solution to this problem is to use MCMC for fine mapping on selected regions via VEM. A hybrid approach is to estimate hyper-parameters via VEM and use MCMC to sample the posterior.</p>
+<p>Now to solve the same issue in the context of multivariate regression, we propose the M&amp;M ASH model, which applies multiple regression using ASH prior on multiple responses. David Gerard has derived a VEM procedure for the M&amp;M model. Assumptions in David's derivations are:</p>
+<ul>
+<li>The residual variance of genes (after regressing out eQTL effect) is structured low rank + diagonal</li>
+<li>There will be missing data in the response matrix</li>
+<li>The mixture proportion can be estimated per test, or be estimated jointly for all tests</li>
+</ul>
+<h3 id="M&amp;M-ASH-with-diagonal-residual-covariance-structure">M&amp;M ASH with diagonal residual covariance structure<a class="anchor-link" href="#M&amp;M-ASH-with-diagonal-residual-covariance-structure">&#182;</a></h3><p>Matthew suggests we make this model simpler and make sure it works. For starters we should ignore correlation among tissues. That is, we assume residual variance a diagonal matrix. Here are a few points why we should start with diagonal and why at least as a first pass we should not make non-diagonal assumption in M&amp;M ASH:</p>
+<ul>
+<li>We are not sure yet if correlated residual will cause a problem to our inference -- unless we can show it empirically: we should find real data examples when correlation between tissues are due to correlation between genes, not due to similarity of tissues. This would raise a red flag that we should model such correlations.</li>
+<li>Even if the problem is confirmed we should use MASH model to show we can solve it, before incorporating the solution to M&amp;M ASH. As MASH model is simpler, it will get us assessment from real data quickly and we'll decide if it worth to pursue the fix in M&amp;M ASH.</li>
+<li>To do it in MASH we should assume this residual correlation is the same as the tissues' correlations (eQTL effect is relatively small) and we estimate the 44 by 44 matrix of covariance directly from expression data. This is not a trivial problem; many methods get estimates that shrink the structure to diagonal. But sparse factor analysis methods can be a good technique to do this, as shown by Wei's work. We then plug this estimate to MASH model<ul>
+<li>The advantage of this approach (over making inference jointly as what David has done for M&amp;M ASH) is that this approach is modular and we can choose a good method (such as SFA, FLASH) to make this step of inference. The method may be biased (ignoring impact of eQTL) but has better variance</li>
+</ul>
+</li>
+<li>The problem with this approach is that if eQTL induces correlation we'll wrongfully believe there is residual covariance when in fact there is not. That is, after removing effect from eQTL the residual covariance is diagonal. This observation would favor the joint approach over the modular approach. To assess if this is a problem, we can choose genes with large covariance matrix, and remove the effect of top eQTL then see if the residual covariance matrix still retains correlations or is mostly diagonal.</li>
+</ul>
+<h3 id="Next-steps">Next steps<a class="anchor-link" href="#Next-steps">&#182;</a></h3><p>We should start with the simplest version (that residual covariance is diagonal) and make it work. The hard part is computation. Using summary data whenever possible may help with computation. Additionally in updating mixture components we can use noiser estimates, that is, estimates from randomly sampled \beta{hat} instead of 20K genes <em> 1000 SNPs </em> 50 conditions data points. We will have our next meeting (David and Gao with Matthew) after we get this simple version to work in practice.</p>
+<h2 id="Project-meeting-20160921">Project meeting 20160921<a class="anchor-link" href="#Project-meeting-20160921">&#182;</a></h2><h3 id="Tentative-schedule">Tentative schedule<a class="anchor-link" href="#Tentative-schedule">&#182;</a></h3><p>Status</p>
+<ul>
+<li>The <code>m&amp;m ash</code> <a href="http://www.bioinformatics.org/labnotes/mnmash/mnmash-model.html">model</a> and <a href="https://github.com/gaow/mnmashr">implementation</a>.</li>
+<li>Implementation is not working on data due to <a href="https://github.com/gaow/mnmashr/blob/master/src/mnmash.hpp#L41">data structure design</a><ul>
+<li>When J is 40, P 2000, K 50 and L 20, the S and SI matrices will be of size 3.2G * 2 = 6.4G. Looping over such data is very slow.</li>
+</ul>
+</li>
+<li>Correctness of implementation not tested</li>
+</ul>
+<p>Next steps</p>
+<ul>
+<li>Get implementation working</li>
+<li>Run simulations</li>
+<li>Put into OmicsBMA framework and do real data anlaysis</li>
+</ul>
+<h3 id="Minutes">Minutes<a class="anchor-link" href="#Minutes">&#182;</a></h3><ul>
+<li>We should conceptually distinguish a model using original data from the one using summary data, though in the VB algorithm they are very similar.</li>
+<li>Currently the model assumes $\Sigma_{J \times J}$ known. This is not easy to estimate because it would involve a non-trivial multiple regression. We should try to model $\Sigma_{J \times J}$ as unknown diagonal matrix and estimate it in the VB framework. For starters, write up the J = 1 case.</li>
+</ul>
+
+</div>
+</div>
+</div>
+<hr>
+Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/dd138e87fac2021e9df22cc71bb02e41169ea871/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Fri Jun 8 11:29:09 2018 <a href="http://github.com/gaow/mvarbvs/commit/dd138e87fac2021e9df22cc71bb02e41169ea871">revision 15, dd138e8</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
