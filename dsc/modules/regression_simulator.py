@@ -65,8 +65,10 @@ def original_y(data, reg, c):
     return None if 'true_coef' not in data else np.array(data['true_coef'])
 
 def simple_lm(data, reg, c):
-    del data['Z']
-    del data['y']
+    if 'Z' in data:
+        del data['Z']
+    if 'y' in data:
+        del data['y']
     eff = UnivariateMixture(reg.X.shape[1])
     eff.set_vanilla(c['amplitude'])
     Y = []

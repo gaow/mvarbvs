@@ -56,14 +56,13 @@ fit_caviar: fit_caviar.R + \
   $posterior: posterior
 
 fit_finemap(fit_caviar): fit_finemap.R + \
-             R(posterior = finemap_mvar(sumstats[1,,], sumstats[2,,],
-                                        data$allele_freq,
+             R(posterior = finemap_mvar(sumstats[1,,] / sumstats[2,,],
                                         ld, N, k,
                                         args, prefix=cache))
   N: $N
-  k: NULL #, (0.6,0.2,0.1,0.05,0.05)
+  k: NULL
   data: $data
-  args: "--n-causal-snps 5"
+  args: "--n-causal-snps 1", "--n-causal-snps 2", "--n-causal-snps 3"
   cache: file(FM)
 
 fit_dap: fit_dap.py + Python(posterior = dap_batch(data['X'], data['Y'], cache, args))

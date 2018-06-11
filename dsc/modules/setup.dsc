@@ -13,7 +13,7 @@ full_data: sim_utils.R + R(data =readRDS(dataset);
             saveRDS(r2, ld_mat);
             write.table(r2,ld_file,quote=F,col.names=F,row.names=F))
   tag: "full"
-  dataset: Shell{head -50 ${data_file}}
+  dataset: Shell{head -100 ${data_file}}
   subset: NULL
   $data: data
   $top_idx: NULL
@@ -41,7 +41,7 @@ dap_g_data(full_data): R(X = readRDS(dataset)$X;
   dataset: Shell{cat ${dap_g_data}}
              
 get_sumstats: regression.R + R(res = mm_regression(as.matrix(data$X), 
-                                                   as.matrix(data$Y)))
+                                                   as.matrix(data$Y), data$Z))
   @CONF: R_libs = abind
   data: $data
   $sumstats: res
