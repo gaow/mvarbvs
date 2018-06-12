@@ -65,7 +65,7 @@ finemap_extract_ncausal <- function(logfile)
   return(tab)
 }
 
-finemap_mvar <- function(zscore, LD_file, n, k, args, prefix, parallel = FALSE) {
+finemap_mvar <- function(zscore, LD_file, n, k, args, prefix, parallel = TRUE) {
   if (is.null(dim(zscore))) {
       zscore = matrix(ncol=1,zscore)
   }

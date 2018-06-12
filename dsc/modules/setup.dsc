@@ -33,9 +33,9 @@ two_effect(full_data):
   subset: 2
              
 dap_g_data(full_data): R(X = readRDS(dataset)$X;
-              r2 = cor(X); r2 ^ 2 * sign(r2);
-              saveRDS(r2, ld_mat);
-              write.table(r2,ld_file,quote=F,col.names=F,row.names=F)) + \
+              r = cor(X);
+              saveRDS(r, ld_mat);
+              write.table(r,ld_file,quote=F,col.names=F,row.names=F)) + \
               dap_g_paper.R + R(data = list(X=X,Y=Y,true_coef=B))  
   tag: "dap_g"
   dataset: Shell{cat ${dap_g_data}}
