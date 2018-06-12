@@ -15,7 +15,7 @@ for (r in 1:ncol(data$Y)) {
                                tol=1e-3)
   fitted[[r]]$lfsr <- susieR::susie_get_lfsr(fitted[[r]])
   fitted[[r]]$n_in_CI <- susieR:::n_in_CS(fitted[[r]])
-  fitted[[r]]$in_CI <- susieR::susie_in_CS(fitted[[r]])
+  fitted[[r]]$in_CI <- susieR:::in_CS(fitted[[r]])
   fitted[[r]]$niter <- susieR:::susie_get_niter(fitted[[r]])
 }
 
