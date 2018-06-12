@@ -190,7 +190,7 @@ stop_if(len(pipeline_files) == 0)
 input: pipeline_files, group_by = 1, concurrent = True
 output: [f"docs/{x.replace('.sos', '.pipeline.html')}" for x in pipeline_files], group_by = 1
 bash: expand = "${ }", stdout = False, stderr = False
-  sos convert ${_input} ${_output} --style tango --lineno
+  sos convert ${_input} ${_output} --style 'solarized light' --lineno
 
 [update-toc (TOC Javascript updater)]
 input: dynamic(notebook_files + index_files)
