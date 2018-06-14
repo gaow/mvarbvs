@@ -12,3 +12,8 @@ fit_susie: fit_susie.R
 
 fit_susie01(fit_susie):
   maxL: 1
+
+fit_susie10(fit_susie):
+  maxL: 10
+  estimate_residual_variance: FALSE, TRUE
+  prior_var: 0.05

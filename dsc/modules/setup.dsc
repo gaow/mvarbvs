@@ -9,9 +9,9 @@
 
 full_data: sim_utils.R + R(data =readRDS(dataset);
             data$X = as.matrix(data$X[,get_center(subset, ncol(data$X))]);
-            r2 = cor(data$X); r2 = r2 ^ 2 * sign(r2);
-            saveRDS(r2, ld_mat);
-            write.table(r2,ld_file,quote=F,col.names=F,row.names=F))
+            r = cor(data$X);
+            saveRDS(r, ld_mat);
+            write.table(r,ld_file,quote=F,col.names=F,row.names=F))
   tag: "full"
   dataset: Shell{head -100 ${data_file}}
   subset: NULL
