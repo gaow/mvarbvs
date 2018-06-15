@@ -36,6 +36,7 @@ lm_less(simple_lm):
 
 lm_less03(simple_lm):
   pve: 0.3
+  n_signal: 10
 
 original_Y(base_sim):
   eff_mode: "original"

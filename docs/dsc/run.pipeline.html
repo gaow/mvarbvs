@@ -219,6 +219,12 @@ tr.subworkflow.step-row {
   font-size: 0.5em;
 }
 
+.cm-sos-interpolated {
+  background-color: #EDD5F3;
+}
+.cm-sos-sigil {
+  background-color: #EDD5F3;
+}
 
 .file {
   position: relative;
@@ -262,6 +268,11 @@ tr.subworkflow.step-row {
 .file .CodeMirror {
   border: 1px solid #eee;
   height: auto;
+}
+
+pre.section-header.CodeMirror-line {
+  background-color: #f7f7f7;
+  border-top: 1px solid #ddd;
 }
       </style>
    </head>
@@ -671,12 +682,12 @@ bash: expand = True, stderr = False
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header";
+                  return "header line-section-header";
                 } else {
                   // match up to :
                   stream.match(/^\[[^:]*:/);
                   state.sos_state = 'header_option';
-                  return "header";
+                  return "header line-section-header";
                 }
               }
             } else if (sl == '!') {
@@ -732,7 +743,7 @@ bash: expand = True, stderr = False
               if (stream.eol()) {
                 state.sos_state = null;
                 state.inner_mode = null;
-                return "header";
+                return "header line-section-header";
               } else {
                 stream.backUp(1);
                 let it = base_mode.token(stream, state.base_state);
@@ -862,11 +873,12 @@ bash: expand = True, stderr = False
 });
       </script>
       <script>
-         var editor = CodeMirror.fromTextArea(document.getElementsByClassName("source-code"), {
+         var editor = CodeMirror.fromTextArea(document.getElementById("source-code"), {
            lineNumbers: true,
            styleActiveLine: true,
            matchBrackets: true,
            readOnly: true,
+           theme: 'solarized light',
            mode: 'sos'
          });
       </script>
