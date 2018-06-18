@@ -262,6 +262,53 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="20180618">20180618<a class="anchor-link" href="#20180618">&#182;</a></h2><p>Slack discussion with Matthew on manuscript outline.</p>
+<h3 id="RE-&quot;default-susie&quot;">RE "default susie"<a class="anchor-link" href="#RE-&quot;default-susie&quot;">&#182;</a></h3><ul>
+<li>Default <code>estimate_residual_variance</code> set to <code>TRUE</code>.</li>
+<li>By default we scale and center X so that prior becomes PVE.</li>
+<li>Choice of Prior: <ul>
+<li>Option 1: we show in our numerical studies prior = 0.1 for all scenarios. We show in supplemental that results do not change that much with other values.</li>
+<li>Option 2: as discussed <a href="https://github.com/stephenslab/susieR/issues/10">in this ticket</a> we can potentially estimate it.</li>
+</ul>
+</li>
+</ul>
+<h3 id="Result-section">Result section<a class="anchor-link" href="#Result-section">&#182;</a></h3><p><em>Note: all figures will be updated to reflect a fix in my simulation code, and to incorporate twice more replicates in the new simulation run</em></p>
+<ol>
+<li><p>Show Bayesian CS followed by a "purity" filter is good enough in the context of genetic fine-mapping.</p>
+<ul>
+<li>For given scenario the <a href="https://gaow.github.io/mvarbvs/analysis/20180515_SusieR_Benchmark.html#2-signals-+-20%-PVE-+-est_residual=FALSE">purity vs size plot</a></li>
+<li>For 95% CS across pooled scenarios a histogram of purity (<strong>to be plotted</strong>) and the <a href="https://gaow.github.io/mvarbvs/details/20180515_SuSiE_Benchmark.html#How-do-we-define-mappable-CS">capture rate as purity threshold changes</a></li>
+<li>For different coverage of CS, show that <a href="https://gaow.github.io/mvarbvs/analysis/20180606_Coverage_Check.html">false discover proportion is under control</a> -- <strong>this table is to be re-generated using the new <code>get_susie_CS</code> function rather than external Python script</strong>. This is to ensure others can reproduce exactly what we offer for the manuscript.</li>
+</ul>
+</li>
+<li><p>Show SNP level PIP and ROC</p>
+<ul>
+<li>Consistency of PIP with <a href="https://gaow.github.io/mvarbvs/analysis/20180527_PIP_Comparison.html#susie-est_var-vs-CAVIAR-154">other methods</a> including susie, caviar, DAP and FINEMAP (<strong>Need to add in FINEMAP V1.1 results</strong>)</li>
+<li><a href="https://gaow.github.io/mvarbvs/analysis/20180605_PIP_Calibrated.html">Calibrated PIP</a> in comparison with the truth, also showing DAP, CAVIAR and FINEMAP results with the truth (<strong>Need to add in FINEMAP V1.1 results</strong>).</li>
+<li><a href="https://gaow.github.io/mvarbvs/analysis/20180606_ROC.html">ROC</a> in comparison with DAP, CAVIAR and FINEMAP (<strong>Need to add in FINEMAP V1.1 results</strong>; <strong>also make Y-axis start at zero</strong>).</li>
+</ul>
+</li>
+<li><p>Comparison of susie CS with DAP cluster</p>
+<ul>
+<li>For <a href="https://gaow.github.io/mvarbvs/analysis/20180528_Power_Comparison.html#susie-est_var-vs-DAP">simpler cases</a></li>
+<li>For <a href="https://gaow.github.io/mvarbvs/analysis/20180615_Power_DAP.html#Power-comparison,-susie-VS-DAP,-for-~8K-region">harder case</a></li>
+</ul>
+</li>
+<li><p>Compare speed of <code>susieR</code> vs <code>dap-g</code></p>
+<ul>
+<li><strong>Need to pull and average from DSC results</strong></li>
+<li>For susieR: we do use ELBO to check for convergence -- should I use line-profiler to get an idea how long the ELBO takes and give an estimate of using $\alpha$ convergence instead?</li>
+</ul>
+</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="20180607">20180607<a class="anchor-link" href="#20180607">&#182;</a></h2><p>Meeting with Matthew.</p>
 <h3 id="Aganda">Aganda<a class="anchor-link" href="#Aganda">&#182;</a></h3><ul>
 <li>Look together sets comparison between DAP and Susie in "Power" and FDP.</li>
@@ -618,7 +665,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/00fb9bdaefd48c8a22e90f7448b07276d39e906d/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Mon Jun 11 20:22:30 2018 <a href="http://github.com/gaow/mvarbvs/commit/00fb9bdaefd48c8a22e90f7448b07276d39e906d">revision 17, 00fb9bd</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7f347ecb4ecfada0f45321f9e7aca9cf963b59b5/writeup/Meetings.ipynb"><code>writeup/Meetings.ipynb</code></a> committed by Gao Wang on Fri Jun 15 09:39:12 2018 <a href="http://github.com/gaow/mvarbvs/commit/7f347ecb4ecfada0f45321f9e7aca9cf963b59b5">revision 18, 7f347ec</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

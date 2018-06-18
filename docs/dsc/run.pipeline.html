@@ -305,7 +305,7 @@ bash: expand = True, stderr = False
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
          </a>
          &nbsp;
-         <a href="https://vatlab.github.io/sos-docs/">SoS Workflow Engine</a> version <samp>0.9.14.10</samp>
+         <a href="https://vatlab.github.io/sos-docs/">SoS Workflow Engine</a> version <samp>0.9.15.0</samp>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
@@ -693,6 +693,9 @@ bash: expand = True, stderr = False
             } else if (sl == '!') {
               stream.eatWhile(/\S/);
               return "meta";
+            } else if (sl == '#') {
+              stream.skipToEnd();
+              return "comment";
             } else if (sl == '%') {
               stream.eatWhile(/\S/);
               return "meta";
