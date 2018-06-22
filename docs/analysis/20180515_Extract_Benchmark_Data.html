@@ -257,6 +257,58 @@ body {
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This generates per gene data-set and surveys how many SNPs in each generated dataset.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/d4e8a8cd3ad151e98bb6644d7fe5ddf721fd9e5b/analysis/20180515_Extract_Benchmark_Data.ipynb"><span class="revision_id">d4e8a8c<span></a></td>
+<td>Gao Wang</td>
+<td>2018-05-24</td>
+<td>Update documentation</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
@@ -267,7 +319,7 @@ body {
 <span class="n">outdir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/Toys&#39;</span><span class="p">)</span>
 <span class="n">tissue</span> <span class="o">=</span> <span class="s1">&#39;Thyroid&#39;</span>
 
-<span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="p">[</span><span class="n">extract</span><span class="p">]</span>
 <span class="n">genes</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;shuf {outdir:d}/all_genes.txt | head -{n}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;genes&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{outdir}/{tissue}.{path(_genes):b}.RDS&quot;</span>
@@ -318,15 +370,96 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-
-<pre><code>sos run extract.ipynb -j 40</code></pre>
+<p>To get an idea how many variants are there:</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">count_var</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/Toys/*.RDS&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">output:</span> <span class="s1">&#39;~/Documents/GTExV8/Toys/counts.txt&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">_output</span>
+  <span class="n">cat</span><span class="p">(</span><span class="n">paste0</span><span class="p">({</span><span class="n">_input</span><span class="p">:</span><span class="n">br</span><span class="p">},</span> <span class="n">ncol</span><span class="p">(</span><span class="n">readRDS</span><span class="p">({</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span><span class="err">$</span><span class="n">X</span><span class="p">),</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTExV8</span><span class="o">/</span><span class="n">Toys</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/home/gaow/Documents/GTExV8/Toys</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">scan</span><span class="p">(</span><span class="s1">&#39;counts.txt&#39;</span><span class="p">)</span>
+<span class="n">summary</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   3022    6450    7226    7217    8033   11999 </pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/d4e8a8cd3ad151e98bb6644d7fe5ddf721fd9e5b/analysis/20180515_Extract_Benchmark_Data.ipynb"><code>analysis/20180515_Extract_Benchmark_Data.ipynb</code></a> committed by Gao Wang on Thu May 24 10:17:15 2018 <a href="http://github.com/gaow/mvarbvs/commit/d4e8a8cd3ad151e98bb6644d7fe5ddf721fd9e5b">revision 1, d4e8a8c</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/c70251f9af0b866d82b6ec81f23c457ed1c8a5ac/analysis/20180515_Extract_Benchmark_Data.ipynb"><code>analysis/20180515_Extract_Benchmark_Data.ipynb</code></a> committed by Gao Wang on Fri Jun 22 07:50:40 2018 <a href="http://github.com/gaow/mvarbvs/commit/c70251f9af0b866d82b6ec81f23c457ed1c8a5ac">revision 2, c70251f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
