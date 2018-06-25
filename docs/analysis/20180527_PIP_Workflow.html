@@ -963,56 +963,9 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Coverage">Coverage<a class="anchor-link" href="#Coverage">&#182;</a></h2><p>It was not part of the design of the DSC to evaluated situations of different coverage. So implementation here is a bit awkward -- to use existing codes to compute purity I need to provide the <code>in_CS</code> matrix and the LD matrix to previously established Python codes, via tmp RDS files; then save output also to tmp RDS files to load calculated <code>purity</code>.</p>
-
+<h2 id="Coverage">Coverage<a class="anchor-link" href="#Coverage">&#182;</a></h2>
 </div>
 </div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">purity_utils</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="n">file_target</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/.sos/purity.py&#39;</span><span class="p">)]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/.sos/purity.py&#39;</span>
-
-<span class="kn">report:</span> <span class="n">output</span><span class="o">=</span><span class="n">f</span><span class="s1">&#39;{_output}&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
-
-    <span class="kn">import</span> <span class="nn">sys</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;${cwd:a}/modules&#39;</span><span class="p">)</span>
-    <span class="kn">from</span> <span class="nn">plot_susie</span> <span class="kn">import</span> <span class="n">SusieReporter</span>
-    <span class="kn">from</span> <span class="nn">dsc.dsc_io</span> <span class="kn">import</span> <span class="n">load_rds</span><span class="p">,</span> <span class="n">save_rds</span>
-    <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
-    <span class="n">cs</span> <span class="o">=</span> <span class="n">load_rds</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">ld</span> <span class="o">=</span> <span class="n">load_rds</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
-    <span class="n">purity</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">cs</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">reporter</span> <span class="o">=</span> <span class="n">SusieReporter</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cs</span><span class="p">[</span><span class="n">k</span><span class="p">]),</span> <span class="p">[],</span> <span class="p">[],</span> <span class="n">ld</span><span class="p">)</span>
-        <span class="n">purity</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">reporter</span><span class="o">.</span><span class="n">purity</span>
-    <span class="n">save_rds</span><span class="p">(</span><span class="n">purity</span><span class="p">,</span> <span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-<div class="prompt"></div>
-
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Workflow can only be executed with magic %run or %sosrun.</pre>
-</div>
-</div>
-
-</div>
-</div>
-
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1021,10 +974,10 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">coverage_2</span><span class="p">]</span>
 <span class="n">est_var</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;FALSE&#39;</span><span class="p">,</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">]</span>
-<span class="n">ld_cutoff</span> <span class="o">=</span> <span class="mf">0.25</span>
-<span class="kn">depends:</span> <span class="n">file_target</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/.sos/purity.py&#39;</span><span class="p">)</span>
+<span class="n">ld_cutoff</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">n_signals</span> <span class="o">=</span> <span class="mi">4</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;est_var&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/Coverage_0606_estvar_{_est_var.lower()}.rds&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/Coverage_0623_estvar_{_est_var.lower()}.rds&#39;</span>
 
 <span class="kn">R:</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">ld_col</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">ld_col</span><span class="p">}</span>
@@ -1036,7 +989,11 @@ body {
     <span class="n">susie_out</span> <span class="o">=</span> <span class="n">subset</span><span class="p">(</span><span class="n">susie_out</span><span class="p">,</span> <span class="n">select</span> <span class="o">=-</span><span class="n">c</span><span class="p">(</span><span class="n">lm_less</span><span class="o">.</span><span class="n">pve</span><span class="p">,</span> <span class="n">fit_susie</span><span class="o">.</span><span class="n">prior_var</span><span class="p">,</span> <span class="n">fit_susie</span><span class="o">.</span><span class="n">estimate_residual_variance</span><span class="p">))</span>
 
     <span class="n">data_sets</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
-    <span class="n">n_signals</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">n_signals</span><span class="p">}))</span> <span class="p">{</span>
+        <span class="n">n_signals</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">n_signals</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:</span><span class="err">$</span><span class="p">{</span><span class="n">n_signals</span><span class="p">}</span>
+    <span class="p">}</span>
     <span class="n">positives</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">n_signals</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">positives</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">s</span><span class="p">)]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
@@ -1044,29 +1001,19 @@ body {
         <span class="k">for</span> <span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">data_sets</span><span class="p">)</span> <span class="p">{</span>
             <span class="n">out_files</span> <span class="o">=</span> <span class="n">susie_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_susie.output.file&quot;</span><span class="p">,</span> <span class="s2">&quot;liter_data.output.file&quot;</span><span class="p">,</span> <span class="s2">&quot;lm_less.output.file&quot;</span><span class="p">)]</span>
             <span class="n">fit</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">posterior</span>
-            <span class="n">ld_mat_fn</span> <span class="o">=</span> <span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;.ld_mat.rds&#39;</span><span class="p">)</span>
+            <span class="n">ld_mat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;.ld_mat.rds&#39;</span><span class="p">))</span>
             <span class="n">truth</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">data</span><span class="err">$</span><span class="n">true_coef</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">r</span> <span class="ow">in</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="p">{</span>
-                <span class="c1"># now compute a grid of in_CI</span>
-                <span class="c1"># save in_CI to tmp RDS</span>
-                <span class="c1"># and make this file name and ld_mat_fn input to some program via a system call, generating some other file names of purity result</span>
-                <span class="c1"># and load that result</span>
-                <span class="n">in_CI</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-                <span class="k">for</span> <span class="p">(</span><span class="n">level</span> <span class="ow">in</span> <span class="n">c</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">))</span> <span class="p">{</span>
-                  <span class="n">in_CI</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_in_CS</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">alpha</span><span class="p">[[</span><span class="n">r</span><span class="p">]],</span> <span class="n">coverage</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="n">level</span><span class="p">)</span>
-                <span class="p">}</span>
-                <span class="n">saveRDS</span><span class="p">(</span><span class="n">in_CI</span><span class="p">,</span> <span class="s2">&quot;/tmp/${_output:bn}.tmp.cs.rds&quot;</span><span class="p">)</span>
-                <span class="n">dscrutils</span><span class="p">::</span><span class="n">run_cmd</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s2">&quot;python .sos/purity.py&quot;</span><span class="p">,</span> <span class="s2">&quot;/tmp/${_output:bn}.tmp.cs.rds&quot;</span><span class="p">,</span> <span class="n">ld_mat_fn</span><span class="p">,</span> <span class="s2">&quot;/tmp/${_output:bn}.tmp.purity.rds&quot;</span><span class="p">))</span>
-                <span class="n">purity</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s2">&quot;/tmp/${_output:bn}.tmp.purity.rds&quot;</span><span class="p">)</span>
                 <span class="n">signals</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">truth</span><span class="p">[,</span><span class="n">r</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">susie_cs_all</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
                 <span class="k">for</span> <span class="p">(</span><span class="n">level</span> <span class="ow">in</span> <span class="n">c</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">))</span> <span class="p">{</span>
+                  <span class="n">susie_cs_all</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_get_CS</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">alpha</span><span class="p">[[</span><span class="n">r</span><span class="p">]],</span> <span class="n">coverage</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="n">level</span><span class="p">,</span> <span class="n">Xcorr</span> <span class="o">=</span> <span class="n">ld_mat</span><span class="p">,</span> <span class="n">min_abs_corr</span> <span class="o">=</span> <span class="n">ld_cutoff</span><span class="p">)</span><span class="err">$</span><span class="n">cs</span>
                   <span class="k">if</span> <span class="p">(</span><span class="err">!</span> <span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">names</span><span class="p">(</span><span class="n">positives</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">s</span><span class="p">)]]))</span> <span class="p">{</span>
                       <span class="n">positives</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">s</span><span class="p">)]][[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
                   <span class="p">}</span>
-                  <span class="n">susie_cs_raw</span> <span class="o">=</span> <span class="n">in_CI</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)]][</span><span class="n">which</span><span class="p">(</span><span class="n">purity</span><span class="p">[[</span><span class="n">paste0</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">,</span> <span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)]][,</span><span class="n">ld_col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">ld_cutoff</span><span class="p">),,</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
-                  <span class="k">if</span> <span class="p">(</span><span class="n">nrow</span><span class="p">(</span><span class="n">susie_cs_raw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                      <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">susie_cs_raw</span><span class="p">))</span> <span class="p">{</span>
-                          <span class="n">susie_cs</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">susie_cs_raw</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+                  <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs_all</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)]])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                      <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs_all</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)]]))</span> <span class="p">{</span>
+                          <span class="n">susie_cs</span> <span class="o">=</span> <span class="n">susie_cs_all</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">level</span><span class="o">*</span><span class="mi">100</span><span class="p">)]][[</span><span class="n">i</span><span class="p">]]</span>
                           <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
                               <span class="nb">next</span>
                           <span class="p">}</span>
@@ -1232,7 +1179,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/f96a5abb4a8db29f45ad214f5cce1aa8867f54a7/analysis/20180527_PIP_Workflow.ipynb"><code>analysis/20180527_PIP_Workflow.ipynb</code></a> committed by Gao Wang on Sat Jun 23 11:25:03 2018 <a href="http://github.com/gaow/mvarbvs/commit/f96a5abb4a8db29f45ad214f5cce1aa8867f54a7">revision 23, f96a5ab</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/62926cac6ef27fe176a48028b755a065d5213127/analysis/20180527_PIP_Workflow.ipynb"><code>analysis/20180527_PIP_Workflow.ipynb</code></a> committed by Gao Wang on Mon Jun 25 16:25:45 2018 <a href="http://github.com/gaow/mvarbvs/commit/62926cac6ef27fe176a48028b755a065d5213127">revision 24, 62926ca</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
