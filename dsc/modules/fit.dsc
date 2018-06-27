@@ -51,7 +51,7 @@ fit_caviar: fit_caviar.R + \
   @CONF: R_libs = (dplyr, magrittr)
   sumstats: $sumstats
   ld: $ld_file
-  args: "-c 1", "-c 2", "-c 3"
+  args: "-g 0.001 -c 1", "-g 0.001 -c 2", "-g 0.001 -c 3"
   cache: file(CAVIAR)
   $posterior: posterior
 
@@ -62,7 +62,7 @@ fit_finemap(fit_caviar): fit_finemap.R + \
   N: $N
   k: NULL
   data: $data
-  args: "--n-causal-snps 1", "--n-causal-snps 2", "--n-causal-snps 3"
+  args: "--n-causal-max 1", "--n-causal-max 2", "--n-causal-max 3"
   cache: file(FM)
 
 fit_dap: fit_dap.py + Python(posterior = dap_batch(data['X'], data['Y'], cache, args))
