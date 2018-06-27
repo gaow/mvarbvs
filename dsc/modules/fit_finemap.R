@@ -39,6 +39,10 @@ run_finemap <- function(z, LD_file, n, k, args = "", prefix="data")
   snp = rank_snp(snp)
   config = read.table(cfg$config,header=TRUE,sep=" ")
 
+  # Only keep configurations with cumulative 95% probability
+  config = within(config, config_prob_cumsum <- cumsum(config_prob))
+  config = config[config$config_prob_cumsum <= 0.95,]
+
   # extract number of causal
   ncausal = finemap_extract_ncausal(cfg$log)
   return(list(snp=snp, set=config, ncausal=ncausal))

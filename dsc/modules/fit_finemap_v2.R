@@ -48,6 +48,10 @@ run_finemap <- function(bhat, se, allele_freq, LD_file, n, k, args = "", prefix=
   config = read.table(cfg$config,header=TRUE,sep=" ")[, 1:4]
   colnames(config) = c('rank', 'config', 'config_prob', 'config_log10bf')
 
+  # Only keep configurations with cumulative 95% probability
+  config = within(config, config_prob_cumsum <- cumsum(config_prob))
+  config = config[config$config_prob_cumsum <= 0.95,]
+
   # extract number of causal
   ncausal = finemap_extract_ncausal(paste0(cfg$log, '_sss'))
   return(list(snp=snp, set=config, ncausal=ncausal))
