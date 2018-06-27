@@ -316,11 +316,14 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
 <span class="kn">parameter:</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="n">outdir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/Toys&#39;</span><span class="p">)</span>
-<span class="n">tissue</span> <span class="o">=</span> <span class="s1">&#39;Thyroid&#39;</span>
+<span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8&#39;</span><span class="p">)</span>
+<span class="n">outdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/Toys&#39;</span>
+<span class="kn">parameter:</span> <span class="n">tissue</span> <span class="o">=</span> <span class="s1">&#39;Thyroid&#39;</span>
+<span class="kn">parameter:</span> <span class="n">genes</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="p">[</span><span class="n">extract</span><span class="p">]</span>
-<span class="n">genes</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;shuf {outdir:d}/all_genes.txt | head -{n}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;shuf {cwd:a}/all_genes.txt | head -{n}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;genes&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{outdir}/{tissue}.{path(_genes):b}.RDS&quot;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
@@ -350,9 +353,9 @@ body {
             <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">gdata</span><span class="p">),</span> <span class="n">y</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">edata</span><span class="p">),</span> <span class="n">Z</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">cdata</span><span class="p">),</span> <span class="n">chrom</span> <span class="o">=</span> <span class="n">strsplit</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">gdata</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;_&#39;</span><span class="p">)[[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">1</span><span class="p">],</span> 
                         <span class="n">pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">rbind</span><span class="p">,</span> <span class="n">strsplit</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">gdata</span><span class="p">),</span> <span class="s1">&#39;_&#39;</span><span class="p">))[,</span><span class="mi">2</span><span class="p">])))</span>
         <span class="p">}</span>
-    <span class="n">genotype_file</span> <span class="o">=</span> <span class="s2">&quot;GTExV8.genotype.cis.h5&quot;</span>
-    <span class="n">expr_file</span> <span class="o">=</span> <span class="s2">&quot;GTExV8.expression.h5&quot;</span>
-    <span class="n">cov_file</span> <span class="o">=</span> <span class="s2">&quot;GTExV8.covariates.h5&quot;</span>
+    <span class="n">genotype_file</span> <span class="o">=</span> <span class="s2">&quot;${cwd:a}/GTExV8.genotype.cis.h5&quot;</span>
+    <span class="n">expr_file</span> <span class="o">=</span> <span class="s2">&quot;${cwd:a}/GTExV8.expression.h5&quot;</span>
+    <span class="n">cov_file</span> <span class="o">=</span> <span class="s2">&quot;${cwd:a}/GTExV8.covariates.h5&quot;</span>
     <span class="c1">## </span>
     <span class="n">geno_table</span> <span class="o">=</span> <span class="s2">&quot;${_genes}&quot;</span>
     <span class="n">expr_table</span> <span class="o">=</span> <span class="s2">&quot;/${tissue}&quot;</span>
@@ -459,7 +462,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/c70251f9af0b866d82b6ec81f23c457ed1c8a5ac/analysis/20180515_Extract_Benchmark_Data.ipynb"><code>analysis/20180515_Extract_Benchmark_Data.ipynb</code></a> committed by Gao Wang on Fri Jun 22 07:50:40 2018 <a href="http://github.com/gaow/mvarbvs/commit/c70251f9af0b866d82b6ec81f23c457ed1c8a5ac">revision 2, c70251f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/a79d1338497cc2db9dc1601fd3a349decee4d94d/analysis/20180515_Extract_Benchmark_Data.ipynb"><code>analysis/20180515_Extract_Benchmark_Data.ipynb</code></a> committed by Gao Wang on Tue Jun 26 16:46:10 2018 <a href="http://github.com/gaow/mvarbvs/commit/a79d1338497cc2db9dc1601fd3a349decee4d94d">revision 3, a79d133</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
