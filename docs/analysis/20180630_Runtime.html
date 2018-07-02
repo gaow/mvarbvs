@@ -1,0 +1,882 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>m&m ash</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">m&m ash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../details.html">Details</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../dsc.html">Dsc</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Comparing-computational-efficiency-of-methods">Comparing computational efficiency of methods<a class="anchor-link" href="#Comparing-computational-efficiency-of-methods">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Previously I've ran this specific DSC using:</p>
+
+<pre><code>dsc susie.dsc --target run_comparison -o susie_comparison</code></pre>
+<p>Which focuses on simulated PVE = 0.2.</p>
+<p>So here I query from that result for computational time. Notice that for each susie and DAP run the two replicates were not performed in parallel (because they are relatively fast hence the lack of need) so benchmark time of susie and dap have to be divided by 2.</p>
+<p>Also there is some overhead of DAP, CAVIAR and FINEMAP in converting results format to command line acceptable formats. So the benchmark is a bit more favorable to susie. However we run susie unoptimized in terms of computational efficiency and some trivial optimization will boost susie's speed. So let's just ignore all these minor caveats now. The more significant chunk of computation is in the actual finemapping algorithm.</p>
+<p>Here we focus on 3 causal signal scenario.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/github/mvarbvs/dsc&#39;</span><span class="p">)</span>
+<span class="n">dirname</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/susie_comparison/&#39;</span><span class="p">)</span>
+<span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;0630&#39;</span>
+<span class="n">susie_prior</span> <span class="o">=</span> <span class="mf">0.1</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Get-data">Get data<a class="anchor-link" href="#Get-data">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">speed_1</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/speed_comparison_{date}.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">dap_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">br</span><span class="p">},</span> 
+                        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset lm_less.n_signal fit_dap&quot;</span><span class="p">,</span>
+                             <span class="n">load</span><span class="o">.</span><span class="n">pkl</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">br</span><span class="p">},</span> 
+                        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset lm_less.n_signal fit_susie fit_susie.prior_var fit_susie.estimate_residual_variance&quot;</span><span class="p">,</span>
+                             <span class="n">load</span><span class="o">.</span><span class="n">pkl</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">caviar_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">br</span><span class="p">},</span> 
+                        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset lm_less.n_signal fit_caviar fit_caviar.args&quot;</span><span class="p">,</span>
+                             <span class="n">load</span><span class="o">.</span><span class="n">pkl</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">finemap_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">br</span><span class="p">},</span> 
+                        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset lm_less.n_signal fit_finemap fit_finemap.args&quot;</span><span class="p">,</span>
+                             <span class="n">load</span><span class="o">.</span><span class="n">pkl</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dap</span><span class="o">=</span><span class="n">dap_out</span><span class="p">,</span> <span class="n">susie</span><span class="o">=</span><span class="n">susie_out</span><span class="p">,</span> <span class="n">caviar</span><span class="o">=</span><span class="n">caviar_out</span><span class="p">,</span> <span class="n">finemap</span><span class="o">=</span><span class="n">finemap_out</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Speed-comparison">Speed comparison<a class="anchor-link" href="#Speed-comparison">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">speed_2</span><span class="p">]</span>
+<span class="n">est_var</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;FALSE&#39;</span><span class="p">,</span> <span class="s1">&#39;TRUE&#39;</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;est_var&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}_estvar_{_est_var.lower()}.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">dap_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">dap</span>
+    <span class="n">caviar_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">caviar</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">susie</span>
+    <span class="n">finemap_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">finemap</span>
+    <span class="c1"># favorite susie flavor</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">susie_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">prior_var</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">susie_prior</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">estimate_residual_variance</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_est_var</span><span class="p">}),</span> <span class="p">]</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">subset</span><span class="p">(</span><span class="n">susie_out</span><span class="p">,</span> <span class="n">select</span> <span class="o">=-</span><span class="n">c</span><span class="p">(</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">prior_var</span><span class="p">,</span> <span class="n">fit_susie</span><span class="o">.</span><span class="n">estimate_residual_variance</span><span class="p">))</span>
+
+    <span class="n">data_sets</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">data_sets</span><span class="p">),</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;SuSiE&#39;</span><span class="p">,</span> <span class="s1">&#39;DAP&#39;</span><span class="p">,</span> <span class="s1">&#39;FINEMAP&#39;</span><span class="p">,</span> <span class="s1">&#39;CAVIAR&#39;</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">data_sets</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="n">susie_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_susie.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">time</span><span class="err">$</span><span class="n">elapsed</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="n">dap_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dap_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">dap_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_dap.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">time</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="n">finemap_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">finemap_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">finemap_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span> <span class="o">&amp;</span> <span class="n">finemap_out</span><span class="err">$</span><span class="n">fit_finemap</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;--n-causal-snps&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_finemap.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">time</span><span class="err">$</span><span class="n">elapsed</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="n">caviar_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">caviar_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">caviar_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span> <span class="o">&amp;</span> <span class="n">caviar_out</span><span class="err">$</span><span class="n">fit_caviar</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_caviar.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">time</span><span class="err">$</span><span class="n">elapsed</span>
+    <span class="p">}</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/home/gaow/GIT/github/mvarbvs/dsc</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="susie-estimate-residual-variance">susie estimate residual variance<a class="anchor-link" href="#susie-estimate-residual-variance">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;susie_comparison/speed_comparison_0630_estvar_true.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">t</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">c</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<tbody>
+	<tr><th scope=row>susie</th><td>   2.97561 </td><td>   0.925000</td><td>   7.26000 </td></tr>
+	<tr><th scope=row>dap</th><td>  12.44603 </td><td>   9.781471</td><td>  24.97176 </td></tr>
+	<tr><th scope=row>finemap</th><td>  99.01583 </td><td>  52.553000</td><td> 179.71600 </td></tr>
+	<tr><th scope=row>caviar</th><td>3398.43827 </td><td>3364.481000</td><td>3434.94400 </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">library</span><span class="p">(</span><span class="n">reshape2</span><span class="p">)</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="n">melt</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">dat</span><span class="p">,</span> <span class="n">measure</span><span class="o">.</span><span class="n">vars</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
+<span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+<span class="c1"># Basic violin plot</span>
+<span class="n">ggplot</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">time</span><span class="p">))</span> <span class="o">+</span> 
+  <span class="n">geom_violin</span><span class="p">(</span><span class="n">trim</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span><span class="o">+</span>
+  <span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;time elapsed (seconds)&quot;</span><span class="p">)</span><span class="o">+</span>
+  <span class="n">geom_boxplot</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">+</span>
+  <span class="n">theme_classic</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+
+</div>
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA0gAAANICAIAAAByhViMAAAABmJLR0QA/wD/AP+gvaeTAAAg
+AElEQVR4nOzde4DVc/748c/cp9t0r9lK0kVtQiyL2CSt2+6vDUUioUhyLWGzua3WyrokEUti
+F4nFIkLu69JiLaJ0IemmUrrN1Fx/f4wdfYv6TM2ZU+8ej78+5z2fOed1aOo5n3PO55NSWloa
+AQCw80tN9gAAAFQOYQcAEAhhBwAQCGEHABAIYQcAEAhhBwAQCGEHABAIYQcAEAhhBwAQCGEH
+ABAIYQcAEAhhBwAQCGEHABAIYQcAEAhhBwAQCGEHABAIYQcAEAhhBwAQCGEHABAIYQcAEAhh
+BwAQCGEHABAIYQcAEAhhBwAQCGEHABAIYQcAEAhhBwAQCGEHABAIYQcAEAhhBwAQCGEHABAI
+YQcAEAhhBwAQCGEHABAIYQcAEAhhBwAQiF0i7Pr06VOvXr0zzzwz2YMAACTQLhF2a9euXbly
+5bp165I9CABAAu0SYQcAsCsQdgAAgRB2AACBEHYAAIEQdgAAgRB2AACBEHYAAIEQdgAAgRB2
+AACBEHYAAIEQdgAAgRB2AACBEHYAAIEQdgAAgRB2AACBEHYAAIEQdgAAgRB2AACBEHYAAIEQ
+dgAAgRB2AACBEHYAAIEQdgAAgRB2AACBEHYAAIEQdgAAgRB2AACBEHYAAIEQdgAAgRB2AACB
+EHYAAIEQdgBAFbnppptOOOGEefPmJXuQYAk7AKCKPPvss/Pnz582bVqyBwmWsAMAqkJRUVF+
+fn4URWvWrEn2LMESdgBAVfjiiy9KS0ujKJo7d26yZwmWsAMAqsL06dPLwu69995L9izBEnYA
+QMKVlJQ88cQTZdvffffdm2++mdx5QiXsAICEmzRp0syZM8tv3nTTTevXr0/iPKESdgBAYi1Y
+sODOO++MoqhWrVpRFKWkpCxatOiOO+5I9lwBSk/2AABAUN55551XX321/GZRUdFrr72Wl5eX
+mpqalpYWRVFmZuaGDRsmTpw4Z86c5s2bl++Zk5MzYMCA7OzsJAwdCmEHAFSmG264YdGiRZuv
+l5SUfPfdd1EUbdiwoWzl/ffff//99zfep2XLlscdd1wVDBkqL8UCAJVpe948V958bBthBwAQ
+CGEHABAIYQcAVKacnJxt/t7atWtX4iS7IB+eAAAq04033vjWW2+VXWQiiqJly5Y98cQTBQUF
+devWzcrKWrJkSZ06dco+RdGuXbtu3bqlpKSU7Vm3bt0uXboka+wwCDsAoDK1atWqVatWG6+0
+adPmj3/848qVK+vWrRtF0erVq6MoatGixfjx4zMzM5MzZaC8FAsAJFb37t2POuqoKIpWrlwZ
+RVFJSUn16tVHjhyp6iqdsAMAEislJeXaa6896KCDym/efPPNbdu2Te5UQRJ2AEDCZWRkXHzx
+xWVvp9trr70OPPDAZE8UJmEHAFSFPfbYo2yjU6dOyZ0kYMIOAKgK6enp1apVi6KoZs2ayZ4l
+WMIOAKgijRo1iqIoNzc32YMEy+lOAIAqcuedd86bN88b7BJH2AEAVaRRo0ZlB+1IEC/FAgAE
+QtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEA
+BELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgB
+AARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELY
+AQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC
+2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAE
+QtgBAARC2AEABELYAQAEQtgBAARC2AEABELYAQAEIr3qH7Jw3Zd/v+Ovb336xXeFWc1bdexz
+7sADmlUv+9K7E2+f9PqHC9aktd1r/9POH9C2Vua2rQMA7IKScMRu4u9HvDiv1pkXj/jTlRe2
+KvrvDZdet7K4NIqi2RNH3PDotE4nnnP1xafX/PKNqy8ZU1wabcM6AMCuqaqP2BWsfvuxeatP
+u/uiQ39WPYqiFlde8MKp1z26NO/c3Iy/PD69VZ+be3ZrGUVR69apvU4f9cDCgWc1zazYerOa
+VfyMAAB2EFV9xK60dP2vfvWrrg2yy26mZf0siqLCktL13726uKD4192alK1n1TmsY83Mj15Z
+UtH1Kn46AAA7jqo+YpdVu+uwYV2jKNqwYuniFUunPXd3Zq32p+XWKFz8SRRF7atllO/58+rp
+U6avKuxasfXym6tXrx48eHDZ9rJlyxo0aJDYJwYAkGxJ+PBEmY+vG/rHL1alpKT/bshf6qal
+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"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob//analysis/20180630_Runtime.ipynb"><code>analysis/20180630_Runtime.ipynb</code></a> committed by Gao Wang on Sun Jul 1 17:32:16 2018 <a href="http://github.com/gaow/mvarbvs/commit/">revision 0, </a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
