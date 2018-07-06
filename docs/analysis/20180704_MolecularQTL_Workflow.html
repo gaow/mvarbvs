@@ -259,7 +259,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span>
@@ -288,7 +288,13 @@ body {
         <th>Date</th>
         <th>Message</th>
         <tr>
-        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/aeaf3fabea9f05ba33b9667f47f92dfdd819bbe7/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">aeaf3fa<span></a></td>
+        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/63045aa248abe96b401e0d0cd683b7b6c7505f84/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">63045aa<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-05</td>
+<td>Change figure layout</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/8c6e7228fc00c568d0e38685b9325c69fdd2ac79/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">8c6e722<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-05</td>
+<td>Add cluster configurations</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/aeaf3fabea9f05ba33b9667f47f92dfdd819bbe7/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">aeaf3fa<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-05</td>
 <td>Fix susie execution pipeline step</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/1420e4c8e3300f7becd18b0fd4c6b749c8554e4e/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">1420e4c<span></a></td>
@@ -351,7 +357,7 @@ chr1    880180  880422  chr1:880180:880422:clu_15502    0.201694364955  0.665990
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">run</span> <span class="mi">20180704</span><span class="n">_MolecularQTL_Workflow</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">-</span><span class="n">h</span>
@@ -391,6 +397,9 @@ Global Workflow Options:
                         X data, the genotype VCF file path
   --y-data . (as path)
                         Y data, the phenotype file paths
+  --max-dist 1000000 (as int)
+                        Maximum distance to site of interest, eg. 1Mb
+                        up/downstream to TSS for gene level QTL
 
 Sections
   preprocess_1:         PCA on phenotype and remove top PCs
@@ -402,10 +411,6 @@ Sections
                         columns eg. &#34;^NA[0-9]+&#34; to extract sample names
   index_vcf:            this step provides VCF file index
   preprocess_2:         Extract cis-SNPs and make fine-mapping datasets
-    Workflow Options:
-      --max-dist 1000000 (as int)
-                        Maximum distance to site of interest, eg. 1Mb
-                        up/downstream to TSS for gene level QTL
   SuSiE:                Run finemapping with SuSiE
     Workflow Options:
       --maxL 5 (as int)
@@ -431,6 +436,8 @@ Sections
 <span class="kn">parameter:</span> <span class="n">x_data</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span>
 <span class="c1"># Y data, the phenotype file paths</span>
 <span class="kn">parameter:</span> <span class="n">y_data</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span>
+<span class="c1"># Maximum distance to site of interest, eg. 1Mb up/downstream to TSS for gene level QTL</span>
+<span class="kn">parameter:</span> <span class="n">max_dist</span> <span class="o">=</span> <span class="mi">1000000</span>
 <span class="n">fail_if</span><span class="p">(</span><span class="ow">not</span> <span class="n">x_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">h5_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">(),</span> <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Please provide ``--x-data`` or ``--h5-data``!&#39;</span><span class="p">)</span>
 <span class="n">fail_if</span><span class="p">(</span><span class="ow">not</span> <span class="n">y_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">h5_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">(),</span> <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Please provide ``--y-data`` or ``--h5-data``!&#39;</span><span class="p">)</span>
 <span class="n">pop</span> <span class="o">=</span> <span class="s1">&#39;YRI&#39;</span>
@@ -447,9 +454,10 @@ Sections
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The preprocessing pipeline can be executed locally, takes 2hrs:</p>
 
-<pre><code>sos run 20180704_MolecularQTL_Workflow.ipynb preprocessing \
+<pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess \
     --x-data ~/GIT/LargeFiles/AS/genotypesYRI.gen.txt.gz \
-    --y-data ~/GIT/LargeFiles/AS/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+    --y-data ~/GIT/LargeFiles/AS/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --max-dist 1000000</code></pre>
 
 </div>
 </div>
@@ -534,11 +542,9 @@ Sections
 <span class="c1"># Extract cis-SNPs and make fine-mapping datasets</span>
 <span class="p">[</span><span class="n">preprocess_2</span> <span class="p">(</span><span class="n">Get</span> <span class="n">per</span><span class="o">-</span><span class="n">unit</span> <span class="n">dataset</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;pysam&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;pandas&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;feather&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;rpy2&#39;</span><span class="p">),</span> <span class="n">f</span><span class="s2">&quot;{x_data}.tbi&quot;</span>
-<span class="c1"># Maximum distance to site of interest, eg. 1Mb up/downstream to TSS for gene level QTL</span>
-<span class="kn">parameter:</span> <span class="n">max_dist</span> <span class="o">=</span> <span class="mi">1000000</span>
 <span class="n">chroms</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;chr{x+1}&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">22</span><span class="p">)]</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;chroms&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;{cwd}/{y_data:bnn}/chr*/*.rds&#39;</span><span class="p">))</span>
+<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/chr*/*.rds&#39;</span><span class="p">))</span>
 <span class="kn">python:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
     <span class="k">def</span> <span class="nf">read_header</span><span class="p">(</span><span class="n">gzfile</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">gzip</span>
@@ -586,8 +592,8 @@ Sections
                               <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">genotypes</span><span class="p">[:,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]]],</span> 
                               <span class="n">index</span> <span class="o">=</span> <span class="n">vcf_id</span><span class="p">)</span>
         <span class="n">merged</span> <span class="o">=</span> <span class="n">Y_data</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">X_data</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
-        <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}/{chrom}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="n">basename</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}/{chrom}/{chrom}_{site}_{max(unit[&quot;end&quot;].tolist())}&#39;</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}_${int(max_dist/1000)}Kb/{chrom}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}_${int(max_dist/1000)}Kb/{chrom}/{chrom}_{site}_{max(unit[&quot;end&quot;].tolist())}&#39;</span>
         <span class="n">write_dataframe</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.feather&#39;</span><span class="p">)</span>
         <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;saveRDS(read_feather(&#39;{0}&#39;), &#39;{1}&#39;);system(&#39;rm -f {0}&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.feather&#39;</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span>
     <span class="c1">#</span>
@@ -619,6 +625,7 @@ Sections
 <pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb SuSiE \
     --x-data ~/GIT/LargeFiles/AS/genotypesYRI.gen.txt.gz \
     --y-data ~/GIT/LargeFiles/AS/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --max-dist 100000 \
     -c ~/software/sos.config.yml -J 40</code></pre>
 
 </div>
@@ -634,8 +641,8 @@ Sections
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;susieR&#39;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="n">maxL</span> <span class="o">=</span> <span class="mi">5</span>
 <span class="kn">parameter:</span> <span class="n">prior_var</span> <span class="o">=</span> <span class="mf">0.1</span>
-<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}/chr*/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}/SuSiE_CS_*/*.rds&#39;</span><span class="p">))</span>
+<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/chr*/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/SuSiE_CS_*/*.rds&#39;</span><span class="p">))</span>
 <span class="c1">#task: trunk_workers = 1, queue = &#39;midway2_head&#39;, walltime = &#39;10m&#39;, trunk_size = 1000, mem = &#39;2G&#39;, cores = 1, workdir = cwd, concurrent = True</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
     <span class="n">library</span><span class="p">(</span><span class="n">susieR</span><span class="p">)</span>
@@ -669,7 +676,7 @@ Sections
                     <span class="n">X</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> 
                     <span class="n">min_abs_corr</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
       <span class="n">pip</span> <span class="o">=</span> <span class="n">susie_get_PIP</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">)</span>
-      <span class="n">dirname</span> <span class="o">=</span> <span class="n">paste0</span><span class="p">(</span><span class="s1">&#39;${cwd}/${y_data:bnn}/SuSiE_CS_&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">),</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+      <span class="n">dirname</span> <span class="o">=</span> <span class="n">paste0</span><span class="p">(</span><span class="s1">&#39;${cwd}/${y_data:bnn}_${int(max_dist/1000)}Kb/SuSiE_CS_&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">),</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
       <span class="n">system</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s2">&quot;mkdir -p&quot;</span><span class="p">,</span> <span class="n">dirname</span><span class="p">))</span>
       <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
           <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">z_score</span><span class="o">=</span><span class="n">z_score</span><span class="p">,</span><span class="n">fitted</span><span class="o">=</span><span class="n">fitted</span><span class="p">,</span><span class="n">sets</span><span class="o">=</span><span class="n">sets</span><span class="p">,</span><span class="n">pip</span><span class="o">=</span><span class="n">pip</span><span class="p">),</span> <span class="n">paste0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">Y</span><span class="p">)[</span><span class="n">r</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span>
@@ -691,15 +698,15 @@ Sections
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># Make SuSiE result plots for significant results</span>
 <span class="p">[</span><span class="n">SuSiE_Summary</span> <span class="p">(</span><span class="n">plot</span> <span class="n">SuSiE</span> <span class="n">results</span><span class="p">)]</span>
-<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}/SuSiE_CS_[1-9]/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/SuSiE_CS_[1-9]/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.png&#39;</span>
-<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output}.log&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span>
     <span class="n">library</span><span class="p">(</span><span class="n">susieR</span><span class="p">)</span>
     <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="n">b</span> <span class="o">=</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">z_score</span><span class="p">))</span>
     <span class="n">b</span><span class="p">[</span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">z_score</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">png</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
-    <span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
     <span class="n">susie_pplot</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">z_score</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
     <span class="n">susie_pplot</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">pip</span><span class="p">,</span> <span class="n">fitted</span><span class="o">=</span><span class="n">dat</span><span class="err">$</span><span class="n">fitted</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">)</span> 
     <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
@@ -712,7 +719,7 @@ Sections
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/aeaf3fabea9f05ba33b9667f47f92dfdd819bbe7/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Thu Jul 5 18:03:12 2018 <a href="http://github.com/gaow/mvarbvs/commit/aeaf3fabea9f05ba33b9667f47f92dfdd819bbe7">revision 3, aeaf3fa</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/63045aa248abe96b401e0d0cd683b7b6c7505f84/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Thu Jul 5 22:45:36 2018 <a href="http://github.com/gaow/mvarbvs/commit/63045aa248abe96b401e0d0cd683b7b6c7505f84">revision 5, 63045aa</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
