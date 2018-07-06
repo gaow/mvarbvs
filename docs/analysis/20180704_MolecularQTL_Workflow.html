@@ -1,0 +1,719 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>m&m ash</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">m&m ash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../details.html">Details</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../dsc.html">Dsc</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Molecular-QTL-workflow">Molecular QTL workflow<a class="anchor-link" href="#Molecular-QTL-workflow">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/aeaf3fabea9f05ba33b9667f47f92dfdd819bbe7/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">aeaf3fa<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-05</td>
+<td>Fix susie execution pipeline step</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/1420e4c8e3300f7becd18b0fd4c6b749c8554e4e/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">1420e4c<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-05</td>
+<td>Use chromsomes as batches</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/044e3a10eece52e08e5c5ce34eeb11c1b713a196/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">044e3a1<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-04</td>
+<td>Add data convertion pipeline for molecular qtls</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data">Data<a class="anchor-link" href="#Data">&#182;</a></h2><p>Molecular QTL data from <a href="http://eqtl.uchicago.edu/jointLCL/">Yang et al (2016) Science</a>. Input are genotypes of ~100 YRI samples with their molecular QTL data measured in LCL.</p>
+<ul>
+<li>alternative splicing (AS) data is of the primary interest here.</li>
+</ul>
+<h3 id="Genotypes">Genotypes<a class="anchor-link" href="#Genotypes">&#182;</a></h3><p><a href="http://eqtl.uchicago.edu/jointLCL/genotypesYRI.gen.txt.gz">Genotype data for YRI</a> is the conventional VCF format but has dosage for genotypes.</p>
+<h3 id="Phenotypes">Phenotypes<a class="anchor-link" href="#Phenotypes">&#182;</a></h3><p>Phenotype data has format:</p>
+
+<pre><code>#Chr    start   end ID  18486   18487   18488   18489   18498   18499
+chr1    880180  880422  chr1:880180:880422:clu_15502    0.201694364955  0.665990212763  -1.21881815589  -0.342480185427 0.165404160483  -1.58524292941</code></pre>
+<p>The first 4 columns are genomic coordinates info. Others are molecular QTL in samples.</p>
+<p>We analyze:</p>
+<ol>
+<li><a href="http://eqtl.uchicago.edu/jointLCL/qqnorm_ASintron_RNAseqGeuvadis.txt">Alternative splicing</a></li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Analysis-plan">Analysis plan<a class="anchor-link" href="#Analysis-plan">&#182;</a></h2><ul>
+<li>For each analysis unit (gene, or intron cluster for AS), get the 1MB up/down-stream variants in genotypes</li>
+<li>Remove top phenotype PC from phenotype data</li>
+<li>Fine-mapping using various methods. SuSiE for starters</li>
+</ul>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Workflow-overview">Workflow overview<a class="anchor-link" href="#Workflow-overview">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">run</span> <span class="mi">20180704</span><span class="n">_MolecularQTL_Workflow</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos run 20180704_MolecularQTL_Workflow.ipynb
+               [workflow_name | -t targets] [options] [workflow_options]
+  workflow_name:        Single or combined workflows defined in this script
+  targets:              One or more targets to generate
+  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
+  workflow_options:     Double-hyphen workflow-specific parameters
+
+Workflows:
+  preprocess
+  index_vcf
+  SuSiE
+  SuSiE_Summary
+
+Global Workflow Options:
+  --cwd /home/gaow/GIT/LargeFiles/AS_output (as path)
+                        Specify work directory
+  --x-data . (as path)
+                        X data, the genotype VCF file path
+  --y-data . (as path)
+                        Y data, the phenotype file paths
+
+Sections
+  preprocess_1:         PCA on phenotype and remove top PCs
+    Workflow Options:
+      --num-pcs 3 (as int)
+                        Num. PC to remove from phenotype
+      --colname-pattern &#39;^[0-9]+&#39;
+                        column name patter for `grep` in R to select phenotype
+                        columns eg. &#34;^NA[0-9]+&#34; to extract sample names
+  index_vcf:            this step provides VCF file index
+  preprocess_2:         Extract cis-SNPs and make fine-mapping datasets
+    Workflow Options:
+      --max-dist 1000000 (as int)
+                        Maximum distance to site of interest, eg. 1Mb
+                        up/downstream to TSS for gene level QTL
+  SuSiE:                Run finemapping with SuSiE
+    Workflow Options:
+      --maxL 5 (as int)
+      --prior-var 0.1 (as float)
+  SuSiE_Summary:        Make SuSiE result plots for significant results
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="c1"># Specify work directory</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s2">&quot;~/GIT/LargeFiles/AS_output&quot;</span><span class="p">)</span>
+<span class="c1"># X data, the genotype VCF file path</span>
+<span class="kn">parameter:</span> <span class="n">x_data</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span>
+<span class="c1"># Y data, the phenotype file paths</span>
+<span class="kn">parameter:</span> <span class="n">y_data</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span>
+<span class="n">fail_if</span><span class="p">(</span><span class="ow">not</span> <span class="n">x_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">h5_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">(),</span> <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Please provide ``--x-data`` or ``--h5-data``!&#39;</span><span class="p">)</span>
+<span class="n">fail_if</span><span class="p">(</span><span class="ow">not</span> <span class="n">y_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">h5_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">(),</span> <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Please provide ``--y-data`` or ``--h5-data``!&#39;</span><span class="p">)</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="s1">&#39;YRI&#39;</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The preprocessing pipeline can be executed locally, takes 2hrs:</p>
+
+<pre><code>sos run 20180704_MolecularQTL_Workflow.ipynb preprocessing \
+    --x-data ~/GIT/LargeFiles/AS/genotypesYRI.gen.txt.gz \
+    --y-data ~/GIT/LargeFiles/AS/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Regressing-out-top-PCs-on-phenotype">Regressing out top PCs on phenotype<a class="anchor-link" href="#Regressing-out-top-PCs-on-phenotype">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There may well be better approach to control for covariates etc, but <a href="https://github.com/bmvdgeijn/WASP/blob/master/examples/example_data/H3K27ac/get_PCs.R">here</a> is workflow from the authors and was deemed sufficient. See their supplemental table of Yang et al 2016 for how many PC to use for each molecular QTLs.</p>
+<p>Need to cope with missing phenotype data here. See <code>na.omit</code> function call in <code>prcomp</code> and <code>na.actions=na.exclude</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># PCA on phenotype and remove top PCs</span>
+<span class="p">[</span><span class="n">preprocess_1</span> <span class="p">(</span><span class="n">Remove</span> <span class="n">top</span> <span class="n">phenotype</span> <span class="n">PC</span><span class="p">)]</span>
+<span class="c1"># Num. PC to remove from phenotype</span>
+<span class="kn">parameter:</span> <span class="n">num_pcs</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># Table S2 of NIHMS835311-supplement-supplement.pdf</span>
+<span class="c1"># column name patter for `grep` in R to select phenotype columns</span>
+<span class="c1"># eg. &quot;^NA[0-9]+&quot; to extract sample names</span>
+<span class="kn">parameter:</span> <span class="n">colname_pattern</span> <span class="o">=</span> <span class="s1">&#39;^[0-9]+&#39;</span>
+<span class="kn">input:</span> <span class="n">y_data</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd}/{_input:bn}.PC{num_pcs}.removed.gz&quot;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{_output:n}.stdout&quot;</span>
+    <span class="n">num_pcs</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">num_pcs</span><span class="p">}</span>
+    <span class="n">dat</span> <span class="o">&lt;-</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">header</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">comment</span><span class="o">.</span><span class="n">char</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">check</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
+    <span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span> <span class="o">&lt;-</span> <span class="n">dat</span><span class="p">[,</span><span class="mi">5</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">dat</span><span class="p">)]</span>
+    <span class="c1"># extract columns of interest</span>
+    <span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span> <span class="o">&lt;-</span> <span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span><span class="p">[,</span><span class="n">grep</span><span class="p">(</span><span class="s2">&quot;${colname_pattern}&quot;</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span><span class="p">),</span> <span class="n">value</span> <span class="o">=</span> <span class="n">T</span><span class="p">)]</span>
+    <span class="c1"># perform principal component analysis</span>
+    <span class="n">pca</span> <span class="o">&lt;-</span> <span class="n">prcomp</span><span class="p">(</span><span class="n">na</span><span class="o">.</span><span class="n">omit</span><span class="p">(</span><span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span><span class="p">))</span>
+    <span class="c1"># PCA summary</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">summary</span><span class="p">(</span><span class="n">pca</span><span class="p">))</span>
+    <span class="n">cat</span><span class="p">(</span><span class="s2">&quot;output&quot;</span><span class="p">,</span> <span class="n">num_pcs</span><span class="p">,</span> <span class="s2">&quot;PCs </span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># remove top PC from phenotype; takes a while</span>
+    <span class="n">cov_pcs</span> <span class="o">&lt;-</span> <span class="n">pca</span><span class="err">$</span><span class="n">rotation</span><span class="p">[,</span> <span class="mi">1</span><span class="p">:</span><span class="n">num_pcs</span><span class="p">]</span>
+    <span class="n">new</span><span class="o">.</span><span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span> <span class="o">&lt;-</span> <span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">rbind</span><span class="p">,</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">residuals</span><span class="p">(</span><span class="n">lm</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,])</span> <span class="o">~</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">cov_pcs</span><span class="p">),</span> <span class="n">na</span><span class="o">.</span><span class="n">action</span><span class="o">=</span><span class="n">na</span><span class="o">.</span><span class="n">exclude</span><span class="p">))))</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">colnames</span><span class="p">(</span><span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+    <span class="n">new</span><span class="o">.</span><span class="n">dat</span> <span class="o">&lt;-</span> <span class="n">cbind</span><span class="p">(</span><span class="n">dat</span><span class="p">[,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="n">new</span><span class="o">.</span><span class="n">phenotype</span><span class="o">.</span><span class="n">matrix</span><span class="p">)</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">dat</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s1">&#39;chr&#39;</span>
+    <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">dat</span><span class="p">,</span> <span class="n">gzfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Extract-per-unit-variables">Extract per unit variables<a class="anchor-link" href="#Extract-per-unit-variables">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># this step provides VCF file index</span>
+<span class="p">[</span><span class="n">index_vcf</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="s1">&#39;{filename}.gz.tbi&#39;</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;tabix&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{filename}.gz&quot;</span>
+<span class="kn">bash:</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+   <span class="n">tabix</span> <span class="o">-</span><span class="n">p</span> <span class="n">vcf</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
+
+<span class="c1"># Extract cis-SNPs and make fine-mapping datasets</span>
+<span class="p">[</span><span class="n">preprocess_2</span> <span class="p">(</span><span class="n">Get</span> <span class="n">per</span><span class="o">-</span><span class="n">unit</span> <span class="n">dataset</span><span class="p">)]</span>
+<span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;pysam&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;pandas&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;feather&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;rpy2&#39;</span><span class="p">),</span> <span class="n">f</span><span class="s2">&quot;{x_data}.tbi&quot;</span>
+<span class="c1"># Maximum distance to site of interest, eg. 1Mb up/downstream to TSS for gene level QTL</span>
+<span class="kn">parameter:</span> <span class="n">max_dist</span> <span class="o">=</span> <span class="mi">1000000</span>
+<span class="n">chroms</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;chr{x+1}&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">22</span><span class="p">)]</span>
+<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;chroms&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;{cwd}/{y_data:bnn}/chr*/*.rds&#39;</span><span class="p">))</span>
+<span class="kn">python:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+    <span class="k">def</span> <span class="nf">read_header</span><span class="p">(</span><span class="n">gzfile</span><span class="p">):</span>
+        <span class="kn">import</span> <span class="nn">gzip</span>
+        <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">gzfile</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+                <span class="k">break</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="n">chrom</span> <span class="o">=</span> <span class="s2">&quot;${_chroms}&quot;</span>
+    <span class="n">phenotype_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;${pop}_{x}&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">read_header</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})[</span><span class="mi">4</span><span class="p">:]]</span>
+    <span class="n">vcf_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;${pop}_{x}&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">read_header</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">x_data</span><span class="p">:</span><span class="n">r</span><span class="p">})[</span><span class="mi">9</span><span class="p">:]]</span>
+    <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+    <span class="kn">import</span> <span class="nn">pysam</span>
+    <span class="n">tbx</span> <span class="o">=</span> <span class="n">pysam</span><span class="o">.</span><span class="n">TabixFile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">x_data</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>    
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span><span class="o">,</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+    <span class="kn">from</span> <span class="nn">feather</span> <span class="kn">import</span> <span class="n">write_dataframe</span>
+    <span class="n">qts</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">qts</span> <span class="o">=</span> <span class="n">qts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">qts</span><span class="p">[</span><span class="s1">&#39;chr&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">chrom</span><span class="p">]</span>
+    <span class="c1">#</span>
+    <span class="kn">import</span> <span class="nn">os</span><span class="o">,</span> <span class="nn">time</span><span class="o">,</span> <span class="nn">tempfile</span>
+    <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;library(feather)&quot;</span><span class="p">]</span>
+    <span class="n">tf</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">NamedTemporaryFile</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">qts</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())):</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">print</span><span class="p">(</span><span class="s1">&#39;[chrom </span><span class="si">%s</span><span class="s1"> percent completed] </span><span class="si">%.1f</span><span class="s1"> (</span><span class="si">%.1f</span><span class="s1"> sec elapsed)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">chrom</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">qts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="kp">name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmds</span><span class="p">))</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Rscript {tf.name}&quot;</span><span class="p">)</span>
+                <span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;library(feather)&quot;</span><span class="p">]</span>            
+        <span class="n">unit</span> <span class="o">=</span> <span class="n">qts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">qts</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">site</span><span class="p">]</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="n">unit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">site</span> <span class="o">-</span> <span class="err">$</span><span class="p">{</span><span class="n">max_dist</span><span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">site</span> <span class="o">+</span> <span class="err">$</span><span class="p">{</span><span class="n">max_dist</span><span class="p">}</span>
+        <span class="n">genotypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tbx</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">chrom</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="n">pysam</span><span class="o">.</span><span class="n">asTuple</span><span class="p">())])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genotypes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">Y_data</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s2">&quot;chr&quot;</span><span class="p">,</span> <span class="s2">&quot;start&quot;</span><span class="p">,</span> <span class="s2">&quot;end&quot;</span><span class="p">,</span> <span class="s2">&quot;ID&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">Y_data</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]]</span>
+        <span class="n">Y_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">phenotype_id</span>
+        <span class="n">X_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">genotypes</span><span class="p">[:,</span><span class="mi">9</span><span class="p">:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                              <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">genotypes</span><span class="p">[:,[</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]]],</span> 
+                              <span class="n">index</span> <span class="o">=</span> <span class="n">vcf_id</span><span class="p">)</span>
+        <span class="n">merged</span> <span class="o">=</span> <span class="n">Y_data</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">X_data</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}/{chrom}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}/{chrom}/{chrom}_{site}_{max(unit[&quot;end&quot;].tolist())}&#39;</span>
+        <span class="n">write_dataframe</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.feather&#39;</span><span class="p">)</span>
+        <span class="n">cmds</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;saveRDS(read_feather(&#39;{0}&#39;), &#39;{1}&#39;);system(&#39;rm -f {0}&#39;)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.feather&#39;</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span>
+    <span class="c1">#</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmds</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="kp">name</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">cmds</span><span class="p">))</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Rscript {tf.name}&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Finemapping-with-SuSiE">Finemapping with SuSiE<a class="anchor-link" href="#Finemapping-with-SuSiE">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This step is to be executed on midway.</p>
+
+<pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb SuSiE \
+    --x-data ~/GIT/LargeFiles/AS/genotypesYRI.gen.txt.gz \
+    --y-data ~/GIT/LargeFiles/AS/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    -c ~/software/sos.config.yml -J 40</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Run finemapping with SuSiE</span>
+<span class="p">[</span><span class="n">SuSiE</span> <span class="p">(</span><span class="n">SuSiE</span> <span class="n">analysis</span><span class="p">)]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;susieR&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">maxL</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="kn">parameter:</span> <span class="n">prior_var</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}/chr*/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}/SuSiE_CS_*/*.rds&#39;</span><span class="p">))</span>
+<span class="c1">#task: trunk_workers = 1, queue = &#39;midway2_head&#39;, walltime = &#39;10m&#39;, trunk_size = 1000, mem = &#39;2G&#39;, cores = 1, workdir = cwd, concurrent = True</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">susieR</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">n_y</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">grep</span><span class="p">(</span><span class="s2">&quot;^chr&quot;</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">),</span> <span class="n">value</span> <span class="o">=</span> <span class="n">T</span><span class="p">))</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">dat</span><span class="p">[,</span><span class="mi">1</span><span class="p">:</span><span class="n">n_y</span><span class="p">,</span><span class="n">drop</span><span class="o">=</span><span class="n">F</span><span class="p">])</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">dat</span><span class="p">[,(</span><span class="n">n_y</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">ncol</span><span class="p">(</span><span class="n">dat</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">F</span><span class="p">])</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">=</span> <span class="s1">&#39;double&#39;</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">mode</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span> <span class="o">=</span> <span class="s1">&#39;double&#39;</span>
+    <span class="n">bad</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">all</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">X</span><span class="p">[,</span><span class="n">i</span><span class="p">]))))</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">snps</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">X</span><span class="p">)[</span><span class="o">-</span><span class="n">bad</span><span class="p">]</span>
+      <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[,</span><span class="o">-</span><span class="n">bad</span><span class="p">]</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">snps</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">r</span> <span class="ow">in</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">keep_rows</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">]))</span>
+      <span class="n">x</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">keep_rows</span><span class="p">,]</span>
+      <span class="n">y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">][</span><span class="n">keep_rows</span><span class="p">]</span>
+      <span class="n">z_score</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">:::</span><span class="n">calc_z</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+      <span class="n">names</span><span class="p">(</span><span class="n">z_score</span><span class="p">)</span> <span class="o">=</span> <span class="n">snps</span>
+      <span class="n">fitted</span> <span class="o">=</span> <span class="n">susie</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span>
+               <span class="n">L</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">maxL</span><span class="p">},</span>
+               <span class="n">estimate_residual_variance</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">,</span> 
+               <span class="n">prior_variance</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">prior_var</span><span class="p">},</span> 
+               <span class="n">intercept</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span>
+               <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
+      <span class="n">sets</span> <span class="o">=</span> <span class="n">susie_get_CS</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span>
+                    <span class="n">coverage</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+                    <span class="n">X</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> 
+                    <span class="n">min_abs_corr</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+      <span class="n">pip</span> <span class="o">=</span> <span class="n">susie_get_PIP</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">)</span>
+      <span class="n">dirname</span> <span class="o">=</span> <span class="n">paste0</span><span class="p">(</span><span class="s1">&#39;${cwd}/${y_data:bnn}/SuSiE_CS_&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">),</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+      <span class="n">system</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s2">&quot;mkdir -p&quot;</span><span class="p">,</span> <span class="n">dirname</span><span class="p">))</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">z_score</span><span class="o">=</span><span class="n">z_score</span><span class="p">,</span><span class="n">fitted</span><span class="o">=</span><span class="n">fitted</span><span class="p">,</span><span class="n">sets</span><span class="o">=</span><span class="n">sets</span><span class="p">,</span><span class="n">pip</span><span class="o">=</span><span class="n">pip</span><span class="p">),</span> <span class="n">paste0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">Y</span><span class="p">)[</span><span class="n">r</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">z_score</span><span class="o">=</span><span class="n">z_score</span><span class="p">,</span><span class="n">fitted</span><span class="o">=</span><span class="n">fitted</span><span class="p">),</span> <span class="n">paste0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">Y</span><span class="p">)[</span><span class="n">r</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span>          
+      <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Make SuSiE result plots for significant results</span>
+<span class="p">[</span><span class="n">SuSiE_Summary</span> <span class="p">(</span><span class="n">plot</span> <span class="n">SuSiE</span> <span class="n">results</span><span class="p">)]</span>
+<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}/SuSiE_CS_[1-9]/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.png&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output}.log&#39;</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">susieR</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">z_score</span><span class="p">))</span>
+    <span class="n">b</span><span class="p">[</span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">z_score</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">png</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="n">units</span> <span class="o">=</span> <span class="s1">&#39;in&#39;</span><span class="p">,</span> <span class="n">res</span> <span class="o">=</span> <span class="mi">500</span><span class="p">)</span>
+    <span class="n">par</span><span class="p">(</span><span class="n">mfrow</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">susie_pplot</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">z_score</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">susie_pplot</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">pip</span><span class="p">,</span> <span class="n">fitted</span><span class="o">=</span><span class="n">dat</span><span class="err">$</span><span class="n">fitted</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">)</span> 
+    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/aeaf3fabea9f05ba33b9667f47f92dfdd819bbe7/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Thu Jul 5 18:03:12 2018 <a href="http://github.com/gaow/mvarbvs/commit/aeaf3fabea9f05ba33b9667f47f92dfdd819bbe7">revision 3, aeaf3fa</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
