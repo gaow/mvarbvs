@@ -259,7 +259,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span>
@@ -288,7 +288,13 @@ body {
         <th>Date</th>
         <th>Message</th>
         <tr>
-        <tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/889526b2a389740c5465396e63acd26baf207ea4/analysis/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">889526b<span></a></td>
+        <tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/45a37a2ddaffcf08a35ff07106a4cb73b6727f08/analysis/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">45a37a2<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-09</td>
+<td>Add outlier case analysis example notebook</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/7d85ad1a1a0e171c0ddc598b24bcaae9bbff8afb/analysis/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">7d85ad1<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-09</td>
+<td>Separate DAP specific data processing from preprocessing step</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/889526b2a389740c5465396e63acd26baf207ea4/analysis/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">889526b<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-09</td>
 <td>Add linear regression follow up</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/a96907bc7bc0745652f3d8f74d2a5c9ba5ef8d4c/analysis/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">a96907b<span></a></td>
@@ -312,13 +318,7 @@ body {
 <td>Change figure layout</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/8c6e7228fc00c568d0e38685b9325c69fdd2ac79/analysis/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">8c6e722<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-05</td>
-<td>Add cluster configurations</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/aeaf3fabea9f05ba33b9667f47f92dfdd819bbe7/analysis/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">aeaf3fa<span></a></td>
-<td>Gao Wang</td>
-<td>2018-07-05</td>
-<td>Fix susie execution pipeline step</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/1420e4c8e3300f7becd18b0fd4c6b749c8554e4e/analysis/20180704_MolecularQTL_Workflow.ipynb"><span class="revision_id">1420e4c<span></a></td>
-<td>Gao Wang</td>
-<td>2018-07-05</td>
-<td>Use chromsomes as batches</td></tr></table>
+<td>Add cluster configurations</td></tr></table>
 </div>
 
 </div>
@@ -372,7 +372,7 @@ chr1    880180  880422  chr1:880180:880422:clu_15502    0.201694364955  0.665990
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">run</span> <span class="mi">20180704</span><span class="n">_MolecularQTL_Workflow</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">-</span><span class="n">h</span>
@@ -438,8 +438,9 @@ Sections
     Workflow Options:
       --maxL 5 (as int)
                         SuSiE parameter: L
-      --prior-var 0.1 (as float)
-                        SuSiE parameter: prior variance
+      --prior-var 0 (as int)
+                        SuSiE parameter: prior variance; set
+                        to 0 to use PVE estimates
   SuSiE_summary:        Make SuSiE result plots for
                         significant results
   DAP_1:                Convert to DAP format
@@ -657,7 +658,7 @@ Sections
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># Summary statistics and PVE estimates</span>
 <span class="p">[</span><span class="n">preprocess_3</span> <span class="p">(</span><span class="n">PVE</span><span class="p">)]</span>
-<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;feather&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;susieR&#39;</span><span class="p">)</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;feather&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;stephenslab/susieR&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.rds&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
@@ -734,8 +735,8 @@ Sections
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;susieR&#39;</span><span class="p">)</span>
 <span class="c1"># SuSiE parameter: L</span>
 <span class="kn">parameter:</span> <span class="n">maxL</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="c1"># SuSiE parameter: prior variance</span>
-<span class="kn">parameter:</span> <span class="n">prior_var</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="c1"># SuSiE parameter: prior variance; set to 0 to use PVE estimates</span>
+<span class="kn">parameter:</span> <span class="n">prior_var</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/chr*/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/SuSiE_CS_*/*.rds&#39;</span><span class="p">))</span>
 <span class="c1">#task: trunk_workers = 1, queue = &#39;midway2_head&#39;, walltime = &#39;10m&#39;, trunk_size = 1000, mem = &#39;2G&#39;, cores = 1, workdir = cwd, concurrent = True</span>
@@ -747,8 +748,7 @@ Sections
       <span class="n">fitted</span> <span class="o">=</span> <span class="n">susie</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="n">dat</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">y</span><span class="p">,</span>
                <span class="n">L</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">maxL</span><span class="p">},</span>
                <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> 
-               <span class="n">prior_variance</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">prior_var</span><span class="p">},</span> 
-               <span class="n">intercept</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span>
+               <span class="n">prior_variance</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">prior_var</span> <span class="k">if</span> <span class="n">prior_var</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;dat[[r]]$pve&quot;</span><span class="p">},</span>
                <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
       <span class="n">sets</span> <span class="o">=</span> <span class="n">susie_get_CS</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span>
                     <span class="n">coverage</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
@@ -1797,7 +1797,7 @@ ACQChB0AAAAAQCL8f1h5bbADtJRwAAAAAElFTkSuQmCC"
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/45a37a2ddaffcf08a35ff07106a4cb73b6727f08/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Mon Jul 9 14:10:24 2018 <a href="http://github.com/gaow/mvarbvs/commit/45a37a2ddaffcf08a35ff07106a4cb73b6727f08">revision 13, 45a37a2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/ea498d313d8ad5b851d57f520104dee6935bcdf3/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Tue Jul 10 12:03:10 2018 <a href="http://github.com/gaow/mvarbvs/commit/ea498d313d8ad5b851d57f520104dee6935bcdf3">revision 14, ea498d3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
