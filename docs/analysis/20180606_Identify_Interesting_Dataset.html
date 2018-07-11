@@ -288,10 +288,13 @@ body {
         <th>Date</th>
         <th>Message</th>
         <tr>
-        <tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/12fe3639ca1b2e6c50e20ef8a221f4f4de0a8cb9/analysis/20180606_Identify_Interesting_Dataset.ipynb"><span class="revision_id">12fe363<span></a></td>
+        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/8f5b189ce63d1fccb2ddf544d79a93dae026ee56/analysis/20180606_Identify_Interesting_Dataset.ipynb"><span class="revision_id">8f5b189<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-10</td>
+<td>Update documentation</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/12fe3639ca1b2e6c50e20ef8a221f4f4de0a8cb9/analysis/20180606_Identify_Interesting_Dataset.ipynb"><span class="revision_id">12fe363<span></a></td>
 <td>Gao Wang</td>
 <td>2018-06-27</td>
-<td>Add finemap 95% config filter</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/d5574254873e939930b65994572c189e8ff5001b/analysis/20180606_Identify_Interesting_Dataset.ipynb"><span class="revision_id">d557425<span></a></td>
+<td>Add finemap 95% config filter</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/d5574254873e939930b65994572c189e8ff5001b/analysis/20180606_Identify_Interesting_Dataset.ipynb"><span class="revision_id">d557425<span></a></td>
 <td>Gao Wang</td>
 <td>2018-06-27</td>
 <td>Update documentation</td></tr></table>
@@ -305,7 +308,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">susie_comparison</span><span class="o">/</span><span class="n">fit_susie</span>
@@ -325,7 +328,7 @@ body {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/home/gaow/Documents/GIT/github/mvarbvs/dsc/susie_comparison/fit_susie</pre>
+<pre>/home/gaow/GIT/github/mvarbvs/dsc/susie_comparison/fit_susie</pre>
 </div>
 </div>
 
@@ -339,7 +342,8 @@ body {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">outdir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;./susie_comparison&#39;</span><span class="p">)</span>
+<span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/github/mvarbvs/dsc&#39;</span><span class="p">)</span>
+<span class="n">dirname</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/susie_comparison/&#39;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="kp">name</span> <span class="o">=</span> <span class="s1">&#39;20180710&#39;</span>
 </pre></div>
 
@@ -628,11 +632,13 @@ body {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">B_1</span><span class="p">]</span>
-<span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset lm_less.pve lm_less.n_signal get_sumstats fit_susie.estimate_residual_variance fit_susie.prior_var fit_susie plot_susie&quot;</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{outdir}/tutorial_{name}/result.RDS&#39;</span>
+<span class="n">target_susie</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset lm_less.pve lm_less.n_signal fit_susie.estimate_residual_variance fit_susie.prior_var fit_susie&quot;</span>
+<span class="n">target_sumstats</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset lm_less.pve lm_less.n_signal get_sumstats lm_less&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/tutorial_{name}/result.RDS&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">outdir</span><span class="p">:</span><span class="n">br</span><span class="p">},</span> <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;${target}&quot;</span><span class="p">,</span> <span class="n">load</span><span class="o">.</span><span class="n">pkl</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
-    <span class="n">saveRDS</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;${target_susie}&quot;</span><span class="p">,</span> <span class="n">load</span><span class="o">.</span><span class="n">pkl</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
+    <span class="n">sumstats_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;${target_sumstats}&quot;</span><span class="p">,</span> <span class="n">load</span><span class="o">.</span><span class="n">pkl</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">susie_out</span><span class="o">=</span><span class="n">susie_out</span><span class="p">,</span> <span class="n">sumstats_out</span><span class="o">=</span><span class="n">sumstats_out</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
 </pre></div>
 
 </div>
@@ -664,62 +670,165 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">B_2</span><span class="p">]</span>
 <span class="n">pve</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">]</span>
-<span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
 <span class="n">est_res</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;TRUE&#39;</span><span class="p">]</span>
-<span class="n">prior</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">]</span>
+<span class="n">prior</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.2</span><span class="p">]</span> <span class="c1"># 0.2 / (1-0.2)</span>
 <span class="n">combos</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pve</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">est_res</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span>
-<span class="n">output_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{_input:d}/{x+1}.rds&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">combos</span><span class="p">)]</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pve&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">,</span> <span class="s1">&#39;est_res&#39;</span><span class="p">,</span> <span class="s1">&#39;prior&#39;</span><span class="p">],</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">output_files</span><span class="p">[</span><span class="n">_index</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{_input:d}/*.rds&#39;</span><span class="p">))</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
-
-    <span class="n">get_combined</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">ld_col</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">out_files</span> <span class="o">=</span> <span class="n">sub</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_susie.output.file&quot;</span><span class="p">,</span> <span class="s2">&quot;plot_susie.output.file&quot;</span><span class="p">)]</span>
-        <span class="n">combined</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">purity</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">lfsr</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> 
-                        <span class="n">captures</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">total_captures</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">pip</span> <span class="o">=</span> <span class="n">NULL</span><span class="p">)</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span> <span class="p">{</span>
-            <span class="n">fit</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">posterior</span>
-            <span class="n">purity</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">dirname</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span>
-            <span class="n">L</span> <span class="o">=</span> <span class="n">sub</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="s2">&quot;lm_less.n_signal&quot;</span><span class="p">]</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">r</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
-                <span class="c1">#</span>
-                <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">purity</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">purity</span> <span class="o">=</span> <span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="p">[[</span><span class="n">paste0</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">,</span><span class="n">r</span><span class="p">)]][,</span><span class="n">ld_col</span><span class="p">]</span>
-                <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">purity</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">purity</span><span class="p">,</span> <span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="p">[[</span><span class="n">paste0</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">,</span><span class="n">r</span><span class="p">)]][,</span><span class="n">ld_col</span><span class="p">])</span>
-                <span class="c1">#</span>
-                <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">size</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">size</span> <span class="o">=</span> <span class="n">fit</span><span class="err">$</span><span class="n">n_in_CI</span><span class="p">[,</span><span class="n">r</span><span class="p">]</span>
-                <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">size</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">size</span><span class="p">,</span> <span class="n">fit</span><span class="err">$</span><span class="n">n_in_CI</span><span class="p">[,</span><span class="n">r</span><span class="p">])</span>
-                <span class="c1">#</span>
-                <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">lfsr</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">lfsr</span> <span class="o">=</span> <span class="n">fit</span><span class="err">$</span><span class="n">lfsr</span><span class="p">[,</span><span class="n">r</span><span class="p">]</span>
-                <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">lfsr</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">lfsr</span><span class="p">,</span> <span class="n">fit</span><span class="err">$</span><span class="n">lfsr</span><span class="p">[,</span><span class="n">r</span><span class="p">])</span>
-                <span class="c1">#</span>
-                <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">captures</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">captures</span> <span class="o">=</span> <span class="n">rowSums</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">signal</span><span class="err">$</span><span class="n">V1</span><span class="p">)</span>
-                <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">captures</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">captures</span><span class="p">,</span> <span class="n">rowSums</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">signal</span><span class="err">$</span><span class="n">V1</span><span class="p">))</span>
-                <span class="c1">#</span>
-                <span class="n">is_pure</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="p">[[</span><span class="n">paste0</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">,</span><span class="n">r</span><span class="p">)]][,</span><span class="n">ld_col</span><span class="p">]</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">ld_cutoff</span><span class="p">})</span>
-                <span class="n">alpha</span> <span class="o">=</span> <span class="n">fit</span><span class="err">$</span><span class="n">alpha</span><span class="p">[[</span><span class="n">r</span><span class="p">]][</span><span class="n">is_pure</span><span class="p">,,</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">alpha</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="n">pip</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dim</span><span class="p">(</span><span class="n">alpha</span><span class="p">)[</span><span class="mi">2</span><span class="p">]))</span>
-                <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-                  <span class="n">pip</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="nb">apply</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">alpha</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">prod</span><span class="p">))</span>
-                <span class="p">}</span>
-                <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">pip</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">pip</span>
-                <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">pip</span><span class="p">,</span> <span class="n">pip</span><span class="p">)</span>            
-                <span class="c1">#</span>
-                <span class="n">detected</span> <span class="o">=</span> <span class="nb">apply</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">signal</span><span class="p">[[</span><span class="n">paste0</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">,</span><span class="n">r</span><span class="p">)]][</span><span class="n">is_pure</span><span class="p">,,</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]),</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">detected</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">L</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="n">detected</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">detected</span><span class="p">,</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">L</span> <span class="o">-</span> <span class="n">length</span><span class="p">(</span><span class="n">detected</span><span class="p">)))</span>
-                <span class="p">}</span>
-                <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">combined</span><span class="err">$</span><span class="n">total_captures</span><span class="p">))</span> <span class="n">combined</span><span class="err">$</span><span class="n">total_captures</span> <span class="o">=</span> <span class="n">detected</span>
-                <span class="k">else</span> <span class="n">combined</span><span class="err">$</span><span class="n">total_captures</span> <span class="o">=</span> <span class="n">combined</span><span class="err">$</span><span class="n">total_captures</span> <span class="o">+</span> <span class="n">detected</span>
+    <span class="n">options</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mi">999</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">out</span><span class="err">$</span><span class="n">susie_out</span>
+    <span class="n">sumstats_out</span> <span class="o">=</span> <span class="n">out</span><span class="err">$</span><span class="n">sumstats_out</span>
+    <span class="c1"># favorit susie flavor</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">susie_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">prior_var</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_prior</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">estimate_residual_variance</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_est_res</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_n</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">pve</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_pve</span><span class="p">}),</span> <span class="p">]</span>
+    <span class="n">sumstats_out</span> <span class="o">=</span> <span class="n">sumstats_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">sumstats_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_n</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">sumstats_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">pve</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_pve</span><span class="p">}),</span> <span class="p">]</span>
+    <span class="n">data_sets</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">data_sets</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">susie_files</span> <span class="o">=</span> <span class="n">susie_out</span><span class="p">[</span><span class="n">susie_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_susie.output.file&quot;</span><span class="p">),</span> <span class="n">drop</span><span class="o">=</span><span class="n">F</span><span class="p">]</span>
+        <span class="n">fit</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">susie_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">posterior</span>
+        <span class="n">sumstats_files</span> <span class="o">=</span> <span class="n">sumstats_out</span><span class="p">[</span><span class="n">sumstats_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;get_sumstats.output.file&quot;</span><span class="p">,</span> <span class="s2">&quot;lm_less.output.file&quot;</span><span class="p">)]</span>
+        <span class="n">z_score</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">sumstats_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">sumstats</span>
+        <span class="n">z_score</span> <span class="o">=</span> <span class="n">z_score</span><span class="p">[</span><span class="mi">1</span><span class="p">,,]</span><span class="o">/</span><span class="n">z_score</span><span class="p">[</span><span class="mi">2</span><span class="p">,,]</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">sumstats_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">data</span>
+        <span class="n">truth</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">true_coef</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">X</span>
+  
+        <span class="k">for</span> <span class="p">(</span><span class="n">r</span> <span class="ow">in</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">z</span> <span class="o">=</span> <span class="n">z_score</span><span class="p">[,</span><span class="n">r</span><span class="p">]</span>
+            <span class="n">signals</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">truth</span><span class="p">[,</span><span class="n">r</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">sets</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_get_CS</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">alpha</span><span class="p">[[</span><span class="n">r</span><span class="p">]],</span> <span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">pip</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_get_PIP</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">alpha</span><span class="p">[[</span><span class="n">r</span><span class="p">]],</span> <span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">)</span>
+            <span class="n">cs</span> <span class="o">=</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">min</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]):</span><span class="nb">max</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]))</span>
+            <span class="n">top_z</span> <span class="o">=</span> <span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+            <span class="k">if</span> <span class="p">(</span><span class="err">!</span> <span class="p">(</span><span class="n">top_z</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">unlist</span><span class="p">(</span><span class="n">cs</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="nb">any</span><span class="p">(</span><span class="n">signals</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">unlist</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="n">pip</span><span class="p">[</span><span class="n">top_z</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.1</span> <span class="o">&amp;&amp;</span> <span class="n">length</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">)</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_n</span><span class="p">})</span> <span class="p">{</span>
+              <span class="n">counter</span> <span class="o">=</span> <span class="n">counter</span> <span class="o">+</span> <span class="mi">1</span>
+              <span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;=====&#39;</span><span class="p">,</span> <span class="n">counter</span><span class="p">,</span> <span class="s1">&#39;=======&#39;</span><span class="p">))</span>
+              <span class="k">print</span><span class="p">(</span><span class="n">top_z</span><span class="p">)</span>
+              <span class="k">print</span><span class="p">(</span><span class="n">sets</span><span class="p">)</span>
+              <span class="k">print</span><span class="p">(</span><span class="n">signals</span><span class="p">)</span>
+              <span class="k">print</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">niter</span><span class="p">[[</span><span class="n">r</span><span class="p">]])</span>
+              <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+              <span class="n">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">dr</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">counter</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="k">return</span><span class="p">(</span><span class="n">combined</span><span class="p">)</span>
     <span class="p">}</span>
-    <span class="n">out</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
-    <span class="n">sub</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">pve</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_pve</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_n</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">out</span><span class="err">$</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">estimate_residual_variance</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_est_res</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">out</span><span class="err">$</span><span class="n">fit_susie</span><span class="o">.</span><span class="n">prior_var</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_prior</span><span class="p">}),]</span>
-    <span class="n">combined</span> <span class="o">=</span> <span class="n">get_combined</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="s2">&quot;${outdir}/&quot;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">ld_col</span><span class="p">})</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_pve</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">_n</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">_prior</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">_est_res</span><span class="p">},</span> <span class="s2">&quot;${_output:n}.png&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span><span class="o">=</span><span class="s1">&#39;${_output:n}.log&#39;</span><span class="p">)</span>
-    <span class="n">saveRDS</span><span class="p">(</span><span class="n">combined</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gaow</span><span class="o">/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">susie_comparison</span><span class="o">/</span><span class="n">tutorial_20180710</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/home/gaow/GIT/github/mvarbvs/dsc/susie_comparison/tutorial_20180710</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">ls</span> <span class="o">*.</span><span class="n">rds</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>1_2.rds  2_1.rds  3_2.rds
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>I think this case below looks good. I'll make a separate notebook for it to demonstrate.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;2_1.rds&#39;</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1">#names(dat)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">pve</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1"># we know from simulation parameters though not saved to this data object ...</span>
+<span class="n">library</span><span class="p">(</span><span class="n">susieR</span><span class="p">)</span>
+<span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">true_coef</span><span class="p">[,</span><span class="n">r</span><span class="p">]</span>
+<span class="n">b</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">b</span><span class="o">!=</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">z_score</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">:::</span><span class="n">calc_z</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="n">dat</span><span class="err">$</span><span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">])</span>
+<span class="n">susie_pplot</span><span class="p">(</span><span class="n">z_score</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
+<span class="n">fitted</span> <span class="o">=</span> <span class="n">susie</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="n">dat</span><span class="err">$</span><span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">],</span> <span class="n">L</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+               <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> 
+               <span class="n">prior_variance</span><span class="o">=</span><span class="n">pve</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">pve</span><span class="p">),</span>
+               <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">track_fit</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
+<span class="n">sets</span> <span class="o">=</span> <span class="n">susie_get_CS</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span>
+            <span class="n">coverage</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> 
+            <span class="n">min_abs_corr</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">)</span>
+<span class="n">pip</span> <span class="o">=</span> <span class="n">susie_get_PIP</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">)</span>
+<span class="n">susie_pplot</span><span class="p">(</span><span class="n">pip</span><span class="p">,</span> <span class="n">fitted</span> <span class="o">=</span> <span class="n">fitted</span><span class="p">,</span> <span class="n">CS</span> <span class="o">=</span> <span class="n">sets</span><span class="p">,</span> <span class="n">max_cs</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span><span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -729,7 +838,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/8f5b189ce63d1fccb2ddf544d79a93dae026ee56/analysis/20180606_Identify_Interesting_Dataset.ipynb"><code>analysis/20180606_Identify_Interesting_Dataset.ipynb</code></a> committed by Gao Wang on Tue Jul 10 18:40:25 2018 <a href="http://github.com/gaow/mvarbvs/commit/8f5b189ce63d1fccb2ddf544d79a93dae026ee56">revision 3, 8f5b189</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/a8c24ae8a09849cf9817160a9af0d5d05ff8f7a2/analysis/20180606_Identify_Interesting_Dataset.ipynb"><code>analysis/20180606_Identify_Interesting_Dataset.ipynb</code></a> committed by Gao Wang on Wed Jul 11 12:13:21 2018 <a href="http://github.com/gaow/mvarbvs/commit/a8c24ae8a09849cf9817160a9af0d5d05ff8f7a2">revision 4, a8c24ae</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
