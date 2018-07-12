@@ -1,0 +1,1007 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>m&m ash</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">m&m ash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../details.html">Details</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../dsc.html">Dsc</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Enrichment-analysis-workflow-for-molecular-QTL-results">Enrichment analysis workflow for molecular QTL results<a class="anchor-link" href="#Enrichment-analysis-workflow-for-molecular-QTL-results">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For molecular QTL analysis results we obtained we'd like to see if:</p>
+<ol>
+<li>PIP are higher on average in certain annotation groups than in the rest of genome</li>
+<li>Is there an enrichment for variables both in CS and in some annotation groups<ul>
+<li>Specifically, whether or not there is an enrichment in the secondary CS that we capture</li>
+</ul>
+</li>
+</ol>
+<p>We focus only on the results that has 1 or more CS identified.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+
+        <table class="revision_table">
+        <tr>
+        <th>Revision</th>
+        <th>Author</th>
+        <th>Date</th>
+        <th>Message</th>
+        <tr>
+        <tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/e7227739946a66d644df8999a32690f93106caba/analysis/20180712_Enrichment_Workflow.ipynb"><span class="revision_id">e722773<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-12</td>
+<td>Update enrichment results</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/305751a80925bf3b47f0af237b73856a6b0a25e2/analysis/20180712_Enrichment_Workflow.ipynb"><span class="revision_id">305751a<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-12</td>
+<td>Add enrichment results</td></tr></table>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">!</span> <span class="n">sos</span> <span class="n">run</span> <span class="mi">20180712</span><span class="n">_Enrichment_Workflow</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos run 20180712_Enrichment_Workflow.ipynb
+               [workflow_name | -t targets] [options] [workflow_options]
+  workflow_name:        Single or combined workflows defined in this script
+  targets:              One or more targets to generate
+  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
+  workflow_options:     Double-hyphen workflow-specific parameters
+
+Workflows:
+  extract_sumstats
+  zscore2bed
+  get_variants
+  range2var_annotation
+  pip_rank_test
+  cs_fisher_test
+
+Global Workflow Options:
+  --y-data . (as path)
+                        Y data, the phenotype file paths
+  --trait VAL (required)
+                        Trait name
+  --cwd  path(f&#39;{y_data:d}/{trait}_output&#39;)
+
+                        Specify work / output directory
+  --annotation-dir /home/gaow/Documents/GIT/LargeFiles/he_lab_annotations_bed (as path)
+                        Path to directory of annotation
+                        files
+  --single-annot . (as path)
+                        Path to list of single annotations
+                        to use
+  --max-dist 100000 (as int)
+                        Maximum distance to site of
+                        interest, set to eg. 100Kb or 1Mb
+                        up/downstream to start site of
+                        analysis unit
+
+Sections
+  extract_sumstats_1:   Extract summary stats from RDS files
+                        to plain text
+  extract_sumstats_2:   Consolidate results to one file
+  zscore2bed_1:         Auxiliary step to get variant in bed
+                        format based on variant ID in
+                        z-score file
+    Workflow Options:
+      --in-file . (as path)
+      --chr-prefix &#39;&#39;
+  zscore2bed_2:
+  get_variants:
+  range2var_annotation_1: Get variants in data that falls in
+                        target region
+  range2var_annotation_2: Make binary annotation file
+  pip_rank_test_1:      Test if PIP is larger in annotations
+  pip_rank_test_2, cs_fisher_test_2: Consolidate results to
+                        one file
+  cs_fisher_test_1:     Test if CS is enriched with
+                        annotations
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Annotation-input">Annotation input<a class="anchor-link" href="#Annotation-input">&#182;</a></h2><p>Annotation files are in bed format (for example: <code>Coding_UCSC.bed</code>).</p>
+
+<pre><code>chr1    69090   70008
+chr1    367658  368597
+chr1    621095  622034
+......
+chr9    141121357       141121553
+chr9    141124188       141124276
+chr9    141134069       141134172</code></pre>
+<p>There are many annotations one can use. For this workflow one should prepare a list of annotations for input, like this:</p>
+
+<pre><code># my annotation
+E8_TCM_T_48h
+E8_TCM_D_48h
+NR2F2
+PGR_Demayo
+DNaseI
+H3K27me3
+H3K4me3
+H3K27ac
+FAIRE</code></pre>
+<p>comment symbol <code>#</code> is allowed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-input">Data input<a class="anchor-link" href="#Data-input">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Need to format the data to:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>Variant_ID PIP z_score CS_ID</code></pre>
+<p>Where <code>CS_ID</code> is 0 if variant is not in SuSiE CS, 1 if in CS 1, 2 in CS 2, etc. <code>Variant_ID</code> carries information of chrom and pos. eg, <code>rs10131831_chr14_20905250_G_A</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="c1"># Y data, the phenotype file paths</span>
+<span class="kn">parameter:</span> <span class="n">y_data</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span>
+<span class="c1"># Trait name</span>
+<span class="kn">parameter:</span> <span class="n">trait</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="c1"># Specify work / output directory</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{y_data:d}/{trait}_output&#39;</span><span class="p">)</span>
+<span class="c1"># Path to directory of annotation files</span>
+<span class="kn">parameter:</span> <span class="n">annotation_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GIT/LargeFiles/he_lab_annotations_bed&#39;</span><span class="p">)</span>
+<span class="c1"># Path to list of single annotations to use</span>
+<span class="kn">parameter:</span> <span class="n">single_annot</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span> <span class="c1">#parameter: single_annot = path(&quot;data/all_annotations.txt&quot;)</span>
+<span class="c1"># Maximum distance to site of interest, set to eg. 100Kb or 1Mb up/downstream to start site of analysis unit</span>
+<span class="kn">parameter:</span> <span class="n">max_dist</span> <span class="o">=</span> <span class="mi">100000</span>
+<span class="n">fail_if</span><span class="p">(</span><span class="ow">not</span> <span class="n">y_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">(),</span> <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Please provide valid ``--y-data``!&#39;</span><span class="p">)</span>
+<span class="n">z_score</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/SuSiE_loci.sumstats.gz&#39;</span><span class="p">)</span>
+<span class="n">out_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/{z_score:bn}&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+<span class="kn">try:</span>
+    <span class="n">single_anno</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{annotation_dir}/{x.split()[0]}.bed&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">single_annot</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)]</span>
+<span class="k">except</span> <span class="p">(</span><span class="n">FileNotFoundError</span><span class="p">,</span> <span class="n">IsADirectoryError</span><span class="p">):</span>
+    <span class="n">single_anno</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Prepare-summary-statistics-file">Prepare summary statistics file<a class="anchor-link" href="#Prepare-summary-statistics-file">&#182;</a></h2>
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb extract_sumstats \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --trait AS -j 16</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Extract summary stats from RDS files to plain text</span>
+<span class="p">[</span><span class="n">extract_sumstats_1</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/SuSiE_CS_[1-9]/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:dd}/enrichment/{_input:bn}.sumstats.gz&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">pip</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">pip</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="n">names</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="nb">input</span><span class="p">)[[</span><span class="n">dat</span><span class="err">$</span><span class="n">idx</span><span class="p">]]</span><span class="err">$</span><span class="n">z_score</span><span class="p">)</span>
+    <span class="n">zscore</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="nb">input</span><span class="p">)[[</span><span class="n">dat</span><span class="err">$</span><span class="n">idx</span><span class="p">]]</span><span class="err">$</span><span class="n">z_score</span>
+    <span class="n">cs_id</span> <span class="o">=</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">pip</span><span class="p">))</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">cs_id</span><span class="p">[</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="p">}</span>
+    <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">cbind</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">pip</span><span class="p">,</span><span class="n">zscore</span><span class="p">,</span><span class="n">cs_id</span><span class="p">),</span> <span class="n">gzfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}),</span> <span class="n">quote</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="c1"># Consolidate results to one file</span>
+<span class="p">[</span><span class="n">extract_sumstats_2</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/SuSiE_loci.sumstats.gz&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">zcat</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">|</span> <span class="n">gzip</span> <span class="o">--</span><span class="n">best</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+<span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/SuSiE_loci.sumstats.gz | wc -l
+1667666
+[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/SuSiE_loci.sumstats.gz | cut -f 4 | grep 1 | wc -l
+46659
+[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/SuSiE_loci.sumstats.gz | cut -f 4 | grep 2 | wc -l
+2212
+[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/SuSiE_loci.sumstats.gz | cut -f 4 | grep 3 | wc -l
+152</code></pre>
+<p>So we have total of 1667666 variants, 46659 in CS 1, 2212 in CS 2.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Convert-variants-from-summary-statistics-to-bed-format">Convert variants from summary statistics to bed format<a class="anchor-link" href="#Convert-variants-from-summary-statistics-to-bed-format">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Auxiliary step to get variant in bed format based on variant ID in z-score file</span>
+<span class="p">[</span><span class="n">zscore2bed_1</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">in_file</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span>
+<span class="kn">parameter:</span> <span class="n">chr_prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+<span class="kn">input:</span> <span class="n">in_file</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.bed.unsorted&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+    <span class="n">var_file</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">}</span>
+    <span class="n">out_file</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}</span>
+
+    <span class="n">variants</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="n">var_file</span><span class="p">)</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">variants</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;variant&#39;</span><span class="p">,</span> <span class="s1">&#39;pip&#39;</span><span class="p">,</span> <span class="s1">&#39;zscore&#39;</span><span class="p">,</span> <span class="s1">&#39;cs&#39;</span><span class="p">)</span>
+    <span class="n">var_info</span> <span class="o">&lt;-</span> <span class="n">str_split</span><span class="p">(</span><span class="n">variants</span><span class="err">$</span><span class="n">variant</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+    <span class="n">variants</span> <span class="o">&lt;-</span> <span class="n">mutate</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="nb">chr</span> <span class="o">=</span> <span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;${chr_prefix}&quot;</span><span class="p">,</span> <span class="n">sapply</span><span class="p">(</span><span class="n">var_info</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]})),</span> 
+                                 <span class="n">pos</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="n">var_info</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">){</span><span class="n">x</span><span class="p">[</span><span class="mi">3</span><span class="p">]}))</span> <span class="o">%&gt;%</span>
+                <span class="n">mutate</span><span class="p">(</span><span class="n">start</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">numeric</span><span class="p">(</span><span class="n">pos</span><span class="p">),</span> <span class="n">stop</span><span class="o">=</span><span class="k">as</span><span class="o">.</span><span class="n">numeric</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>  <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%&gt;%</span>
+                <span class="n">select</span><span class="p">(</span><span class="nb">chr</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">,</span> <span class="n">variant</span><span class="p">)</span>
+    <span class="n">options</span><span class="p">(</span><span class="n">scipen</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span> <span class="c1"># So that positions are always fully written out)</span>
+    <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">out_file</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="p">[</span><span class="n">zscore2bed_2</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+     <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+<span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
+
+<span class="p">[</span><span class="n">get_variants</span><span class="p">:</span> <span class="kp">provides</span> <span class="o">=</span> <span class="s1">&#39;{data}.bed&#39;</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{data}.bed&#39;</span>
+<span class="n">sos_run</span><span class="p">(</span><span class="s1">&#39;zscore2bed&#39;</span><span class="p">,</span> <span class="n">in_file</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.gz&#39;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Apply-ranged-based-annotations">Apply ranged based annotations<a class="anchor-link" href="#Apply-ranged-based-annotations">&#182;</a></h2>
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb range2var_annotation \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --trait AS -j 16 \
+    --single-annot data/annotation.list</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Get variants in data that falls in target region</span>
+<span class="p">[</span><span class="n">range2var_annotation_1</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">f</span><span class="s1">&#39;{z_score:n}.bed&#39;</span>
+<span class="kn">input:</span> <span class="nb">set</span><span class="p">(</span><span class="n">paths</span><span class="p">(</span><span class="n">single_anno</span><span class="p">)),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{out_dir}/{_input:bn}.{z_score:bn}.bed&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}:{annotation_dir}&#39;</span>
+    <span class="n">bedops</span> <span class="o">-</span><span class="n">e</span> <span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">bed</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Make binary annotation file</span>
+<span class="p">[</span><span class="n">range2var_annotation_2</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">z_score</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.gz&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span>
+
+    <span class="n">variant_tsv</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">r</span><span class="p">}</span>
+    <span class="n">annotation_var_bed</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">}</span>
+    <span class="n">annot_name</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">bnr</span><span class="p">}</span> <span class="o">%&gt;%</span> <span class="n">str_replace</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="err">$</span><span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">bnr</span><span class="p">}),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">out_name</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}</span>
+
+    <span class="nb">vars</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="n">variant_tsv</span><span class="p">)[,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">annot_vars</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="n">annotation_var_bed</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">names</span><span class="p">(</span><span class="nb">vars</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="s2">&quot;SNP&quot;</span>
+    <span class="nb">vars</span> <span class="o">&lt;-</span> <span class="nb">vars</span> <span class="o">%&gt;%</span>
+            <span class="n">mutate</span><span class="p">(</span><span class="n">annot_d</span> <span class="o">=</span> <span class="n">case_when</span><span class="p">(</span><span class="n">SNP</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">annot_vars</span><span class="err">$</span><span class="n">X4</span> <span class="o">~</span> <span class="mi">1</span><span class="p">,</span>
+                                                        <span class="n">TRUE</span> <span class="o">~</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="n">names</span><span class="p">(</span><span class="nb">vars</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="n">annot_name</span>
+    <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="nb">vars</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">gzfile</span><span class="p">(</span><span class="n">out_name</span><span class="p">),</span>
+                <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Enrichment-analysis">Enrichment analysis<a class="anchor-link" href="#Enrichment-analysis">&#182;</a></h2><p>Test for larger PIP in annotation vs outside it.</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb pip_rank_test \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --trait AS -j 16 \
+    --single-annot data/annotation.list</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Test if PIP is larger in annotations</span>
+<span class="p">[</span><span class="n">pip_rank_test_1</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">z_score</span>
+<span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{out_dir}/{value:bn}.{z_score:bn}.gz&#39;</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">(</span><span class="n">single_anno</span><span class="p">)]</span>
+<span class="kn">input:</span> <span class="n">input_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.{step_name}.csv&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+    <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+    <span class="n">variants</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">col_names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">variants</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;SNP&#39;</span><span class="p">,</span> <span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;CS&#39;</span><span class="p">)</span>
+    <span class="n">annotation</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">col_names</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
+    <span class="kp">name</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">annotation</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;SNP&#39;</span><span class="p">,</span> <span class="s1">&#39;GROUP&#39;</span><span class="p">)</span>
+    <span class="c1"># add two random groupings</span>
+    <span class="n">annotation</span><span class="err">$</span><span class="n">RAND_1</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">annotation</span><span class="err">$</span><span class="n">GROUP</span><span class="p">)</span>
+    <span class="n">annotation</span><span class="err">$</span><span class="n">RAND_2</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">annotation</span><span class="err">$</span><span class="n">GROUP</span><span class="p">)</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="n">inner_join</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;SNP&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">variants</span><span class="err">$</span><span class="n">GROUP</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">wilcox</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">PIP</span> <span class="o">~</span> <span class="n">GROUP</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">variants</span><span class="p">)</span>
+    <span class="n">c_1</span> <span class="o">=</span> <span class="n">wilcox</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">PIP</span> <span class="o">~</span> <span class="n">RAND_1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">variants</span><span class="p">)</span>
+    <span class="n">c_2</span> <span class="o">=</span> <span class="n">wilcox</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">PIP</span> <span class="o">~</span> <span class="n">RAND_2</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">variants</span><span class="p">)</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">test</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">c_1</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">c_2</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="p">}</span>
+
+<span class="c1"># Consolidate results to one file</span>
+<span class="p">[</span><span class="n">pip_rank_test_2</span><span class="p">,</span> <span class="n">cs_fisher_test_2</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/SuSiE_loci.sumstats.{step_name}.csv&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">cat</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+<span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.pip_rank_test_2.csv&#39;</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;annotation&#39;</span><span class="p">,</span> <span class="s1">&#39;enrichment&#39;</span><span class="p">,</span> <span class="s1">&#39;random_1&#39;</span><span class="p">,</span> <span class="s2">&quot;random_2&quot;</span><span class="p">)</span>
+<span class="n">dat</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>annotation</th><th scope=col>enrichment</th><th scope=col>random_1</th><th scope=col>random_2</th></tr></thead>
+<tbody>
+	<tr><td>1_GATA2-Interval-Track                     </td><td> 1.830602e-04                              </td><td>0.023181587                                </td><td>0.211675314                                </td></tr>
+	<tr><td>CN_range_anno                              </td><td> 8.382343e-16                              </td><td>0.253494387                                </td><td>0.294843141                                </td></tr>
+	<tr><td>Coding_UCSC                                </td><td>2.367650e-137                              </td><td>0.007528518                                </td><td>0.609613470                                </td></tr>
+	<tr><td>Conserved_LindbladToh                      </td><td>8.528926e-200                              </td><td>0.122396156                                </td><td>0.875704581                                </td></tr>
+	<tr><td>CTCF_Hoffman                               </td><td> 4.655771e-04                              </td><td>0.063114033                                </td><td>0.886410967                                </td></tr>
+	<tr><td>DGF_ENCODE                                 </td><td> 1.868320e-14                              </td><td>0.208284071                                </td><td>0.909854963                                </td></tr>
+	<tr><td>DHS_peaks_Trynka                           </td><td> 1.212949e-01                              </td><td>0.263073453                                </td><td>0.344757598                                </td></tr>
+	<tr><td>DNaseI                                     </td><td>3.625202e-190                              </td><td>0.167255015                                </td><td>0.287116940                                </td></tr>
+	<tr><td>DN_range_anno                              </td><td> 5.706675e-61                              </td><td>0.026743121                                </td><td>0.587352717                                </td></tr>
+	<tr><td>E8_TCM_D_48h                               </td><td> 2.373551e-59                              </td><td>0.147704536                                </td><td>0.376516416                                </td></tr>
+	<tr><td>E8_TCM_T_48h                               </td><td> 1.539131e-37                              </td><td>0.293343005                                </td><td>0.476824755                                </td></tr>
+	<tr><td>Enhancer_Andersson                         </td><td> 5.087272e-18                              </td><td>0.057260212                                </td><td>0.744858046                                </td></tr>
+	<tr><td>Enhancer_Hoffman                           </td><td> 4.865850e-03                              </td><td>0.429708986                                </td><td>0.155164595                                </td></tr>
+	<tr><td>eQTL_0.05_FDR                              </td><td> 6.681596e-08                              </td><td>0.067717388                                </td><td>0.072284226                                </td></tr>
+	<tr><td>eQTL_0.1_FDR                               </td><td> 6.619897e-02                              </td><td>0.279144367                                </td><td>0.022893614                                </td></tr>
+	<tr><td>FAIRE                                      </td><td> 2.208255e-04                              </td><td>0.077511180                                </td><td>0.798583659                                </td></tr>
+	<tr><td>FetalDHS_Trynka                            </td><td> 7.464480e-06                              </td><td>0.128757169                                </td><td>0.322607809                                </td></tr>
+	<tr><td>FOSL2                                      </td><td> 2.293812e-01                              </td><td>0.906508847                                </td><td>0.495422848                                </td></tr>
+	<tr><td>FOXO1_DeMayo                               </td><td> 1.439729e-17                              </td><td>0.931348197                                </td><td>0.669237468                                </td></tr>
+	<tr><td>GA_range_anno                              </td><td> 1.684668e-43                              </td><td>0.416599322                                </td><td>0.655759436                                </td></tr>
+	<tr><td>H3K27ac                                    </td><td> 1.977123e-96                              </td><td>0.638853600                                </td><td>0.659427268                                </td></tr>
+	<tr><td>h3k27ac-final-C-48h                        </td><td>5.285726e-217                              </td><td>0.694586645                                </td><td>0.310745360                                </td></tr>
+	<tr><td>h3k27ac-final-D-48h                        </td><td> 0.000000e+00                              </td><td>0.771948557                                </td><td>0.031263332                                </td></tr>
+	<tr><td>H3K27ac_Hnisz                              </td><td>1.471394e-252                              </td><td>0.230483290                                </td><td>0.954079808                                </td></tr>
+	<tr><td>H3K27ac_PGC2                               </td><td> 0.000000e+00                              </td><td>0.062509516                                </td><td>0.381037111                                </td></tr>
+	<tr><td>H3K27me3                                   </td><td> 1.317778e-01                              </td><td>0.439245761                                </td><td>0.683300272                                </td></tr>
+	<tr><td>h3k4me1-final-C-48h                        </td><td>1.985243e-282                              </td><td>0.805457804                                </td><td>0.913224247                                </td></tr>
+	<tr><td>h3k4me1-final-D-48h                        </td><td> 0.000000e+00                              </td><td>0.767603825                                </td><td>0.436463424                                </td></tr>
+	<tr><td>H3K4me1_peaks_Trynka                       </td><td>9.328009e-185                              </td><td>0.281596708                                </td><td>0.148118439                                </td></tr>
+	<tr><td>H3K4me3                                    </td><td>3.243413e-137                              </td><td>0.699100500                                </td><td>0.650514824                                </td></tr>
+	<tr><td>h3k4me3-final-C-48h                        </td><td>5.153547e-154                              </td><td>0.317245827                                </td><td>0.504084223                                </td></tr>
+	<tr><td>h3k4me3-final-D-48h                        </td><td>6.331268e-238                              </td><td>0.744190770                                </td><td>0.755766192                                </td></tr>
+	<tr><td>H3K4me3_peaks_Trynka                       </td><td> 3.150111e-88                              </td><td>0.797428018                                </td><td>0.291294587                                </td></tr>
+	<tr><td>H3K9ac_peaks_Trynka                        </td><td>1.571287e-189                              </td><td>0.228074999                                </td><td>0.521552277                                </td></tr>
+	<tr><td>hESC-RegElements-hg19                      </td><td>           NA                              </td><td>         NA                                </td><td>         NA                                </td></tr>
+	<tr><td>hic_all_interacting_DT1_dTL4_D_48h         </td><td>3.185830e-227                              </td><td>0.856356039                                </td><td>0.430472550                                </td></tr>
+	<tr><td>hic_all_interacting_DT1_dTL4_D_48h_expanded</td><td> 0.000000e+00                              </td><td>0.190405224                                </td><td>0.136241248                                </td></tr>
+	<tr><td>hic_harmonizome_interacting_DT1_dTL4_D_48h </td><td> 6.139673e-94                              </td><td>0.936784081                                </td><td>0.584717182                                </td></tr>
+	<tr><td>hic_human_gain_interacting_DT1_dTL4_D_48h  </td><td>4.323638e-244                              </td><td>0.576119507                                </td><td>0.063454672                                </td></tr>
+	<tr><td>Intron_UCSC                                </td><td> 0.000000e+00                              </td><td>0.186215033                                </td><td>0.466056620                                </td></tr>
+	<tr><td>ips_range_anno                             </td><td> 2.711120e-94                              </td><td>0.594655444                                </td><td>0.878309660                                </td></tr>
+	<tr><td>NR2F2                                      </td><td> 1.894557e-05                              </td><td>0.276231591                                </td><td>0.249707836                                </td></tr>
+	<tr><td>NSC_range_anno                             </td><td> 1.103111e-20                              </td><td>0.732929197                                </td><td>0.003894382                                </td></tr>
+	<tr><td>PGR-A_Bagchi                               </td><td> 8.813764e-01                              </td><td>0.203215004                                </td><td>0.881075737                                </td></tr>
+	<tr><td>PGR-B_Bagchi                               </td><td> 1.744193e-07                              </td><td>0.031174028                                </td><td>0.723448476                                </td></tr>
+	<tr><td>PGR_Demayo                                 </td><td> 3.667659e-02                              </td><td>0.191607331                                </td><td>0.631553147                                </td></tr>
+	<tr><td>PLZF                                       </td><td> 1.392102e-10                              </td><td>0.467785033                                </td><td>0.125378880                                </td></tr>
+	<tr><td>POLII_DeMayo                               </td><td> 0.000000e+00                              </td><td>0.798088955                                </td><td>0.625348673                                </td></tr>
+	<tr><td>PromoterFlanking_Hoffman                   </td><td> 1.198566e-02                              </td><td>0.006025561                                </td><td>0.963987284                                </td></tr>
+	<tr><td>Promoter_UCSC                              </td><td>1.593581e-172                              </td><td>0.265206480                                </td><td>0.017204930                                </td></tr>
+	<tr><td>Repressed_Hoffman                          </td><td> 0.000000e+00                              </td><td>0.400036863                                </td><td>0.004812683                                </td></tr>
+	<tr><td>SuperEnhancer_Hnisz                        </td><td> 2.148822e-49                              </td><td>0.011424978                                </td><td>0.306818079                                </td></tr>
+	<tr><td>TFBS_ENCODE                                </td><td>1.531654e-118                              </td><td>0.960375964                                </td><td>0.512628941                                </td></tr>
+	<tr><td>Transcribed_Hoffman                        </td><td> 0.000000e+00                              </td><td>0.752157540                                </td><td>0.423015528                                </td></tr>
+	<tr><td>TSS_Hoffman                                </td><td>1.876752e-204                              </td><td>0.584929700                                </td><td>0.142497845                                </td></tr>
+	<tr><td>UTR_3_UCSC                                 </td><td> 1.342769e-43                              </td><td>0.318592218                                </td><td>0.393275312                                </td></tr>
+	<tr><td>UTR_5_UCSC                                 </td><td> 3.177439e-18                              </td><td>0.316484017                                </td><td>0.444990641                                </td></tr>
+	<tr><td>WeakEnhancer_Hoffman                       </td><td> 1.895438e-37                              </td><td>0.095147823                                </td><td>0.271219865                                </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Test for enrichment of annotation in CS.</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb cs_fisher_test \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --trait AS -j 16 \
+    --single-annot data/annotation.list</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Test if CS is enriched with annotations</span>
+<span class="p">[</span><span class="n">cs_fisher_test_1</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">z_score</span>
+<span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{out_dir}/{value:bn}.{z_score:bn}.gz&#39;</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">(</span><span class="n">single_anno</span><span class="p">)]</span>
+<span class="kn">input:</span> <span class="n">input_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.{step_name}.csv&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+    <span class="n">run_test</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">dat</span>
+        <span class="n">d1</span><span class="err">$</span><span class="n">CS</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">d1</span><span class="err">$</span><span class="n">CS</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">table</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>
+        <span class="n">test</span><span class="o">.</span><span class="n">d1</span> <span class="o">=</span> <span class="n">fisher</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>
+        <span class="c1"># test for non-first CS only</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">CS</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">),]</span>
+        <span class="n">d2</span><span class="err">$</span><span class="n">CS</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">d2</span><span class="err">$</span><span class="n">CS</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">table</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span>
+        <span class="n">test</span><span class="o">.</span><span class="n">d2</span> <span class="o">=</span> <span class="n">fisher</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">d1</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">d2</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
+    <span class="n">variants</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">col_names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">variants</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;SNP&#39;</span><span class="p">,</span> <span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;CS&#39;</span><span class="p">)</span>
+    <span class="n">annotation</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">col_names</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
+    <span class="kp">name</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">annotation</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;SNP&#39;</span><span class="p">,</span> <span class="s1">&#39;GROUP&#39;</span><span class="p">)</span>
+    <span class="c1"># add two random groupings</span>
+    <span class="n">annotation</span><span class="err">$</span><span class="n">RAND_1</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">annotation</span><span class="err">$</span><span class="n">GROUP</span><span class="p">)</span>
+    <span class="n">annotation</span><span class="err">$</span><span class="n">RAND_2</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">annotation</span><span class="err">$</span><span class="n">GROUP</span><span class="p">)</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="n">inner_join</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;SNP&quot;</span><span class="p">)[,</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">variants</span><span class="err">$</span><span class="n">GROUP</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="c1"># test against all CS</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">run_test</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;GROUP&#39;</span><span class="p">)])</span>
+    <span class="n">ctrl_1</span> <span class="o">=</span> <span class="n">run_test</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;RAND_1&#39;</span><span class="p">)])</span>
+    <span class="n">ctrl_2</span> <span class="o">=</span> <span class="n">run_test</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;RAND_2&#39;</span><span class="p">)])</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">test</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">test</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">ctrl_1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ctrl_1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">ctrl_2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ctrl_2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.cs_fisher_test_2.csv&#39;</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;annotation&#39;</span><span class="p">,</span> <span class="s1">&#39;enrichment CS&gt;0&#39;</span><span class="p">,</span> <span class="s1">&#39;enrichment CS&gt;1&#39;</span><span class="p">,</span> <span class="s2">&quot;random_1 CS&gt;0&quot;</span><span class="p">,</span> <span class="s2">&quot;random_1 CS&gt;1&quot;</span><span class="p">,</span> <span class="s2">&quot;random_2 CS&gt;0&quot;</span><span class="p">,</span> <span class="s2">&quot;random_2 CS&gt;1&quot;</span><span class="p">)</span>
+<span class="n">dat</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>annotation</th><th scope=col>enrichment CS&gt;0</th><th scope=col>enrichment CS&gt;1</th><th scope=col>random_1 CS&gt;0</th><th scope=col>random_1 CS&gt;1</th><th scope=col>random_2 CS&gt;0</th><th scope=col>random_2 CS&gt;1</th></tr></thead>
+<tbody>
+	<tr><td>1_GATA2-Interval-Track                     </td><td> 8.212912e-01                              </td><td>1.098493e-01                               </td><td>3.809206e-01                               </td><td>0.7723599128                               </td><td>0.618852527                                </td><td>0.5101159170                               </td></tr>
+	<tr><td>CN_range_anno                              </td><td> 1.228953e-08                              </td><td>2.621717e-01                               </td><td>5.115877e-01                               </td><td>0.5083750231                               </td><td>0.950743353                                </td><td>0.5424369620                               </td></tr>
+	<tr><td>Coding_UCSC                                </td><td> 4.079106e-86                              </td><td>1.883235e-14                               </td><td>5.976688e-01                               </td><td>0.0318514435                               </td><td>0.362804631                                </td><td>0.1366581638                               </td></tr>
+	<tr><td>Conserved_LindbladToh                      </td><td> 1.502215e-71                              </td><td>5.028735e-09                               </td><td>1.059441e-01                               </td><td>0.2942796417                               </td><td>0.241819686                                </td><td>0.6495859239                               </td></tr>
+	<tr><td>CTCF_Hoffman                               </td><td> 3.360994e-62                              </td><td>1.477895e-04                               </td><td>7.425694e-02                               </td><td>0.5859058192                               </td><td>0.217650723                                </td><td>0.9517220351                               </td></tr>
+	<tr><td>DGF_ENCODE                                 </td><td> 1.249363e-15                              </td><td>4.290191e-02                               </td><td>5.298368e-01                               </td><td>0.3302871076                               </td><td>0.410620357                                </td><td>0.7176617788                               </td></tr>
+	<tr><td>DHS_peaks_Trynka                           </td><td> 4.697483e-01                              </td><td>5.732683e-02                               </td><td>8.847985e-02                               </td><td>0.1869450861                               </td><td>0.564186346                                </td><td>0.9610392405                               </td></tr>
+	<tr><td>DNaseI                                     </td><td> 0.000000e+00                              </td><td>4.409109e-27                               </td><td>2.376067e-01                               </td><td>0.4195083073                               </td><td>0.610155582                                </td><td>0.5423165668                               </td></tr>
+	<tr><td>DN_range_anno                              </td><td> 1.136175e-03                              </td><td>6.158265e-02                               </td><td>7.613172e-01                               </td><td>0.1980360402                               </td><td>0.662691597                                </td><td>0.8354116238                               </td></tr>
+	<tr><td>E8_TCM_D_48h                               </td><td> 5.640626e-33                              </td><td>4.343954e-01                               </td><td>5.021905e-01                               </td><td>0.8614044950                               </td><td>0.867875047                                </td><td>0.6629680699                               </td></tr>
+	<tr><td>E8_TCM_T_48h                               </td><td> 4.001675e-38                              </td><td>5.339539e-03                               </td><td>3.347715e-01                               </td><td>0.6476358209                               </td><td>0.779021514                                </td><td>0.6646779369                               </td></tr>
+	<tr><td>Enhancer_Andersson                         </td><td> 2.164834e-56                              </td><td>5.403893e-07                               </td><td>9.473553e-01                               </td><td>0.7555062851                               </td><td>0.895117442                                </td><td>0.2899345456                               </td></tr>
+	<tr><td>Enhancer_Hoffman                           </td><td>4.861672e-193                              </td><td>1.690437e-07                               </td><td>3.562017e-01                               </td><td>0.8115863669                               </td><td>0.137630288                                </td><td>0.5775080832                               </td></tr>
+	<tr><td>eQTL_0.05_FDR                              </td><td> 3.156183e-78                              </td><td>1.102527e-63                               </td><td>3.411059e-02                               </td><td>0.7896602354                               </td><td>0.037764951                                </td><td>0.0556066689                               </td></tr>
+	<tr><td>eQTL_0.1_FDR                               </td><td> 2.107911e-70                              </td><td>2.809380e-53                               </td><td>3.929831e-01                               </td><td>0.6495152846                               </td><td>0.550615137                                </td><td>0.2337834540                               </td></tr>
+	<tr><td>FAIRE                                      </td><td> 3.835716e-01                              </td><td>3.475980e-02                               </td><td>6.168475e-01                               </td><td>0.0544685465                               </td><td>0.044253995                                </td><td>0.6256411565                               </td></tr>
+	<tr><td>FetalDHS_Trynka                            </td><td> 1.944919e-12                              </td><td>1.370647e-03                               </td><td>6.396099e-02                               </td><td>0.7599859228                               </td><td>0.972654217                                </td><td>0.4506817181                               </td></tr>
+	<tr><td>FOSL2                                      </td><td> 3.618563e-12                              </td><td>4.771895e-01                               </td><td>4.190354e-01                               </td><td>0.0263028897                               </td><td>0.618390815                                </td><td>0.4061878542                               </td></tr>
+	<tr><td>FOXO1_DeMayo                               </td><td> 7.240761e-13                              </td><td>2.107129e-02                               </td><td>6.171531e-01                               </td><td>0.0256873297                               </td><td>0.306824203                                </td><td>0.8990308960                               </td></tr>
+	<tr><td>GA_range_anno                              </td><td> 9.697859e-09                              </td><td>3.746581e-07                               </td><td>4.149899e-01                               </td><td>0.6446079325                               </td><td>0.637823457                                </td><td>1.0000000000                               </td></tr>
+	<tr><td>H3K27ac                                    </td><td>6.624460e-193                              </td><td>5.007076e-10                               </td><td>8.501910e-01                               </td><td>0.0745709930                               </td><td>0.080183930                                </td><td>0.1820838977                               </td></tr>
+	<tr><td>h3k27ac-final-C-48h                        </td><td> 1.138076e-08                              </td><td>2.753032e-01                               </td><td>3.958390e-01                               </td><td>0.7411025407                               </td><td>0.840120674                                </td><td>0.2684413286                               </td></tr>
+	<tr><td>h3k27ac-final-D-48h                        </td><td> 4.461940e-22                              </td><td>2.501875e-01                               </td><td>3.513531e-01                               </td><td>0.7744498837                               </td><td>0.093222065                                </td><td>0.1368932293                               </td></tr>
+	<tr><td>H3K27ac_Hnisz                              </td><td>7.515750e-249                              </td><td>3.367817e-02                               </td><td>1.064421e-02                               </td><td>0.1457691657                               </td><td>0.876464491                                </td><td>0.4706701782                               </td></tr>
+	<tr><td>H3K27ac_PGC2                               </td><td> 1.380171e-01                              </td><td>1.104875e-08                               </td><td>9.847587e-01                               </td><td>0.8218297534                               </td><td>0.089549665                                </td><td>0.3442590843                               </td></tr>
+	<tr><td>H3K27me3                                   </td><td> 1.752786e-01                              </td><td>3.941284e-07                               </td><td>7.384336e-01                               </td><td>0.6736255086                               </td><td>0.838716830                                </td><td>0.1356029960                               </td></tr>
+	<tr><td>h3k4me1-final-C-48h                        </td><td> 2.588510e-43                              </td><td>1.633310e-01                               </td><td>9.458450e-01                               </td><td>0.5971646899                               </td><td>0.442597834                                </td><td>0.5970132344                               </td></tr>
+	<tr><td>h3k4me1-final-D-48h                        </td><td> 2.831365e-85                              </td><td>6.245495e-02                               </td><td>9.009290e-01                               </td><td>0.3698467776                               </td><td>0.980703450                                </td><td>0.8449846675                               </td></tr>
+	<tr><td>H3K4me1_peaks_Trynka                       </td><td> 7.568332e-02                              </td><td>9.186388e-01                               </td><td>1.807310e-01                               </td><td>0.9390206808                               </td><td>0.039356701                                </td><td>0.7306298457                               </td></tr>
+	<tr><td>H3K4me3                                    </td><td>1.176638e-126                              </td><td>2.590441e-02                               </td><td>8.416753e-01                               </td><td>0.4701110166                               </td><td>0.331895060                                </td><td>0.5105287312                               </td></tr>
+	<tr><td>h3k4me3-final-C-48h                        </td><td>3.410593e-123                              </td><td>5.993773e-04                               </td><td>2.483428e-01                               </td><td>0.1056386750                               </td><td>0.807047404                                </td><td>0.0908509415                               </td></tr>
+	<tr><td>h3k4me3-final-D-48h                        </td><td>3.548082e-167                              </td><td>1.493369e-02                               </td><td>8.519669e-01                               </td><td>0.0253581965                               </td><td>0.987934443                                </td><td>0.9810379590                               </td></tr>
+	<tr><td>H3K4me3_peaks_Trynka                       </td><td> 4.369151e-03                              </td><td>2.349882e-04                               </td><td>3.797452e-03                               </td><td>0.4497785605                               </td><td>0.333386212                                </td><td>0.7434651652                               </td></tr>
+	<tr><td>H3K9ac_peaks_Trynka                        </td><td> 2.053231e-10                              </td><td>7.976529e-01                               </td><td>2.897342e-05                               </td><td>0.8433054612                               </td><td>0.128525155                                </td><td>0.7968632305                               </td></tr>
+	<tr><td>hESC-RegElements-hg19                      </td><td>           NA                              </td><td>          NA                               </td><td>          NA                               </td><td>          NA                               </td><td>         NA                                </td><td>          NA                               </td></tr>
+	<tr><td>hic_all_interacting_DT1_dTL4_D_48h         </td><td> 5.436659e-28                              </td><td>4.713571e-19                               </td><td>1.335318e-02                               </td><td>0.2352837569                               </td><td>0.004160152                                </td><td>0.8217548336                               </td></tr>
+	<tr><td>hic_all_interacting_DT1_dTL4_D_48h_expanded</td><td> 9.282358e-90                              </td><td>1.433973e-39                               </td><td>3.379203e-02                               </td><td>0.7108925223                               </td><td>0.397913646                                </td><td>0.7397527914                               </td></tr>
+	<tr><td>hic_harmonizome_interacting_DT1_dTL4_D_48h </td><td> 3.134298e-02                              </td><td>5.369307e-07                               </td><td>9.583529e-03                               </td><td>0.6416725303                               </td><td>0.960789946                                </td><td>0.9076671392                               </td></tr>
+	<tr><td>hic_human_gain_interacting_DT1_dTL4_D_48h  </td><td> 8.104335e-01                              </td><td>1.290204e-06                               </td><td>2.867514e-01                               </td><td>0.0222717952                               </td><td>0.022416787                                </td><td>0.8469489534                               </td></tr>
+	<tr><td>Intron_UCSC                                </td><td> 0.000000e+00                              </td><td>2.583183e-70                               </td><td>9.334659e-01                               </td><td>0.0008697541                               </td><td>0.001976813                                </td><td>0.8926382793                               </td></tr>
+	<tr><td>ips_range_anno                             </td><td> 7.330132e-06                              </td><td>1.823227e-05                               </td><td>4.372704e-01                               </td><td>0.8863349253                               </td><td>0.981850003                                </td><td>0.7611592972                               </td></tr>
+	<tr><td>NR2F2                                      </td><td> 1.174801e-02                              </td><td>8.166078e-01                               </td><td>5.593667e-01                               </td><td>0.0254159366                               </td><td>0.014045271                                </td><td>0.8226886143                               </td></tr>
+	<tr><td>NSC_range_anno                             </td><td> 7.516029e-01                              </td><td>5.650001e-02                               </td><td>8.791204e-01                               </td><td>0.9779952796                               </td><td>0.550241965                                </td><td>0.9779711473                               </td></tr>
+	<tr><td>PGR-A_Bagchi                               </td><td> 8.757311e-09                              </td><td>4.713856e-06                               </td><td>2.340265e-01                               </td><td>0.1080581848                               </td><td>0.910526513                                </td><td>0.2892528716                               </td></tr>
+	<tr><td>PGR-B_Bagchi                               </td><td> 2.789860e-02                              </td><td>1.803904e-04                               </td><td>7.967789e-01                               </td><td>0.2243336496                               </td><td>0.148943429                                </td><td>0.3498259219                               </td></tr>
+	<tr><td>PGR_Demayo                                 </td><td> 5.373188e-01                              </td><td>8.406633e-02                               </td><td>3.502766e-01                               </td><td>1.0000000000                               </td><td>0.073994385                                </td><td>0.5340505193                               </td></tr>
+	<tr><td>PLZF                                       </td><td> 2.060002e-36                              </td><td>3.232903e-15                               </td><td>7.977086e-01                               </td><td>0.4599331491                               </td><td>0.071870248                                </td><td>0.8063556301                               </td></tr>
+	<tr><td>POLII_DeMayo                               </td><td> 0.000000e+00                              </td><td>1.753827e-02                               </td><td>2.030460e-02                               </td><td>0.2986595412                               </td><td>0.114173788                                </td><td>0.6860353557                               </td></tr>
+	<tr><td>PromoterFlanking_Hoffman                   </td><td> 3.538217e-05                              </td><td>2.403007e-03                               </td><td>7.400462e-04                               </td><td>0.9058348628                               </td><td>0.404416428                                </td><td>0.7530615395                               </td></tr>
+	<tr><td>Promoter_UCSC                              </td><td>7.547211e-144                              </td><td>1.180574e-01                               </td><td>2.557095e-01                               </td><td>0.3855754061                               </td><td>0.012367307                                </td><td>0.9077577479                               </td></tr>
+	<tr><td>Repressed_Hoffman                          </td><td> 0.000000e+00                              </td><td>9.669009e-47                               </td><td>3.379821e-02                               </td><td>0.7318257904                               </td><td>0.137088164                                </td><td>0.2475137279                               </td></tr>
+	<tr><td>SuperEnhancer_Hnisz                        </td><td> 0.000000e+00                              </td><td>2.697503e-23                               </td><td>2.507967e-01                               </td><td>0.9246389984                               </td><td>0.615984051                                </td><td>0.0006885008                               </td></tr>
+	<tr><td>TFBS_ENCODE                                </td><td> 1.394719e-19                              </td><td>9.960109e-05                               </td><td>5.089287e-01                               </td><td>0.0494009105                               </td><td>0.200109061                                </td><td>0.5474870572                               </td></tr>
+	<tr><td>Transcribed_Hoffman                        </td><td> 0.000000e+00                              </td><td>2.532327e-53                               </td><td>2.894718e-01                               </td><td>0.8032281724                               </td><td>0.310705315                                </td><td>0.3356351633                               </td></tr>
+	<tr><td>TSS_Hoffman                                </td><td>3.628567e-116                              </td><td>2.134504e-28                               </td><td>2.789893e-02                               </td><td>0.7149206456                               </td><td>0.273259485                                </td><td>0.0745319002                               </td></tr>
+	<tr><td>UTR_3_UCSC                                 </td><td>1.713536e-140                              </td><td>7.073551e-01                               </td><td>7.597747e-01                               </td><td>0.7184014785                               </td><td>0.972295996                                </td><td>0.8186212637                               </td></tr>
+	<tr><td>UTR_5_UCSC                                 </td><td> 1.494857e-81                              </td><td>8.872967e-03                               </td><td>9.331046e-01                               </td><td>0.5379910292                               </td><td>0.918032868                                </td><td>0.6589439793                               </td></tr>
+	<tr><td>WeakEnhancer_Hoffman                       </td><td>3.589908e-257                              </td><td>5.908310e-08                               </td><td>4.725798e-06                               </td><td>0.1003845554                               </td><td>0.917694867                                </td><td>0.4464084510                               </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/e7227739946a66d644df8999a32690f93106caba/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Thu Jul 12 16:00:14 2018 <a href="http://github.com/gaow/mvarbvs/commit/e7227739946a66d644df8999a32690f93106caba">revision 2, e722773</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
