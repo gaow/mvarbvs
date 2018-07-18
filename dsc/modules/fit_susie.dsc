@@ -21,4 +21,3 @@ fit_susie01(fit_susie):
 
 fit_susie10(fit_susie):
   maxL: 10
-  prior_var: 0.05
