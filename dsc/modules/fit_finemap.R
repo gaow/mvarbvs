@@ -37,7 +37,7 @@ run_finemap <- function(z, LD_file, n, k, args = "", prefix="data")
   snp$snp = as.character(snp$snp)
 
   snp = rank_snp(snp)
-  config = read.table(cfg$config,header=TRUE,sep=" "
+  config = read.table(cfg$config,header=TRUE,sep=" ")
 
   # extract number of causal
   ncausal = finemap_extract_ncausal(cfg$log)
