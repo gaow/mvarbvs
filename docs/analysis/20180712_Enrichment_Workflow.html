@@ -305,7 +305,10 @@ body {
         <th>Date</th>
         <th>Message</th>
         <tr>
-        <tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/9531187446835c456a7a6fca586c890d8203aad4/analysis/20180712_Enrichment_Workflow.ipynb"><span class="revision_id">9531187<span></a></td>
+        <tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/24b7bf304421316d1c70d0cab18fe420ea96e9ed/analysis/20180712_Enrichment_Workflow.ipynb"><span class="revision_id">24b7bf3<span></a></td>
+<td>Gao Wang</td>
+<td>2018-07-13</td>
+<td>Update documentation</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/9531187446835c456a7a6fca586c890d8203aad4/analysis/20180712_Enrichment_Workflow.ipynb"><span class="revision_id">9531187<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-12</td>
 <td>Add CS based enrichment</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/e7227739946a66d644df8999a32690f93106caba/analysis/20180712_Enrichment_Workflow.ipynb"><span class="revision_id">e722773<span></a></td>
@@ -685,7 +688,140 @@ FAIRE</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Enrichment-analysis">Enrichment analysis<a class="anchor-link" href="#Enrichment-analysis">&#182;</a></h2><p>Test for larger PIP in annotation vs outside it.</p>
+<h2 id="Matched-enrichment-analysis-via-GREGOR">Matched enrichment analysis via GREGOR<a class="anchor-link" href="#Matched-enrichment-analysis-via-GREGOR">&#182;</a></h2><p>To properly perform enrichment analysis we want to match the control SNPs with the SNPs of interest -- that is, SNPs inside CS -- in terms of LD, distance to nearest gene and MAF. The <a href="http://csg.sph.umich.edu/GREGOR/index.php/site/download">GREGOR</a> software can generate list of matched SNPs. I will use SNPs inside CS as input and expect a list of output SNPs matching these inputs.</p>
+<p>GREGOR is release under University of Michigan license so I'll not make it into a docker image. So path to GREGOR directory is required. Also we need reference files, prepared by:</p>
+
+<pre><code>cat \
+    GREGOR.AFR.ref.r2.greater.than.0.7.tar.gz.part.00 \
+    GREGOR.AFR.ref.r2.greater.than.0.7.tar.gz.part.01 \
+    &gt; GREGOR.AFR.ref.r2.greater.than.0.7.tar.gz
+tar zxvf GREGOR.AFR.ref.r2.greater.than.0.7.tar.gz</code></pre>
+<p>MD5SUM check:</p>
+
+<pre><code>AFR.part.0  ( MD5: 9926904128dd58d6bf1ad4f1e90638af )
+AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The input file can be a list of <code>rs</code> ID's. In <code>SuSiE_loci.sumstats.gz</code> we do have this information.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gregor:1 \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --trait AS -j 16 \
+    --single-annot data/annotation.list</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gregor_1</span> <span class="p">(</span><span class="n">make</span> <span class="n">SNP</span> <span class="n">index</span><span class="p">)]</span>
+<span class="kn">input:</span> <span class="n">z_score</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.rsid.txt&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.annotations.list&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
+    <span class="n">zcat</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">|</span> <span class="n">cut</span> <span class="o">-</span><span class="n">f</span> <span class="mi">2</span><span class="p">,</span><span class="mi">3</span> <span class="o">-</span><span class="n">d</span> <span class="s2">&quot;_&quot;</span> <span class="o">|</span> <span class="n">sed</span> <span class="s1">&#39;s/_/:/g&#39;</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_output</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">single_anno</span><span class="p">))</span>
+
+<span class="p">[</span><span class="n">gregor_2</span> <span class="p">(</span><span class="n">make</span> <span class="n">configuration</span> <span class="nb">file</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">gregor_db</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/LargeFiles/GREGOR_DB&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">pop</span> <span class="o">=</span> <span class="s1">&#39;AFR&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input[0]:nn}.gregor.conf&#39;</span>
+<span class="kn">report:</span> <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output}&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="c1">##############################################################################</span>
+    <span class="c1"># CHIPSEQ ENRICHMENT CONFIGURATION FILE</span>
+    <span class="c1"># This configuration file contains run-time configuration of</span>
+    <span class="c1"># CHIP_SEQ ENRICHMENT</span>
+    <span class="c1">###############################################################################</span>
+    <span class="c1">## KEY ELEMENTS TO CONFIGURE : NEED TO MODIFY</span>
+    <span class="c1">###############################################################################</span>
+    <span class="n">INDEX_SNP_FILE</span> <span class="o">=</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+    <span class="n">BED_FILE_INDEX</span> <span class="o">=</span> <span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]}</span> 
+    <span class="n">REF_DIR</span> <span class="o">=</span> <span class="p">{</span><span class="n">gregor_db</span><span class="p">}</span>
+    <span class="n">R2THRESHOLD</span> <span class="o">=</span> <span class="mf">0.7</span> <span class="c1">## must be greater than 0.7</span>
+    <span class="n">LDWINDOWSIZE</span> <span class="o">=</span> <span class="mi">10000</span> <span class="c1">## must be less than 1MB; these two values define LD buddies</span>
+    <span class="n">OUT_DIR</span> <span class="o">=</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nn</span><span class="p">}</span><span class="n">_gregor_output</span>
+    <span class="n">MIN_NEIGHBOR_NUM</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1">## define the size of neighborhood</span>
+    <span class="n">BEDFILE_IS_SORTED</span> <span class="o">=</span> <span class="n">true</span>  <span class="c1">## false, if the bed files are not sorted</span>
+    <span class="n">POPULATION</span> <span class="o">=</span> <span class="p">{</span><span class="n">pop</span><span class="p">}</span>  <span class="c1">## define the population, you can specify EUR, AFR, AMR or ASN</span>
+    <span class="n">TOPNBEDFILES</span> <span class="o">=</span> <span class="mi">2</span> 
+    <span class="n">JOBNUMBER</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="c1">###############################################################################</span>
+    <span class="c1">#BATCHTYPE = mosix ##  submit jobs on MOSIX</span>
+    <span class="c1">#BATCHOPTS = -E/tmp -i -m2000 -j10,11,12,13,14,15,16,17,18,19,120,122,123,124,125 sh -c</span>
+    <span class="c1">###############################################################################</span>
+    <span class="c1">#BATCHTYPE = slurm   ##  submit jobs on SLURM</span>
+    <span class="c1">#BATCHOPTS = --partition=broadwl --account=pi-mstephens --time=0:30:0</span>
+    <span class="c1">###############################################################################</span>
+    <span class="n">BATCHTYPE</span> <span class="o">=</span> <span class="n">local</span> <span class="c1">##  run jobs on local machine</span>
+
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">sed</span> <span class="o">-</span><span class="n">i</span> <span class="s1">&#39;/^$/d&#39;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>GREGOR is written in <code>perl</code>. Some libraries are required before one can run GREGOR:</p>
+
+<pre><code>sudo apt-get install libdbi-perl libswitch-perl libdbd-sqlite3-perl</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gregor_3</span> <span class="p">(</span><span class="n">run</span> <span class="n">gregor</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">gregor_path</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/opt/GREGOR&#39;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.done&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">perl</span> <span class="p">{</span><span class="n">gregor_path</span><span class="p">}</span><span class="o">/</span><span class="n">script</span><span class="o">/</span><span class="n">GREGOR</span><span class="o">.</span><span class="n">pl</span> <span class="o">--</span><span class="n">conf</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&amp;&amp;</span> <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Unmatched-enrichment-analysis">Unmatched enrichment analysis<a class="anchor-link" href="#Unmatched-enrichment-analysis">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Test for larger PIP in annotation vs outside it.</p>
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb pip_rank_test \
     --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
