@@ -491,7 +491,7 @@ FAIRE</code></pre>
 <span class="c1"># Maximum distance to site of interest, set to eg. 100Kb or 1Mb up/downstream to start site of analysis unit</span>
 <span class="kn">parameter:</span> <span class="n">max_dist</span> <span class="o">=</span> <span class="mi">100000</span>
 <span class="n">fail_if</span><span class="p">(</span><span class="ow">not</span> <span class="n">y_data</span><span class="o">.</span><span class="n">is_file</span><span class="p">(),</span> <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Please provide valid ``--y-data``!&#39;</span><span class="p">)</span>
-<span class="n">z_score</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/SuSiE_loci.sumstats.gz&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">z_score</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/SuSiE_loci.sumstats.gz&#39;</span><span class="p">)</span>
 <span class="n">out_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/{z_score:bn}&#39;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
 <span class="kn">try:</span>
     <span class="n">single_anno</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{annotation_dir}/{x.split()[0]}.bed&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">single_annot</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)]</span>
@@ -721,7 +721,7 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 
-<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gregor:1 \
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gregor \
     --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
     --trait AS -j 16 \
     --single-annot data/annotation.list</code></pre>
@@ -1252,7 +1252,7 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7f148480375c188a1af4353a6fe227c985571ac7/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Tue Jul 24 16:05:55 2018 <a href="http://github.com/gaow/mvarbvs/commit/7f148480375c188a1af4353a6fe227c985571ac7">revision 5, 7f14848</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/08a86854d3a8304fbee8abe63ef37c9c4c0b1edd/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Tue Jul 31 16:24:33 2018 <a href="http://github.com/gaow/mvarbvs/commit/08a86854d3a8304fbee8abe63ef37c9c4c0b1edd">revision 7, 08a8685</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
