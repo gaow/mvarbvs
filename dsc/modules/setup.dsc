@@ -13,7 +13,7 @@ full_data: sim_utils.R + R(data =readRDS(dataset);
             saveRDS(r, ld_mat);
             write.table(r,ld_file,quote=F,col.names=F,row.names=F))
   tag: "full"
-  dataset: Shell{head -100 ${data_file}}
+  dataset: Shell{head -150 ${data_file}}
   subset: NULL
   $data: data
   $top_idx: NULL

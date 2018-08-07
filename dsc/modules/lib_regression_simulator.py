@@ -1,7 +1,9 @@
 import numpy as np
 import os, copy
-import seaborn as sns
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+import seaborn as sns
 import pandas as pd
 from pprint import pformat
 from collections import OrderedDict
