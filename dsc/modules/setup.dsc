@@ -16,7 +16,7 @@ full_data: sim_utils.R + R(data =readRDS(dataset);
   dataset: Shell{head -150 ${data_file}}
   subset: NULL
   $data: data
-  $top_idx: NULL
+  $top_idx: NA
   $ld_file: file(ld)
   $ld_mat: file(rds)
         
