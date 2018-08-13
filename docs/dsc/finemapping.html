@@ -298,10 +298,15 @@ body {
 <h2 id="Commands-for-SuSiE-paper">Commands for SuSiE paper<a class="anchor-link" href="#Commands-for-SuSiE-paper">&#182;</a></h2><p>Computations of DSC are performed on UChicago RCC Midway cluster.</p>
 <p>To compare with other methods on limited scenarios:</p>
 
-<pre><code>dsc susie.dsc --target run_comparison -o susie_comparison --host susie_comparison.yml -c 30</code></pre>
+<pre><code>dsc susie.dsc --target run_comparison -o susie_comparison --host susie_comparison.yml -c 60</code></pre>
 <p>To compare with DAP on a hard case: PVE = 0.3, full data (~8K average):</p>
 
-<pre><code>dsc susie.dsc --target hard_case -o hard_case --host susie_comparison.yml -c 30</code></pre>
+<pre><code>dsc susie.dsc --target hard_case -o hard_case --host hard_case.yml -c 60</code></pre>
+<p>To sync only relevant results:</p>
+
+<pre><code>#to_sync=susie_comparison
+to_sync=hard_case
+rsync -auzP --include="*/" --exclude="*.ld_mat.rds" --include="*.rds" --include="*.pkl" --include="*.pdf" --include="*.png" --include="*.db"  --include="*.mpk" --exclude="*" mw:~/GIT/mvarbvs/dsc/$to_sync ./</code></pre>
 <h2 id="Commands-for-in-house-investigations">Commands for in house investigations<a class="anchor-link" href="#Commands-for-in-house-investigations">&#182;</a></h2>
 <pre><code>dsc susie.dsc --target run_susie</code></pre>
 
@@ -339,37 +344,37 @@ body {
         <th>Date</th>
         <th>Message</th>
         <tr>
-        <tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/86162036e057221c7ded17ae8d32af2a71d9ceca/dsc/finemapping.ipynb"><span class="revision_id">8616203<span></a></td>
+        <tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/c8985172076dca9f66aeaa9d3af640983d4a9de4/dsc/finemapping.ipynb"><span class="revision_id">c898517<span></a></td>
+<td>Gao Wang</td>
+<td>2018-08-08</td>
+<td>Add midway config for hard_case benchmark</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/a522f02f7ba56663e5a5c999e37e91359f9d22b3/dsc/finemapping.ipynb"><span class="revision_id">a522f02<span></a></td>
 <td>Gao Wang</td>
 <td>2018-08-07</td>
-<td>Add midway2 configuration</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/31bfc99b649a426d569796c1401d8dc6848c9653/dsc/finemapping.ipynb"><span class="revision_id">31bfc99<span></a></td>
+<td>Update midway2 configuration</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/86162036e057221c7ded17ae8d32af2a71d9ceca/dsc/finemapping.ipynb"><span class="revision_id">8616203<span></a></td>
+<td>Gao Wang</td>
+<td>2018-08-07</td>
+<td>Add midway2 configuration</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/31bfc99b649a426d569796c1401d8dc6848c9653/dsc/finemapping.ipynb"><span class="revision_id">31bfc99<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-20</td>
-<td>Fix type due to previous commit</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/64cf92208796f2a266ef0f8a609d6369856035dc/dsc/finemapping.ipynb"><span class="revision_id">64cf922<span></a></td>
+<td>Fix type due to previous commit</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/64cf92208796f2a266ef0f8a609d6369856035dc/dsc/finemapping.ipynb"><span class="revision_id">64cf922<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-18</td>
-<td>Revert FINEMAP code to output all configurations</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/89c7d08eff0d6fe7676eeabab1523c70332ade4f/dsc/finemapping.ipynb"><span class="revision_id">89c7d08<span></a></td>
+<td>Revert FINEMAP code to output all configurations</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/89c7d08eff0d6fe7676eeabab1523c70332ade4f/dsc/finemapping.ipynb"><span class="revision_id">89c7d08<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-18</td>
-<td>Remove fit_susie01 (since we've got est_prior)</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/1c1003fc665737a6c7150e424f59e336a529b0e7/dsc/finemapping.ipynb"><span class="revision_id">1c1003f<span></a></td>
+<td>Remove fit_susie01 (since we've got est_prior)</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/1c1003fc665737a6c7150e424f59e336a529b0e7/dsc/finemapping.ipynb"><span class="revision_id">1c1003f<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-18</td>
-<td>Separate susie from susie auto</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/24b7bf304421316d1c70d0cab18fe420ea96e9ed/dsc/finemapping.ipynb"><span class="revision_id">24b7bf3<span></a></td>
+<td>Separate susie from susie auto</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/24b7bf304421316d1c70d0cab18fe420ea96e9ed/dsc/finemapping.ipynb"><span class="revision_id">24b7bf3<span></a></td>
 <td>Gao Wang</td>
 <td>2018-07-13</td>
-<td>Update documentation</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/12fe3639ca1b2e6c50e20ef8a221f4f4de0a8cb9/dsc/finemapping.ipynb"><span class="revision_id">12fe363<span></a></td>
+<td>Update documentation</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/12fe3639ca1b2e6c50e20ef8a221f4f4de0a8cb9/dsc/finemapping.ipynb"><span class="revision_id">12fe363<span></a></td>
 <td>Gao Wang</td>
 <td>2018-06-27</td>
-<td>Add finemap 95% config filter</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/e4eeba89fa10dc06f2af7f4f6df452e49de61c81/dsc/finemapping.ipynb"><span class="revision_id">e4eeba8<span></a></td>
+<td>Add finemap 95% config filter</td></tr><tr><td><a target="_blank" href="http://github.com/gaow/mvarbvs/blob/e4eeba89fa10dc06f2af7f4f6df452e49de61c81/dsc/finemapping.ipynb"><span class="revision_id">e4eeba8<span></a></td>
 <td>Gao Wang</td>
 <td>2018-06-27</td>
-<td>FINEMAP 1.1 max-snp argument fix</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/c70251f9af0b866d82b6ec81f23c457ed1c8a5ac/dsc/finemapping.ipynb"><span class="revision_id">c70251f<span></a></td>
-<td>Gao Wang</td>
-<td>2018-06-22</td>
-<td>Add more documentations</td></tr><tr><td><a target="_blank" href="https://github.com/gaow/mvarbvs/blob/2c06a8cd553237ec934710afc787e9aa0248d640/dsc/finemapping.ipynb"><span class="revision_id">2c06a8c<span></a></td>
-<td>Gao Wang</td>
-<td>2018-06-15</td>
-<td>Complete susie-dap hard case comparisons</td></tr></table>
+<td>FINEMAP 1.1 max-snp argument fix</td></tr></table>
 </div>
 
 </div>
@@ -575,7 +580,7 @@ body {
     <span class="n">run_susie</span><span class="p">:</span> <span class="n">liter_data</span> <span class="o">*</span> <span class="n">summarize_ld</span> <span class="o">*</span> <span class="n">simple_lm</span> <span class="o">*</span> <span class="n">fit_susie</span> <span class="o">*</span> <span class="p">(</span><span class="n">plot_sse</span><span class="p">,</span> <span class="n">plot_susie</span><span class="p">)</span>
     <span class="n">run_varbvs</span><span class="p">:</span> <span class="n">liter_data</span> <span class="o">*</span> <span class="n">summarize_ld</span> <span class="o">*</span> <span class="n">simple_lm</span> <span class="o">*</span> <span class="n">fit_varbvs</span> <span class="o">*</span> <span class="n">plot_sse</span>
     <span class="n">run_comparison</span><span class="p">:</span> <span class="n">liter_data</span> <span class="o">*</span> <span class="n">summarize_ld</span> <span class="o">*</span> <span class="n">lm_less</span> <span class="o">*</span> <span class="n">get_sumstats</span> <span class="o">*</span> <span class="p">(</span><span class="n">fit_susie</span> <span class="o">*</span> <span class="n">plot_susie</span><span class="p">,</span> <span class="n">fit_dap</span> <span class="o">*</span> <span class="n">plot_dap</span><span class="p">,</span> <span class="n">fit_caviar</span> <span class="o">*</span> <span class="n">plot_caviar</span><span class="p">,</span> <span class="n">fit_finemap</span> <span class="o">*</span> <span class="n">plot_finemap</span><span class="p">)</span>
-    <span class="n">hard_case</span><span class="p">:</span> <span class="n">full_data</span> <span class="o">*</span> <span class="n">summarize_ld</span> <span class="o">*</span> <span class="n">lm_less03</span> <span class="o">*</span> <span class="n">get_sumstats</span> <span class="o">*</span> <span class="p">(</span><span class="n">fit_susie10</span> <span class="o">*</span> <span class="n">plot_susie</span><span class="p">,</span> <span class="n">fit_dap</span> <span class="o">*</span> <span class="n">plot_dap</span><span class="p">)</span>
+    <span class="n">hard_case</span><span class="p">:</span> <span class="n">full_data</span> <span class="o">*</span> <span class="n">lm_less03</span> <span class="o">*</span> <span class="n">get_sumstats</span> <span class="o">*</span> <span class="p">(</span><span class="n">fit_susie10</span> <span class="o">*</span> <span class="n">plot_susie</span><span class="p">,</span> <span class="n">fit_dap</span> <span class="o">*</span> <span class="n">plot_dap</span><span class="p">)</span>
   <span class="n">exec_path</span><span class="p">:</span> <span class="n">modules</span>
   <span class="k">global</span><span class="p">:</span>
     <span class="n">data_file</span><span class="p">:</span> <span class="o">../</span><span class="n">data</span><span class="o">/</span><span class="n">gtex</span><span class="o">-</span><span class="n">manifest</span><span class="o">.</span><span class="n">txt</span>
@@ -806,7 +811,7 @@ body {
   <span class="n">dataset</span><span class="p">:</span> <span class="n">Shell</span><span class="p">{</span><span class="n">head</span> <span class="o">-</span><span class="mi">150</span> <span class="err">$</span><span class="p">{</span><span class="n">data_file</span><span class="p">}}</span>
   <span class="n">subset</span><span class="p">:</span> <span class="n">NULL</span>
   <span class="err">$</span><span class="n">data</span><span class="p">:</span> <span class="n">data</span>
-  <span class="err">$</span><span class="n">top_idx</span><span class="p">:</span> <span class="n">NULL</span>
+  <span class="err">$</span><span class="n">top_idx</span><span class="p">:</span> <span class="n">NA</span>
   <span class="err">$</span><span class="n">ld_file</span><span class="p">:</span> <span class="nb">file</span><span class="p">(</span><span class="n">ld</span><span class="p">)</span>
   <span class="err">$</span><span class="n">ld_mat</span><span class="p">:</span> <span class="nb">file</span><span class="p">(</span><span class="n">rds</span><span class="p">)</span>
         
@@ -3610,7 +3615,7 @@ rs3 10 1 G A 0.18 0.0228 0.0199</code></pre>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/a522f02f7ba56663e5a5c999e37e91359f9d22b3/dsc/finemapping.ipynb"><code>dsc/finemapping.ipynb</code></a> committed by Gao Wang on Tue Aug 7 11:16:21 2018 <a href="http://github.com/gaow/mvarbvs/commit/a522f02f7ba56663e5a5c999e37e91359f9d22b3">revision 50, a522f02</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/dcf8131c51521524b46d1d46e6f746015787946c/dsc/finemapping.ipynb"><code>dsc/finemapping.ipynb</code></a> committed by Gao Wang on Thu Aug 9 12:29:21 2018 <a href="http://github.com/gaow/mvarbvs/commit/dcf8131c51521524b46d1d46e6f746015787946c">revision 55, dcf8131</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
