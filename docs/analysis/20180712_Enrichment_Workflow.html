@@ -270,6 +270,15 @@ body {
 </li>
 </ol>
 <p>We focus only on the results that has 1 or more CS identified.</p>
+<h2 id="Annotations-used-for-splice-QTL">Annotations used for splice QTL<a class="anchor-link" href="#Annotations-used-for-splice-QTL">&#182;</a></h2><p>We use the following types of annotations:</p>
+<ol>
+<li>Histone marks for LCLs from Epigenome Roadmap (download link see pipeline below)</li>
+<li><a href="http://www.ebi.ac.uk/birney-srv/CTCF-QTL/">CTCF binding sites</a></li>
+<li>POL II ChIP-seq (download link see pipeline below)</li>
+<li>Intron and exon regions from UCSC</li>
+<li>Extended splice site, defined as 5bp up/down intron start site and 15bp up/down intron end site (based on UCSC intron data)</li>
+</ol>
+<p>I will first test for enrichment with the primary CS (defined as the set with highest purity), then test for the non-primary CS. The idea is to discover enrichment of annotations in the primary CS, then also show that additional CS has similar (or interestingly different!) pattern of enrichment.</p>
 
 </div>
 </div>
@@ -430,15 +439,23 @@ chr9    141134069       141134172</code></pre>
 <p>There are many annotations one can use. For this workflow one should prepare a list of annotations for input, like this:</p>
 
 <pre><code># my annotation
-E8_TCM_T_48h
-E8_TCM_D_48h
-NR2F2
-PGR_Demayo
-DNaseI
-H3K27me3
-H3K4me3
-H3K27ac
-FAIRE</code></pre>
+Coding_UCSC
+CTCF_binding
+E116-DNase.macs2
+E116-H2A.Z
+E116-H3K27ac
+E116-H3K27me3
+E116-H3K36me3
+E116-H3K4me1
+E116-H3K4me2
+E116-H3K4me3
+E116-H3K79me2
+E116-H3K9ac
+E116-H3K9me3
+E116-H4K20me1
+E117-DNase.macs2
+Intron_UCSC
+PolII_binding</code></pre>
 <p>comment symbol <code>#</code> is allowed.</p>
 
 </div>
@@ -485,7 +502,7 @@ FAIRE</code></pre>
 <span class="c1"># Specify work / output directory</span>
 <span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{y_data:d}/{trait}_output&#39;</span><span class="p">)</span>
 <span class="c1"># Path to directory of annotation files</span>
-<span class="kn">parameter:</span> <span class="n">annotation_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GIT/LargeFiles/he_lab_annotations_bed&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">annotation_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GIT/LargeFiles/lcl_annotation&#39;</span><span class="p">)</span>
 <span class="c1"># Path to list of single annotations to use</span>
 <span class="kn">parameter:</span> <span class="n">single_annot</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span> <span class="c1">#parameter: single_annot = path(&quot;data/all_annotations.txt&quot;)</span>
 <span class="c1"># Maximum distance to site of interest, set to eg. 100Kb or 1Mb up/downstream to start site of analysis unit</span>
@@ -497,6 +514,209 @@ FAIRE</code></pre>
     <span class="n">single_anno</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{annotation_dir}/{x.split()[0]}.bed&quot;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">single_annot</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)]</span>
 <span class="k">except</span> <span class="p">(</span><span class="n">FileNotFoundError</span><span class="p">,</span> <span class="n">IsADirectoryError</span><span class="p">):</span>
     <span class="n">single_anno</span> <span class="o">=</span> <span class="p">[]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Prepare-annotations">Prepare annotations<a class="anchor-link" href="#Prepare-annotations">&#182;</a></h2><p>Histone marks</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_histone_annotation --trait AS \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">download_histone_annotation</span><span class="p">]</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">paths</span><span class="p">([</span><span class="s2">&quot;E116-DNase.macs2.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H2A.Z.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K4me1.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K4me2.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K4me3.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K9ac.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K9me3.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K27ac.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K27me3.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K36me3.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H3K79me2.narrowPeak.gz&quot;</span><span class="p">,</span>
+<span class="s2">&quot;E116-H4K20me1.narrowPeak.gz&quot;</span><span class="p">])</span>
+<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;dataset&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/{_dataset:nn}.bed&#39;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">egg2</span><span class="o">.</span><span class="n">wustl</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">roadmap</span><span class="o">/</span><span class="n">data</span><span class="o">/</span><span class="n">byFileType</span><span class="o">/</span><span class="n">peaks</span><span class="o">/</span><span class="n">consolidated</span><span class="o">/</span><span class="n">narrowPeak</span><span class="o">/</span><span class="p">{</span><span class="n">_dataset</span><span class="p">}</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span>
+    <span class="n">zcat</span> <span class="p">{</span><span class="n">_dataset</span><span class="p">}</span> <span class="o">|</span> <span class="n">cut</span> <span class="o">-</span><span class="n">f1</span><span class="o">-</span><span class="mi">3</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">v</span> <span class="n">chrM</span> <span class="o">|</span> <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="o">-</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>CTCF binding:</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_ctcf_annotation --trait AS \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">download_ctcf_annotation</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/CTCF_binding.bed&#39;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">annotation_dir</span>
+    <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">ebi</span><span class="o">.</span><span class="n">ac</span><span class="o">.</span><span class="n">uk</span><span class="o">/</span><span class="n">birney</span><span class="o">-</span><span class="n">srv</span><span class="o">/</span><span class="n">CTCF</span><span class="o">-</span><span class="n">QTL</span><span class="o">/</span><span class="n">phenotypes</span><span class="o">/</span><span class="n">bindings</span><span class="o">.</span><span class="n">csv</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span>
+    <span class="n">cut</span> <span class="o">-</span><span class="n">f1</span><span class="o">-</span><span class="mi">3</span> <span class="o">-</span><span class="n">d</span> <span class="s2">&quot;,&quot;</span> <span class="n">bindings</span><span class="o">.</span><span class="n">csv</span> <span class="o">|</span> <span class="n">tail</span> <span class="o">-</span><span class="n">n</span><span class="o">+</span><span class="mi">2</span> <span class="o">|</span> <span class="n">sed</span> <span class="s1">&#39;s/,/</span><span class="se">\t</span><span class="s1">/g&#39;</span> <span class="o">|</span> <span class="n">sed</span> <span class="s1">&#39;s/^/chr/g&#39;</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">v</span> <span class="n">chrM</span> <span class="o">|</span> <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="o">-</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>PolyII binding:</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_polII_annotation --trait AS \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+<p>Need to <code>liftOver</code>:</p>
+
+<pre><code>conda config --add channels bioconda
+conda install ucsc-liftover</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">download_polII_annotation</span><span class="p">]</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="s2">&quot;GSM487431_GM12878_Pol2_narrowPeak.bed.gz&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/PolII_binding.bed&#39;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">expand</span><span class="o">=</span><span class="bp">True</span>
+    <span class="n">ftp</span><span class="p">:</span><span class="o">//</span><span class="n">ftp</span><span class="o">.</span><span class="n">ncbi</span><span class="o">.</span><span class="n">nlm</span><span class="o">.</span><span class="n">nih</span><span class="o">.</span><span class="n">gov</span><span class="o">/</span><span class="n">geo</span><span class="o">/</span><span class="n">samples</span><span class="o">/</span><span class="n">GSM487nnn</span><span class="o">/</span><span class="n">GSM487431</span><span class="o">/</span><span class="n">suppl</span><span class="o">/</span><span class="p">{</span><span class="n">dataset</span><span class="p">}</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">annotation_dir</span>
+    <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">hgdownload</span><span class="o">.</span><span class="n">cse</span><span class="o">.</span><span class="n">ucsc</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">goldenpath</span><span class="o">/</span><span class="n">hg18</span><span class="o">/</span><span class="n">liftOver</span><span class="o">/</span><span class="n">hg18ToHg19</span><span class="o">.</span><span class="n">over</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">gz</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span>
+    <span class="n">zcat</span> <span class="p">{</span><span class="n">dataset</span><span class="p">}</span> <span class="o">|</span> <span class="n">cut</span> <span class="o">-</span><span class="n">f1</span><span class="o">-</span><span class="mi">3</span>  <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">v</span> <span class="n">chrM</span> <span class="o">|</span> <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="o">-</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">hg18</span><span class="o">.</span><span class="n">bed</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span>
+    <span class="n">liftOver</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">hg18</span><span class="o">.</span><span class="n">bed</span> <span class="n">hg18ToHg19</span><span class="o">.</span><span class="n">over</span><span class="o">.</span><span class="n">chain</span><span class="o">.</span><span class="n">gz</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span> <span class="n">unmapped</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Gene regions:</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gene_regions --trait AS \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gene_regions_refgene</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/genes.bed&#39;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">annotation_dir</span>
+    <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">hgdownload</span><span class="o">.</span><span class="n">cse</span><span class="o">.</span><span class="n">ucsc</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">goldenPath</span><span class="o">/</span><span class="n">hg19</span><span class="o">/</span><span class="n">database</span><span class="o">/</span><span class="n">refGene</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">gz</span>
+<span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span>
+    <span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
+    <span class="n">ref_gene</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_table</span><span class="p">(</span><span class="s1">&#39;refGene.txt.gz&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> 
+                         <span class="n">header</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">usecols</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">12</span><span class="p">),</span> 
+                         <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tx_name&quot;</span><span class="p">,</span> <span class="s2">&quot;chrom&quot;</span><span class="p">,</span> <span class="s2">&quot;tx_start&quot;</span><span class="p">,</span> <span class="s2">&quot;tx_end&quot;</span><span class="p">,</span> <span class="s2">&quot;gene_name&quot;</span><span class="p">])</span>
+    <span class="n">ref_gene</span> <span class="o">=</span> <span class="n">ref_gene</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;chrom&quot;</span><span class="p">,</span> <span class="s2">&quot;tx_start&quot;</span><span class="p">,</span> <span class="s2">&quot;tx_end&quot;</span><span class="p">))</span>
+    <span class="n">ref_gene</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">ref_gene</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;chrom&#39;</span><span class="p">,</span><span class="s1">&#39;gene_name&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">&#39;tx_start&#39;</span><span class="p">:</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;tx_end&#39;</span><span class="p">:</span> <span class="s1">&#39;max&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">to_records</span><span class="p">())</span>
+    <span class="n">ref_gene</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">sep</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gene_regions</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/gene_map.txt&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/gene_map.bed&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span>
+    <span class="n">cut</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">f2</span><span class="o">-</span><span class="mi">4</span> <span class="o">|</span> <span class="n">sed</span> <span class="s1">&#39;s/^/chr/g&#39;</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">v</span> <span class="n">chrM</span> <span class="o">|</span> <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="o">-</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Extended splice sites:</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb extended_splice_site --trait AS \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">extended_splice_site</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{annotation_dir}/Intron_UCSC.bed&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{annotation_dir}/Extended_splice_site.bed&quot;</span>
+<span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span><span class="o">.</span><span class="n">readlines</span><span class="p">()]</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{line[0]}</span><span class="se">\t</span><span class="s1">{int(line[1])-5}</span><span class="se">\t</span><span class="s1">{int(line[1])+5}&#39;</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{line[0]}</span><span class="se">\t</span><span class="s1">{int(line[2])-15}</span><span class="se">\t</span><span class="s1">{int(line[2])+15}&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span>
+    <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">sorted</span><span class="o">.</span><span class="n">txt</span>
+    <span class="n">mv</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">sorted</span><span class="o">.</span><span class="n">txt</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
 </div>
@@ -530,9 +750,13 @@ FAIRE</code></pre>
     <span class="n">pip</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">pip</span>
     <span class="n">names</span> <span class="o">=</span> <span class="n">names</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="nb">input</span><span class="p">)[[</span><span class="n">dat</span><span class="err">$</span><span class="n">idx</span><span class="p">]]</span><span class="err">$</span><span class="n">z_score</span><span class="p">)</span>
     <span class="n">zscore</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="nb">input</span><span class="p">)[[</span><span class="n">dat</span><span class="err">$</span><span class="n">idx</span><span class="p">]]</span><span class="err">$</span><span class="n">z_score</span>
+    <span class="c1"># For earlier version of susieR</span>
+    <span class="n">ordering</span> <span class="o">=</span> <span class="n">order</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">purity</span><span class="err">$</span><span class="nb">min</span><span class="o">.</span><span class="n">abs</span><span class="o">.</span><span class="n">corr</span><span class="p">,</span> <span class="n">decreasing</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[</span><span class="n">ordering</span><span class="p">]</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">purity</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">purity</span><span class="p">[</span><span class="n">ordering</span><span class="p">,]</span>
     <span class="n">cs_id</span> <span class="o">=</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">pip</span><span class="p">))</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span> <span class="p">{</span>
-        <span class="n">cs_id</span><span class="p">[</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">cs_id</span><span class="p">[</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
     <span class="p">}</span>
     <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">cbind</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">pip</span><span class="p">,</span><span class="n">zscore</span><span class="p">,</span><span class="n">cs_id</span><span class="p">),</span> <span class="n">gzfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}),</span> <span class="n">quote</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -554,15 +778,15 @@ FAIRE</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 
-<pre><code>[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/SuSiE_loci.sumstats.gz | wc -l
-1667666
-[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/SuSiE_loci.sumstats.gz | cut -f 4 | grep 1 | wc -l
-46659
-[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/SuSiE_loci.sumstats.gz | cut -f 4 | grep 2 | wc -l
-2212
-[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/SuSiE_loci.sumstats.gz | cut -f 4 | grep 3 | wc -l
-152</code></pre>
-<p>So we have total of 1667666 variants, 46659 in CS 1, 2212 in CS 2.</p>
+<pre><code>[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | wc -l
+1289796
+[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 1 | wc -l
+37911
+[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 2 | wc -l
+1881
+[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 3 | wc -l
+91</code></pre>
+<p>So we have total of 1289796 variants, 37911 in CS 1, 1881 in CS 2, etc.</p>
 
 </div>
 </div>
@@ -586,7 +810,7 @@ FAIRE</code></pre>
 <span class="kn">parameter:</span> <span class="n">chr_prefix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 <span class="kn">input:</span> <span class="n">in_file</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.bed.unsorted&#39;</span>
-<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
     <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
@@ -605,7 +829,7 @@ FAIRE</code></pre>
 
 <span class="p">[</span><span class="n">zscore2bed_2</span><span class="p">]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}&#39;</span>
-<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
      <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 <span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
 
@@ -642,7 +866,7 @@ FAIRE</code></pre>
 <span class="kn">depends:</span> <span class="n">f</span><span class="s1">&#39;{z_score:n}.bed&#39;</span>
 <span class="kn">input:</span> <span class="nb">set</span><span class="p">(</span><span class="n">paths</span><span class="p">(</span><span class="n">single_anno</span><span class="p">)),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{out_dir}/{_input:bn}.{z_score:bn}.bed&#39;</span>
-<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}:{annotation_dir}&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}:{annotation_dir}&#39;</span>
     <span class="n">bedops</span> <span class="o">-</span><span class="n">e</span> <span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">bed</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
@@ -661,7 +885,7 @@ FAIRE</code></pre>
 <span class="kn">depends:</span> <span class="n">z_score</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.gz&#39;</span>
-<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
     <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span>
@@ -671,12 +895,14 @@ FAIRE</code></pre>
     <span class="n">annot_name</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">bnr</span><span class="p">}</span> <span class="o">%&gt;%</span> <span class="n">str_replace</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span><span class="err">$</span><span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">bnr</span><span class="p">}),</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="n">out_name</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}</span>
 
-    <span class="nb">vars</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="n">variant_tsv</span><span class="p">)[,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">vars</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="n">variant_tsv</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)[,</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">annot_vars</span> <span class="o">=</span> <span class="n">read_tsv</span><span class="p">(</span><span class="n">annotation_var_bed</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
     <span class="n">names</span><span class="p">(</span><span class="nb">vars</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="s2">&quot;SNP&quot;</span>
     <span class="nb">vars</span> <span class="o">&lt;-</span> <span class="nb">vars</span> <span class="o">%&gt;%</span>
             <span class="n">mutate</span><span class="p">(</span><span class="n">annot_d</span> <span class="o">=</span> <span class="n">case_when</span><span class="p">(</span><span class="n">SNP</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">annot_vars</span><span class="err">$</span><span class="n">X4</span> <span class="o">~</span> <span class="mi">1</span><span class="p">,</span>
                                                         <span class="n">TRUE</span> <span class="o">~</span> <span class="mi">0</span><span class="p">))</span>
+    <span class="c1"># remove possible duplicate rows</span>
+    <span class="nb">vars</span> <span class="o">&lt;-</span> <span class="n">unique</span><span class="p">(</span><span class="nb">vars</span><span class="p">)</span>    
     <span class="n">names</span><span class="p">(</span><span class="nb">vars</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="n">annot_name</span>
     <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="nb">vars</span><span class="p">,</span> <span class="nb">file</span><span class="o">=</span><span class="n">gzfile</span><span class="p">(</span><span class="n">out_name</span><span class="p">),</span>
                 <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
@@ -721,7 +947,12 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 
-<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gregor \
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 1 \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --trait AS -j 16 \
+    --single-annot data/annotation.list 
+
+sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
     --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
     --trait AS -j 16 \
     --single-annot data/annotation.list</code></pre>
@@ -735,18 +966,21 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gregor_1</span> <span class="p">(</span><span class="n">make</span> <span class="n">SNP</span> <span class="n">index</span><span class="p">)]</span>
+<span class="c1"># which set to test. 1 to test primary test, otherwise non-primary set</span>
+<span class="kn">parameter:</span> <span class="n">cs</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="kn">input:</span> <span class="n">z_score</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.rsid.txt&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.annotations.list&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.set{cs}.txt&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.annotations.list&#39;</span>
 <span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
-    <span class="n">zcat</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">|</span> <span class="n">cut</span> <span class="o">-</span><span class="n">f</span> <span class="mi">2</span><span class="p">,</span><span class="mi">3</span> <span class="o">-</span><span class="n">d</span> <span class="s2">&quot;_&quot;</span> <span class="o">|</span> <span class="n">sed</span> <span class="s1">&#39;s/_/:/g&#39;</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
+    <span class="n">zcat</span> <span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">|</span> <span class="n">awk</span> <span class="s1">&#39;{if (${&quot;$4==1 &amp;&amp; $2 &gt; 0.05&quot; if cs == 1 else &quot;$4&gt;1 &amp;&amp; $2 &gt; 0.05&quot;}) print $0}&#39;</span> <span class="o">|</span> <span class="n">cut</span> <span class="o">-</span><span class="n">f</span> <span class="mi">2</span><span class="p">,</span><span class="mi">3</span> <span class="o">-</span><span class="n">d</span> <span class="s2">&quot;_&quot;</span> <span class="o">|</span> <span class="n">sed</span> <span class="s1">&#39;s/_/:/g&#39;</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">-</span><span class="n">u</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span>
 
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">_output</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
     <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">single_anno</span><span class="p">))</span>
 
 <span class="p">[</span><span class="n">gregor_2</span> <span class="p">(</span><span class="n">make</span> <span class="n">configuration</span> <span class="nb">file</span><span class="p">)]</span>
-<span class="kn">parameter:</span> <span class="n">gregor_db</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/LargeFiles/GREGOR_DB&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">gregor_db</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/data/GREGOR_DB&#39;</span><span class="p">)</span>
 <span class="kn">parameter:</span> <span class="n">pop</span> <span class="o">=</span> <span class="s1">&#39;AFR&#39;</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input[0]:nn}.gregor.conf&#39;</span>
+<span class="kn">parameter:</span> <span class="n">ncpu</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input[0]:n}.gregor.conf&#39;</span>
 <span class="kn">report:</span> <span class="n">output</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output}&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="c1">##############################################################################</span>
     <span class="c1"># CHIPSEQ ENRICHMENT CONFIGURATION FILE</span>
@@ -765,7 +999,7 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
     <span class="n">BEDFILE_IS_SORTED</span> <span class="o">=</span> <span class="n">true</span>  <span class="c1">## false, if the bed files are not sorted</span>
     <span class="n">POPULATION</span> <span class="o">=</span> <span class="p">{</span><span class="n">pop</span><span class="p">}</span>  <span class="c1">## define the population, you can specify EUR, AFR, AMR or ASN</span>
     <span class="n">TOPNBEDFILES</span> <span class="o">=</span> <span class="mi">2</span> 
-    <span class="n">JOBNUMBER</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">JOBNUMBER</span> <span class="o">=</span> <span class="p">{</span><span class="n">ncpu</span><span class="p">}</span>
     <span class="c1">###############################################################################</span>
     <span class="c1">#BATCHTYPE = mosix ##  submit jobs on MOSIX</span>
     <span class="c1">#BATCHOPTS = -E/tmp -i -m2000 -j10,11,12,13,14,15,16,17,18,19,120,122,123,124,125 sh -c</span>
@@ -788,7 +1022,7 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>GREGOR is written in <code>perl</code>. Some libraries are required before one can run GREGOR:</p>
+<p>GREGOR is written in <code>perl</code>. Some libraries are required to run GREGOR:</p>
 
 <pre><code>sudo apt-get install libdbi-perl libswitch-perl libdbd-sqlite3-perl</code></pre>
 
@@ -804,7 +1038,7 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <span class="kn">parameter:</span> <span class="n">gregor_path</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/opt/GREGOR&#39;</span><span class="p">)</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}_gregor_output/StatisticSummaryFile.txt&#39;</span>
 <span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
-    <span class="n">perl</span> <span class="p">{</span><span class="n">gregor_path</span><span class="p">}</span><span class="o">/</span><span class="n">script</span><span class="o">/</span><span class="n">GREGOR</span><span class="o">.</span><span class="n">pl</span> <span class="o">--</span><span class="n">conf</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&amp;&amp;</span> <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+    <span class="n">rm</span> <span class="o">-</span><span class="n">rf</span> <span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">nn</span><span class="p">}</span><span class="n">_gregor_output</span> <span class="o">&amp;&amp;</span> <span class="n">perl</span> <span class="p">{</span><span class="n">gregor_path</span><span class="p">}</span><span class="o">/</span><span class="n">script</span><span class="o">/</span><span class="n">GREGOR</span><span class="o">.</span><span class="n">pl</span> <span class="o">--</span><span class="n">conf</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&amp;&amp;</span> <span class="n">touch</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 
 <span class="p">[</span><span class="n">gregor_4</span> <span class="p">(</span><span class="n">format</span> <span class="n">output</span><span class="p">)]</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.csv&#39;</span>
@@ -819,7 +1053,7 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci_gregor_output/StatisticSummaryFile.csv&#39;</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
@@ -844,64 +1078,20 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <table>
 <thead><tr><th></th><th scope=col>Bed_File</th><th scope=col>InBed_Index_SNP</th><th scope=col>ExpectNum_of_InBed_SNP</th><th scope=col>PValue</th></tr></thead>
 <tbody>
-	<tr><th scope=row>2</th><td>POLII_DeMayo.bed                               </td><td>148424                                         </td><td> 66768.2288                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>4</th><td>TSS_Hoffman.bed                                </td><td>105040                                         </td><td> 51686.5347                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>7</th><td>DGF_ENCODE.bed                                 </td><td>352229                                         </td><td>304847.0034                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>9</th><td>h3k4me3-final-C-48h.bed                        </td><td> 95058                                         </td><td> 51763.8750                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>12</th><td>CN_range_anno.bed                              </td><td>120947                                         </td><td>108629.8275                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>13</th><td>h3k4me1-final-C-48h.bed                        </td><td>208171                                         </td><td>156068.2213                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>15</th><td>UTR_3_UCSC.bed                                 </td><td> 62993                                         </td><td> 38469.2608                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>16</th><td>NSC_range_anno.bed                             </td><td>112092                                         </td><td> 98634.1120                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>17</th><td>Enhancer_Andersson.bed                         </td><td> 23736                                         </td><td> 16741.3500                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>18</th><td>E8_TCM_D_48h.bed                               </td><td>159330                                         </td><td>118319.0294                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>19</th><td>h3k4me1-final-D-48h.bed                        </td><td>201232                                         </td><td>152916.2864                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>21</th><td>hic_human_gain_interacting_DT1_dTL4_D_48h.bed  </td><td>  7201                                         </td><td>  3406.4494                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>22</th><td>DHS_peaks_Trynka.bed                           </td><td>290817                                         </td><td>266604.2877                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>23</th><td>E8_TCM_T_48h.bed                               </td><td>146277                                         </td><td>106205.1566                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>24</th><td>Enhancer_Hoffman.bed                           </td><td>158045                                         </td><td>107265.6836                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>25</th><td>hic_all_interacting_DT1_dTL4_D_48h_expanded.bed</td><td>282194                                         </td><td>179417.3868                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>26</th><td>H3K4me3.bed                                    </td><td> 65160                                         </td><td> 33016.5929                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>27</th><td>DN_range_anno.bed                              </td><td>177616                                         </td><td>158188.9712                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>28</th><td>TFBS_ENCODE.bed                                </td><td>343409                                         </td><td>281616.0570                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>29</th><td>SuperEnhancer_Hnisz.bed                        </td><td>227836                                         </td><td>155177.3329                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>30</th><td>FetalDHS_Trynka.bed                            </td><td>241405                                         </td><td>215215.1876                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>31</th><td>H3K27ac_PGC2.bed                               </td><td>419715                                         </td><td>341032.7564                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>33</th><td>hic_all_interacting_DT1_dTL4_D_48h.bed         </td><td>156628                                         </td><td> 94286.0462                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>34</th><td>ips_range_anno.bed                             </td><td>225026                                         </td><td>199397.0582                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>36</th><td>Transcribed_Hoffman.bed                        </td><td>472250                                         </td><td>425468.7470                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>37</th><td>UTR_5_UCSC.bed                                 </td><td> 43607                                         </td><td> 24890.7079                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>41</th><td>Promoter_UCSC.bed                              </td><td>124896                                         </td><td> 72956.8647                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>42</th><td>H3K4me1_peaks_Trynka.bed                       </td><td>378846                                         </td><td>327010.4645                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>43</th><td>CTCF_Hoffman.bed                               </td><td> 96020                                         </td><td> 78533.4241                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>44</th><td>H3K27ac.bed                                    </td><td> 32067                                         </td><td> 17557.1494                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>46</th><td>PromoterFlanking_Hoffman.bed                   </td><td> 55782                                         </td><td> 33676.5310                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>47</th><td>h3k4me3-final-D-48h.bed                        </td><td> 97934                                         </td><td> 54390.0531                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>48</th><td>h3k27ac-final-C-48h.bed                        </td><td>138545                                         </td><td> 97309.2398                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>49</th><td>DNaseI.bed                                     </td><td>180607                                         </td><td>114976.6276                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>50</th><td>WeakEnhancer_Hoffman.bed                       </td><td> 91516                                         </td><td> 71120.7073                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>51</th><td>Coding_UCSC.bed                                </td><td> 90547                                         </td><td> 54338.7560                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>52</th><td>GA_range_anno.bed                              </td><td>164513                                         </td><td>144006.7218                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>53</th><td>H3K27ac_Hnisz.bed                              </td><td>461449                                         </td><td>376970.7602                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>54</th><td>hic_harmonizome_interacting_DT1_dTL4_D_48h.bed </td><td> 23990                                         </td><td> 13069.6623                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>55</th><td>H3K9ac_peaks_Trynka.bed                        </td><td>191165                                         </td><td>126158.2969                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>57</th><td>H3K4me3_peaks_Trynka.bed                       </td><td>180459                                         </td><td>133295.4966                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>58</th><td>h3k27ac-final-D-48h.bed                        </td><td>141034                                         </td><td>101569.3987                                    </td><td> 0.000000e+00                                  </td></tr>
-	<tr><th scope=row>32</th><td>eQTL_0.1_FDR.bed                               </td><td>  2286                                         </td><td>  1053.1653                                    </td><td>2.483173e-304                                  </td></tr>
-	<tr><th scope=row>14</th><td>eQTL_0.05_FDR.bed                              </td><td>  1652                                         </td><td>   731.2447                                    </td><td>3.292609e-243                                  </td></tr>
-	<tr><th scope=row>11</th><td>FOSL2.bed                                      </td><td> 19949                                         </td><td> 16902.1539                                    </td><td>3.312756e-134                                  </td></tr>
-	<tr><th scope=row>8</th><td>hESC-RegElements-hg19.bed                      </td><td> 17907                                         </td><td> 15011.6075                                    </td><td>7.171432e-132                                  </td></tr>
-	<tr><th scope=row>45</th><td>PLZF.bed                                       </td><td>  1617                                         </td><td>   931.9039                                    </td><td> 4.260820e-98                                  </td></tr>
-	<tr><th scope=row>6</th><td>PGR-B_Bagchi.bed                               </td><td> 18705                                         </td><td> 16222.1686                                    </td><td> 2.556596e-92                                  </td></tr>
-	<tr><th scope=row>10</th><td>H3K27me3.bed                                   </td><td>  6150                                         </td><td>  5064.4085                                    </td><td> 3.989667e-55                                  </td></tr>
-	<tr><th scope=row>5</th><td>NR2F2.bed                                      </td><td> 15691                                         </td><td> 13987.8574                                    </td><td> 4.911642e-52                                  </td></tr>
-	<tr><th scope=row>3</th><td>PGR-A_Bagchi.bed                               </td><td> 10598                                         </td><td>  9415.0148                                    </td><td> 4.915404e-38                                  </td></tr>
-	<tr><th scope=row>39</th><td>Conserved_LindbladToh.bed                      </td><td> 88432                                         </td><td> 86063.5185                                    </td><td> 1.639221e-23                                  </td></tr>
-	<tr><th scope=row>1</th><td>1_GATA2-Interval-Track.bed                     </td><td> 48250                                         </td><td> 46682.3763                                    </td><td> 1.014878e-15                                  </td></tr>
-	<tr><th scope=row>20</th><td>FOXO1_DeMayo.bed                               </td><td> 23060                                         </td><td> 22572.3426                                    </td><td> 2.802158e-04                                  </td></tr>
-	<tr><th scope=row>35</th><td>PGR_Demayo.bed                                 </td><td>  6543                                         </td><td>  6550.6041                                    </td><td> 5.414172e-01                                  </td></tr>
-	<tr><th scope=row>38</th><td>FAIRE.bed                                      </td><td> 36952                                         </td><td> 45491.3816                                    </td><td> 1.000000e+00                                  </td></tr>
-	<tr><th scope=row>40</th><td>Repressed_Hoffman.bed                          </td><td>226858                                         </td><td>353001.2185                                    </td><td> 1.000000e+00                                  </td></tr>
-	<tr><th scope=row>56</th><td>Intron_UCSC.bed                                </td><td>378875                                         </td><td>387183.3032                                    </td><td> 1.000000e+00                                  </td></tr>
+	<tr><th scope=row>1</th><td>E116-H3K36me3.bed       </td><td>2883                    </td><td> 770.67361              </td><td> 0.000000e+00           </td></tr>
+	<tr><th scope=row>2</th><td>E116-H3K4me3.bed        </td><td>2162                    </td><td> 650.85295              </td><td> 0.000000e+00           </td></tr>
+	<tr><th scope=row>7</th><td>PolII_binding.bed       </td><td>1353                    </td><td> 252.57187              </td><td> 0.000000e+00           </td></tr>
+	<tr><th scope=row>9</th><td>E116-H3K9ac.bed         </td><td>2112                    </td><td> 591.04726              </td><td> 0.000000e+00           </td></tr>
+	<tr><th scope=row>10</th><td>E116-H3K79me2.bed       </td><td>2668                    </td><td> 752.76032              </td><td> 0.000000e+00           </td></tr>
+	<tr><th scope=row>11</th><td>E116-H3K4me2.bed        </td><td>2809                    </td><td>1024.89199              </td><td> 0.000000e+00           </td></tr>
+	<tr><th scope=row>12</th><td>Coding_UCSC.bed         </td><td>1932                    </td><td> 791.45368              </td><td> 0.000000e+00           </td></tr>
+	<tr><th scope=row>13</th><td>E116-H3K27ac.bed        </td><td>2424                    </td><td> 767.45946              </td><td> 0.000000e+00           </td></tr>
+	<tr><th scope=row>6</th><td>E116-H3K4me1.bed        </td><td>2049                    </td><td> 900.11623              </td><td>2.817817e-303           </td></tr>
+	<tr><th scope=row>8</th><td>E116-H2A.Z.bed          </td><td>1512                    </td><td> 591.64615              </td><td>5.953945e-269           </td></tr>
+	<tr><th scope=row>3</th><td>Extended_splice_site.bed</td><td> 522                    </td><td> 131.50573              </td><td>1.491773e-164           </td></tr>
+	<tr><th scope=row>5</th><td>E116-H4K20me1.bed       </td><td> 294                    </td><td>  73.90964              </td><td> 1.072375e-89           </td></tr>
+	<tr><th scope=row>4</th><td>CTCF_binding.bed        </td><td> 779                    </td><td> 432.57289              </td><td> 5.859478e-59           </td></tr>
+	<tr><th scope=row>14</th><td>Intron_UCSC.bed         </td><td>5879                    </td><td>5724.81885              </td><td> 5.798512e-13           </td></tr>
 </tbody>
 </table>
 
@@ -925,6 +1115,50 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>In Li 2016 manuscript the analysis was not matched by LD, MAF and TSS for sQTL. The only constraint for control SNPs was that they should be within intron clusters. To focus analysis on these SNPs:</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb overlap_cluster \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --trait AS</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Overlap z-scores with intron clusters</span>
+<span class="p">[</span><span class="n">overlap_cluster</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{z_score:n}.bed&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{out_dir}/{y_data:bnn}.{z_score:bn}.overlap.bed&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{annotation_dir}:{annotation_dir}&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{y_data:d}:{y_data:d}&quot;</span><span class="p">]</span>
+    <span class="c1"># bedops -e {_input} {annotation_dir}/gene_map.bed | sort -u &gt; {_output}</span>
+    <span class="n">bedops</span> <span class="o">-</span><span class="n">e</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&lt;</span><span class="p">(</span><span class="n">cat</span> <span class="p">{</span><span class="n">annotation_dir</span><span class="p">}</span><span class="o">/</span><span class="n">Coding_UCSC</span><span class="o">.</span><span class="n">bed</span> <span class="p">{</span><span class="n">annotation_dir</span><span class="p">}</span><span class="o">/</span><span class="n">Intron_UCSC</span><span class="o">.</span><span class="n">bed</span> <span class="o">|</span> <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="o">-</span><span class="p">)</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">-</span><span class="n">u</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We ended up having 348K variants:</p>
+
+<pre><code>[GW] wc -l /home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci_sumstats/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.SuSiE_loci.sumstats.overlap.bed
+348694</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Test for larger PIP in annotation vs outside it.</p>
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb pip_rank_test \
@@ -940,13 +1174,13 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Test if PIP is larger in annotations</span>
-<span class="p">[</span><span class="n">pip_rank_test_1</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="n">z_score</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Subset data</span>
+<span class="p">[</span><span class="n">pip_rank_test_1</span><span class="p">,</span> <span class="n">cs_fisher_test_1</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">z_score</span><span class="p">,</span> <span class="n">f</span><span class="s1">&#39;{out_dir}/{y_data:bnn}.{z_score:bn}.overlap.bed&#39;</span>
 <span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{out_dir}/{value:bn}.{z_score:bn}.gz&#39;</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">(</span><span class="n">single_anno</span><span class="p">)]</span>
 <span class="kn">input:</span> <span class="n">input_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.{step_name}.csv&#39;</span>
-<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.data.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
     <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
@@ -955,22 +1189,46 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
     <span class="n">annotation</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">col_names</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
     <span class="kp">name</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">annotation</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
     <span class="n">colnames</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;SNP&#39;</span><span class="p">,</span> <span class="s1">&#39;GROUP&#39;</span><span class="p">)</span>
-    <span class="c1"># add two random groupings</span>
-    <span class="n">annotation</span><span class="err">$</span><span class="n">RAND_1</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">annotation</span><span class="err">$</span><span class="n">GROUP</span><span class="p">)</span>
-    <span class="n">annotation</span><span class="err">$</span><span class="n">RAND_2</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">annotation</span><span class="err">$</span><span class="n">GROUP</span><span class="p">)</span>
-    <span class="n">variants</span> <span class="o">=</span> <span class="n">inner_join</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;SNP&quot;</span><span class="p">)</span>
+    <span class="n">cluster_subset</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="s1">&#39;${out_dir}/${y_data:bnn}.${z_score:bn}.overlap.bed&#39;</span><span class="p">,</span> <span class="n">col_names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">cluster_subset</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;CHR&quot;</span><span class="p">,</span> <span class="s2">&quot;START&quot;</span><span class="p">,</span> <span class="s2">&quot;END&quot;</span><span class="p">,</span> <span class="s2">&quot;SNP&quot;</span><span class="p">)</span>
+    <span class="c1"># restrict analysis to within genes</span>
+    <span class="n">annotation</span> <span class="o">=</span> <span class="n">inner_join</span><span class="p">(</span><span class="n">cluster_subset</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;SNP&quot;</span><span class="p">)[,</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;SNP&quot;</span><span class="p">,</span> <span class="s2">&quot;GROUP&quot;</span><span class="p">)]</span>
+    <span class="c1"># remove duplicates in variants but keep the largest CS label when possible</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">variants</span><span class="p">)</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="n">variants</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="s1">&#39;SNP&#39;</span><span class="p">],</span><span class="o">-</span><span class="n">variants</span><span class="p">[,</span><span class="s1">&#39;CS&#39;</span><span class="p">]),]</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="n">variants</span><span class="p">[</span><span class="err">!</span><span class="n">duplicated</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="s1">&#39;SNP&#39;</span><span class="p">]),]</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="n">inner_join</span><span class="p">(</span><span class="n">annotation</span><span class="p">,</span> <span class="n">variants</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;SNP&quot;</span><span class="p">)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="kp">name</span><span class="o">=</span><span class="kp">name</span><span class="p">,</span> <span class="n">variants</span><span class="o">=</span><span class="n">variants</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Test if PIP is larger in annotations</span>
+<span class="p">[</span><span class="n">pip_rank_test_2</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.pip_rank_test.csv&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">variants</span>
+    <span class="kp">name</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="kp">name</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">variants</span><span class="err">$</span><span class="n">GROUP</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-      <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+      <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-    <span class="n">test</span> <span class="o">=</span> <span class="n">wilcox</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">PIP</span> <span class="o">~</span> <span class="n">GROUP</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">variants</span><span class="p">,</span><span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;smaller&#39;</span><span class="p">)</span>
-    <span class="n">c_1</span> <span class="o">=</span> <span class="n">wilcox</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">PIP</span> <span class="o">~</span> <span class="n">RAND_1</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">variants</span><span class="p">,</span><span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;smaller&#39;</span><span class="p">)</span>
-    <span class="n">c_2</span> <span class="o">=</span> <span class="n">wilcox</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">PIP</span> <span class="o">~</span> <span class="n">RAND_2</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">variants</span><span class="p">,</span><span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;smaller&#39;</span><span class="p">)</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">test</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">c_1</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">c_2</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">wilcox</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">PIP</span> <span class="o">~</span> <span class="n">GROUP</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">variants</span><span class="p">,</span> <span class="n">conf</span><span class="o">.</span><span class="n">int</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">test</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">test</span><span class="err">$</span><span class="n">estimate</span><span class="p">,</span> <span class="n">test</span><span class="err">$</span><span class="n">conf</span><span class="o">.</span><span class="n">int</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">test</span><span class="err">$</span><span class="n">conf</span><span class="o">.</span><span class="n">int</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="p">}</span>
 
 <span class="c1"># Consolidate results to one file</span>
-<span class="p">[</span><span class="n">pip_rank_test_2</span><span class="p">,</span> <span class="n">cs_fisher_test_2</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/SuSiE_loci.sumstats.{step_name}.csv&#39;</span>
+<span class="p">[</span><span class="n">pip_rank_test_3</span><span class="p">,</span><span class="n">cs_fisher_test_3</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/enrichment/SuSiE_loci.sumstats.{step_name.rsplit(&#39;_&#39;, 1)[0]}.csv&quot;</span>
 <span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">cat</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 <span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
@@ -986,8 +1244,8 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/PVE_Prior/enrichment/SuSiE_loci.sumstats.pip_rank_test_2.csv&#39;</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-<span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;annotation&#39;</span><span class="p">,</span> <span class="s1">&#39;enrichment&#39;</span><span class="p">,</span> <span class="s1">&#39;random_1&#39;</span><span class="p">,</span> <span class="s2">&quot;random_2&quot;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.pip_rank_test.csv&#39;</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;annotation&#39;</span><span class="p">,</span> <span class="s1">&#39;p.value&#39;</span><span class="p">,</span> <span class="s1">&#39;estimate&#39;</span><span class="p">,</span> <span class="s1">&#39;conf.int.1&#39;</span><span class="p">,</span> <span class="s2">&quot;conf.int.2&quot;</span><span class="p">)</span>
 <span class="n">dat</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">dat</span><span class="p">[,</span><span class="mi">2</span><span class="p">]),]</span>
 </pre></div>
 
@@ -1007,66 +1265,22 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 
 <div class="output_html rendered_html output_subarea ">
 <table>
-<thead><tr><th></th><th scope=col>annotation</th><th scope=col>enrichment</th><th scope=col>random_1</th><th scope=col>random_2</th></tr></thead>
+<thead><tr><th></th><th scope=col>annotation</th><th scope=col>p.value</th><th scope=col>estimate</th><th scope=col>conf.int.1</th><th scope=col>conf.int.2</th></tr></thead>
 <tbody>
-	<tr><th scope=row>2</th><td>CN_range_anno                              </td><td>0.000000e+00                               </td><td>0.873252807                                </td><td>0.852578430                                </td></tr>
-	<tr><th scope=row>3</th><td>Coding_UCSC                                </td><td>0.000000e+00                               </td><td>0.996235741                                </td><td>0.695193265                                </td></tr>
-	<tr><th scope=row>4</th><td>Conserved_LindbladToh                      </td><td>0.000000e+00                               </td><td>0.938801922                                </td><td>0.562147709                                </td></tr>
-	<tr><th scope=row>8</th><td>DNaseI                                     </td><td>0.000000e+00                               </td><td>0.916372493                                </td><td>0.143558470                                </td></tr>
-	<tr><th scope=row>9</th><td>DN_range_anno                              </td><td>0.000000e+00                               </td><td>0.013371561                                </td><td>0.706323641                                </td></tr>
-	<tr><th scope=row>10</th><td>E8_TCM_D_48h                               </td><td>0.000000e+00                               </td><td>0.926147732                                </td><td>0.811741792                                </td></tr>
-	<tr><th scope=row>11</th><td>E8_TCM_T_48h                               </td><td>0.000000e+00                               </td><td>0.853328497                                </td><td>0.761587623                                </td></tr>
-	<tr><th scope=row>12</th><td>Enhancer_Andersson                         </td><td>0.000000e+00                               </td><td>0.028630106                                </td><td>0.372429022                                </td></tr>
-	<tr><th scope=row>19</th><td>FOXO1_DeMayo                               </td><td>0.000000e+00                               </td><td>0.534325901                                </td><td>0.334618733                                </td></tr>
-	<tr><th scope=row>20</th><td>GA_range_anno                              </td><td>0.000000e+00                               </td><td>0.791700339                                </td><td>0.327879718                                </td></tr>
-	<tr><th scope=row>21</th><td>H3K27ac                                    </td><td>0.000000e+00                               </td><td>0.319426799                                </td><td>0.670286366                                </td></tr>
-	<tr><th scope=row>22</th><td>h3k27ac-final-C-48h                        </td><td>0.000000e+00                               </td><td>0.347293322                                </td><td>0.844627320                                </td></tr>
-	<tr><th scope=row>23</th><td>h3k27ac-final-D-48h                        </td><td>0.000000e+00                               </td><td>0.385974278                                </td><td>0.984368334                                </td></tr>
-	<tr><th scope=row>24</th><td>H3K27ac_Hnisz                              </td><td>0.000000e+00                               </td><td>0.884758355                                </td><td>0.522960096                                </td></tr>
-	<tr><th scope=row>25</th><td>H3K27ac_PGC2                               </td><td>0.000000e+00                               </td><td>0.031254758                                </td><td>0.809481445                                </td></tr>
-	<tr><th scope=row>27</th><td>h3k4me1-final-C-48h                        </td><td>0.000000e+00                               </td><td>0.402728902                                </td><td>0.456612123                                </td></tr>
-	<tr><th scope=row>28</th><td>h3k4me1-final-D-48h                        </td><td>0.000000e+00                               </td><td>0.383801912                                </td><td>0.781768288                                </td></tr>
-	<tr><th scope=row>29</th><td>H3K4me1_peaks_Trynka                       </td><td>0.000000e+00                               </td><td>0.140798354                                </td><td>0.074059219                                </td></tr>
-	<tr><th scope=row>30</th><td>H3K4me3                                    </td><td>0.000000e+00                               </td><td>0.650449750                                </td><td>0.674742588                                </td></tr>
-	<tr><th scope=row>31</th><td>h3k4me3-final-C-48h                        </td><td>0.000000e+00                               </td><td>0.841377087                                </td><td>0.252042111                                </td></tr>
-	<tr><th scope=row>32</th><td>h3k4me3-final-D-48h                        </td><td>0.000000e+00                               </td><td>0.627904615                                </td><td>0.622116904                                </td></tr>
-	<tr><th scope=row>33</th><td>H3K4me3_peaks_Trynka                       </td><td>0.000000e+00                               </td><td>0.601285991                                </td><td>0.145647293                                </td></tr>
-	<tr><th scope=row>34</th><td>H3K9ac_peaks_Trynka                        </td><td>0.000000e+00                               </td><td>0.885962501                                </td><td>0.739223862                                </td></tr>
-	<tr><th scope=row>36</th><td>hic_all_interacting_DT1_dTL4_D_48h         </td><td>0.000000e+00                               </td><td>0.571821980                                </td><td>0.215236275                                </td></tr>
-	<tr><th scope=row>37</th><td>hic_all_interacting_DT1_dTL4_D_48h_expanded</td><td>0.000000e+00                               </td><td>0.904797388                                </td><td>0.931879376                                </td></tr>
-	<tr><th scope=row>38</th><td>hic_harmonizome_interacting_DT1_dTL4_D_48h </td><td>0.000000e+00                               </td><td>0.531607959                                </td><td>0.707641409                                </td></tr>
-	<tr><th scope=row>39</th><td>hic_human_gain_interacting_DT1_dTL4_D_48h  </td><td>0.000000e+00                               </td><td>0.288059752                                </td><td>0.031727336                                </td></tr>
-	<tr><th scope=row>40</th><td>Intron_UCSC                                </td><td>0.000000e+00                               </td><td>0.093107517                                </td><td>0.766971690                                </td></tr>
-	<tr><th scope=row>41</th><td>ips_range_anno                             </td><td>0.000000e+00                               </td><td>0.297327722                                </td><td>0.560845170                                </td></tr>
-	<tr><th scope=row>43</th><td>NSC_range_anno                             </td><td>0.000000e+00                               </td><td>0.633535402                                </td><td>0.998052809                                </td></tr>
-	<tr><th scope=row>48</th><td>POLII_DeMayo                               </td><td>0.000000e+00                               </td><td>0.399044477                                </td><td>0.312674336                                </td></tr>
-	<tr><th scope=row>50</th><td>Promoter_UCSC                              </td><td>0.000000e+00                               </td><td>0.867396760                                </td><td>0.008602465                                </td></tr>
-	<tr><th scope=row>52</th><td>SuperEnhancer_Hnisz                        </td><td>0.000000e+00                               </td><td>0.005712489                                </td><td>0.153409039                                </td></tr>
-	<tr><th scope=row>53</th><td>TFBS_ENCODE                                </td><td>0.000000e+00                               </td><td>0.480187982                                </td><td>0.256314470                                </td></tr>
-	<tr><th scope=row>54</th><td>Transcribed_Hoffman                        </td><td>0.000000e+00                               </td><td>0.376078770                                </td><td>0.788492236                                </td></tr>
-	<tr><th scope=row>55</th><td>TSS_Hoffman                                </td><td>0.000000e+00                               </td><td>0.707535150                                </td><td>0.071248922                                </td></tr>
-	<tr><th scope=row>56</th><td>UTR_3_UCSC                                 </td><td>0.000000e+00                               </td><td>0.840703891                                </td><td>0.803362344                                </td></tr>
-	<tr><th scope=row>57</th><td>UTR_5_UCSC                                 </td><td>0.000000e+00                               </td><td>0.158242008                                </td><td>0.777504679                                </td></tr>
-	<tr><th scope=row>6</th><td>DGF_ENCODE                                 </td><td>8.992806e-15                               </td><td>0.895857965                                </td><td>0.545072518                                </td></tr>
-	<tr><th scope=row>47</th><td>PLZF                                       </td><td>6.960499e-11                               </td><td>0.233892513                                </td><td>0.062689439                                </td></tr>
-	<tr><th scope=row>14</th><td>eQTL_0.05_FDR                              </td><td>3.340798e-08                               </td><td>0.033858693                                </td><td>0.036142112                                </td></tr>
-	<tr><th scope=row>45</th><td>PGR-B_Bagchi                               </td><td>8.720963e-08                               </td><td>0.984412986                                </td><td>0.361724237                                </td></tr>
-	<tr><th scope=row>17</th><td>FetalDHS_Trynka                            </td><td>3.732240e-06                               </td><td>0.935621416                                </td><td>0.838696095                                </td></tr>
-	<tr><th scope=row>42</th><td>NR2F2                                      </td><td>9.472783e-06                               </td><td>0.138115795                                </td><td>0.875146082                                </td></tr>
-	<tr><th scope=row>13</th><td>Enhancer_Hoffman                           </td><td>2.432925e-03                               </td><td>0.785145507                                </td><td>0.077582297                                </td></tr>
-	<tr><th scope=row>15</th><td>eQTL_0.1_FDR                               </td><td>3.309949e-02                               </td><td>0.139572181                                </td><td>0.011446806                                </td></tr>
-	<tr><th scope=row>7</th><td>DHS_peaks_Trynka                           </td><td>6.064745e-02                               </td><td>0.868463274                                </td><td>0.827621201                                </td></tr>
-	<tr><th scope=row>26</th><td>H3K27me3                                   </td><td>6.588890e-02                               </td><td>0.780377120                                </td><td>0.341650134                                </td></tr>
-	<tr><th scope=row>18</th><td>FOSL2                                      </td><td>1.146906e-01                               </td><td>0.546745577                                </td><td>0.247711423                                </td></tr>
-	<tr><th scope=row>44</th><td>PGR-A_Bagchi                               </td><td>5.593118e-01                               </td><td>0.898392498                                </td><td>0.440537867                                </td></tr>
-	<tr><th scope=row>46</th><td>PGR_Demayo                                 </td><td>9.816617e-01                               </td><td>0.095803664                                </td><td>0.315776572                                </td></tr>
-	<tr><th scope=row>49</th><td>PromoterFlanking_Hoffman                   </td><td>9.940072e-01                               </td><td>0.003012780                                </td><td>0.518006358                                </td></tr>
-	<tr><th scope=row>5</th><td>CTCF_Hoffman                               </td><td>9.997672e-01                               </td><td>0.968442983                                </td><td>0.443205483                                </td></tr>
-	<tr><th scope=row>16</th><td>FAIRE                                      </td><td>9.998896e-01                               </td><td>0.961244410                                </td><td>0.600708171                                </td></tr>
-	<tr><th scope=row>1</th><td>1_GATA2-Interval-Track                     </td><td>9.999085e-01                               </td><td>0.988409207                                </td><td>0.894162343                                </td></tr>
-	<tr><th scope=row>51</th><td>Repressed_Hoffman                          </td><td>1.000000e+00                               </td><td>0.200018431                                </td><td>0.997593658                                </td></tr>
-	<tr><th scope=row>58</th><td>WeakEnhancer_Hoffman                       </td><td>1.000000e+00                               </td><td>0.952426089                                </td><td>0.135609932                                </td></tr>
-	<tr><th scope=row>35</th><td>hESC-RegElements-hg19                      </td><td>          NA                               </td><td>         NA                                </td><td>         NA                                </td></tr>
+	<tr><th scope=row>5</th><td>E116-H3K36me3       </td><td>3.502158e-30        </td><td>-5.129676e-06       </td><td> 1.775306e-05       </td><td>-3.221700e-05       </td></tr>
+	<tr><th scope=row>9</th><td>E116-H3K79me2       </td><td>4.270451e-13        </td><td>-6.049179e-07       </td><td> 7.960476e-06       </td><td>-2.022996e-05       </td></tr>
+	<tr><th scope=row>6</th><td>E116-H3K4me1        </td><td>1.697103e-09        </td><td>-9.792211e-08       </td><td>-1.556027e-06       </td><td> 1.362075e-05       </td></tr>
+	<tr><th scope=row>1</th><td>Coding_UCSC         </td><td>2.509293e-05        </td><td>-4.857236e-06       </td><td>-1.807982e-06       </td><td> 1.770077e-05       </td></tr>
+	<tr><th scope=row>12</th><td>Intron_UCSC         </td><td>8.206769e-05        </td><td> 9.223260e-07       </td><td> 1.164579e-05       </td><td>-3.812980e-05       </td></tr>
+	<tr><th scope=row>7</th><td>E116-H3K4me2        </td><td>1.346789e-02        </td><td>-9.790462e-07       </td><td> 1.863036e-05       </td><td>-2.333847e-05       </td></tr>
+	<tr><th scope=row>11</th><td>E116-H4K20me1       </td><td>2.504146e-02        </td><td> 9.040980e-06       </td><td> 3.240370e-05       </td><td>-1.051296e-05       </td></tr>
+	<tr><th scope=row>3</th><td>E116-H2A.Z          </td><td>3.381491e-02        </td><td>-2.721414e-06       </td><td>-3.348304e-05       </td><td>-3.768027e-05       </td></tr>
+	<tr><th scope=row>14</th><td>Extended_splice_site</td><td>4.238859e-02        </td><td>-4.047743e-06       </td><td>-2.379580e-05       </td><td>-1.682468e-05       </td></tr>
+	<tr><th scope=row>10</th><td>E116-H3K9ac         </td><td>5.446758e-02        </td><td>-5.920611e-07       </td><td>-1.564686e-05       </td><td>-4.512561e-05       </td></tr>
+	<tr><th scope=row>8</th><td>E116-H3K4me3        </td><td>1.027078e-01        </td><td>-2.603563e-06       </td><td>-2.694487e-05       </td><td> 9.840231e-06       </td></tr>
+	<tr><th scope=row>13</th><td>PolII_binding       </td><td>1.918467e-01        </td><td>-3.929391e-06       </td><td> 7.624660e-06       </td><td>-2.928285e-05       </td></tr>
+	<tr><th scope=row>2</th><td>CTCF_binding        </td><td>2.040274e-01        </td><td>-3.818905e-06       </td><td> 2.232505e-06       </td><td> 2.335322e-05       </td></tr>
+	<tr><th scope=row>4</th><td>E116-H3K27ac        </td><td>4.087071e-01        </td><td>-1.722333e-07       </td><td> 8.590494e-06       </td><td>-2.235855e-05       </td></tr>
 </tbody>
 </table>
 
@@ -1098,44 +1312,34 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># Test if CS is enriched with annotations</span>
-<span class="p">[</span><span class="n">cs_fisher_test_1</span><span class="p">]</span>
-<span class="kn">depends:</span> <span class="n">z_score</span>
-<span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{out_dir}/{value:bn}.{z_score:bn}.gz&#39;</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">(</span><span class="n">single_anno</span><span class="p">)]</span>
-<span class="kn">input:</span> <span class="n">input_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.{step_name}.csv&#39;</span>
-<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">docker_image</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+<span class="p">[</span><span class="n">cs_fisher_test_2</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.cs_fisher_test.csv&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="n">container</span> <span class="o">=</span> <span class="s1">&#39;gaow/atac-gwas&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
     <span class="n">run_test</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">d1</span> <span class="o">=</span> <span class="n">dat</span>
-        <span class="n">d1</span><span class="err">$</span><span class="n">CS</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">d1</span><span class="err">$</span><span class="n">CS</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">CS</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">),]</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">d1</span><span class="p">[</span><span class="o">-</span><span class="n">which</span><span class="p">(</span><span class="n">d1</span><span class="err">$</span><span class="n">CS</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="n">d1</span><span class="err">$</span><span class="n">PIP</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">),</span> <span class="p">]</span>
+        <span class="n">d1</span><span class="err">$</span><span class="n">PIP</span> <span class="o">=</span> <span class="n">NULL</span>
         <span class="n">d1</span> <span class="o">=</span> <span class="n">table</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>
         <span class="n">test</span><span class="o">.</span><span class="n">d1</span> <span class="o">=</span> <span class="n">fisher</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>
         <span class="c1"># test for non-first CS only</span>
         <span class="n">d2</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">CS</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">),]</span>
         <span class="n">d2</span><span class="err">$</span><span class="n">CS</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">d2</span><span class="err">$</span><span class="n">CS</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="n">d2</span><span class="p">[</span><span class="o">-</span><span class="n">which</span><span class="p">(</span><span class="n">d2</span><span class="err">$</span><span class="n">CS</span> <span class="o">==</span> <span class="mi">1</span> <span class="o">&amp;</span> <span class="n">d2</span><span class="err">$</span><span class="n">PIP</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">),</span> <span class="p">]</span>
+        <span class="n">d2</span><span class="err">$</span><span class="n">PIP</span> <span class="o">=</span> <span class="n">NULL</span>
         <span class="n">d2</span> <span class="o">=</span> <span class="n">table</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span>
         <span class="n">test</span><span class="o">.</span><span class="n">d2</span> <span class="o">=</span> <span class="n">fisher</span><span class="o">.</span><span class="n">test</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span>
-        <span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">d1</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">d2</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">d1</span><span class="err">$</span><span class="n">estimate</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">d2</span><span class="err">$</span><span class="n">estimate</span><span class="p">))</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">test</span><span class="o">.</span><span class="n">d1</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">d1</span><span class="err">$</span><span class="n">estimate</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">d1</span><span class="err">$</span><span class="n">conf</span><span class="o">.</span><span class="n">int</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">test</span><span class="o">.</span><span class="n">d1</span><span class="err">$</span><span class="n">conf</span><span class="o">.</span><span class="n">int</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">test</span><span class="o">.</span><span class="n">d2</span><span class="err">$</span><span class="n">p</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">d2</span><span class="err">$</span><span class="n">estimate</span><span class="p">,</span> <span class="n">test</span><span class="o">.</span><span class="n">d2</span><span class="err">$</span><span class="n">conf</span><span class="o">.</span><span class="n">int</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">test</span><span class="o">.</span><span class="n">d2</span><span class="err">$</span><span class="n">conf</span><span class="o">.</span><span class="n">int</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
     <span class="p">}</span>
-    <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
-    <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
-    <span class="n">variants</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">col_names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
-    <span class="n">colnames</span><span class="p">(</span><span class="n">variants</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;SNP&#39;</span><span class="p">,</span> <span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="s1">&#39;Z&#39;</span><span class="p">,</span> <span class="s1">&#39;CS&#39;</span><span class="p">)</span>
-    <span class="n">annotation</span> <span class="o">&lt;-</span> <span class="n">read_tsv</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">col_names</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
-    <span class="kp">name</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">annotation</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">colnames</span><span class="p">(</span><span class="n">annotation</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;SNP&#39;</span><span class="p">,</span> <span class="s1">&#39;GROUP&#39;</span><span class="p">)</span>
-    <span class="c1"># add two random groupings</span>
-    <span class="n">annotation</span><span class="err">$</span><span class="n">RAND_1</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">annotation</span><span class="err">$</span><span class="n">GROUP</span><span class="p">)</span>
-    <span class="n">annotation</span><span class="err">$</span><span class="n">RAND_2</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">annotation</span><span class="err">$</span><span class="n">GROUP</span><span class="p">)</span>
-    <span class="n">variants</span> <span class="o">=</span> <span class="n">inner_join</span><span class="p">(</span><span class="n">variants</span><span class="p">,</span> <span class="n">annotation</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;SNP&quot;</span><span class="p">)[,</span><span class="mi">4</span><span class="p">:</span><span class="mi">7</span><span class="p">]</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">variants</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">variants</span>
+    <span class="kp">name</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="kp">name</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">variants</span><span class="err">$</span><span class="n">GROUP</span><span class="p">))</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
       <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">NA</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
     <span class="c1"># test against all CS</span>
-    <span class="n">test</span> <span class="o">=</span> <span class="n">run_test</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;GROUP&#39;</span><span class="p">)])</span>
-    <span class="n">ctrl_1</span> <span class="o">=</span> <span class="n">run_test</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;RAND_1&#39;</span><span class="p">)])</span>
-    <span class="n">ctrl_2</span> <span class="o">=</span> <span class="n">run_test</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;RAND_2&#39;</span><span class="p">)])</span>
-    <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">test</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">test</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">test</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">test</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">ctrl_1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ctrl_1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">ctrl_2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ctrl_2</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">run_test</span><span class="p">(</span><span class="n">variants</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;CS&#39;</span><span class="p">,</span> <span class="s1">&#39;GROUP&#39;</span><span class="p">,</span> <span class="s1">&#39;PIP&#39;</span><span class="p">)])</span>
+    <span class="n">write</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="kp">name</span><span class="p">,</span> <span class="n">test</span><span class="p">),</span> <span class="n">collapse</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">),</span> <span class="nb">file</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="p">}</span>
 </pre></div>
 
@@ -1146,11 +1350,11 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.cs_fisher_test_2.csv&#39;</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
-<span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;annotation&#39;</span><span class="p">,</span> <span class="s1">&#39;enrichment CS&gt;0&#39;</span><span class="p">,</span> <span class="s1">&#39;odds ratio CS&gt;0&#39;</span><span class="p">,</span> <span class="s1">&#39;enrichment CS&gt;1&#39;</span><span class="p">,</span> <span class="s2">&quot;odds ratio CS&gt;1&quot;</span><span class="p">,</span> <span class="s2">&quot;random_1 CS&gt;0&quot;</span><span class="p">,</span> <span class="s2">&quot;random_1 CS&gt;1&quot;</span><span class="p">,</span> <span class="s2">&quot;random_2 CS&gt;0&quot;</span><span class="p">,</span> <span class="s2">&quot;random_2 CS&gt;1&quot;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">read</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.cs_fisher_test.csv&#39;</span><span class="p">,</span> <span class="n">head</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">)</span>
+<span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;annotation&#39;</span><span class="p">,</span> <span class="s1">&#39;p.value.1&#39;</span><span class="p">,</span> <span class="s1">&#39;est.1&#39;</span><span class="p">,</span> <span class="s1">&#39;conf.1a&#39;</span><span class="p">,</span> <span class="s2">&quot;conf.1b&quot;</span><span class="p">,</span>  <span class="s1">&#39;p.value.2&#39;</span><span class="p">,</span> <span class="s1">&#39;est.2&#39;</span><span class="p">,</span> <span class="s1">&#39;conf.2a&#39;</span><span class="p">,</span> <span class="s2">&quot;conf.2b&quot;</span><span class="p">)</span>
 <span class="n">dat</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">dat</span><span class="p">[,</span><span class="mi">2</span><span class="p">]),]</span>
 </pre></div>
 
@@ -1170,66 +1374,22 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 
 <div class="output_html rendered_html output_subarea ">
 <table>
-<thead><tr><th></th><th scope=col>annotation</th><th scope=col>enrichment CS&gt;0</th><th scope=col>odds ratio CS&gt;0</th><th scope=col>enrichment CS&gt;1</th><th scope=col>odds ratio CS&gt;1</th><th scope=col>random_1 CS&gt;0</th><th scope=col>random_1 CS&gt;1</th><th scope=col>random_2 CS&gt;0</th><th scope=col>random_2 CS&gt;1</th></tr></thead>
+<thead><tr><th></th><th scope=col>annotation</th><th scope=col>p.value.1</th><th scope=col>est.1</th><th scope=col>conf.1a</th><th scope=col>conf.1b</th><th scope=col>p.value.2</th><th scope=col>est.2</th><th scope=col>conf.2a</th><th scope=col>conf.2b</th></tr></thead>
 <tbody>
-	<tr><th scope=row>8</th><td>DNaseI                                     </td><td> 0.000000e+00                              </td><td>0.7067594                                  </td><td>4.409109e-27                               </td><td> 0.6762155                                 </td><td>2.376067e-01                               </td><td>0.4195083073                               </td><td>0.610155582                                </td><td>0.5423165668                               </td></tr>
-	<tr><th scope=row>40</th><td>Intron_UCSC                                </td><td> 0.000000e+00                              </td><td>1.8606005                                  </td><td>2.583183e-70                               </td><td> 1.5002123                                 </td><td>9.334659e-01                               </td><td>0.0008697541                               </td><td>0.001976813                                </td><td>0.8926382793                               </td></tr>
-	<tr><th scope=row>48</th><td>POLII_DeMayo                               </td><td> 0.000000e+00                              </td><td>1.4307286                                  </td><td>1.753827e-02                               </td><td> 1.0689536                                 </td><td>2.030460e-02                               </td><td>0.2986595412                               </td><td>0.114173788                                </td><td>0.6860353557                               </td></tr>
-	<tr><th scope=row>51</th><td>Repressed_Hoffman                          </td><td> 0.000000e+00                              </td><td>0.4218858                                  </td><td>9.669009e-47                               </td><td> 0.6360341                                 </td><td>3.379821e-02                               </td><td>0.7318257904                               </td><td>0.137088164                                </td><td>0.2475137279                               </td></tr>
-	<tr><th scope=row>52</th><td>SuperEnhancer_Hnisz                        </td><td> 0.000000e+00                              </td><td>0.7328975                                  </td><td>2.697503e-23                               </td><td> 0.7863073                                 </td><td>2.507967e-01                               </td><td>0.9246389984                               </td><td>0.615984051                                </td><td>0.0006885008                               </td></tr>
-	<tr><th scope=row>54</th><td>Transcribed_Hoffman                        </td><td> 0.000000e+00                              </td><td>2.1880560                                  </td><td>2.532327e-53                               </td><td> 1.4262518                                 </td><td>2.894718e-01                               </td><td>0.8032281724                               </td><td>0.310705315                                </td><td>0.3356351633                               </td></tr>
-	<tr><th scope=row>58</th><td>WeakEnhancer_Hoffman                       </td><td>3.589908e-257                              </td><td>0.5922669                                  </td><td>5.908310e-08                               </td><td> 0.6850443                                 </td><td>4.725798e-06                               </td><td>0.1003845554                               </td><td>0.917694867                                </td><td>0.4464084510                               </td></tr>
-	<tr><th scope=row>24</th><td>H3K27ac_Hnisz                              </td><td>7.515750e-249                              </td><td>0.8483169                                  </td><td>3.367817e-02                               </td><td> 1.0513025                                 </td><td>1.064421e-02                               </td><td>0.1457691657                               </td><td>0.876464491                                </td><td>0.4706701782                               </td></tr>
-	<tr><th scope=row>13</th><td>Enhancer_Hoffman                           </td><td>4.861672e-193                              </td><td>0.7667908                                  </td><td>1.690437e-07                               </td><td> 0.8030417                                 </td><td>3.562017e-01                               </td><td>0.8115863669                               </td><td>0.137630288                                </td><td>0.5775080832                               </td></tr>
-	<tr><th scope=row>21</th><td>H3K27ac                                    </td><td>6.624460e-193                              </td><td>1.6957818                                  </td><td>5.007076e-10                               </td><td> 1.6825087                                 </td><td>8.501910e-01                               </td><td>0.0745709930                               </td><td>0.080183930                                </td><td>0.1820838977                               </td></tr>
-	<tr><th scope=row>32</th><td>h3k4me3-final-D-48h                        </td><td>3.548082e-167                              </td><td>1.2894844                                  </td><td>1.493369e-02                               </td><td> 1.1166966                                 </td><td>8.519669e-01                               </td><td>0.0253581965                               </td><td>0.987934443                                </td><td>0.9810379590                               </td></tr>
-	<tr><th scope=row>50</th><td>Promoter_UCSC                              </td><td>7.547211e-144                              </td><td>1.2088327                                  </td><td>1.180574e-01                               </td><td> 1.0583820                                 </td><td>2.557095e-01                               </td><td>0.3855754061                               </td><td>0.012367307                                </td><td>0.9077577479                               </td></tr>
-	<tr><th scope=row>56</th><td>UTR_3_UCSC                                 </td><td>1.713536e-140                              </td><td>1.3565139                                  </td><td>7.073551e-01                               </td><td> 0.9746426                                 </td><td>7.597747e-01                               </td><td>0.7184014785                               </td><td>0.972295996                                </td><td>0.8186212637                               </td></tr>
-	<tr><th scope=row>30</th><td>H3K4me3                                    </td><td>1.176638e-126                              </td><td>1.3283413                                  </td><td>2.590441e-02                               </td><td> 1.1389654                                 </td><td>8.416753e-01                               </td><td>0.4701110166                               </td><td>0.331895060                                </td><td>0.5105287312                               </td></tr>
-	<tr><th scope=row>31</th><td>h3k4me3-final-C-48h                        </td><td>3.410593e-123                              </td><td>1.2523644                                  </td><td>5.993773e-04                               </td><td> 1.1700516                                 </td><td>2.483428e-01                               </td><td>0.1056386750                               </td><td>0.807047404                                </td><td>0.0908509415                               </td></tr>
-	<tr><th scope=row>55</th><td>TSS_Hoffman                                </td><td>3.628567e-116                              </td><td>1.2218424                                  </td><td>2.134504e-28                               </td><td> 1.5332152                                 </td><td>2.789893e-02                               </td><td>0.7149206456                               </td><td>0.273259485                                </td><td>0.0745319002                               </td></tr>
-	<tr><th scope=row>37</th><td>hic_all_interacting_DT1_dTL4_D_48h_expanded</td><td> 9.282358e-90                              </td><td>1.1109238                                  </td><td>1.433973e-39                               </td><td> 0.7049148                                 </td><td>3.379203e-02                               </td><td>0.7108925223                               </td><td>0.397913646                                </td><td>0.7397527914                               </td></tr>
-	<tr><th scope=row>3</th><td>Coding_UCSC                                </td><td> 4.079106e-86                              </td><td>1.2405891                                  </td><td>1.883235e-14                               </td><td> 0.6113015                                 </td><td>5.976688e-01                               </td><td>0.0318514435                               </td><td>0.362804631                                </td><td>0.1366581638                               </td></tr>
-	<tr><th scope=row>28</th><td>h3k4me1-final-D-48h                        </td><td> 2.831365e-85                              </td><td>1.1405109                                  </td><td>6.245495e-02                               </td><td> 1.0615721                                 </td><td>9.009290e-01                               </td><td>0.3698467776                               </td><td>0.980703450                                </td><td>0.8449846675                               </td></tr>
-	<tr><th scope=row>57</th><td>UTR_5_UCSC                                 </td><td> 1.494857e-81                              </td><td>1.3572173                                  </td><td>8.872967e-03                               </td><td> 0.7865846                                 </td><td>9.331046e-01                               </td><td>0.5379910292                               </td><td>0.918032868                                </td><td>0.6589439793                               </td></tr>
-	<tr><th scope=row>14</th><td>eQTL_0.05_FDR                              </td><td> 3.156183e-78                              </td><td>3.6579666                                  </td><td>1.102527e-63                               </td><td>18.7914197                                 </td><td>3.411059e-02                               </td><td>0.7896602354                               </td><td>0.037764951                                </td><td>0.0556066689                               </td></tr>
-	<tr><th scope=row>4</th><td>Conserved_LindbladToh                      </td><td> 1.502215e-71                              </td><td>1.2796519                                  </td><td>5.028735e-09                               </td><td> 0.6171993                                 </td><td>1.059441e-01                               </td><td>0.2942796417                               </td><td>0.241819686                                </td><td>0.6495859239                               </td></tr>
-	<tr><th scope=row>15</th><td>eQTL_0.1_FDR                               </td><td> 2.107911e-70                              </td><td>3.0053048                                  </td><td>2.809380e-53                               </td><td>13.1200133                                 </td><td>3.929831e-01                               </td><td>0.6495152846                               </td><td>0.550615137                                </td><td>0.2337834540                               </td></tr>
-	<tr><th scope=row>5</th><td>CTCF_Hoffman                               </td><td> 3.360994e-62                              </td><td>0.7947610                                  </td><td>1.477895e-04                               </td><td> 0.7767888                                 </td><td>7.425694e-02                               </td><td>0.5859058192                               </td><td>0.217650723                                </td><td>0.9517220351                               </td></tr>
-	<tr><th scope=row>12</th><td>Enhancer_Andersson                         </td><td> 2.164834e-56                              </td><td>0.6266058                                  </td><td>5.403893e-07                               </td><td> 0.4537132                                 </td><td>9.473553e-01                               </td><td>0.7555062851                               </td><td>0.895117442                                </td><td>0.2899345456                               </td></tr>
-	<tr><th scope=row>27</th><td>h3k4me1-final-C-48h                        </td><td> 2.588510e-43                              </td><td>1.0972890                                  </td><td>1.633310e-01                               </td><td> 0.9547977                                 </td><td>9.458450e-01                               </td><td>0.5971646899                               </td><td>0.442597834                                </td><td>0.5970132344                               </td></tr>
-	<tr><th scope=row>11</th><td>E8_TCM_T_48h                               </td><td> 4.001675e-38                              </td><td>1.1272946                                  </td><td>5.339539e-03                               </td><td> 1.1291681                                 </td><td>3.347715e-01                               </td><td>0.6476358209                               </td><td>0.779021514                                </td><td>0.6646779369                               </td></tr>
-	<tr><th scope=row>47</th><td>PLZF                                       </td><td> 2.060002e-36                              </td><td>2.5654996                                  </td><td>3.232903e-15                               </td><td> 6.8531068                                 </td><td>7.977086e-01                               </td><td>0.4599331491                               </td><td>0.071870248                                </td><td>0.8063556301                               </td></tr>
-	<tr><th scope=row>10</th><td>E8_TCM_D_48h                               </td><td> 5.640626e-33                              </td><td>1.1128039                                  </td><td>4.343954e-01                               </td><td> 1.0339223                                 </td><td>5.021905e-01                               </td><td>0.8614044950                               </td><td>0.867875047                                </td><td>0.6629680699                               </td></tr>
-	<tr><th scope=row>36</th><td>hic_all_interacting_DT1_dTL4_D_48h         </td><td> 5.436659e-28                              </td><td>1.0941350                                  </td><td>4.713571e-19                               </td><td> 0.6732629                                 </td><td>1.335318e-02                               </td><td>0.2352837569                               </td><td>0.004160152                                </td><td>0.8217548336                               </td></tr>
-	<tr><th scope=row>23</th><td>h3k27ac-final-D-48h                        </td><td> 4.461940e-22                              </td><td>1.0799903                                  </td><td>2.501875e-01                               </td><td> 1.0446532                                 </td><td>3.513531e-01                               </td><td>0.7744498837                               </td><td>0.093222065                                </td><td>0.1368932293                               </td></tr>
-	<tr><th scope=row>53</th><td>TFBS_ENCODE                                </td><td> 1.394719e-19                              </td><td>0.9501926                                  </td><td>9.960109e-05                               </td><td> 1.1062296                                 </td><td>5.089287e-01                               </td><td>0.0494009105                               </td><td>0.200109061                                </td><td>0.5474870572                               </td></tr>
-	<tr><th scope=row>6</th><td>DGF_ENCODE                                 </td><td> 1.249363e-15                              </td><td>0.9535897                                  </td><td>4.290191e-02                               </td><td> 1.0572492                                 </td><td>5.298368e-01                               </td><td>0.3302871076                               </td><td>0.410620357                                </td><td>0.7176617788                               </td></tr>
-	<tr><th scope=row>19</th><td>FOXO1_DeMayo                               </td><td> 7.240761e-13                              </td><td>1.2070897                                  </td><td>2.107129e-02                               </td><td> 0.7036136                                 </td><td>6.171531e-01                               </td><td>0.0256873297                               </td><td>0.306824203                                </td><td>0.8990308960                               </td></tr>
-	<tr><th scope=row>17</th><td>FetalDHS_Trynka                            </td><td> 1.944919e-12                              </td><td>0.9470019                                  </td><td>1.370647e-03                               </td><td> 0.8872634                                 </td><td>6.396099e-02                               </td><td>0.7599859228                               </td><td>0.972654217                                </td><td>0.4506817181                               </td></tr>
-	<tr><th scope=row>18</th><td>FOSL2                                      </td><td> 3.618563e-12                              </td><td>1.2167932                                  </td><td>4.771895e-01                               </td><td> 1.1003857                                 </td><td>4.190354e-01                               </td><td>0.0263028897                               </td><td>0.618390815                                </td><td>0.4061878542                               </td></tr>
-	<tr><th scope=row>34</th><td>H3K9ac_peaks_Trynka                        </td><td> 2.053231e-10                              </td><td>1.0538224                                  </td><td>7.976529e-01                               </td><td> 0.9888572                                 </td><td>2.897342e-05                               </td><td>0.8433054612                               </td><td>0.128525155                                </td><td>0.7968632305                               </td></tr>
-	<tr><th scope=row>44</th><td>PGR-A_Bagchi                               </td><td> 8.757311e-09                              </td><td>1.2201513                                  </td><td>4.713856e-06                               </td><td> 0.3014172                                 </td><td>2.340265e-01                               </td><td>0.1080581848                               </td><td>0.910526513                                </td><td>0.2892528716                               </td></tr>
-	<tr><th scope=row>20</th><td>GA_range_anno                              </td><td> 9.697859e-09                              </td><td>0.9468286                                  </td><td>3.746581e-07                               </td><td> 1.2344270                                 </td><td>4.149899e-01                               </td><td>0.6446079325                               </td><td>0.637823457                                </td><td>1.0000000000                               </td></tr>
-	<tr><th scope=row>22</th><td>h3k27ac-final-C-48h                        </td><td> 1.138076e-08                              </td><td>1.0485700                                  </td><td>2.753032e-01                               </td><td> 1.0436441                                 </td><td>3.958390e-01                               </td><td>0.7411025407                               </td><td>0.840120674                                </td><td>0.2684413286                               </td></tr>
-	<tr><th scope=row>2</th><td>CN_range_anno                              </td><td> 1.228953e-08                              </td><td>0.9362605                                  </td><td>2.621717e-01                               </td><td> 1.0594882                                 </td><td>5.115877e-01                               </td><td>0.5083750231                               </td><td>0.950743353                                </td><td>0.5424369620                               </td></tr>
-	<tr><th scope=row>41</th><td>ips_range_anno                             </td><td> 7.330132e-06                              </td><td>1.0345155                                  </td><td>1.823227e-05                               </td><td> 1.1597345                                 </td><td>4.372704e-01                               </td><td>0.8863349253                               </td><td>0.981850003                                </td><td>0.7611592972                               </td></tr>
-	<tr><th scope=row>49</th><td>PromoterFlanking_Hoffman                   </td><td> 3.538217e-05                              </td><td>1.0672701                                  </td><td>2.403007e-03                               </td><td> 0.7758693                                 </td><td>7.400462e-04                               </td><td>0.9058348628                               </td><td>0.404416428                                </td><td>0.7530615395                               </td></tr>
-	<tr><th scope=row>9</th><td>DN_range_anno                              </td><td> 1.136175e-03                              </td><td>1.0291643                                  </td><td>6.158265e-02                               </td><td> 1.0796640                                 </td><td>7.613172e-01                               </td><td>0.1980360402                               </td><td>0.662691597                                </td><td>0.8354116238                               </td></tr>
-	<tr><th scope=row>33</th><td>H3K4me3_peaks_Trynka                       </td><td> 4.369151e-03                              </td><td>1.0240384                                  </td><td>2.349882e-04                               </td><td> 1.1497993                                 </td><td>3.797452e-03                               </td><td>0.4497785605                               </td><td>0.333386212                                </td><td>0.7434651652                               </td></tr>
-	<tr><th scope=row>42</th><td>NR2F2                                      </td><td> 1.174801e-02                              </td><td>1.0836242                                  </td><td>8.166078e-01                               </td><td> 0.9477860                                 </td><td>5.593667e-01                               </td><td>0.0254159366                               </td><td>0.014045271                                </td><td>0.8226886143                               </td></tr>
-	<tr><th scope=row>45</th><td>PGR-B_Bagchi                               </td><td> 2.789860e-02                              </td><td>1.0639426                                  </td><td>1.803904e-04                               </td><td> 0.5274480                                 </td><td>7.967789e-01                               </td><td>0.2243336496                               </td><td>0.148943429                                </td><td>0.3498259219                               </td></tr>
-	<tr><th scope=row>38</th><td>hic_harmonizome_interacting_DT1_dTL4_D_48h </td><td> 3.134298e-02                              </td><td>0.9453467                                  </td><td>5.369307e-07                               </td><td> 0.4541603                                 </td><td>9.583529e-03                               </td><td>0.6416725303                               </td><td>0.960789946                                </td><td>0.9076671392                               </td></tr>
-	<tr><th scope=row>29</th><td>H3K4me1_peaks_Trynka                       </td><td> 7.568332e-02                              </td><td>1.0096517                                  </td><td>9.186388e-01                               </td><td> 1.0025222                                 </td><td>1.807310e-01                               </td><td>0.9390206808                               </td><td>0.039356701                                </td><td>0.7306298457                               </td></tr>
-	<tr><th scope=row>25</th><td>H3K27ac_PGC2                               </td><td> 1.380171e-01                              </td><td>0.9929420                                  </td><td>1.104875e-08                               </td><td> 1.1368155                                 </td><td>9.847587e-01                               </td><td>0.8218297534                               </td><td>0.089549665                                </td><td>0.3442590843                               </td></tr>
-	<tr><th scope=row>26</th><td>H3K27me3                                   </td><td> 1.752786e-01                              </td><td>0.9418530                                  </td><td>3.941284e-07                               </td><td> 0.1581161                                 </td><td>7.384336e-01                               </td><td>0.6736255086                               </td><td>0.838716830                                </td><td>0.1356029960                               </td></tr>
-	<tr><th scope=row>16</th><td>FAIRE                                      </td><td> 3.835716e-01                              </td><td>1.0194917                                  </td><td>3.475980e-02                               </td><td> 0.7763700                                 </td><td>6.168475e-01                               </td><td>0.0544685465                               </td><td>0.044253995                                </td><td>0.6256411565                               </td></tr>
-	<tr><th scope=row>7</th><td>DHS_peaks_Trynka                           </td><td> 4.697483e-01                              </td><td>0.9949569                                  </td><td>5.732683e-02                               </td><td> 1.0629358                                 </td><td>8.847985e-02                               </td><td>0.1869450861                               </td><td>0.564186346                                </td><td>0.9610392405                               </td></tr>
-	<tr><th scope=row>46</th><td>PGR_Demayo                                 </td><td> 5.373188e-01                              </td><td>1.0336297                                  </td><td>8.406633e-02                               </td><td> 1.4666066                                 </td><td>3.502766e-01                               </td><td>1.0000000000                               </td><td>0.073994385                                </td><td>0.5340505193                               </td></tr>
-	<tr><th scope=row>43</th><td>NSC_range_anno                             </td><td> 7.516029e-01                              </td><td>1.0036770                                  </td><td>5.650001e-02                               </td><td> 1.1062752                                 </td><td>8.791204e-01                               </td><td>0.9779952796                               </td><td>0.550241965                                </td><td>0.9779711473                               </td></tr>
-	<tr><th scope=row>39</th><td>hic_human_gain_interacting_DT1_dTL4_D_48h  </td><td> 8.104335e-01                              </td><td>1.0082408                                  </td><td>1.290204e-06                               </td><td> 0.2703047                                 </td><td>2.867514e-01                               </td><td>0.0222717952                               </td><td>0.022416787                                </td><td>0.8469489534                               </td></tr>
-	<tr><th scope=row>1</th><td>1_GATA2-Interval-Track                     </td><td> 8.212912e-01                              </td><td>1.0038281                                  </td><td>1.098493e-01                               </td><td> 1.1341617                                 </td><td>3.809206e-01                               </td><td>0.7723599128                               </td><td>0.618852527                                </td><td>0.5101159170                               </td></tr>
-	<tr><th scope=row>35</th><td>hESC-RegElements-hg19                      </td><td>           NA                              </td><td>       NA                                  </td><td>          NA                               </td><td>        NA                                 </td><td>          NA                               </td><td>          NA                               </td><td>         NA                                </td><td>          NA                               </td></tr>
+	<tr><th scope=row>9</th><td>E116-H3K79me2       </td><td>6.213563e-53        </td><td>1.7733509           </td><td>1.6528902           </td><td>1.9012944           </td><td>7.045409e-10        </td><td>2.5640731           </td><td>1.9118226           </td><td>3.406334            </td></tr>
+	<tr><th scope=row>8</th><td>E116-H3K4me3        </td><td>6.082080e-41        </td><td>1.9288253           </td><td>1.7620249           </td><td>2.1082689           </td><td>2.513862e-07        </td><td>2.7630391           </td><td>1.9089417           </td><td>3.906909            </td></tr>
+	<tr><th scope=row>5</th><td>E116-H3K36me3       </td><td>7.558364e-41        </td><td>1.7262809           </td><td>1.5989467           </td><td>1.8620315           </td><td>4.346591e-05        </td><td>2.0319146           </td><td>1.4497790           </td><td>2.798520            </td></tr>
+	<tr><th scope=row>13</th><td>PolII_binding       </td><td>1.124630e-40        </td><td>2.5990105           </td><td>2.2890045           </td><td>2.9413682           </td><td>5.745633e-04        </td><td>2.8025486           </td><td>1.5425794           </td><td>4.723309            </td></tr>
+	<tr><th scope=row>10</th><td>E116-H3K9ac         </td><td>2.042655e-39        </td><td>1.9337026           </td><td>1.7625323           </td><td>2.1180509           </td><td>1.216273e-04        </td><td>2.2532773           </td><td>1.4933752           </td><td>3.295533            </td></tr>
+	<tr><th scope=row>7</th><td>E116-H3K4me2        </td><td>4.015520e-37        </td><td>1.6912262           </td><td>1.5648070           </td><td>1.8261439           </td><td>5.155783e-06        </td><td>2.1827886           </td><td>1.5664095           </td><td>2.992412            </td></tr>
+	<tr><th scope=row>4</th><td>E116-H3K27ac        </td><td>4.990333e-36        </td><td>1.7684080           </td><td>1.6243937           </td><td>1.9227320           </td><td>1.353474e-04        </td><td>2.0899986           </td><td>1.4378677           </td><td>2.965523            </td></tr>
+	<tr><th scope=row>1</th><td>Coding_UCSC         </td><td>2.689713e-16        </td><td>1.5378655           </td><td>1.3919312           </td><td>1.6959596           </td><td>6.343610e-02        </td><td>1.5414558           </td><td>0.9569762           </td><td>2.373234            </td></tr>
+	<tr><th scope=row>14</th><td>Extended_splice_site</td><td>2.953173e-15        </td><td>2.8019658           </td><td>2.2146418           </td><td>3.5018781           </td><td>6.427788e-02        </td><td>2.7080663           </td><td>0.7312262           </td><td>7.034874            </td></tr>
+	<tr><th scope=row>3</th><td>E116-H2A.Z          </td><td>1.499169e-11        </td><td>1.6450145           </td><td>1.4307537           </td><td>1.8834071           </td><td>4.404253e-01        </td><td>1.2854915           </td><td>0.5804513           </td><td>2.483132            </td></tr>
+	<tr><th scope=row>12</th><td>Intron_UCSC         </td><td>6.510039e-09        </td><td>0.7177286           </td><td>0.6445246           </td><td>0.8011805           </td><td>7.800842e-01        </td><td>1.1424304           </td><td>0.6415253           </td><td>2.243416            </td></tr>
+	<tr><th scope=row>6</th><td>E116-H3K4me1        </td><td>3.041316e-04        </td><td>1.2066611           </td><td>1.0900523           </td><td>1.3330231           </td><td>5.125559e-02        </td><td>1.5192093           </td><td>0.9785290           </td><td>2.272590            </td></tr>
+	<tr><th scope=row>11</th><td>E116-H4K20me1       </td><td>1.216984e-03        </td><td>1.5920187           </td><td>1.1971216           </td><td>2.0781821           </td><td>3.465422e-02        </td><td>2.8434502           </td><td>0.9141362           </td><td>6.738671            </td></tr>
+	<tr><th scope=row>2</th><td>CTCF_binding        </td><td>6.975631e-01        </td><td>1.0396775           </td><td>0.8297934           </td><td>1.2874168           </td><td>1.000000e+00        </td><td>0.9460932           </td><td>0.2556027           </td><td>2.455165            </td></tr>
 </tbody>
 </table>
 
@@ -1241,18 +1401,9 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 </div>
 
 </div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>There is more consistency between matched and unmatched PIP analysis. But in general, most annotations are significant.</p>
-
-</div>
-</div>
-</div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/08a86854d3a8304fbee8abe63ef37c9c4c0b1edd/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Tue Jul 31 16:24:33 2018 <a href="http://github.com/gaow/mvarbvs/commit/08a86854d3a8304fbee8abe63ef37c9c4c0b1edd">revision 7, 08a8685</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/9e348be14fd02ce04237a13a4359f7cad3f48af9/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Mon Aug 13 19:34:53 2018 <a href="http://github.com/gaow/mvarbvs/commit/9e348be14fd02ce04237a13a4359f7cad3f48af9">revision 8, 9e348be</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
