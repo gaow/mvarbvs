@@ -1401,9 +1401,86 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Check-for-overlap-between-signals-identifyed-by-Li-2016">Check for overlap between signals identifyed by Li 2016<a class="anchor-link" href="#Check-for-overlap-between-signals-identifyed-by-Li-2016">&#182;</a></h2><p>Data download from the <a href="http://eqtl.uchicago.edu/jointLCL/output_ASintron_PC3.txt">paper's companion data website</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb signal_overlap \
+    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
+    --trait AS -j 16</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">signal_overlap_1</span> <span class="p">(</span><span class="n">download</span> <span class="n">Li</span> <span class="mi">2016</span> <span class="n">results</span><span class="p">)]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/output_ASintron_PC3.txt&#39;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{_output:d}&quot;</span>
+    <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">eqtl</span><span class="o">.</span><span class="n">uchicago</span><span class="o">.</span><span class="n">edu</span><span class="o">/</span><span class="n">jointLCL</span><span class="o">/</span><span class="n">output_ASintron_PC3</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">signal_overlap_2</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">z_score</span>
+<span class="n">fdr</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+    <span class="kn">from</span> <span class="nn">sos.utils</span> <span class="kn">import</span> <span class="n">get_output</span>
+    <span class="n">susie</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;zcat ${z_score} | cut -f2,3 -d&#39;_&#39; | sed &#39;s/_/./g&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
+    <span class="n">yang</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;awk &#39;{if ($5 &lt; ${fdr}) print $1,$2}&#39; ${_input}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">yang_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">yang</span><span class="p">:</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">yang_dict</span><span class="p">:</span>
+            <span class="n">yang_dict</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">yang_dict</span><span class="p">[</span><span class="n">line</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">intersects</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">yang_dict</span><span class="p">:</span>
+        <span class="n">common</span> <span class="o">=</span> <span class="n">susie</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">yang_dict</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="n">intersects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">common</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">intersects</span><span class="p">))</span>
+    <span class="k">print</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">intersects</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>1906 out of 2437 clusters match.</p>
+
+</div>
+</div>
+</div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/9e348be14fd02ce04237a13a4359f7cad3f48af9/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Mon Aug 13 19:34:53 2018 <a href="http://github.com/gaow/mvarbvs/commit/9e348be14fd02ce04237a13a4359f7cad3f48af9">revision 8, 9e348be</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/dd86c4bd1cd1add3bc596cb6de916949f64b1053/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Tue Aug 14 19:43:08 2018 <a href="http://github.com/gaow/mvarbvs/commit/dd86c4bd1cd1add3bc596cb6de916949f64b1053">revision 9, dd86c4b</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
