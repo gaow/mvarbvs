@@ -293,8 +293,8 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
 <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/github/mvarbvs/dsc&#39;</span><span class="p">)</span>
 <span class="n">dirname</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/susie_comparison/&#39;</span><span class="p">)</span>
-<span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;0630&#39;</span>
-<span class="n">susie_prior</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;0722&#39;</span>
+<span class="n">susie_prior</span> <span class="o">=</span> <span class="mf">0.2</span>
 </pre></div>
 
 </div>
@@ -378,10 +378,40 @@ body {
         <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">time</span> <span class="o">/</span> <span class="mi">2</span>
         <span class="n">out_files</span> <span class="o">=</span> <span class="n">finemap_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">finemap_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">finemap_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span> <span class="o">&amp;</span> <span class="n">finemap_out</span><span class="err">$</span><span class="n">fit_finemap</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;--n-causal-max&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_finemap.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
         <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">time</span><span class="err">$</span><span class="n">elapsed</span>
-        <span class="n">out_files</span> <span class="o">=</span> <span class="n">caviar_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">caviar_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">caviar_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span> <span class="o">&amp;</span> <span class="n">caviar_out</span><span class="err">$</span><span class="n">fit_caviar</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_caviar.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+        <span class="n">out_files</span> <span class="o">=</span> <span class="n">caviar_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">caviar_out</span><span class="err">$</span><span class="n">lm_less</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">caviar_out</span><span class="err">$</span><span class="n">liter_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span> <span class="o">&amp;</span> <span class="n">caviar_out</span><span class="err">$</span><span class="n">fit_caviar</span><span class="o">.</span><span class="n">args</span> <span class="o">==</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;-g 0.001 -c&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">)),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_caviar.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
         <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">time</span><span class="err">$</span><span class="n">elapsed</span>
     <span class="p">}</span>
     <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">speed_3</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.png&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">reshape2</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">melt</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">dat</span><span class="p">,</span> <span class="n">measure</span><span class="o">.</span><span class="n">vars</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+    <span class="c1"># Basic violin plot</span>
+    <span class="n">png</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="mi">600</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">ggplot</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">time</span><span class="p">))</span> <span class="o">+</span> 
+      <span class="n">geom_violin</span><span class="p">(</span><span class="n">trim</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span><span class="o">+</span>
+      <span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;time elapsed (seconds)&quot;</span><span class="p">)</span><span class="o">+</span>
+      <span class="n">geom_boxplot</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">+</span>
+      <span class="n">theme_classic</span><span class="p">()</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
 </div>
@@ -482,31 +512,10 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[15]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">library</span><span class="p">(</span><span class="n">reshape2</span><span class="p">)</span>
-<span class="n">dat</span> <span class="o">=</span> <span class="n">melt</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">dat</span><span class="p">,</span> <span class="n">measure</span><span class="o">.</span><span class="n">vars</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
-<span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
-</pre></div>
-
-</div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
-<span class="c1"># Basic violin plot</span>
-<span class="n">ggplot</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">time</span><span class="p">))</span> <span class="o">+</span> 
-  <span class="n">geom_violin</span><span class="p">(</span><span class="n">trim</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">)</span><span class="o">+</span>
-  <span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;time elapsed (seconds)&quot;</span><span class="p">)</span><span class="o">+</span>
-  <span class="n">geom_boxplot</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">+</span>
-  <span class="n">theme_classic</span><span class="p">()</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">susie_comparison</span><span class="o">/</span><span class="n">speed_comparison_0630_estvar_true</span><span class="o">.</span><span class="n">png</span>
 </pre></div>
 
 </div>
@@ -873,9 +882,22 @@ xA4AAACAJ5DYAQAAAPAEEjsAAAAAnkBiBwAAAMAT/wfKHxDz+dG3IQAAAABJRU5ErkJggg=="
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/24b7bf304421316d1c70d0cab18fe420ea96e9ed/analysis/20180630_Runtime.ipynb"><code>analysis/20180630_Runtime.ipynb</code></a> committed by Gao Wang on Fri Jul 13 11:41:04 2018 <a href="http://github.com/gaow/mvarbvs/commit/24b7bf304421316d1c70d0cab18fe420ea96e9ed">revision 2, 24b7bf3</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/811f030e681587509b20c724f4a9197cfe405ec3/analysis/20180630_Runtime.ipynb"><code>analysis/20180630_Runtime.ipynb</code></a> committed by Gao Wang on Fri Aug 17 10:07:13 2018 <a href="http://github.com/gaow/mvarbvs/commit/811f030e681587509b20c724f4a9197cfe405ec3">revision 3, 811f030</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
