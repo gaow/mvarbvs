@@ -29,7 +29,7 @@ def write_dap_ss(z,prefix):
         np.savetxt(f,  np.vstack((ids, z)).T, fmt = '%s', delimiter = ' ')
 
 def run_dap_z(ld, prefix, args):
-    cmd = ['dap-g', '-d_z', f'{prefix}.z', '-d_ld', ld, '-o', f'{prefix}.result', '--all'] + ' '.join(args).split()
+    cmd = ['dap-g', '-d_z', f'{prefix}.z', '-d_ld', ld, '-o', f'{prefix}.result', '--output_all'] + ' '.join(args).split()
     subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()    
     
 def extract_dap_output(prefix):

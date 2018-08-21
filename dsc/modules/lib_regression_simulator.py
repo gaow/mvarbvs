@@ -255,7 +255,6 @@ class UnivariateMixture:
         '''
         top_only: only keep top `num_non_zero` effects
         '''
-        nb = np.zeros(self.size)
         if top_only:
             big_beta_index = [i[0] for i in sorted(enumerate(self.coef), key = lambda x: np.absolute(x[1]), reverse = True)]
             selected_index = big_beta_index[:min(len(big_beta_index), num_non_zero)]

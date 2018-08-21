@@ -17,7 +17,7 @@ for (r in 1:ncol(data$Y)) {
                                L=maxL,
                                max_iter=maxI,
                                estimate_residual_variance=estimate_residual_variance,
-                               prior_variance=prior_var,
+                               scaled_prior_variance=prior_var,
                                tol=1e-3)
   }
   fitted[[r]]$lfsr <- susieR::susie_get_lfsr(fitted[[r]])

@@ -9,7 +9,7 @@
 
 full_data: sim_utils.R + R(data =readRDS(dataset);
             data$X = as.matrix(data$X[,get_center(subset, ncol(data$X))]);
-            r = cor(data$X);
+            r = round(cor(data$X), 4);
             saveRDS(r, ld_mat);
             write.table(r,ld_file,quote=F,col.names=F,row.names=F))
   tag: "full"
@@ -33,7 +33,7 @@ two_effect(full_data):
   subset: 2
              
 dap_g_data(full_data): R(X = readRDS(dataset)$X;
-              r = cor(X);
+              r = round(cor(X), 4);
               saveRDS(r, ld_mat);
               write.table(r,ld_file,quote=F,col.names=F,row.names=F)) + \
               dap_g_paper.R + R(data = list(X=X,Y=Y,true_coef=B))  
