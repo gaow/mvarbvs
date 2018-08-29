@@ -27,9 +27,9 @@ class RegressionData(dotdict):
         # FIXME: check if inputs are indeed numpy arrays
         self.debug = dotdict()
         self.x_mean = self.y_mean = self.z_mean = None
-        self.X = None
-        self.Y = None
-        self.Z = None
+        self.X = X
+        self.Y = Y
+        self.Z = Z
         self.xcorr = None
 
     def get_summary_stats(self):
@@ -66,25 +66,36 @@ class RegressionData(dotdict):
             self.z_mean = np.mean(self.Z, axis=0)
             self.Z -= self.z_mean
 
-    def set_xcorr(self, xcorr):
+    def set_xcorr(self, xcorr=None):
         if xcorr is not None:
             self.xcorr = np.array(xcorr)
         else:
             self.xcorr = np.corrcoef(self.X, rowvar = False)
             self.xcorr = (np.square(self.xcorr) * np.sign(self.xcorr)).astype(np.float16)
 
-    def plot_xcorr(self, out, limit = 5000):
-        use_abs = np.sum(self.xcorr < 0) == 0
-        fig, ax = plt.subplots()
-        limit = min(self.xcorr.shape[0], limit)
+    def plot_xcorr(self, out, limit = 5000, size = 15):
+        if isinstance(limit, tuple):
+            start = max(0, limit[0])
+            end = min(self.xcorr.shape[0], limit[1])
+            xcorr = self.xcorr[start:end,start:end]
+        else:
+            # the correlation matrix
+            limit = min(self.xcorr.shape[0], limit)
+            xcorr = self.xcorr[0:limit,0:limit]
+        # Generate a mask for the upper triangle
+        mask = np.zeros_like(xcorr, dtype=np.bool)
+        mask[np.triu_indices_from(mask)] = True
+        fig, ax = plt.subplots(figsize=(size,size))
         if out.endswith('pdf'):
             raise ValueError('Please use png extension for output file.')
         print(f'Plotting figure {out} for {limit} markers (default limit set to 5000) ...')
-        cmap = sns.cubehelix_palette(50, hue=0.05, rot=0, light=1, dark=0, as_cmap=True)
-        sns.heatmap(self.xcorr[1:limit,1:limit], ax = ax, cmap = cmap, vmin=-1 if not use_abs else 0,
-                    vmax=1, square=True, xticklabels = False, yticklabels = False)
+        use_abs = np.sum(xcorr < 0) == 0
+        cmap = sns.diverging_palette(250, 15, as_cmap=True)
+        sns.heatmap(xcorr, ax = ax, mask=mask, cmap = cmap, vmin=-1 if not use_abs else 0,
+                    vmax=1, square=True, xticklabels = False, yticklabels = False, 
+                    linewidths=.5, cbar_kws={"shrink": .5}, center=0)  
         ax = plt.gca()
-        print(f'Saving figure {out} ...')        
+        print(f'Saving figure {out} ...')
         plt.savefig(out, dpi = 500)
         
     def permute_X_columns(self):
