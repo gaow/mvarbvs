@@ -407,15 +407,14 @@ Global Workflow Options:
                         X data, the genotype VCF file path
   --y-data . (as path)
                         Y data, the phenotype file paths
-  --trait VAL (required)
+  --trait &#39;unnamed_phenotype&#39;
                         Trait name
   --cwd  f&#39;{y_data:d}/{trait}_output&#39;
 
                         Specify work / output directory
-  --max-dist 1000000 (as int)
-                        Maximum distance to site of
-                        interest, eg. 1Mb up/downstream to
-                        TSS for gene level QTL
+  --max-dist 100000 (as int)
+                        Maximum distance to site of interest, set to eg. 100Kb
+                        or 1Mb up/downstream to start site of analysis unit
 
 Sections
   preprocess_1:         PCA on phenotype and remove top PCs
@@ -423,37 +422,33 @@ Sections
       --num-pcs 3 (as int)
                         Num. PC to remove from phenotype
       --colname-pattern &#39;^[0-9]+&#39;
-                        column name patter for `grep` in R
-                        to select phenotype columns eg.
-                        &#34;^NA[0-9]+&#34; to extract sample names
+                        column name patter for `grep` in R to select phenotype
+                        columns eg. &#34;^NA[0-9]+&#34; to extract sample names
   index_vcf:            this step provides VCF file index
-  preprocess_2:         Extract cis-SNPs and make fine-
-                        mapping datasets
+  preprocess_2:         Extract cis-SNPs and make fine-mapping datasets
   preprocess_3:         Summary statistics and PVE estimates
   SuSiE:                Run SuSiE
     Workflow Options:
       --maxL 5 (as int)
                         SuSiE parameter: L
-      --prior-var 0 (as int)
-                        SuSiE parameter: prior variance; set
-                        to 0 to use PVE estimates
-  SuSiE_summary:        Make SuSiE result plots for
-                        significant results
+      --prior-var 0.0 (as float)
+                        SuSiE parameter: prior variance; set to 0 to use per-
+                        dataset PVE estimates
+  SuSiE_summary:        Make SuSiE result plots for significant results
   DAP_1:                Convert to DAP format
   DAP_2:                Run DAP-g
-  CAVIAR_follow_up_1:   Run CAVIAR on SuSiE results of
-                        interest
+  CAVIAR_follow_up_1:   Run CAVIAR on SuSiE results of interest
     Workflow Options:
       --caviar-args &#39;-c 2&#39;
   CAVIAR_follow_up_2:   Plot CAVIAR vs SuSiE results
-  lm_follow_up_1:       Run linear regression conditional on
-                        SuSiE CS
+  lm_follow_up_1:       Run linear regression conditional on SuSiE CS
     Workflow Options:
       --use-top-pip TRUE
-                        Only use top pip from each cluster
-                        rather than using all variables from
-                        the cluster
+                        Only use top pip from each cluster rather than using all
+                        variables from the cluster
   lm_follow_up_2:       Summarize the outcome
+    Workflow Options:
+      --pval-cutoff &#39;1E-4&#39;
 </pre>
 </div>
 </div>
@@ -473,7 +468,7 @@ Sections
 <span class="c1"># Y data, the phenotype file paths</span>
 <span class="kn">parameter:</span> <span class="n">y_data</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span>
 <span class="c1"># Trait name</span>
-<span class="kn">parameter:</span> <span class="n">trait</span> <span class="o">=</span> <span class="bp">None</span>
+<span class="kn">parameter:</span> <span class="n">trait</span> <span class="o">=</span> <span class="s2">&quot;unnamed_phenotype&quot;</span>
 <span class="c1"># Specify work / output directory</span>
 <span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{y_data:d}/{trait}_output&#39;</span>
 <span class="c1"># Maximum distance to site of interest, set to eg. 100Kb or 1Mb up/downstream to start site of analysis unit</span>
@@ -492,6 +487,29 @@ Sections
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>and some <code>bash</code> variables</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<div class="highlight"><pre><span></span><span class="nv">xdata</span><span class="o">=</span>/project/compbio/jointLCLs/genotype/hg19/YRI/genotypesYRI.gen.txt.gz
+<span class="nv">ydata</span><span class="o">=</span>/project/compbio/jointLCLs/phenotypes/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz
+<span class="nv">ncpu</span><span class="o">=</span><span class="m">24</span>
+<span class="nv">trait</span><span class="o">=</span>AS
+<span class="nv">cwd</span><span class="o">=</span>/project/compbio/jointLCLs/results/SuSiE
+</pre></div>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Preprocessing-analysis">Preprocessing analysis<a class="anchor-link" href="#Preprocessing-analysis">&#182;</a></h2>
 </div>
 </div>
@@ -503,9 +521,8 @@ Sections
 <p>The preprocessing pipeline can be executed locally, takes 3hrs on my 40-thread machine:</p>
 
 <pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
-    --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --max-dist 100000 --num-pcs 3 --trait AS -j 38</code></pre>
+    --x-data $xdata --y-data $ydata --trait $trait --cwd $cwd -j $ncpu \
+    --max-dist 100000 --num-pcs 3</code></pre>
 
 </div>
 </div>
@@ -588,11 +605,11 @@ Sections
    <span class="n">tabix</span> <span class="o">-</span><span class="n">p</span> <span class="n">vcf</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span>
 
 <span class="c1"># Extract cis-SNPs and make fine-mapping datasets</span>
-<span class="p">[</span><span class="n">preprocess_2</span> <span class="p">(</span><span class="n">Get</span> <span class="n">per</span><span class="o">-</span><span class="n">unit</span> <span class="n">dataset</span><span class="p">)]</span>
+<span class="p">[</span><span class="n">preprocess_2</span> <span class="p">(</span><span class="n">Get</span> <span class="n">per</span><span class="o">-</span><span class="n">unit</span> <span class="n">dataset</span><span class="p">):</span> <span class="kp">shared</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;unit_dataset&#39;</span><span class="p">:</span> <span class="s2">&quot;step_output&quot;</span><span class="p">}]</span>
 <span class="kn">depends:</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;pysam&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;pandas&#39;</span><span class="p">),</span> <span class="n">Py_Module</span><span class="p">(</span><span class="s1">&#39;feather&#39;</span><span class="p">),</span> <span class="n">f</span><span class="s2">&quot;{x_data}.tbi&quot;</span>
 <span class="n">chroms</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;chr{x+1}&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">22</span><span class="p">)]</span>
 <span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;chroms&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/chr*/*.feather&#39;</span><span class="p">))</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/{_chroms}/MANIFEST&#39;</span>
 <span class="kn">python:</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
     <span class="k">def</span> <span class="nf">read_header</span><span class="p">(</span><span class="n">gzfile</span><span class="p">):</span>
         <span class="kn">import</span> <span class="nn">gzip</span>
@@ -601,7 +618,7 @@ Sections
                 <span class="n">res</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">res</span>
-
+    <span class="kn">import</span> <span class="nn">os</span>
     <span class="n">chrom</span> <span class="o">=</span> <span class="s2">&quot;${_chroms}&quot;</span>
     <span class="n">phenotype_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;${pop}_{x}&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">read_header</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})[</span><span class="mi">4</span><span class="p">:]]</span>
     <span class="n">vcf_id</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;${pop}_{x}&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">read_header</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">x_data</span><span class="p">:</span><span class="n">r</span><span class="p">})[</span><span class="mi">9</span><span class="p">:]]</span>
@@ -616,11 +633,16 @@ Sections
     <span class="kn">import</span> <span class="nn">re</span><span class="o">,</span> <span class="nn">time</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">out_files</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">site</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">qts</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">())):</span>
         <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
             <span class="k">print</span><span class="p">(</span><span class="s1">&#39;[chrom </span><span class="si">%s</span><span class="s1"> percent completed] </span><span class="si">%.1f</span><span class="s1"> (</span><span class="si">%.1f</span><span class="s1"> sec elapsed)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">chrom</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">qts</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>        
         <span class="n">unit</span> <span class="o">=</span> <span class="n">qts</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">qts</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">site</span><span class="p">]</span>
         <span class="n">i</span> <span class="o">+=</span> <span class="n">unit</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">basename</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}_${int(max_dist/1000)}Kb/{chrom}/{chrom}_{site}_{max(unit[&quot;end&quot;].tolist())}&#39;</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.feather&#39;</span><span class="p">):</span>
+            <span class="n">out_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.feather&#39;</span><span class="p">)</span>
+            <span class="k">continue</span>
         <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">site</span> <span class="o">-</span> <span class="err">$</span><span class="p">{</span><span class="n">max_dist</span><span class="p">},</span> <span class="mi">0</span><span class="p">)</span>
         <span class="n">end</span> <span class="o">=</span> <span class="n">site</span> <span class="o">+</span> <span class="err">$</span><span class="p">{</span><span class="n">max_dist</span><span class="p">}</span>
         <span class="n">genotypes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">row</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tbx</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="n">chrom</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">parser</span><span class="o">=</span><span class="n">pysam</span><span class="o">.</span><span class="n">asTuple</span><span class="p">())])</span>
@@ -634,10 +656,12 @@ Sections
                               <span class="n">index</span> <span class="o">=</span> <span class="n">vcf_id</span><span class="p">)</span>
         <span class="n">merged</span> <span class="o">=</span> <span class="n">Y_data</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">X_data</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">&#39;inner&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
         <span class="n">Path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}_${int(max_dist/1000)}Kb/{chrom}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-        <span class="n">basename</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;${cwd}/${y_data:bnn}_${int(max_dist/1000)}Kb/{chrom}/{chrom}_{site}_{max(unit[&quot;end&quot;].tolist())}&#39;</span>
         <span class="c1"># FIXME: this will be a large file because feather format is not yet compressed ... </span>
         <span class="c1"># This is being discussed by the feather development group and hopefully compression will be supported in later 2018</span>
         <span class="n">write_dataframe</span><span class="p">(</span><span class="n">merged</span><span class="p">,</span> <span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.feather&#39;</span><span class="p">)</span>
+        <span class="n">out_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">basename</span> <span class="o">+</span> <span class="s1">&#39;.feather&#39;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
 </pre></div>
 
 </div>
@@ -662,7 +686,7 @@ Sections
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># Summary statistics and PVE estimates</span>
 <span class="p">[</span><span class="n">preprocess_3</span> <span class="p">(</span><span class="n">PVE</span><span class="p">)]</span>
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;feather&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;susieR&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">input:</span> <span class="n">paths</span><span class="p">([</span><span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;cat {x}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">unit_dataset</span><span class="p">]),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.rds&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
     <span class="n">library</span><span class="p">(</span><span class="n">feather</span><span class="p">)</span>
@@ -741,20 +765,19 @@ Sections
 <p>This step takes 3hrs on my 40-thread machine:</p>
 
 <pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb SuSiE \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
-    --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --max-dist 100000 --trait AS -j 38</code></pre>
+    --x-data $xdata --y-data $ydata --trait $trait --cwd $cwd -j $ncpu \
+    --max-dist 100000 --prior_var 0.096</code></pre>
+<p>and not very much recommanded but what I've tried anyways is to use region level PVE based value 
+(<strong>it will override previous command so please empty previous output if you'd like to try this!</strong>):</p>
 
 <pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb SuSiE \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
-    --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --max-dist 100000 --trait AS -j 16 --prior_var 0.096</code></pre>
-<p>and we only plot the ones SuSiE reports at least 1 CS:</p>
+    --x-data $xdata --y-data $ydata --trait $trait --cwd $cwd -j $ncpu \
+    --max-dist 100000</code></pre>
+<p>we only plot the ones SuSiE reports at least 1 CS:</p>
 
 <pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb SuSiE_summary \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
-    --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --max-dist 100000 --trait AS -j 38</code></pre>
+    --x-data $xdata --y-data $ydata --trait $trait --cwd $cwd -j $ncpu \
+    --max-dist 100000</code></pre>
 
 </div>
 </div>
@@ -769,7 +792,7 @@ Sections
 <span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;susieR&#39;</span><span class="p">)</span>
 <span class="c1"># SuSiE parameter: L</span>
 <span class="kn">parameter:</span> <span class="n">maxL</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="c1"># SuSiE parameter: prior variance; set to 0 to use PVE estimates</span>
+<span class="c1"># SuSiE parameter: prior variance; set to 0 to use per-dataset PVE estimates</span>
 <span class="kn">parameter:</span> <span class="n">prior_var</span> <span class="o">=</span> <span class="mf">0.0</span>
 <span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/chr*/*.rds&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">dynamic</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd}/{y_data:bnn}_{int(max_dist/1000)}Kb/SuSiE_CS_*/*.rds&#39;</span><span class="p">))</span>
@@ -782,7 +805,7 @@ Sections
       <span class="n">fitted</span> <span class="o">=</span> <span class="n">susie</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="n">dat</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">y</span><span class="p">,</span>
                <span class="n">L</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">maxL</span><span class="p">},</span>
                <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> 
-               <span class="n">prior_variance</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">prior_var</span> <span class="k">if</span> <span class="n">prior_var</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;dat[[r]]$pve / (1 - dat[[r]]$pve)&quot;</span><span class="p">},</span>
+               <span class="n">scaled_prior_variance</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">prior_var</span> <span class="k">if</span> <span class="n">prior_var</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;dat[[r]]$pve&quot;</span><span class="p">},</span>
                <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">)</span>
       <span class="n">sets</span> <span class="o">=</span> <span class="n">susie_get_CS</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span>
                     <span class="n">coverage</span> <span class="o">=</span> <span class="mf">0.95</span><span class="p">,</span>
@@ -840,22 +863,22 @@ Sections
 <h2 id="Finemapping-with-DAP">Finemapping with DAP<a class="anchor-link" href="#Finemapping-with-DAP">&#182;</a></h2><p>I made this for Kevin's analysis. Here is a list of analysis I've ran:</p>
 
 <pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
+    --x-data $xdata \
     --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_m6A_merged_peaks_IPcounts_YangVCF.txt.gz \
     --max-dist 100000 --num-pcs 7 --trait m6A -j 38 \
     -b ~/GIT/github/mvarbvs/dsc/modules/linux/
 sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
+    --x-data $xdata \
     --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_ribo_normExpr_YangVCF.txt.gz \
     --max-dist 100000 --num-pcs 2 --trait ribo -j 38 \
     -b ~/GIT/github/mvarbvs/dsc/modules/linux/
 sos run analysis/20180704_MolecularQTL_Workflow.ipynb DAP \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
+    --x-data $xdata \
     --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
     --max-dist 100000 --num-pcs 3 --trait AS -j 38 \
     -b ~/GIT/github/mvarbvs/dsc/modules/linux/
 sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
+    --x-data $xdata \
     --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_apa_distProxRatio_YangVCF.txt.gz \
     --max-dist 100000 --num-pcs 7 --trait APA -j 38 \
     -b ~/GIT/github/mvarbvs/dsc/modules/linux/</code></pre>
@@ -945,9 +968,8 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
 <p>To verify how many signals are in there when there is seemingly one cluster visually, we run CAVIAR for those data. Input for CAVIAR are z-scores and LD matrices.</p>
 
 <pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb CAVIAR_follow_up \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
-    --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --max-dist 100000 -j 16 --trait AS \
+    --x-data $xdata --y-data $ydata --trait $trait --cwd $cwd -j $ncpu \
+    --max-dist 100000 \
     -b ~/GIT/github/mvarbvs/dsc/modules/linux/</code></pre>
 
 </div>
@@ -1069,9 +1091,8 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
 <h2 id="Follow-up:-verify-with-multiple-regression">Follow-up: verify with multiple regression<a class="anchor-link" href="#Follow-up:-verify-with-multiple-regression">&#182;</a></h2><p>For SuSiE 1 or more CS results we can construct a multiple regression model using variables (or top signal) from each CS, then get the residual, and regress it with the SNP that has top z-score, to see if the effect on the top SNP disappears.</p>
 
 <pre><code>sos run analysis/20180704_MolecularQTL_Workflow.ipynb lm_follow_up \
-    --x-data ~/GIT/LargeFiles/JointLCL/genotypesYRI.gen.txt.gz \
-    --y-data ~/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --max-dist 100000 -j 16 --trait AS</code></pre>
+    --x-data $xdata --y-data $ydata --trait $trait --cwd $cwd -j $ncpu \
+    --max-dist 100000 \</code></pre>
 
 </div>
 </div>
@@ -1926,7 +1947,7 @@ gVkAAAAASUVORK5CYII="
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/2eeb43b1fd56b2ecbf6508b8697a134840564c62/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Thu Aug 16 20:57:20 2018 <a href="http://github.com/gaow/mvarbvs/commit/2eeb43b1fd56b2ecbf6508b8697a134840564c62">revision 25, 2eeb43b</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/1064b24b6ea9dcfbf05f782f33d0e0973103f1b7/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Thu Aug 23 17:07:48 2018 <a href="http://github.com/gaow/mvarbvs/commit/1064b24b6ea9dcfbf05f782f33d0e0973103f1b7">revision 29, 1064b24</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
