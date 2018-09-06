@@ -502,7 +502,7 @@ PolII_binding</code></pre>
 <span class="c1"># Specify work / output directory</span>
 <span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{y_data:d}/{trait}_output&#39;</span><span class="p">)</span>
 <span class="c1"># Path to directory of annotation files</span>
-<span class="kn">parameter:</span> <span class="n">annotation_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GIT/LargeFiles/lcl_annotation&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">annotation_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/project/compbio/jointLCLs/annotations/susie_paper_annotations&#39;</span><span class="p">)</span>
 <span class="c1"># Path to list of single annotations to use</span>
 <span class="kn">parameter:</span> <span class="n">single_annot</span> <span class="o">=</span> <span class="n">path</span><span class="p">()</span> <span class="c1">#parameter: single_annot = path(&quot;data/all_annotations.txt&quot;)</span>
 <span class="c1"># Maximum distance to site of interest, set to eg. 100Kb or 1Mb up/downstream to start site of analysis unit</span>
@@ -525,10 +525,33 @@ PolII_binding</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>and some bash variables:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>xdata=/project/compbio/jointLCLs/genotype/hg19/YRI/genotypesYRI.gen.txt.gz
+ydata=/project/compbio/jointLCLs/phenotypes/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz
+ncpu=16
+trait=AS
+cwd=/project/compbio/jointLCLs/results/SuSiE</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Prepare-annotations">Prepare annotations<a class="anchor-link" href="#Prepare-annotations">&#182;</a></h2><p>Histone marks</p>
 
-<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_histone_annotation --trait AS \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_histone_annotation \
+    --trait $trait --y-data $ydata</code></pre>
 
 </div>
 </div>
@@ -570,8 +593,8 @@ PolII_binding</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>CTCF binding:</p>
 
-<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_ctcf_annotation --trait AS \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_ctcf_annotation \
+    --trait $trait --y-data $ydata</code></pre>
 
 </div>
 </div>
@@ -600,8 +623,8 @@ PolII_binding</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>PolyII binding:</p>
 
-<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_polII_annotation --trait AS \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_polII_annotation \
+    --trait $trait --y-data $ydata</code></pre>
 <p>Need to <code>liftOver</code>:</p>
 
 <pre><code>conda config --add channels bioconda
@@ -639,8 +662,8 @@ conda install ucsc-liftover</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Gene regions:</p>
 
-<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gene_regions --trait AS \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gene_regions \
+    --trait $trait --y-data $ydata</code></pre>
 
 </div>
 </div>
@@ -692,8 +715,8 @@ conda install ucsc-liftover</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Extended splice sites:</p>
 
-<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb extended_splice_site --trait AS \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz</code></pre>
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb extended_splice_site \
+    --trait $trait --y-data $ydata</code></pre>
 
 </div>
 </div>
@@ -730,8 +753,7 @@ conda install ucsc-liftover</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Prepare-summary-statistics-file">Prepare summary statistics file<a class="anchor-link" href="#Prepare-summary-statistics-file">&#182;</a></h2>
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb extract_sumstats \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --trait AS -j 16</code></pre>
+    --trait $trait --y-data $ydata -j $ncpu</code></pre>
 
 </div>
 </div>
@@ -849,8 +871,7 @@ conda install ucsc-liftover</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Apply-ranged-based-annotations">Apply ranged based annotations<a class="anchor-link" href="#Apply-ranged-based-annotations">&#182;</a></h2>
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb range2var_annotation \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --trait AS -j 16 \
+    --trait $trait --y-data $ydata -j $ncpu \
     --single-annot data/annotation.list</code></pre>
 
 </div>
@@ -948,13 +969,11 @@ AFR.part.1  ( MD5: c1d30aff89a584bfa8c1fa1bdc197f21 )</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 1 \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --trait AS -j 16 \
+    --trait $trait --y-data $ydata -j $ncpu \
     --single-annot data/annotation.list 
 
 sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --trait AS -j 16 \
+    --trait $trait --y-data $ydata -j $ncpu \
     --single-annot data/annotation.list</code></pre>
 
 </div>
@@ -1118,8 +1137,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 <p>In Li 2016 manuscript the analysis was not matched by LD, MAF and TSS for sQTL. The only constraint for control SNPs was that they should be within intron clusters. To focus analysis on these SNPs:</p>
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb overlap_cluster \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --trait AS</code></pre>
+    --trait $trait --y-data $ydata</code></pre>
 
 </div>
 </div>
@@ -1162,8 +1180,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 <p>Test for larger PIP in annotation vs outside it.</p>
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb pip_rank_test \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --trait AS -j 16 \
+    --trait $trait --y-data $ydata -j $ncpu \
     --single-annot data/annotation.list</code></pre>
 
 </div>
@@ -1299,8 +1316,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 <p>Test for enrichment of annotation in CS.</p>
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb cs_fisher_test \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --trait AS -j 16 \
+    --trait $trait --y-data $ydata -j $ncpu \
     --single-annot data/annotation.list</code></pre>
 
 </div>
@@ -1522,8 +1538,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 <div class="text_cell_render border-box-sizing rendered_html">
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb signal_overlap \
-    --y-data ~/Documents/GIT/LargeFiles/JointLCL/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz \
-    --trait AS -j 16</code></pre>
+    --trait $trait --y-data $ydata -j $ncpu</code></pre>
 
 </div>
 </div>
@@ -1586,7 +1601,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/27f917a36e16d8000ffa28c4bb0a9c2d2550804e/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Thu Aug 16 18:16:46 2018 <a href="http://github.com/gaow/mvarbvs/commit/27f917a36e16d8000ffa28c4bb0a9c2d2550804e">revision 12, 27f917a</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/6ffe8e6ea693053df044ce3a0e23c30ee3481c87/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Wed Sep 5 23:12:11 2018 <a href="http://github.com/gaow/mvarbvs/commit/6ffe8e6ea693053df044ce3a0e23c30ee3481c87">revision 13, 6ffe8e6</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
