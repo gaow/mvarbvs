@@ -683,6 +683,35 @@ conda install ucsc-liftover</code></pre>
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<p>General annotations:</p>
+
+<pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb download_general_annotation --trait $trait \
+    --y-data $ydata</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">download_general_annotation</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{annotation_dir}/{x}.bed&#39;</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;Coding_UCSC&#39;</span><span class="p">,</span> <span class="s1">&#39;Intron_UCSC&#39;</span><span class="p">]]</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">decompress</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">stephenslab</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">susie</span><span class="o">-</span><span class="n">paper</span><span class="o">/</span><span class="n">downloads</span><span class="o">/</span><span class="n">Coding_UCSC</span><span class="o">.</span><span class="n">bed</span><span class="o">.</span><span class="n">gz</span>
+    <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">stephenslab</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">susie</span><span class="o">-</span><span class="n">paper</span><span class="o">/</span><span class="n">downloads</span><span class="o">/</span><span class="n">Intron_UCSC</span><span class="o">.</span><span class="n">bed</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>Gene regions:</p>
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb gene_regions \
@@ -721,10 +750,14 @@ conda install ucsc-liftover</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gene_regions</span><span class="p">]</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">gene_regions_1</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/gene_map.txt&#39;</span>
+<span class="kn">download:</span> <span class="n">dest_dir</span> <span class="o">=</span> <span class="n">annotation_dir</span><span class="p">,</span> <span class="n">decompress</span> <span class="o">=</span> <span class="bp">True</span>
+    <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">stephenslab</span><span class="o">.</span><span class="n">github</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">susie</span><span class="o">-</span><span class="n">paper</span><span class="o">/</span><span class="n">downloads</span><span class="o">/</span><span class="n">gene_map</span><span class="o">.</span><span class="n">txt</span><span class="o">.</span><span class="n">gz</span>
+
+<span class="p">[</span><span class="n">gene_regions_2</span><span class="p">]</span>
 <span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;sort-bed&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/gene_map.txt&#39;</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}/gene_map.bed&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.bed&#39;</span>
 <span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">annotation_dir</span>
     <span class="n">cut</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">-</span><span class="n">f2</span><span class="o">-</span><span class="mi">4</span> <span class="o">|</span> <span class="n">sed</span> <span class="s1">&#39;s/^/chr/g&#39;</span> <span class="o">|</span> <span class="n">grep</span> <span class="o">-</span><span class="n">v</span> <span class="n">chrM</span> <span class="o">|</span> <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="o">-</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
@@ -779,7 +812,7 @@ conda install ucsc-liftover</code></pre>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Prepare-summary-statistics-file">Prepare summary statistics file<a class="anchor-link" href="#Prepare-summary-statistics-file">&#182;</a></h2>
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb extract_sumstats \
-    --trait $trait --y-data $ydata -j $ncpu</code></pre>
+    --trait $trait --y-data $ydata -j $ncpu --cwd $cwd</code></pre>
 
 </div>
 </div>
@@ -803,8 +836,10 @@ conda install ucsc-liftover</code></pre>
     <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[</span><span class="n">ordering</span><span class="p">]</span>
     <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">purity</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">purity</span><span class="p">[</span><span class="n">ordering</span><span class="p">,]</span>
     <span class="n">cs_id</span> <span class="o">=</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">pip</span><span class="p">))</span>
-    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span> <span class="p">{</span>
-        <span class="n">cs_id</span><span class="p">[</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">cs_id</span><span class="p">[</span><span class="n">dat</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]]</span> <span class="o">=</span> <span class="n">j</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="p">}</span>
     <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">cbind</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="n">pip</span><span class="p">,</span><span class="n">zscore</span><span class="p">,</span><span class="n">cs_id</span><span class="p">),</span> <span class="n">gzfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}),</span> <span class="n">quote</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -826,15 +861,15 @@ conda install ucsc-liftover</code></pre>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 
-<pre><code>[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | wc -l
-1289796
-[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 1 | wc -l
-37911
-[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 2 | wc -l
-1881
-[GW] zcat /home/gaow/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 3 | wc -l
-91</code></pre>
-<p>So we have total of 1289796 variants, 37911 in CS 1, 1881 in CS 2, etc.</p>
+<pre><code>[MW] zcat /project/compbio/jointLCLs/results/SuSiE/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | wc -l
+1370381
+[MW] zcat /project/compbio/jointLCLs/results/SuSiE/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 1 | wc -l
+38557
+[MW] zcat /project/compbio/jointLCLs/results/SuSiE/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 2 | wc -l
+1868
+[MW] zcat /project/compbio/jointLCLs/results/SuSiE/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci.sumstats.gz | cut -f 4 | grep 3 | wc -l
+85</code></pre>
+<p>So we have total of 1370381 variants, 38557 in CS 1, 1868 in CS 2, etc.</p>
 
 </div>
 </div>
@@ -916,7 +951,7 @@ conda install ucsc-liftover</code></pre>
 <span class="kn">depends:</span> <span class="n">f</span><span class="s1">&#39;{z_score:n}.bed&#39;</span>
 <span class="kn">input:</span> <span class="nb">set</span><span class="p">(</span><span class="n">paths</span><span class="p">(</span><span class="n">single_anno</span><span class="p">)),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{out_dir}/{_input:bn}.{z_score:bn}.bed&#39;</span>
-<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>  <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{annotation_dir}:{annotation_dir}&#39;</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span>  <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">bedops</span> <span class="o">-</span><span class="n">e</span> <span class="p">{</span><span class="n">z_score</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">bed</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
 
@@ -935,7 +970,7 @@ conda install ucsc-liftover</code></pre>
 <span class="kn">depends:</span> <span class="n">z_score</span><span class="p">,</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;readr&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;stringr&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;dplyr&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.gz&#39;</span>
-<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stderr&#39;</span>
     <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">stringr</span><span class="p">)</span>
@@ -1181,7 +1216,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 <span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;bedops&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="n">f</span><span class="s2">&quot;{z_score:n}.bed&quot;</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{out_dir}/{y_data:bnn}.{z_score:bn}.overlap.bed&#39;</span>
-<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">volumes</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{annotation_dir}:{annotation_dir}&#39;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{y_data:d}:{y_data:d}&quot;</span><span class="p">]</span>
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="c1"># bedops -e {_input} {annotation_dir}/gene_map.bed | sort -u &gt; {_output}</span>
     <span class="n">bedops</span> <span class="o">-</span><span class="n">e</span> <span class="p">{</span><span class="n">_input</span><span class="p">}</span> <span class="o">&lt;</span><span class="p">(</span><span class="n">cat</span> <span class="p">{</span><span class="n">annotation_dir</span><span class="p">}</span><span class="o">/</span><span class="n">Coding_UCSC</span><span class="o">.</span><span class="n">bed</span> <span class="p">{</span><span class="n">annotation_dir</span><span class="p">}</span><span class="o">/</span><span class="n">Intron_UCSC</span><span class="o">.</span><span class="n">bed</span> <span class="o">|</span> <span class="n">sort</span><span class="o">-</span><span class="n">bed</span> <span class="o">-</span><span class="p">)</span> <span class="o">|</span> <span class="n">sort</span> <span class="o">-</span><span class="n">u</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
 </pre></div>
@@ -1195,10 +1230,10 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>We ended up having 348K variants:</p>
+<p>We ended up having 369K variants:</p>
 
 <pre><code>[GW] wc -l /home/gaow/Documents/GIT/LargeFiles/JointLCL/AS_output/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb/enrichment/SuSiE_loci_sumstats/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.SuSiE_loci.sumstats.overlap.bed
-348694</code></pre>
+369134</code></pre>
 
 </div>
 </div>
@@ -1227,7 +1262,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 <span class="n">input_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{out_dir}/{value:bn}.{z_score:bn}.gz&#39;</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">paths</span><span class="p">(</span><span class="n">single_anno</span><span class="p">)]</span>
 <span class="kn">input:</span> <span class="n">input_files</span><span class="p">,</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.data.rds&#39;</span>
-<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stdout&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.stderr&#39;</span>
     <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">readr</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">dplyr</span><span class="p">)</span>
@@ -1568,7 +1603,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 <div class="text_cell_render border-box-sizing rendered_html">
 
 <pre><code>sos run analysis/20180712_Enrichment_Workflow.ipynb signal_overlap \
-    --trait $trait --y-data $ydata -j $ncpu</code></pre>
+    --trait $trait --y-data $ydata -j $ncpu --cwd $cwd</code></pre>
 
 </div>
 </div>
@@ -1596,7 +1631,7 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">signal_overlap_2</span><span class="p">]</span>
 <span class="kn">depends:</span> <span class="n">z_score</span>
-<span class="n">fdr</span> <span class="o">=</span> <span class="mf">0.0001</span>
+<span class="kn">parameter:</span> <span class="n">fdr</span> <span class="o">=</span> <span class="mf">0.0001</span>
 <span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
     <span class="kn">from</span> <span class="nn">sos.utils</span> <span class="kn">import</span> <span class="n">get_output</span>
     <span class="n">susie</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">get_output</span><span class="p">(</span><span class="s2">&quot;zcat ${z_score} | cut -f2,3 -d&#39;_&#39; | sed &#39;s/_/./g&#39;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">))</span>
@@ -1624,14 +1659,18 @@ sos run analysis/20180712_Enrichment_Workflow.ipynb gregor --cs 2 \
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>For fdr 0.01, 1906 out of 2437 clusters match (78%); for fdr 0.001, 1317 out of 1494 clusters match (88%); for fdr 1E-4, 1004 out of 1111 clusters match (90.36%).</p>
+<ul>
+<li>for fdr 0.01, 1934 out of 2437 clusters match (79%)</li>
+<li>for fdr 0.001, 1324 out of 1494 clusters match (89%)</li>
+<li>for fdr 1E-4, 1007 out of 1111 clusters match (91%)</li>
+</ul>
 
 </div>
 </div>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/f3b5e0e6a5153080611629ace821723aa3cc04c7/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Thu Sep 6 15:52:41 2018 <a href="http://github.com/gaow/mvarbvs/commit/f3b5e0e6a5153080611629ace821723aa3cc04c7">revision 14, f3b5e0e</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/aeff0d4e6afc1bc67b04078a5503b8cc4476f9ce/analysis/20180712_Enrichment_Workflow.ipynb"><code>analysis/20180712_Enrichment_Workflow.ipynb</code></a> committed by Gao Wang on Fri Sep 7 12:52:01 2018 <a href="http://github.com/gaow/mvarbvs/commit/aeff0d4e6afc1bc67b04078a5503b8cc4476f9ce">revision 15, aeff0d4</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
