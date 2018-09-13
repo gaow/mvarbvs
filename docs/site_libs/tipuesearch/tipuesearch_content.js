@@ -360,9 +360,11 @@ var tipuesearch = {"pages": [
 {"mainTitle": "Start Simple!", "title": "Problems we want to address to with this "simple start"", "text": "Problems we want to address to with this 'simple start' ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Start_Simple.html", "url": "http://gaow.github.io/mvarbvs/writeup/Start_Simple.html#Problems-we-want-to-address-to-with-this-"simple-start""},
 {"mainTitle": "Start Simple!", "title": "Other thoughts", "text": "Other thoughts ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Start_Simple.html", "url": "http://gaow.github.io/mvarbvs/writeup/Start_Simple.html#Other-thoughts"},
 {"mainTitle": "You need a password to continue", "title": "You need a password to continue", "text": "You need a password to continue ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/writeup/Meetings.html", "url": "http://gaow.github.io/mvarbvs/writeup/Meetings.html"},
+{"mainTitle": "R Markdown", "title": "R Markdown", "text": "R Markdown ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/analysis/20180911_BF_Exporation_MS.html", "url": "http://gaow.github.io/mvarbvs/analysis/20180911_BF_Exporation_MS.html#R-Markdown"},
 {"mainTitle": "export.sos
          
       ", "title": "export.sos
          
-      ", "text": "export.sos ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/dsc/export.pipeline.html", "url": "http://gaow.github.io/mvarbvs/dsc/export.pipeline.html"}
+      ", "text": "export.sos ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/dsc/export.pipeline.html", "url": "http://gaow.github.io/mvarbvs/dsc/export.pipeline.html"},
+{"mainTitle": "R Markdown", "title": "R Markdown", "text": "R Markdown ", "tags": "", "mainUrl": "http://gaow.github.io/mvarbvs/analysis/20180911_BF_Exporation_MS.html", "url": "http://gaow.github.io/mvarbvs/analysis/20180911_BF_Exporation_MS.html#R-Markdown"}
 ]};
