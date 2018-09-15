@@ -459,7 +459,7 @@ body {
                 <span class="n">dap_dc</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="p">}</span>
         <span class="p">}</span>
-        <span class="n">rates</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="o">*</span><span class="n">n_experiments</span><span class="p">,</span> <span class="n">susie_tc</span><span class="p">,</span> <span class="n">dap_tc</span><span class="p">,</span> <span class="n">susie_signals</span><span class="o">/</span><span class="n">s</span><span class="o">/</span><span class="n">n_experiments</span><span class="p">,</span> <span class="n">dap_signals</span><span class="o">/</span><span class="n">s</span><span class="o">/</span><span class="n">n_experiments</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">susie_tdc</span><span class="o">/</span><span class="n">susie_tc</span><span class="p">),</span> <span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">dap_tdc</span><span class="o">/</span><span class="n">dap_tc</span><span class="p">),</span> <span class="n">susie_size</span> <span class="o">/</span> <span class="n">susie_tdc</span><span class="p">,</span> <span class="n">dap_size</span> <span class="o">/</span> <span class="n">dap_tdc</span><span class="p">,</span> <span class="n">median</span><span class="p">(</span><span class="n">susie_sizes</span><span class="p">),</span> <span class="n">median</span><span class="p">(</span><span class="n">dap_sizes</span><span class="p">),</span> <span class="n">susie_avg_ld</span> <span class="o">/</span> <span class="n">susie_tdc</span><span class="p">,</span> <span class="n">dap_avg_ld</span> <span class="o">/</span> <span class="n">dap_tdc</span><span class="p">)</span>
+        <span class="n">rates</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="o">*</span><span class="n">n_experiments</span><span class="p">,</span> <span class="n">susie_tc</span><span class="p">,</span> <span class="n">dap_tc</span><span class="p">,</span> <span class="n">susie_signals</span><span class="o">/</span><span class="n">s</span><span class="o">/</span><span class="n">n_experiments</span><span class="p">,</span> <span class="n">dap_signals</span><span class="o">/</span><span class="n">s</span><span class="o">/</span><span class="n">n_experiments</span><span class="p">,</span> <span class="n">susie_tdc</span><span class="o">/</span><span class="n">susie_tc</span><span class="p">,</span> <span class="n">dap_tdc</span><span class="o">/</span><span class="n">dap_tc</span><span class="p">,</span> <span class="n">susie_size</span> <span class="o">/</span> <span class="n">susie_tdc</span><span class="p">,</span> <span class="n">dap_size</span> <span class="o">/</span> <span class="n">dap_tdc</span><span class="p">,</span> <span class="n">median</span><span class="p">(</span><span class="n">susie_sizes</span><span class="p">),</span> <span class="n">median</span><span class="p">(</span><span class="n">dap_sizes</span><span class="p">),</span> <span class="n">susie_avg_ld</span> <span class="o">/</span> <span class="n">susie_tdc</span><span class="p">,</span> <span class="n">dap_avg_ld</span> <span class="o">/</span> <span class="n">dap_tdc</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="p">{</span>
           <span class="n">result</span> <span class="o">=</span> <span class="n">rates</span>
         <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
@@ -467,7 +467,7 @@ body {
         <span class="p">}</span>
     <span class="p">}</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">byrow</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">nrow</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">colnames</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;n_signal&#39;</span><span class="p">,</span> <span class="s1">&#39;expected_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_power&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_power&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_fdp&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_fdp&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_avg_size&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_avg_size&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_median_size&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_median_size&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_avg_ld&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_avg_ld&#39;</span><span class="p">)</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;n_signal&#39;</span><span class="p">,</span> <span class="s1">&#39;expected_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_power&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_power&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_coverage&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_coverage&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_avg_size&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_avg_size&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_median_size&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_median_size&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_avg_ld&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_avg_ld&#39;</span><span class="p">)</span>
     <span class="n">rownames</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">result</span><span class="p">[,</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">saveRDS</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
 </pre></div>
@@ -487,7 +487,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span>
@@ -507,7 +507,7 @@ body {
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>/home/gaow/GIT/github/mvarbvs/dsc</pre>
+<pre>/project/mstephens/SuSiE/mvarbvs/dsc</pre>
 </div>
 </div>
 
@@ -517,10 +517,10 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;hard_case/DAP_comparison_0615_cluster_prob_estvar_true.rds&#39;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;hard_case/DAP_comparison_0801_cluster_prob_estvar_true.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -539,9 +539,9 @@ body {
 
 <div class="output_html rendered_html output_subarea ">
 <table>
-<thead><tr><th></th><th scope=col>n_signal</th><th scope=col>expected_discoveries</th><th scope=col>susie_discoveries</th><th scope=col>dap_discoveries</th><th scope=col>susie_power</th><th scope=col>dap_power</th><th scope=col>susie_fdp</th><th scope=col>dap_fdp</th><th scope=col>susie_avg_size</th><th scope=col>dap_avg_size</th><th scope=col>susie_median_size</th><th scope=col>dap_median_size</th><th scope=col>susie_avg_ld</th><th scope=col>dap_avg_ld</th></tr></thead>
+<thead><tr><th></th><th scope=col>n_signal</th><th scope=col>expected_discoveries</th><th scope=col>susie_discoveries</th><th scope=col>dap_discoveries</th><th scope=col>susie_power</th><th scope=col>dap_power</th><th scope=col>susie_coverage</th><th scope=col>dap_coverage</th><th scope=col>susie_avg_size</th><th scope=col>dap_avg_size</th><th scope=col>susie_median_size</th><th scope=col>dap_median_size</th><th scope=col>susie_avg_ld</th><th scope=col>dap_avg_ld</th></tr></thead>
 <tbody>
-	<tr><th scope=row>10</th><td>10        </td><td>2000      </td><td>602       </td><td>557       </td><td>0.2775    </td><td>0.248     </td><td>0.08803987</td><td>0.1202873 </td><td>21.09472  </td><td>13.09184  </td><td>9         </td><td>11        </td><td>0.9243739 </td><td>0.895302  </td></tr>
+	<tr><th scope=row>10</th><td>10       </td><td>3000     </td><td>945      </td><td>848      </td><td>0.2796667</td><td>0.2406667</td><td>0.8740741</td><td>0.8419811</td><td>23.75908 </td><td>12.77871 </td><td>7        </td><td>10       </td><td>0.9390865</td><td>0.8983109</td></tr>
 </tbody>
 </table>
 
@@ -555,10 +555,10 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;hard_case/DAP_comparison_0615_cluster_prob_estvar_false.rds&#39;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;hard_case/DAP_comparison_0801_cluster_prob_estvar_false.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -577,9 +577,9 @@ body {
 
 <div class="output_html rendered_html output_subarea ">
 <table>
-<thead><tr><th></th><th scope=col>n_signal</th><th scope=col>expected_discoveries</th><th scope=col>susie_discoveries</th><th scope=col>dap_discoveries</th><th scope=col>susie_power</th><th scope=col>dap_power</th><th scope=col>susie_fdp</th><th scope=col>dap_fdp</th><th scope=col>susie_avg_size</th><th scope=col>dap_avg_size</th><th scope=col>susie_median_size</th><th scope=col>dap_median_size</th><th scope=col>susie_avg_ld</th><th scope=col>dap_avg_ld</th></tr></thead>
+<thead><tr><th></th><th scope=col>n_signal</th><th scope=col>expected_discoveries</th><th scope=col>susie_discoveries</th><th scope=col>dap_discoveries</th><th scope=col>susie_power</th><th scope=col>dap_power</th><th scope=col>susie_coverage</th><th scope=col>dap_coverage</th><th scope=col>susie_avg_size</th><th scope=col>dap_avg_size</th><th scope=col>susie_median_size</th><th scope=col>dap_median_size</th><th scope=col>susie_avg_ld</th><th scope=col>dap_avg_ld</th></tr></thead>
 <tbody>
-	<tr><th scope=row>10</th><td>10        </td><td>2000      </td><td>484       </td><td>557       </td><td>0.238     </td><td>0.248     </td><td>0.03512397</td><td>0.1202873 </td><td>23.56959  </td><td>13.09184  </td><td>11        </td><td>11        </td><td>0.9163804 </td><td>0.895302  </td></tr>
+	<tr><th scope=row>10</th><td>10       </td><td>3000     </td><td>779      </td><td>848      </td><td>0.2466667</td><td>0.2406667</td><td>0.9268293</td><td>0.8419811</td><td>27.34903 </td><td>12.77871 </td><td>9.5      </td><td>10       </td><td>0.9319639</td><td>0.8983109</td></tr>
 </tbody>
 </table>
 
@@ -593,7 +593,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/ded33162e0467f2eee42b1b9c2f8e00b0bf8df61/analysis/20180615_Power_DAP.ipynb"><code>analysis/20180615_Power_DAP.ipynb</code></a> committed by Gao Wang on Mon Aug 13 10:45:16 2018 <a href="http://github.com/gaow/mvarbvs/commit/ded33162e0467f2eee42b1b9c2f8e00b0bf8df61">revision 2, ded3316</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/c2a02d77fad88df1210e5d729a78ac576a5579ab/analysis/20180615_Power_DAP.ipynb"><code>analysis/20180615_Power_DAP.ipynb</code></a> committed by Gao Wang on Fri Sep 14 19:09:59 2018 <a href="http://github.com/gaow/mvarbvs/commit/c2a02d77fad88df1210e5d729a78ac576a5579ab">revision 3, c2a02d7</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

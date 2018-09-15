@@ -520,7 +520,7 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">purity_4</span><span class="p">]</span>
 <span class="kn">input:</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input:n}.png&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{_input:n}.pdf&quot;</span>
 <span class="kn">python:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
     <span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
     <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
@@ -575,13 +575,16 @@ body {
     <span class="kn">import</span> <span class="nn">pickle</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">pickle</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;${_input}&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">))</span>
     <span class="n">plot_purity</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;${_output}&#39;</span><span class="p">,</span> <span class="n">lfsr_cutoff</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">lfsr_cutoff</span><span class="p">})</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;convert -density 120 ${_output} ${_output:n}.png&quot;</span><span class="p">)</span>
+
 
 <span class="p">[</span><span class="n">purity_5</span><span class="p">]</span>
 <span class="n">header</span> <span class="o">=</span> <span class="s1">&#39;PVE,N_Causal,susie_prior,est_residual,output&#39;</span>
 <span class="kn">output:</span>  <span class="n">f</span><span class="s1">&#39;{outdir}/purity_{name}/index.html&#39;</span>
 <span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
     <span class="n">echo</span> <span class="p">{</span><span class="n">header</span><span class="p">}</span> <span class="o">&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">csv</span>
-    <span class="n">cat</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">_input</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">,</span> <span class="s1">&#39;.log&#39;</span><span class="p">)}</span> <span class="o">&gt;&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">csv</span>
+    <span class="n">cat</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">_input</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.pdf&#39;</span><span class="p">,</span> <span class="s1">&#39;.log&#39;</span><span class="p">)}</span> <span class="o">&gt;&gt;</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">csv</span>
     <span class="n">cd</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">d</span><span class="p">}</span>
     <span class="n">dsc</span><span class="o">-</span><span class="n">io</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">an</span><span class="p">}</span><span class="o">.</span><span class="n">csv</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">a</span><span class="p">}</span>
 </pre></div>
@@ -664,7 +667,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/dc9652fc1f459d266173d6c9d84d36a7c82bee42/analysis/20180516_Purity_Plot.ipynb"><code>analysis/20180516_Purity_Plot.ipynb</code></a> committed by Gao Wang on Mon Aug 6 22:25:33 2018 <a href="http://github.com/gaow/mvarbvs/commit/dc9652fc1f459d266173d6c9d84d36a7c82bee42">revision 1, dc9652f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/4ea4ad2598a0817aa8c71d1ee9b047146b06ec2a/analysis/20180516_Purity_Plot.ipynb"><code>analysis/20180516_Purity_Plot.ipynb</code></a> committed by Gao Wang on Fri Sep 14 12:06:02 2018 <a href="http://github.com/gaow/mvarbvs/commit/4ea4ad2598a0817aa8c71d1ee9b047146b06ec2a">revision 2, 4ea4ad2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
