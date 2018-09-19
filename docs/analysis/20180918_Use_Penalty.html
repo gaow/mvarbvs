@@ -1,0 +1,1076 @@
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>m&m ash</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">m&m ash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../details.html">Details</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../dsc.html">Dsc</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Adding-null-component-to-SuSiE">Adding null component to SuSiE<a class="anchor-link" href="#Adding-null-component-to-SuSiE">&#182;</a></h1><p>Here we evaluate the possible benefit adding a null component to SuSiE. The hope is that the CS will be easier to prune (without using purity) and that the pruned CS can achieve smaller FDR.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-simple-simulation-case">A simple simulation case<a class="anchor-link" href="#A-simple-simulation-case">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
+<span class="n">b</span><span class="p">[</span><span class="mi">200</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">b</span><span class="p">[</span><span class="mi">800</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">p</span><span class="p">),</span><span class="n">nrow</span><span class="o">=</span><span class="n">n</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+<span class="n">X</span><span class="p">[,</span><span class="mi">200</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[,</span><span class="mi">400</span><span class="p">]</span>
+<span class="n">X</span><span class="p">[,</span><span class="mi">600</span><span class="p">]</span> <span class="o">=</span> <span class="n">X</span><span class="p">[,</span><span class="mi">800</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">b</span> <span class="o">+</span> <span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+<span class="n">diag_susie</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">purity</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dedup</span> <span class="o">=</span> <span class="n">F</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">scaled_prior_variance</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">track_fit</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">coverage</span><span class="o">=</span><span class="n">NULL</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+    <span class="n">sets</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_get_CS</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="n">cbind</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">coverage</span><span class="o">=</span><span class="mf">0.95</span><span class="p">,</span><span class="n">min_abs_corr</span><span class="o">=</span><span class="n">purity</span><span class="p">,</span><span class="n">dedup</span><span class="o">=</span><span class="n">dedup</span><span class="p">)</span>
+    <span class="nb">str</span><span class="p">(</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="s1">&#39;PIP for the null (1st PIP) and causal (other PIPs)&#39;</span><span class="p">)</span>
+    <span class="n">pip</span> <span class="o">=</span> <span class="n">susieR</span><span class="p">::</span><span class="n">susie_get_PIP</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">sets</span><span class="err">$</span><span class="n">cs_index</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">pip</span><span class="p">[</span><span class="n">c</span><span class="p">(</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">600</span><span class="p">,</span><span class="mi">800</span><span class="p">)])</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">run_susie</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">purity</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">dedup</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">diag_susie</span><span class="p">(</span><span class="n">purity</span><span class="o">=</span><span class="n">purity</span><span class="p">,</span> <span class="n">dedup</span><span class="o">=</span><span class="n">dedup</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Run-SuSiE-in-&quot;diagnostics&quot;-mode">Run SuSiE in "diagnostics" mode<a class="anchor-link" href="#Run-SuSiE-in-&quot;diagnostics&quot;-mode">&#182;</a></h3><p>"Diagnostics" means that we set no purity threshold and remove no duplicate CS. The PIP computation will be based on the un-processed result.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>First, fit with SuSiE as is, but over-specifiy $L$ and report all CS obtained (setting <code>min_abs_corr</code> to zero)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L3: int [1:876] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L4: int [1:876] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L5: int [1:877] 1 2 4 5 6 8 9 10 11 12 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1]        NA 0.5006026 0.5006026 0.5006017 0.5006017
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So the 3rd and 4th CS are large. Now add a penalty to null,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L4: int [1:872] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L5: int [1:873] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L3: int [1:871] 1 2 4 5 6 8 9 10 11 12 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.1008317 0.5005786 0.5005786 0.5005777 0.5005777
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>As expected the CS got slightly narrower, and the PIP for the null is larger than $1/p$ (0.001 in this case). Now I increase the penalty,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L5: int [1:868] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L4: int [1:867] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L3: int [1:866] 1 2 4 5 6 8 9 10 11 12 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.1886082 0.5005565 0.5005565 0.5005557 0.5005557
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L3: int [1:822] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L5: int [1:828] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L4: int [1:825] 1 2 4 5 6 8 9 10 11 12 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.6041899 0.5004224 0.5004224 0.5004218 0.5004218
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L5: int [1:772] 2 4 5 6 8 9 10 11 12 13 ...
+ $ L3: int [1:768] 2 4 5 6 8 9 10 11 12 13 ...
+ $ L4: int [1:769] 2 4 5 6 8 9 10 11 12 13 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.8101352 0.5003204 0.5003204 0.5003199 0.5003199
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L3: int [1:647] 2 5 6 8 10 11 12 13 14 15 ...
+ $ L5: int [1:648] 2 5 6 8 10 11 12 13 14 15 ...
+ $ L4: int [1:647] 2 5 6 8 10 11 12 13 14 15 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9419801 0.5002054 0.5002054 0.5002052 0.5002052
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L3: int [1:501] 5 8 10 11 13 14 15 16 17 18 ...
+ $ L4: int [1:502] 5 8 10 11 13 14 15 16 17 18 ...
+ $ L5: int [1:506] 5 8 10 11 13 14 15 16 17 18 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9782793 0.5001411 0.5001411 0.5001409 0.5001409
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L4: int [1:340] 8 10 11 13 14 23 25 26 31 32 ...
+ $ L5: int [1:342] 8 10 11 13 14 23 25 26 31 32 ...
+ $ L3: int [1:339] 8 10 11 13 14 23 25 26 31 32 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9914398 0.5001001 0.5001001 0.5001000 0.5001000
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L5: int [1:179] 8 10 25 31 32 33 36 37 38 45 ...
+ $ L3: int [1:179] 8 10 25 31 32 33 36 37 38 45 ...
+ $ L4: int [1:179] 8 10 25 31 32 33 36 37 38 45 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9966153 0.5000713 0.5000713 0.5000713 0.5000713
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L3: int [1:52] 8 36 63 90 112 173 246 248 339 352 ...
+ $ L4: int [1:52] 8 36 63 90 112 173 246 248 339 352 ...
+ $ L5: int [1:52] 8 36 63 90 112 173 246 248 339 352 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9987379 0.5000499 0.5000499 0.5000499 0.5000499
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+ $ L3: int [1:4] 112 768 954 1001
+ $ L4: int [1:4] 112 768 954 1001
+ $ L5: int [1:4] 112 768 954 1001
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9995926 0.5000333 0.5000333 0.5000333 0.5000333
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L3: int 1001
+ $ L4: int 1001
+ $ L5: int 1001
+ $ L1: int [1:2] 200 400
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9999042 0.5000200 0.5000200 0.5000200 0.5000200
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.98</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L2: int [1:2] 600 800
+ $ L3: int 1001
+ $ L4: int 1001
+ $ L5: int 1001
+ $ L1: int [1:2] 200 400
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9999999 0.5000017 0.5000017 0.5000017 0.5000017
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Run-SuSiE-in-default-mode">Run SuSiE in default mode<a class="anchor-link" href="#Run-SuSiE-in-default-mode">&#182;</a></h3><p>Here we set purity threshold to 0.1 and remove duplicate CS.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">run_susie</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this example the default SuSiE with purity filter is good enough. No need to bother with a penalty.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">run_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 2
+ $ L2: int [1:2] 600 800
+ $ L1: int [1:2] 200 400
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.0 0.5 0.5 0.5 0.5
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">run_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 3
+ $ L2: int [1:2] 600 800
+ $ L4: int [1:2] 954 1001
+ $ L1: int [1:2] 200 400
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1] 0.9405439 0.5000088 0.5000088 0.5000088 0.5000088
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>At least from this example, we will get stuck to a null set only when <code>null_weight</code> is very high.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-null-simulation">A null simulation<a class="anchor-link" href="#A-null-simulation">&#182;</a></h2><p>We simulate random data,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">p</span><span class="p">),</span><span class="n">nrow</span><span class="o">=</span><span class="n">n</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>and run SuSiE with / without purity filter:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>List of 5
+ $ L5: int [1:887] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L4: int [1:887] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L2: int [1:887] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L3: int [1:887] 1 2 4 5 6 8 9 10 11 12 ...
+ $ L1: int [1:887] 1 2 4 5 6 8 9 10 11 12 ...
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1]          NA 0.002444137 0.007357031 0.002841289 0.002235344
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">run_susie</span><span class="p">()</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre> NULL
+[1] &#34;PIP for the null (1st PIP) and causal (other PIPs)&#34;
+[1]          NA 0.002444137 0.007357031 0.002841289 0.002235344
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For this simple case, the purity filter itself is good enough to tell between signal and noise.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="A-case-demonstrating-the-usefulness-of-penalty">A case demonstrating the usefulness of penalty<a class="anchor-link" href="#A-case-demonstrating-the-usefulness-of-penalty">&#182;</a></h2><p>I took this data-set from our simulation. This is a case SuSiE makes false discovery in multi-signal setting.</p>
+
+</div>
+</div>
+</div>
+<hr>
+Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/23eb96c3bdf7a4d79b8568ca328f6f0e3f0afd62/analysis/20180918_Use_Penalty.ipynb"><code>analysis/20180918_Use_Penalty.ipynb</code></a> committed by Gao Wang on Wed Sep 19 13:28:33 2018 <a href="http://github.com/gaow/mvarbvs/commit/23eb96c3bdf7a4d79b8568ca328f6f0e3f0afd62">revision 1, 23eb96c</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
