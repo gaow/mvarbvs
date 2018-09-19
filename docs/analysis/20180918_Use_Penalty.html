@@ -4558,9 +4558,40 @@ AACdINgBAADoBMEOAABAJ/4fm0dsUU6tWewAAAAASUVORK5CYII="
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[53]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="s2">&quot;fit_susie/liter_data_12_summarize_ld_1_lm_less_3_fit_susie_6.rds&quot;</span><span class="p">)</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">script</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] &#34;## r script UUID: 86257949\nlibrary(susieR)\nDSC_1BF7CD6A &lt;- list()\nDSC_1BF7CD6A &lt;- dscrutils::load_inputs(c(&#39;susie_comparison/lm_less/liter_data_12_summarize_ld_1_lm_less_3.pkl&#39;), dscrutils::read_dsc)\nDSC_REPLICATE &lt;- DSC_1BF7CD6A$DSC_DEBUG$replicate\ndata &lt;- DSC_1BF7CD6A$data\nestimate_residual_variance &lt;- TRUE\nmaxI &lt;- 200\nmaxL &lt;- 5\nprior_var &lt;- 0.1\nTIC_1BF7CD6A &lt;- proc.time()\nset.seed(DSC_REPLICATE)\n\n## BEGIN DSC CORE\nfitted &lt;- list()\nfor (r in 1:ncol(data$Y)) {\n  if (&#39;Z&#39; %in% names(data)) {\n      data$Y[,r] = residuals(lm(data$Y[,r]~Z, na.action=na.exclude))\n  }\n  if (prior_var == &#39;auto&#39;) {\n      fitted[[r]] &lt;- susieR::susie_auto(data$X,data$Y[,r],L_max=100,tol=1e-3)\n  } else if (prior_var == 0) {\n      fitted[[r]] &lt;- susieR::susie(data$X,data$Y[,r],\n                               L=maxL,\n                               max_iter=maxI,\n                               estimate_residual_variance=estimate_residual_variance,\n                               estimate_prior_variance=TRUE,\n                               tol=1e-3)\n  } else {\n      fitted[[r]] &lt;- susieR::susie(data$X,data$Y[,r],\n                               L=maxL,\n                               max_iter=maxI,\n                               estimate_residual_variance=estimate_residual_variance,\n                               prior_variance=prior_var,\n                               tol=1e-3)\n  }\n  fitted[[r]]$lfsr &lt;- susieR::susie_get_lfsr(fitted[[r]])\n  fitted[[r]]$n_in_CI &lt;- susieR:::n_in_CS(fitted[[r]])\n  fitted[[r]]$in_CI &lt;- susieR:::in_CS(fitted[[r]])\n}\nposterior &lt;- list(PosteriorMean=do.call(cbind, lapply(1:length(fitted), function(i) susieR:::coef.susie(fitted[[i]]))),\n                  lfsr=do.call(cbind, lapply(1:length(fitted), function(i) fitted[[i]]$lfsr)),\n                  alpha=lapply(1:length(fitted), function(i) fitted[[i]]$alpha),\n                  in_CI=lapply(1:length(fitted), function(i) fitted[[i]]$in_CI),\n                  n_in_CI=do.call(cbind, lapply(1:length(fitted), function(i) fitted[[i]]$n_in_CI)),\n                  niter = sapply(1:length(fitted), function(i) fitted[[i]]$niter)\n                  )\n## END DSC CORE\n\nsaveRDS(list(posterior=posterior, fitted=fitted, DSC_DEBUG=dscrutils::save_session(TIC_1BF7CD6A, DSC_REPLICATE)), &#39;susie_comparison/fit_susie/liter_data_12_summarize_ld_1_lm_less_3_fit_susie_6.rds&#39;)\n\n&#34;
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/1dd574e4d27fec4ed380a92ca7789e3d5937d8ab/analysis/20180918_Use_Penalty.ipynb"><code>analysis/20180918_Use_Penalty.ipynb</code></a> committed by Gao Wang on Wed Sep 19 15:58:39 2018 <a href="http://github.com/gaow/mvarbvs/commit/1dd574e4d27fec4ed380a92ca7789e3d5937d8ab">revision 2, 1dd574e</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/f5b29c50be8c9e218f28d6eec3d3710606f22d6d/analysis/20180918_Use_Penalty.ipynb"><code>analysis/20180918_Use_Penalty.ipynb</code></a> committed by Gao Wang on Wed Sep 19 16:01:09 2018 <a href="http://github.com/gaow/mvarbvs/commit/f5b29c50be8c9e218f28d6eec3d3710606f22d6d">revision 3, f5b29c5</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
