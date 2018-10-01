@@ -9,15 +9,19 @@ for (r in 1:ncol(data$Y)) {
       fitted[[r]] <- susieR::susie(data$X,data$Y[,r],
                                L=maxL,
                                max_iter=maxI,
-                               estimate_residual_variance=estimate_residual_variance,
+                               estimate_residual_variance=TRUE,
                                estimate_prior_variance=TRUE,
+                               null_weight=null_weight,
+                               coverage=NULL,
                                tol=1e-3)
   } else {
       fitted[[r]] <- susieR::susie(data$X,data$Y[,r],
                                L=maxL,
                                max_iter=maxI,
-                               estimate_residual_variance=estimate_residual_variance,
+                               estimate_residual_variance=TRUE,
                                scaled_prior_variance=prior_var,
+                               null_weight=null_weight,
+                               coverage=NULL,
                                tol=1e-3)
   }
   fitted[[r]]$lfsr <- susieR::susie_get_lfsr(fitted[[r]])
