@@ -45,12 +45,17 @@ rank_snp <- function(snp) {
   return(snp)    
 }
 
-finemap_mcaviar <- function(zscore, LD_file, args, prefix) {
+finemap_mcaviar <- function(zscore, LD_file, args, prefix, parallel = FALSE) {
   if (is.null(dim(zscore))) {
       zscore = matrix(ncol=1,zscore)
   }
-  return(parallel::mclapply(1:ncol(zscore), function(r)
-          run_caviar(zscore[,r], LD_file, args, 
-                     paste0(prefix, '_condition_', r)), 
-                            mc.cores = min(8, ncol(zscore))))
+
+  single_core = function(r) 
+      run_caviar(zscore[,r], LD_file, args, 
+                  paste0(prefix, '_condition_', r))
+  if (parallel)
+      return(parallel::mclapply(1:ncol(zscore), function(r) single_core(r),
+                                mc.cores = min(8, ncol(zscore))))
+  else
+      return(lapply(1:ncol(zscore), function(r) single_core(r)))
 }

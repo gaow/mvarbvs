@@ -26,6 +26,5 @@ for (r in 1:ncol(data$Y)) {
                                coverage=0.95,min_abs_corr=0.5,
                                tol=1e-3)
   }
-  fitted[[r]]$lfsr <- susie_get_lfsr(fitted[[r]])
   posterior[[r]] <- summary(fitted[[r]])
 }
