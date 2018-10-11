@@ -2184,6 +2184,119 @@ RU5ErkJggg=="
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Try-with-different-L">Try with different L<a class="anchor-link" href="#Try-with-different-L">&#182;</a></h2><p>As pointed out by Matthew, in case L=5 susie is actually mis-using the “non-significant effects’ (2,4,5) to induce a correlation at variable 217. Here I try with L=3 for example,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">summary</span><span class="p">(</span><span class="n">susieR</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="n">dat</span><span class="err">$</span><span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">],</span> <span class="n">L</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+               <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> 
+               <span class="n">scaled_prior_variance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+               <span class="n">compute_univariate_zscore</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">,</span>
+               <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">))</span><span class="err">$</span><span class="n">cs</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>cs</th><th scope=col>cs_log10bf</th><th scope=col>cs_avg_r2</th><th scope=col>cs_min_r2</th><th scope=col>variable</th></tr></thead>
+<tbody>
+	<tr><td>1                                                                      </td><td>89.58071                                                               </td><td>0.998824                                                               </td><td>0.9959860                                                              </td><td>754,758,760,761,764,765,769,773,774,775,776,777,778,779,788,789,792,795</td></tr>
+	<tr><td>3                                                                      </td><td>31.90596                                                               </td><td>0.791897                                                               </td><td>0.4415596                                                              </td><td>136,156,192,198,200,215,217,227,229                                    </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here, 229 is included, though in a low purity set. For L=4,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">summary</span><span class="p">(</span><span class="n">susieR</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="n">dat</span><span class="err">$</span><span class="n">Y</span><span class="p">[,</span><span class="n">r</span><span class="p">],</span> <span class="n">L</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+               <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> 
+               <span class="n">scaled_prior_variance</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+               <span class="n">compute_univariate_zscore</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">,</span>
+               <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">))</span><span class="err">$</span><span class="n">cs</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>cs</th><th scope=col>cs_log10bf</th><th scope=col>cs_avg_r2</th><th scope=col>cs_min_r2</th><th scope=col>variable</th></tr></thead>
+<tbody>
+	<tr><td>1                                                                      </td><td>91.80845                                                               </td><td>0.9988240                                                              </td><td>0.9959860                                                              </td><td>754,758,760,761,764,765,769,773,774,775,776,777,778,779,788,789,792,795</td></tr>
+	<tr><td>3                                                                      </td><td>32.56526                                                               </td><td>0.7272491                                                              </td><td>0.4660795                                                              </td><td>136,217,227                                                            </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Again we are missing 229, but got 227 which is very close. <strong>This is a convergence issue to be revisited.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Try-with-null-weights">Try with null weights<a class="anchor-link" href="#Try-with-null-weights">&#182;</a></h3><p>First, I use a small null weight (just to test the water),</p>
 
 </div>
@@ -2649,7 +2762,7 @@ Iterplot saved to test_track_fit_4.gif
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/454df23d4d598cf43ceb349906b0e22eda0e4a82/analysis/20181009_Null_Weight.ipynb"><code>analysis/20181009_Null_Weight.ipynb</code></a> committed by Gao Wang on Thu Oct 11 10:41:09 2018 <a href="http://github.com/gaow/mvarbvs/commit/454df23d4d598cf43ceb349906b0e22eda0e4a82">revision 3, 454df23</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/5af81f292226cee3689acc7bab7f14e7bb64767d/analysis/20181009_Null_Weight.ipynb"><code>analysis/20181009_Null_Weight.ipynb</code></a> committed by Gao Wang on Thu Oct 11 10:52:06 2018 <a href="http://github.com/gaow/mvarbvs/commit/5af81f292226cee3689acc7bab7f14e7bb64767d">revision 5, 5af81f2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
