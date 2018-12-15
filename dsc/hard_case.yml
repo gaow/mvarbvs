@@ -19,8 +19,8 @@ DSC:
       #SBATCH --ntasks-per-node={cores}
       #SBATCH --mem-per-cpu={mem//10**9}G
       #SBATCH --job-name={job_name}
-      #SBATCH --output=$HOME/.sos/tasks/{job_name}.out
-      #SBATCH --error=$HOME/.sos/tasks/{job_name}.err
+      #SBATCH --output={job_name}.out
+      #SBATCH --error={job_name}.err
       cd {cur_dir}
       module load R
     partition: "SBATCH --partition=broadwl"
@@ -53,4 +53,4 @@ plot_susie:
 
 fit_dap:
   instances_per_job: 2
-  time_per_instance: 80m
+  time_per_instance: 120m

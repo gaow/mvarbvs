@@ -23,7 +23,7 @@ class SusieReporter:
 
         
     @staticmethod
-    def get_set_positions(in_cs):
+    def get_set_positions(in_cs, max_pos):
         positions = []
         curr_len = 0
         for b, g in itertools.groupby(in_cs):
@@ -31,10 +31,14 @@ class SusieReporter:
             if b:
                 positions.append((curr_len, curr_len + lg))
             curr_len += lg
+        # remove the null weight case
+        if positions[-1][1] > max_pos:
+            positions = positions[:-1]
         return positions
-
+    
     def get_cs(self, in_cs):
-        return [self.get_set_positions(c) for c in in_cs]
+        cs = [self.get_set_positions(c, self.ld.shape[0]) for c in in_cs]
+        return [x for x in cs if len(x)]
 
     def get_purity_values(self):
         purity = []
@@ -51,6 +55,8 @@ class SusieReporter:
         return purity, {'min': 0, 'mean': 1, 'median': 2, 'max': 3}
         
     def plot_segments(self, seg_file, ld_type = 'min'):
+        if len(self.cs) == 0:
+            return None
         lengths = np.concatenate([np.full(len(x), idx) for idx, x in enumerate(self.cs)])
         lengths = np.array([(len(lengths) - idx, x) for idx, x in enumerate(lengths)])
         sets = np.vstack(np.array(self.cs))

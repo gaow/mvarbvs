@@ -29,19 +29,8 @@ plot_sse: lib_regression_simulator.py + \
   ld_mat: $ld_mat
   $plot_file: file(plot_file)
 
-plot_susie: plot_susie.py + Python(purity, signal = plot_sets(result['in_CI'], 
-                                                              result['lfsr'],
-                                                              data['true_coef'],
-                                                              ld_mat,
-                                                              seg, save_plot))
-  @CONF: python_modules = seaborn
+plot_susie: plot_susie.R
+  @CONF: R_libs = susieR
   data: $data
-  result: $posterior
-  ld_mat: $ld_mat
-  save_plot: True                                                            
-  $seg: file(seg)
-  $purity: purity
-  $signal: signal
-                                                              
-eval_susie(plot_susie):
-  save_plot: False
+  result: $fitted
+  $plot_file: file(png)

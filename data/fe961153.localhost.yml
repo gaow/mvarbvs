@@ -1,0 +1,157 @@
+hosts:
+  faraway2:
+    account: ''
+    address: gaow@midway2.rcc.uchicago.edu
+    description: Submit and manage jobs to `midway2` from a local computer.
+    job_template: '#!/bin/bash
+
+      #SBATCH --time={walltime}
+
+      #{partition}
+
+      #{account}
+
+      #SBATCH --nodes=1
+
+      #SBATCH --ntasks-per-node={cores}
+
+      #SBATCH --mem-per-cpu={mem//10**9}G
+
+      #SBATCH --job-name={job_name}
+
+      #SBATCH --output={job_name}.out
+
+      #SBATCH --error={job_name}.err
+
+      cd {cur_dir}
+
+      module load R
+
+      sos execute {task} -v {verbosity} -s {sig_mode}'
+    kill_cmd: scancel {job_id}
+    max_cores: 40
+    max_mem: 64G
+    max_running_jobs: 60
+    max_walltime: '36:00:00'
+    partition: SBATCH --partition=broadwl
+    paths: &id001
+      home: /home/gaow
+    queue_type: pbs
+    status_check_interval: 60
+    status_cmd: squeue --job {job_id}
+    submit_cmd: sbatch {job_file}
+    submit_cmd_output: Submitted batch job {job_id}
+  faraway2-process:
+    based_on: hosts.faraway2
+    job_template: 'cd {cur_dir}
+
+      module load R
+
+      sos execute {task} -v {verbosity} -s {sig_mode}'
+    queue_type: process
+    status_check_interval: 3
+  localhost:
+    address: localhost
+    paths:
+      home: /home/{user_name}
+  midway2:
+    account: ''
+    address: localhost
+    description: UChicago RCC cluster Midway 2
+    job_template: '#!/bin/bash
+
+      #SBATCH --time={walltime}
+
+      #{partition}
+
+      #{account}
+
+      #SBATCH --nodes=1
+
+      #SBATCH --ntasks-per-node={cores}
+
+      #SBATCH --mem-per-cpu={mem//10**9}G
+
+      #SBATCH --job-name={job_name}
+
+      #SBATCH --output={job_name}.out
+
+      #SBATCH --error={job_name}.err
+
+      cd {cur_dir}
+
+      module load R
+
+      sos execute {task} -v {verbosity} -s {sig_mode}'
+    kill_cmd: scancel {job_id}
+    max_cores: 40
+    max_mem: 64G
+    max_running_jobs: 60
+    max_walltime: '36:00:00'
+    partition: SBATCH --partition=broadwl
+    paths: *id001
+    queue_type: pbs
+    status_check_interval: 60
+    status_cmd: squeue --job {job_id}
+    submit_cmd: sbatch {job_file}
+    submit_cmd_output: Submitted batch job {job_id}
+  midway2-process:
+    based_on: hosts.midway2
+    job_template: 'cd {cur_dir}
+
+      module load R
+
+      sos execute {task} -v {verbosity} -s {sig_mode}'
+    queue_type: process
+    status_check_interval: 3
+  stephenslab:
+    account: SBATCH --account=pi-mstephens
+    address: localhost
+    description: UChicago RCC cluster Midway 2
+    job_template: '#!/bin/bash
+
+      #SBATCH --time={walltime}
+
+      #{partition}
+
+      #{account}
+
+      #SBATCH --nodes=1
+
+      #SBATCH --ntasks-per-node={cores}
+
+      #SBATCH --mem-per-cpu={mem//10**9}G
+
+      #SBATCH --job-name={job_name}
+
+      #SBATCH --output={job_name}.out
+
+      #SBATCH --error=$HOME/.sos/tasks/{job_name}.err
+
+      cd {cur_dir}
+
+      module load R
+
+      sos execute {task} -v {verbosity} -s {sig_mode}'
+    kill_cmd: scancel {job_id}
+    max_cores: 28
+    max_mem: 128G
+    max_running_jobs: 60
+    max_walltime: 10d
+    partition: SBATCH --partition=mstephens
+    paths: *id001
+    queue_type: pbs
+    status_check_interval: 60
+    status_cmd: squeue --job {job_id}
+    submit_cmd: sbatch {job_file}
+    submit_cmd_output: Submitted batch job {job_id}
+  stephenslab-process:
+    based_on: hosts.stephenslab
+    job_template: 'cd {cur_dir}
+
+      module load R
+
+      sos execute {task} -v {verbosity} -s {sig_mode}'
+    queue_type: process
+    status_check_interval: 3
+localhost: localhost

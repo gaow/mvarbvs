@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="ipynb_website:version" content="0.9.4" />
+<meta name="ipynb_website:version" content="0.9.6" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <link rel="stylesheet" type="text/css" href="../css/jt.css">
@@ -818,7 +818,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
     <span class="n">size</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="n">function</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="n">length</span><span class="p">(</span><span class="n">cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]][[</span><span class="n">j</span><span class="p">]])))</span>
     <span class="n">purity</span> <span class="o">=</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">results</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">purity</span><span class="p">[,</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">high_pips</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">results</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">pip</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">pip_cutoff</span><span class="p">}))</span>
-    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">purity</span><span class="o">=</span><span class="n">purity</span><span class="p">,</span><span class="n">high_pips</span><span class="o">=</span><span class="n">high_pips</span><span class="p">),</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">purity</span><span class="o">=</span><span class="n">purity</span><span class="p">,</span><span class="n">high_pips</span><span class="o">=</span><span class="n">high_pips</span><span class="p">,</span><span class="n">cs</span><span class="o">=</span><span class="n">cs</span><span class="p">),</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
 </pre></div>
 
 </div>
@@ -828,7 +828,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">compbio</span><span class="o">/</span><span class="n">jointLCLs</span><span class="o">/</span><span class="n">results</span><span class="o">/</span><span class="n">SuSiE</span><span class="o">/</span><span class="n">fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb</span>
@@ -858,11 +858,23 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;SuSiE_CS_Summary.rds&#39;</span><span class="p">)</span>
-<span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">L</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">L</span><span class="p">))</span>
 <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">tmp</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">L</span><span class="o">==</span><span class="n">i</span><span class="p">)</span>
@@ -902,9 +914,17 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Number-of-CS-with-different-sizes">Number of CS with different sizes<a class="anchor-link" href="#Number-of-CS-with-different-sizes">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
@@ -936,7 +956,39 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+239
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">size</span><span class="p">))</span>
@@ -968,7 +1020,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">purity</span><span class="p">))</span>
@@ -1000,7 +1052,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">mean</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">purity</span><span class="p">))</span>
@@ -1032,7 +1084,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">high_pips</span><span class="p">)</span>
@@ -1056,6 +1108,55 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 619
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="CS-overlapping-status">CS overlapping status<a class="anchor-link" href="#CS-overlapping-status">&#182;</a></h3><p>There is no overlapping CS in our results.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">cs</span><span class="p">[[</span><span class="n">s</span><span class="p">]]))</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="p">)</span> <span class="nb">next</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="n">intersect</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">cs</span><span class="p">[[</span><span class="n">s</span><span class="p">]][[</span><span class="n">i</span><span class="p">]],</span> <span class="n">dat</span><span class="err">$</span><span class="n">cs</span><span class="p">[[</span><span class="n">s</span><span class="p">]][[</span><span class="n">j</span><span class="p">]])</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">status</span><span class="p">))</span> <span class="k">print</span><span class="p">(</span><span class="n">status</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+<div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[1] 2496
+</pre>
+</div>
 </div>
 
 </div>
@@ -1431,7 +1532,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/f3b5e0e6a5153080611629ace821723aa3cc04c7/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Thu Sep 6 15:52:41 2018 <a href="http://github.com/gaow/mvarbvs/commit/f3b5e0e6a5153080611629ace821723aa3cc04c7">revision 33, f3b5e0e</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/7c3b7673960bd4872b374cc0dcbe9b8d6e3fc633/analysis/20180704_MolecularQTL_Workflow.ipynb"><code>analysis/20180704_MolecularQTL_Workflow.ipynb</code></a> committed by Gao Wang on Thu Dec 13 11:17:24 2018 <a href="http://github.com/gaow/mvarbvs/commit/7c3b7673960bd4872b374cc0dcbe9b8d6e3fc633">revision 35, 7c3b767</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
