@@ -295,18 +295,27 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Commands-for-SuSiE-paper">Commands for SuSiE paper<a class="anchor-link" href="#Commands-for-SuSiE-paper">&#182;</a></h2><p>Computations of DSC are performed on UChicago RCC Midway cluster.</p>
-<p>To compare with other methods on limited scenarios:</p>
+<h2 id="Commands-for-SuSiE-paper">Commands for SuSiE paper<a class="anchor-link" href="#Commands-for-SuSiE-paper">&#182;</a></h2><h2 id="Actual-commands-used-for-SuSiE-paper">Actual commands used for SuSiE paper<a class="anchor-link" href="#Actual-commands-used-for-SuSiE-paper">&#182;</a></h2><p>Computations of DSC are performed on The University of Chicago RCC Midway cluster. 
+The files <code>*.yml</code> are relevant to settings on the cluster that assigns resource for different computational modules involved.</p>
+<p>To compare with methods on smaller simulations scenarios for effect variable $S = 1,2,3,4,5$ on smaller data (1000 variables):</p>
 
 <pre><code>dsc susie.dsc --target run_comparison -o susie_comparison --host susie_comparison.yml -c 60</code></pre>
-<p>To compare with DAP on a hard case: PVE = 0.3, full data (~8K average):</p>
+<p>To compare with DAP on $S = 10$ on full range of genotype data (~8K variables on average):</p>
 
 <pre><code>dsc susie.dsc --target hard_case -o hard_case --host hard_case.yml -c 60</code></pre>
-<p>To sync only relevant results:</p>
+<p>It is also possible to run the benchmark on a local computer, if <code>--host</code> option is dropped. The <code>*.yml</code> files under <code>src</code> folder are still relevant in providing information on required resource for each DSC module. Running time of the benchmark depends on avaiable computational resource. It is estimated that the entire benchmark will take over a week to run on a single compute node with 28 Intel Xeon E5 CPU threads (some otehr fine-mapping methods are the speed bottleneck)</p>
+<p>To sync only relevant results to local computer:</p>
 
 <pre><code>#to_sync=susie_comparison
 to_sync=hard_case
-rsync -auzP --include="*/" --exclude="*.ld_mat.rds" --include="*.rds" --include="*.pkl" --include="*.pdf" --include="*.png" --include="*.db"  --include="*.mpk" --exclude="*" mw:~/GIT/mvarbvs/dsc/$to_sync ./</code></pre>
+rsync -auzP --include="*/" --exclude="*.ld_mat.rds" --include="*.rds" --include="*.pkl" --include="*.pdf" --include="*.png" --include="*.db"  --include="*.mpk" --exclude="*" &lt;remote_url&gt;:&lt;path&gt;/$to_sync ./</code></pre>
+<p>To pack up for distribution,</p>
+
+<pre><code>cd susie_comparison
+tar -zcf susie_comparison.tar.gz fit_caviar fit_dap fit_finemap fit_susie get_sumstats liter_data lm_less plot_caviar plot_dap plot_finemap plot_susie summarize_ld
+ susie_comparison &amp;&amp; cd ../hard_case
+tar -zcf hard_case.tar.gz fit_dap fit_susie10 full_data lm_less03 plot_dap plot_susie &amp;&amp; cd ..
+tar cvf dsc-susie-paper.tar susie_comparison/susie_comparison* hard_case/hard_case*</code></pre>
 <h2 id="Commands-for-in-house-investigations">Commands for in house investigations<a class="anchor-link" href="#Commands-for-in-house-investigations">&#182;</a></h2>
 <pre><code>dsc susie.dsc --target run_susie</code></pre>
 
@@ -3669,7 +3678,7 @@ I thus keep them here just in case.</p>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/27dfebf099f464171cfd0289e0e0b36a97371880/dsc/finemapping.ipynb"><code>dsc/finemapping.ipynb</code></a> committed by Gao Wang on Wed Oct 10 09:07:55 2018 <a href="http://github.com/gaow/mvarbvs/commit/27dfebf099f464171cfd0289e0e0b36a97371880">revision 69, 27dfebf</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/c9803f21f5ca89cbeea031a56aa078c089703dc5/dsc/finemapping.ipynb"><code>dsc/finemapping.ipynb</code></a> committed by Gao Wang on Sun Dec 16 00:39:25 2018 <a href="http://github.com/gaow/mvarbvs/commit/c9803f21f5ca89cbeea031a56aa078c089703dc5">revision 73, c9803f2</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

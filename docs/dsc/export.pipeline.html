@@ -360,7 +360,7 @@ bash: expand = True, stderr = False
          <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
          </a> &nbsp;See the output of command <samp>sos run export.sos -h</samp> for usage information</div>
-         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.17.5</samp></div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.18.2</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
@@ -730,18 +730,15 @@ bash: expand = True, stderr = False
           if (stream.sol()) {
             let sl = stream.peek();
             if (sl == '[') {
-              // header, move to the end
               if (stream.match(/^\[.*\]$/, false)) {
-                // if there is no :, the easy case
-                if (stream.match(/^\[[^:]*\]$/)) {
+                // if there is :
+                if (stream.match(/^\[[\s\w_,-]+:/)) {
+                  state.sos_state = 'header_option';
+                  return "header line-section-header";
+                } else if (stream.match(/^\[[\s\w,-]+\]$/)) {
                   // reset state
                   state.sos_state = null;
                   state.inner_mode = null;
-                  return "header line-section-header";
-                } else {
-                  // match up to :
-                  stream.match(/^\[[^:]*:/);
-                  state.sos_state = 'header_option';
                   return "header line-section-header";
                 }
               }

@@ -324,7 +324,7 @@ body {
 <span class="p">[</span><span class="n">extract</span><span class="p">]</span>
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
     <span class="n">genes</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;shuf {cwd:a}/all_genes.txt | head -{n}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="kn">input:</span> <span class="kp">for_each</span> <span class="o">=</span> <span class="s1">&#39;genes&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="s1">&#39;genes&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{outdir}/{tissue}.{path(_genes):b}.RDS&quot;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
 
@@ -384,7 +384,7 @@ body {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">count_var</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/Toys/*.RDS&#39;</span><span class="p">),</span> <span class="kp">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/Toys/*.RDS&#39;</span><span class="p">),</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="kn">output:</span> <span class="s1">&#39;~/Documents/GTExV8/Toys/counts.txt&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">_output</span>
   <span class="n">cat</span><span class="p">(</span><span class="n">paste0</span><span class="p">({</span><span class="n">_input</span><span class="p">:</span><span class="n">br</span><span class="p">},</span> <span class="n">ncol</span><span class="p">(</span><span class="n">readRDS</span><span class="p">({</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span><span class="err">$</span><span class="n">X</span><span class="p">),</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">))</span>
