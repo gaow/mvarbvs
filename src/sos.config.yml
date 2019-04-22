@@ -7,7 +7,8 @@ hosts:
     account: ''
     address: gaow@midway2.rcc.uchicago.edu
     description: UChicago RCC cluster Midway 2
-    job_template: '#!/bin/bash
+    job_template: |
+      #!/bin/bash
       #SBATCH --time={walltime}
       #{partition}
       #{account}
@@ -18,8 +19,8 @@ hosts:
       #SBATCH --output={cur_dir}/.sos/{job_name}.out
       #SBATCH --error={cur_dir}/.sos/{job_name}.err
       cd {cur_dir}
-      module load R/3.4.3
-      sos execute {task} -v {verbosity} -s {sig_mode}'
+      module load R
+      sos execute {task} -v {verbosity} -s {sig_mode}
     kill_cmd: scancel {job_id}
     max_cores: 40
     max_mem: 64G
@@ -37,7 +38,8 @@ hosts:
     account: ''
     address: localhost
     description: UChicago RCC cluster Midway 2
-    job_template: '#!/bin/bash
+    job_template: | 
+      #!/bin/bash
       #SBATCH --time={walltime}
       #{partition}
       #{account}
@@ -49,7 +51,7 @@ hosts:
       #SBATCH --error={cur_dir}/{job_name}.err
       cd {cur_dir}
       module load R/3.4.3
-      sos execute {task} -v {verbosity} -s {sig_mode}'
+      sos execute {task} -v {verbosity} -s {sig_mode}
     kill_cmd: scancel {job_id}
     max_cores: 40
     max_mem: 64G
