@@ -45,8 +45,8 @@ hosts:
       #SBATCH --ntasks-per-node={cores}
       #SBATCH --mem-per-cpu={mem//10**9}G
       #SBATCH --job-name={job_name}
-      #SBATCH --output={cur_dir}/.sos/{job_name}.out
-      #SBATCH --error={cur_dir}/.sos/{job_name}.err
+      #SBATCH --output={cur_dir}/{job_name}.out
+      #SBATCH --error={cur_dir}/{job_name}.err
       cd {cur_dir}
       module load R/3.4.3
       sos execute {task} -v {verbosity} -s {sig_mode}'
