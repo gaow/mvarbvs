@@ -253,7 +253,7 @@ body {
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Extract-per-gene-toy-dataset">Extract per gene toy dataset<a class="anchor-link" href="#Extract-per-gene-toy-dataset">&#182;</a></h1>
+<h1 id="Extract-per-gene-dataset">Extract per gene dataset<a class="anchor-link" href="#Extract-per-gene-dataset">&#182;</a></h1>
 </div>
 </div>
 </div>
@@ -315,53 +315,188 @@ body {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
-<span class="kn">parameter:</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">200</span>
-<span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8&#39;</span><span class="p">)</span>
-<span class="n">outdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/Toys&#39;</span>
-<span class="kn">parameter:</span> <span class="n">tissue</span> <span class="o">=</span> <span class="s1">&#39;Thyroid&#39;</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">genotype_file</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/GTExV7.genotype.cis.h5&quot;</span>
+<span class="kn">parameter:</span> <span class="n">expr_file</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/GTExV7.expression.h5&quot;</span>
+<span class="kn">parameter:</span> <span class="n">cov_file</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;{cwd:a}/GTExV7.covariates.h5&quot;</span>
+<span class="kn">parameter:</span> <span class="n">outdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd:a}/Toys&#39;</span>
+<span class="c1"># we can extract single or multiple tissue data</span>
+<span class="kn">parameter:</span> <span class="n">tissues</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># list of genes to extract data for</span>
 <span class="kn">parameter:</span> <span class="n">genes</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c1"># if list of genes is not provided we&#39;ll get from a fixed file `n` genes</span>
+<span class="kn">parameter:</span> <span class="n">n</span> <span class="o">=</span> <span class="mi">200</span>
 
-<span class="p">[</span><span class="n">extract</span><span class="p">]</span>
+<span class="n">tissues_default</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">Adipose_Subcutaneous</span>
+<span class="s1">Adipose_Visceral_Omentum</span>
+<span class="s1">Adrenal_Gland</span>
+<span class="s1">Artery_Aorta</span>
+<span class="s1">Artery_Coronary</span>
+<span class="s1">Artery_Tibial</span>
+<span class="s1">Brain_Amygdala</span>
+<span class="s1">Brain_Anterior_cingulate_cortex_BA24</span>
+<span class="s1">Brain_Caudate_basal_ganglia</span>
+<span class="s1">Brain_Cerebellar_Hemisphere</span>
+<span class="s1">Brain_Cerebellum</span>
+<span class="s1">Brain_Cortex</span>
+<span class="s1">Brain_Frontal_Cortex_BA9</span>
+<span class="s1">Brain_Hippocampus</span>
+<span class="s1">Brain_Hypothalamus</span>
+<span class="s1">Brain_Nucleus_accumbens_basal_ganglia</span>
+<span class="s1">Brain_Putamen_basal_ganglia</span>
+<span class="s1">Brain_Spinal_cord_cervical_c-1</span>
+<span class="s1">Brain_Substantia_nigra</span>
+<span class="s1">Breast_Mammary_Tissue</span>
+<span class="s1">Cells_Cultured_fibroblasts</span>
+<span class="s1">Cells_EBV-transformed_lymphocytes</span>
+<span class="s1">Colon_Sigmoid</span>
+<span class="s1">Colon_Transverse</span>
+<span class="s1">Esophagus_Gastroesophageal_Junction</span>
+<span class="s1">Esophagus_Mucosa</span>
+<span class="s1">Esophagus_Muscularis</span>
+<span class="s1">Heart_Atrial_Appendage</span>
+<span class="s1">Heart_Left_Ventricle</span>
+<span class="s1">Kidney_Cortex</span>
+<span class="s1">Liver</span>
+<span class="s1">Lung</span>
+<span class="s1">Minor_Salivary_Gland</span>
+<span class="s1">Muscle_Skeletal</span>
+<span class="s1">Nerve_Tibial</span>
+<span class="s1">Ovary</span>
+<span class="s1">Pancreas</span>
+<span class="s1">Pituitary</span>
+<span class="s1">Prostate</span>
+<span class="s1">Skin_Not_Sun_Exposed_Suprapubic</span>
+<span class="s1">Skin_Sun_Exposed_Lower_leg</span>
+<span class="s1">Small_Intestine_Terminal_Ileum</span>
+<span class="s1">Spleen</span>
+<span class="s1">Stomach</span>
+<span class="s1">Testis</span>
+<span class="s1">Thyroid</span>
+<span class="s1">Uterus</span>
+<span class="s1">Vagina</span>
+<span class="s1">Whole_Blood</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">tissues</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="n">tissues</span> <span class="o">=</span> <span class="n">tissues_default</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">extract</span><span class="p">]</span>
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-    <span class="n">genes</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;shuf {cwd:a}/all_genes.txt | head -{n}&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">genes</span> <span class="o">=</span> <span class="n">get_output</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;shuf {cwd:a}/all_genes.txt | sort -u | head -{n} &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">tissue_tables</span> <span class="o">=</span> <span class="s1">&#39;c(&#39;</span> <span class="o">+</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">f</span><span class="s1">&#39;&quot;/{item}&quot;&#39;</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">tissues</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;rhdf5&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;plyr&#39;</span><span class="p">)</span>
 <span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="s1">&#39;genes&#39;</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{outdir}/{tissue}.{path(_genes):b}.RDS&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s2">&quot;{outdir}/{tissues[0] if len(tissues) == 1 else &#39;Multi_Tissues&#39;}.{path(_genes):b}.RDS&quot;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
-
-    <span class="n">load_data</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">expr_file</span><span class="p">,</span> <span class="n">cov_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">library</span><span class="p">(</span><span class="n">rhdf5</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">rhdf5</span><span class="p">)</span>
+    <span class="n">load_genotype</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">)</span> <span class="p">{</span>
             <span class="n">geno</span> <span class="o">=</span> <span class="n">h5read</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">)</span>
             <span class="n">gdata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">geno</span><span class="err">$</span><span class="n">block0_values</span><span class="p">)</span>
             <span class="n">colnames</span><span class="p">(</span><span class="n">gdata</span><span class="p">)</span> <span class="o">=</span> <span class="n">geno</span><span class="err">$</span><span class="n">axis1</span>
             <span class="n">rownames</span><span class="p">(</span><span class="n">gdata</span><span class="p">)</span> <span class="o">=</span> <span class="n">geno</span><span class="err">$</span><span class="n">axis0</span>
-            <span class="c1">#</span>
+            <span class="k">return</span><span class="p">(</span><span class="n">gdata</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">load_expression</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">expr_file</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">,</span> <span class="n">gene</span><span class="p">)</span> <span class="p">{</span>
             <span class="n">expr</span> <span class="o">=</span> <span class="n">h5read</span><span class="p">(</span><span class="n">expr_file</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">)</span>
             <span class="n">edata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">expr</span><span class="err">$</span><span class="n">block0_values</span><span class="p">)</span>
             <span class="n">colnames</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span> <span class="o">=</span> <span class="n">tools</span><span class="p">::</span><span class="n">file_path_sans_ext</span><span class="p">(</span><span class="n">expr</span><span class="err">$</span><span class="n">axis1</span><span class="p">)</span>
-            <span class="n">edata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">edata</span><span class="p">[,</span> <span class="n">basename</span><span class="p">(</span><span class="n">geno_table</span><span class="p">)])</span>
+            <span class="n">edata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">edata</span><span class="p">[,</span> <span class="n">gene</span><span class="p">])</span>
             <span class="n">rownames</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span> <span class="o">=</span> <span class="n">expr</span><span class="err">$</span><span class="n">axis0</span>
-            <span class="n">colnames</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">geno_table</span><span class="p">)</span>
-            <span class="c1">#</span>
-            <span class="n">covariate</span> <span class="o">&lt;-</span> <span class="n">h5read</span><span class="p">(</span><span class="n">cov_file</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span>
+            <span class="n">colnames</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span> <span class="o">=</span> <span class="n">basename</span><span class="p">(</span><span class="n">expr_table</span><span class="p">)</span>
+            <span class="k">return</span><span class="p">(</span><span class="n">edata</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">load_covariates</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">cov_file</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">covariate</span> <span class="o">=</span> <span class="n">h5read</span><span class="p">(</span><span class="n">cov_file</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span>
             <span class="n">cdata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">covariate</span><span class="err">$</span><span class="n">block0_values</span><span class="p">)</span>
             <span class="n">colnames</span><span class="p">(</span><span class="n">cdata</span><span class="p">)</span> <span class="o">=</span> <span class="n">covariate</span><span class="err">$</span><span class="n">axis1</span>
             <span class="n">rownames</span><span class="p">(</span><span class="n">cdata</span><span class="p">)</span> <span class="o">=</span> <span class="n">covariate</span><span class="err">$</span><span class="n">axis0</span>
             <span class="n">cdata</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">cdata</span><span class="p">)</span>
+            <span class="k">return</span><span class="p">(</span><span class="n">cdata</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">load_data_single</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">expr_file</span><span class="p">,</span> <span class="n">cov_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">gdata</span> <span class="o">=</span> <span class="n">load_genotype</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">)</span>
+            <span class="n">edata</span> <span class="o">=</span> <span class="n">load_expression</span><span class="p">(</span><span class="n">expr_file</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">,</span> <span class="n">basename</span><span class="p">(</span><span class="n">geno_table</span><span class="p">))</span>
+            <span class="n">cdata</span> <span class="o">=</span> <span class="n">load_covariates</span><span class="p">(</span><span class="n">cov_file</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span>
             <span class="c1"># reorder</span>
             <span class="n">edata</span> <span class="o">=</span> <span class="n">edata</span><span class="p">[</span><span class="n">match</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">cdata</span><span class="p">),</span> <span class="n">rownames</span><span class="p">(</span><span class="n">edata</span><span class="p">)),]</span>
             <span class="n">gdata</span> <span class="o">=</span> <span class="n">gdata</span><span class="p">[</span><span class="n">rownames</span><span class="p">(</span><span class="n">cdata</span><span class="p">),]</span>
             <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">gdata</span><span class="p">),</span> <span class="n">y</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">edata</span><span class="p">),</span> <span class="n">Z</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">cdata</span><span class="p">),</span> <span class="n">chrom</span> <span class="o">=</span> <span class="n">strsplit</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">gdata</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;_&#39;</span><span class="p">)[[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">1</span><span class="p">],</span> 
                         <span class="n">pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">rbind</span><span class="p">,</span> <span class="n">strsplit</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">gdata</span><span class="p">),</span> <span class="s1">&#39;_&#39;</span><span class="p">))[,</span><span class="mi">2</span><span class="p">])))</span>
-        <span class="p">}</span>
-    <span class="n">genotype_file</span> <span class="o">=</span> <span class="s2">&quot;${cwd:a}/GTExV8.genotype.cis.h5&quot;</span>
-    <span class="n">expr_file</span> <span class="o">=</span> <span class="s2">&quot;${cwd:a}/GTExV8.expression.h5&quot;</span>
-    <span class="n">cov_file</span> <span class="o">=</span> <span class="s2">&quot;${cwd:a}/GTExV8.covariates.h5&quot;</span>
-    <span class="c1">## </span>
+    <span class="p">}</span>
+    <span class="n">load_data_multi</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">expr_file</span><span class="p">,</span> <span class="n">cov_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">,</span> <span class="n">expr_tables</span><span class="p">,</span> <span class="n">cov_tables</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">gdata</span> <span class="o">=</span> <span class="n">load_genotype</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">)</span>
+            <span class="n">edata</span> <span class="o">=</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">expr_tables</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">load_expression</span><span class="p">(</span><span class="n">expr_file</span><span class="p">,</span> <span class="n">expr_tables</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">basename</span><span class="p">(</span><span class="n">geno_table</span><span class="p">)))</span>
+            <span class="n">cdata</span> <span class="o">=</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">cov_tables</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">load_covariates</span><span class="p">(</span><span class="n">cov_file</span><span class="p">,</span> <span class="n">cov_tables</span><span class="p">[[</span><span class="n">i</span><span class="p">]]))</span>
+            <span class="n">y_res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+            <span class="c1"># reorder and remove covariates</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">edata</span><span class="p">))</span> <span class="p">{</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">match</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">cdata</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="n">rownames</span><span class="p">(</span><span class="n">edata</span><span class="p">[[</span><span class="n">i</span><span class="p">]]))</span>
+                <span class="n">row_str</span> <span class="o">=</span> <span class="n">rownames</span><span class="p">(</span><span class="n">edata</span><span class="p">[[</span><span class="n">i</span><span class="p">]])[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="n">col_str</span> <span class="o">=</span> <span class="n">colnames</span><span class="p">(</span><span class="n">edata</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span>
+                <span class="n">edata</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">edata</span><span class="p">[[</span><span class="n">i</span><span class="p">]][</span><span class="n">idx</span><span class="p">,]</span>
+                <span class="n">Z</span> <span class="o">=</span> <span class="n">scale</span><span class="p">(</span><span class="n">cdata</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">center</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
+                <span class="n">y_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="o">.</span><span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">edata</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span><span class="err">$</span><span class="n">residuals</span>
+                <span class="n">y_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="n">y_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">length</span><span class="p">(</span><span class="n">y_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">y_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">row_str</span><span class="p">,</span> <span class="n">y_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span>
+                <span class="n">colnames</span><span class="p">(</span><span class="n">y_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;sample.id&#39;</span><span class="p">,</span> <span class="n">col_str</span><span class="p">)</span>
+            <span class="p">}</span>
+            <span class="c1"># merge residuals into one matrix</span>
+            <span class="c1"># need to ensure same rows </span>
+            <span class="c1"># are matched and unmatched entries are filled with NA</span>
+            <span class="n">y_res_mat</span> <span class="o">=</span> <span class="n">plyr</span><span class="p">::</span><span class="n">join_all</span><span class="p">(</span><span class="n">y_res</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="s2">&quot;sample.id&quot;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">match</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span><span class="p">)</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">y_res_mat</span><span class="p">[,</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">y_res_mat</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">y_res_mat</span><span class="p">[,</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">rownames</span><span class="p">(</span><span class="n">y_res_mat</span><span class="p">)</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">names</span>
+            <span class="c1"># and match its order with genotype data</span>
+            <span class="c1">#gdata = gdata[rownames(y_res_mat),]</span>
+            <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">X</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="n">gdata</span><span class="p">),</span> <span class="n">y</span> <span class="o">=</span> <span class="n">edata</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">cdata</span><span class="p">,</span> <span class="n">y_res</span> <span class="o">=</span> <span class="n">y_res_mat</span><span class="p">,</span>
+                        <span class="n">chrom</span> <span class="o">=</span> <span class="n">strsplit</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">gdata</span><span class="p">)[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;_&#39;</span><span class="p">)[[</span><span class="mi">1</span><span class="p">]][</span><span class="mi">1</span><span class="p">],</span> 
+                        <span class="n">pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">rbind</span><span class="p">,</span> <span class="n">strsplit</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">gdata</span><span class="p">),</span> <span class="s1">&#39;_&#39;</span><span class="p">))[,</span><span class="mi">2</span><span class="p">])))</span>
+    <span class="p">}</span>
+    <span class="c1">#</span>
     <span class="n">geno_table</span> <span class="o">=</span> <span class="s2">&quot;${_genes}&quot;</span>
-    <span class="n">expr_table</span> <span class="o">=</span> <span class="s2">&quot;/${tissue}&quot;</span>
-    <span class="n">cov_table</span> <span class="o">=</span> <span class="s2">&quot;/${tissue}&quot;</span>
-    <span class="n">dat</span> <span class="o">=</span> <span class="n">load_data</span><span class="p">(</span><span class="n">genotype_file</span><span class="p">,</span> <span class="n">expr_file</span><span class="p">,</span> <span class="n">cov_file</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span>
+    <span class="n">expr_table</span> <span class="o">=</span> <span class="n">cov_table</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">tissue_tables</span><span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">expr_table</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">load_data_single</span><span class="p">(</span><span class="s2">&quot;${genotype_file}&quot;</span><span class="p">,</span> <span class="s2">&quot;${expr_file}&quot;</span><span class="p">,</span> <span class="s2">&quot;${cov_file}&quot;</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">load_data_multi</span><span class="p">(</span><span class="s2">&quot;${genotype_file}&quot;</span><span class="p">,</span> <span class="s2">&quot;${expr_file}&quot;</span><span class="p">,</span> <span class="s2">&quot;${cov_file}&quot;</span><span class="p">,</span> <span class="n">geno_table</span><span class="p">,</span> <span class="n">expr_table</span><span class="p">,</span> <span class="n">cov_table</span><span class="p">)</span>        
+    <span class="p">}</span>
     <span class="n">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For (one) example,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">sos</span> <span class="n">run</span> <span class="n">analysis</span><span class="o">/</span><span class="mi">20180515</span><span class="n">_Extract_Benchmark_Data</span><span class="o">.</span><span class="n">ipynb</span> <span class="n">extract</span> <span class="o">--</span><span class="n">genes</span> <span class="o">/</span><span class="n">chr4</span><span class="o">/</span><span class="n">ENSG00000145214</span>
 </pre></div>
 
 </div>
@@ -462,7 +597,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/a79d1338497cc2db9dc1601fd3a349decee4d94d/analysis/20180515_Extract_Benchmark_Data.ipynb"><code>analysis/20180515_Extract_Benchmark_Data.ipynb</code></a> committed by Gao Wang on Tue Jun 26 16:46:10 2018 <a href="http://github.com/gaow/mvarbvs/commit/a79d1338497cc2db9dc1601fd3a349decee4d94d">revision 3, a79d133</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/1bf5d8546ea3ad3f3f90e92eb7d06209f32edcf9/analysis/20180515_Extract_Benchmark_Data.ipynb"><code>analysis/20180515_Extract_Benchmark_Data.ipynb</code></a> committed by Gao Wang on Mon May 13 08:57:38 2019 <a href="http://github.com/gaow/mvarbvs/commit/1bf5d8546ea3ad3f3f90e92eb7d06209f32edcf9">revision 7, 1bf5d85</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
