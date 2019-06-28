@@ -347,33 +347,34 @@ pre.section-header.CodeMirror-line {
 
    </head>
    <body>
-      <h2 class='mt-0'>export.sos
+      <h2 class='mt-0'>get_mmbr_prototypes.sos
          
       </h2>
       <div class="file">
          <div class="fileheader">
             <div class="fileinfo">
-               8 lines
+               9 lines
                <span class="file-info-divider"></span>
-               230 Bytes
+               228 Bytes
             </div>
          </div>
          <div class="filecontent">
-            <textarea rows="8" id="source-code" class="sos-source" name="code">#!/usr/bin/env sos-runner
-parameter: notebook = 'finemapping.ipynb'
+            <textarea rows="9" id="source-code" class="sos-source" name="code">[global]
+from glob import glob
+parameter: mmbr_dir = path('~/GIT/software/mmbr/inst/prototypes')
 
-[convert]
-input: notebook
-output: f'/tmp/{_input:b}'
-bash: expand = True, stderr = False
-  jupyter nbconvert --to notebook --execute {_input} --output {_output}
+[1]
+input: glob(f'{mmbr_dir:a}/*.ipynb'), group_by = 1
+output: f'20190627_{_input:b}'
+bash: expand = True
+  cp {_input} {_output}
 </textarea>
          </div>
       </div>
       <footer>
          <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
-         </a> &nbsp;See the output of command <samp>sos run export.sos -h</samp> for usage information</div>
+         </a> &nbsp;See the output of command <samp>sos run get_mmbr_prototypes.sos -h</samp> for usage information</div>
          <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.19.13</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
