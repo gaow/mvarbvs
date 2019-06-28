@@ -1,0 +1,9 @@
+[global]
+from glob import glob
+parameter: mmbr_dir = path('~/GIT/software/mmbr/inst/prototypes')
+
+[1]
+input: glob(f'{mmbr_dir:a}/*.ipynb'), group_by = 1
+output: f'20190627_{_input:b}'
+bash: expand = True
+  cp {_input} {_output}
