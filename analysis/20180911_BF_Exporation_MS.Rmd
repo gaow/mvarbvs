@@ -14,7 +14,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(susieR)
 set.seed(1)
-dat = readRDS(system.file("data", "N2finemapping.rds", package = "susieR"))
+data(N2finemapping.rds)
+dat = N2finemapping
 names(dat)
 r = 1
 fitted = susie(dat$X, dat$Y[,r], L=5,
