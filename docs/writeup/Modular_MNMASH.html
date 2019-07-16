@@ -250,16 +250,14 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="A-modular-approach-to-M&amp;M-ASH-model">A modular approach to M&amp;M ASH model<a class="anchor-link" href="#A-modular-approach-to-M&amp;M-ASH-model">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><em>Update: for a more formal version of this documentation please see this <a href="https://www.overleaf.com/8858826xzvbppzrxmtw">overleaf writeup</a>.</em></p>
 <h2 id="Motivation">Motivation<a class="anchor-link" href="#Motivation">&#182;</a></h2><p>In genetic association studies there is great interest in finding multiple causal variants (eQTL or GWAS hits). Several methods for fine mapping in univariate association problems (eg, eQTL discovery with single tissues) have been developed, but for multi-condition analysis this problem is more difficult to address. <a href="http://dx.doi.org/10.1016/j.ajhg.2016.03.029">DAP (Wen 2016)</a> uses an MCMC based method (DAP) for fine mapping but it lacks a principled approach to combine genome-wide information to estimate hyperparameters required by the algorithm, due to computational limitations.</p>
@@ -278,8 +276,7 @@ body {
 <p>However we do have to ensure that each of mr-ash analysis on different conditions will give the same sparse mode. One way to ensure this is to assume effects across all conditions are the same and fit a fixed effect model, using estimates from there to initialize mr-ash hoping the VEM converge to the same mode this way. But Wei has pointed out that VEM computation always favors $X_1$ in the block of $X_1, ..., X_p$, thus as long as the order of $X$ remains the same across univariate analysis we should be good.</p>
 <p>Another issue to verify is that the hyperparameters $\mathbf{\pi}$ obtained via running ash on effect size estimates from mr-ash agrees with those estimated from mr-ash. If this is verified, we can claim that the hyperparameters estimated by mash using mr-ash deconvoluted data is equivalent to fitting the monster algorithm.</p>
 <p>Also, instead of using posterior mean of $\beta$ from mr-ash, we should use likelihood:</p>
-<p>$$P(Y|\beta_1) \propto \frac{P(\beta_1|Y)}{P(\beta_1)}$$</p>
-<p>where $P(\beta_1)$ is available from the VEM updates.</p>
+$$P(Y|\beta_1) \propto \frac{P(\beta_1|Y)}{P(\beta_1)}$$<p>where $P(\beta_1)$ is available from the VEM updates.</p>
 <h2 id="Step-two:-multivariate-analysis-on-deconvoluted-effect-size-estimates">Step two: multivariate analysis on deconvoluted effect size estimates<a class="anchor-link" href="#Step-two:-multivariate-analysis-on-deconvoluted-effect-size-estimates">&#182;</a></h2><p>We use mash to perform another shrinkage in order to learn typical patterns of sparsity, sharing and correlations among effects, and pass this knowledge to the next step. First, as with mash we initialize $U_k$ using a number of decompositions on covariance matrix of effect size. But I'm not sure about whether we still take the "top SNP" per unit (gene) across conditions?</p>
 <p>Then we estimate $U_k$ via some deconvolution method (Bovy or Gerard), use the result in the mixture prior and write up the likelihood of $\hat{\beta}$ to feed into the algorithm for mixture proportion estimation (a convex problem).</p>
 <h2 id="Step-three:-fine-mapping-for-eQTL-discovery">Step three: fine-mapping for eQTL discovery<a class="anchor-link" href="#Step-three:-fine-mapping-for-eQTL-discovery">&#182;</a></h2><p>To generate posterior mean of effect size -- the fine-mapping. DAP can be applied in parallel to all units using the same prior from previous step. I still have to read about it.</p>
