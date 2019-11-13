@@ -1,0 +1,5 @@
+library(R2HESS)
+config <- r2hess.makeConfig(data.frame(X), data.frame(Y), data_dir, r=ncol(Y))
+r2hess.run(config)
+pip_file = paste0(data_dir, '/Marg_Prob_Incl.txt')
+result = list(pip_conditions = t(read.table(pip_file, skip=1)))
