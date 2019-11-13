@@ -19,8 +19,8 @@ DSC:
       #SBATCH --cpus-per-task={cores}
       #SBATCH --mem={mem//10**9}G
       #SBATCH --job-name={job_name}
-      #SBATCH --output={cur_dir}/outfiles/{job_name}.out
-      #SBATCH --error={cur_dir}/outfiles/{job_name}.err
+      #SBATCH --output={cur_dir}/{job_name}.out
+      #SBATCH --error={cur_dir}/{job_name}.err
       cd {cur_dir}
       module load R 2> /dev/null
     partition: "SBATCH --partition=broadwl"
@@ -39,7 +39,7 @@ DSC:
 
 default:
   queue: midway2
-  instances_per_job: 200
+  instances_per_job: 100
   nodes_per_job: 1
   instances_per_node: 8
   cpus_per_instance: 1
@@ -48,5 +48,5 @@ default:
 
 mnm:
   time_per_instance: 10m
-  instances_per_job: 40
+  instances_per_job: 20
   mem_per_instance: 3G
