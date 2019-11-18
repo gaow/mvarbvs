@@ -13,3 +13,4 @@ susie_scores: susie_scores.R + R(sc = susie_scores($(result), $(meta)$true_coef,
     $false_neg_cond_discoveries: sc$false_neg_cond_discoveries
     $true_cond_discoveries: sc$true_cond_discoveries
     $avg_diff_eff_size_percentile: sc$avg_diff_eff_size_percentile
+    $converged: sc$converged

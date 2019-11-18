@@ -110,5 +110,6 @@ susie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
               false_pos_cond_discoveries = false_positive_condition_cs, 
               true_cond_discoveries = true_positive_condition_cs, 
               false_neg_cond_discoveries = false_neg_condition_cs,
-              avg_diff_eff_size_percentile = mean(estimate_diff)))
+              avg_diff_eff_size_percentile = mean(estimate_diff),
+              converged = (m$convergence$delta >=0 && m$convergence$converged)))
 }
