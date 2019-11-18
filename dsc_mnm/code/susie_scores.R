@@ -1,19 +1,22 @@
 library(KScorrect)
 #' @title Check if produced confidence sets have overlaps
 #' @param cs a list a susie confidence sets from susie fit
-#' @return number of overlaps
+#' @return number of overlaps in terms of both SNPs and CS
 check_overlap = function(cs) {
   if (length(cs) == 0) {
     return(0)
   } else {
-    overlaps = 0
+    overlaps_snp = 0
+    overlaps_cs = 0
     for (i in 1:length(cs)) {
       for (j in 1:i) {
         if (i == j) next
-        overlaps = overlaps + length(intersect(cs[[i]], cs[[j]]))
+        overlap = intersect(cs[[i]], cs[[j]])
+        overlaps_snp = overlaps_snp + length(overlap)
+        overlaps_cs = overlaps_cs + (length(overlap) > 0)
       }
     }
-    return(overlaps)
+    return(list(snp = overlaps_snp, cs = overlaps_cs))
   }
 }
 
@@ -99,7 +102,9 @@ susie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
       estimate_diff = append(estimate_diff, quant_diff / length(truth))
     }
   }
-  return(list(total=total, valid=valid, size=size, purity=purity, top=top_hit, overlap=check_overlap(cs), 
+  overlaps = check_overlap(cs)
+  return(list(total=total, valid=valid, size=size, purity=purity, top=top_hit, 
+              overlap_var = overlaps$snp, overlap_cs = overlaps$cs,
               n_signal=length(beta_idx), 
               included_signal = sum(beta_idx %in% unlist(cs)), 
               false_pos_cond_discoveries = false_positive_condition_cs, 
