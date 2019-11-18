@@ -19,7 +19,7 @@ DSC:
     # number of dataset to evaluate
     n_dataset: 300
     # number of conditions as a global variable
-    R: 45, 5
+    R: 5, 45
     # number of causal as a global variable, <0 is to use default
     C: 1
     #grid: (0.1, 0.25, 0.4, 0.6)

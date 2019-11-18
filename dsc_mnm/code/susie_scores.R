@@ -4,7 +4,7 @@ library(KScorrect)
 #' @return number of overlaps in terms of both SNPs and CS
 check_overlap = function(cs) {
   if (length(cs) == 0) {
-    return(0)
+    return(list(snp = 0, cs = 0))
   } else {
     overlaps_snp = 0
     overlaps_cs = 0
