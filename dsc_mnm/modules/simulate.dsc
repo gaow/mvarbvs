@@ -1,9 +1,10 @@
 # A module to prepare for simulation configurations
 oracle_generator: lib_regression_simulator.py + \
                 regression_simulator.py + \
-                Python(configurations = get_config(effects, ${R}, ${grid}, dict(mixture_1=${mixture_1})))
+                Python(configurations = get_config(effects, n_traits, ${grid}, dict(mixture_1=${mixture_1})))
   effects: ('identity', 'low_het', 'mid_het', 'high_het', 'shared', 'singleton', 'singleton_1', 'mixture_1')
   $configurations: configurations
+  n_traits: (${R})
 
 # MASH 'identity' matrix
 # No correlated effects across conditions

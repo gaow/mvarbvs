@@ -5,6 +5,7 @@ mnm_base: mnm.R
   meta: $meta
   cfg: $configurations
   eff_mode: 'identity', 'low_het', 'mid_het', 'high_het', 'shared', 'singleton', 'mixture_1'
+  alpha: 0, 1
   L: 2, 1
   missing_Y: TRUE, FALSE
   resid_method: 'oracle', 'diag', 'flash'

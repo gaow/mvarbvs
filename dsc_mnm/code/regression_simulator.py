@@ -112,29 +112,31 @@ def mash_sim(data, reg, c, mode):
     reg.Y = eff.get_y(reg, c['pve']/data['n_signal'], residual_correlation, is_pve_per_variable = True)
     return eff.coef, eff.residual_variance, eff.get_prior()
 
-def get_config(effects, R, eff_grid, mixtures):
+def get_config(effects, n_traits, eff_grid, mixtures):
     res = dict()
-    for mode in effects:
-        eff = MultivariateMixtureEqualEff((0, R))
-        eff.set_grid(eff_grid)
-        if mode == 'low_het':
-            eff.set_low_het()
-        elif mode == 'mid_het':
-            eff.set_mid_het()
-        elif mode == 'high_het':
-            eff.set_high_het()
-        elif mode == 'shared':
-            eff.set_shared()
-        elif mode == 'identity':
-            eff.set_indep()
-        elif mode.startswith('singleton'):
-            eff.set_singleton(mode)
-        elif mode.startswith("mixture_"):
-            eff.set_manual_mixture(mixtures[mode])
-        elif mode.startswith("group_"):
-            eff.set_manual_blocks(mixtures[mode]['n_groups'], mixtures[mode]['group_het'], mixtures[mode]['group_prop'])
-        else:
-            raise ValueError(f"Unknown mash simulation mode `{mode}`")
-        eff.apply_grid()
-        res[mode] = eff.get_prior()
+    for R in n_traits:
+        res[str(R)] = dict()
+        for mode in effects:
+            eff = MultivariateMixtureEqualEff((0, R))
+            eff.set_grid(eff_grid)
+            if mode == 'low_het':
+                eff.set_low_het()
+            elif mode == 'mid_het':
+                eff.set_mid_het()
+            elif mode == 'high_het':
+                eff.set_high_het()
+            elif mode == 'shared':
+                eff.set_shared()
+            elif mode == 'identity':
+                eff.set_indep()
+            elif mode.startswith('singleton'):
+                eff.set_singleton(mode)
+            elif mode.startswith("mixture_"):
+                eff.set_manual_mixture(mixtures[mode])
+            elif mode.startswith("group_"):
+                eff.set_manual_blocks(mixtures[mode]['n_groups'], mixtures[mode]['group_het'], mixtures[mode]['group_prop'])
+            else:
+                raise ValueError(f"Unknown mash simulation mode `{mode}`")
+            eff.apply_grid()
+            res[str(R)][mode] = eff.get_prior()
     return res

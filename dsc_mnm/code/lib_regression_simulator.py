@@ -395,11 +395,12 @@ class MultivariateMixture:
 
 
 
-    def set_manual_mixture(self, cfg = dict(identity=0.1,equal_effects=0.2,singleton=0.2,simple_het_1=0.1,simple_het_2=0.1,simple_het_3=0.1,null=0)):
+    def set_manual_mixture(self, mixture = dict(identity=0.1,equal_effects=0.2,singleton=0.2,simple_het_1=0.1,simple_het_2=0.1,simple_het_3=0.1,null=0)):
         '''
         example configuration is dictionary, see the `cfg` example above
         the proportions **do not have to sum to 1** because they will be normalized anyways
         '''
+        cfg = copy.deepcopy(mixture)
         default_keys = ['identity', 'equal_effects', 'singleton', 'simple_het_1', 'simple_het_2', 'simple_het_3', 'null']
         if set(list(cfg.keys())) != set(default_keys):
             raise ValueError(f"Input configuration has to contain all of these components: {default_keys}")
