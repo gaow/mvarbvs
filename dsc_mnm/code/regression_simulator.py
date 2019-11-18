@@ -36,7 +36,7 @@ def simulate_main(data, c):
     else:
         if c['n_traits'] < 2:
             raise ValueError(f'Cannot simulate {c["n_traits"]} under mode {eff_mode}')
-        data['true_coef'], data['residual_variance'], data['residual_correlation'], data['prior'] = mash_sim(data, reg, c, eff_mode)
+        data['true_coef'], data['residual_variance'], data['prior'] = mash_sim(data, reg, c, eff_mode)
     if c['center_data']:
         reg.center_data()
     data['X'] = reg.X
@@ -110,7 +110,7 @@ def mash_sim(data, reg, c, mode):
     eff.sparsify_effects(data['n_signal'])
     residual_correlation = ResidualCorrelation(c['residual_mode'], eff.R).apply()
     reg.Y = eff.get_y(reg, c['pve']/data['n_signal'], residual_correlation, is_pve_per_variable = True)
-    return eff.coef, eff.residual_variance, residual_correlation, eff.get_prior()
+    return eff.coef, eff.residual_variance, eff.get_prior()
 
 def get_config(effects, R, eff_grid, mixtures):
     res = dict()

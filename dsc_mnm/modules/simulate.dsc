@@ -28,7 +28,7 @@ identity: lib_regression_simulator.py + \
   $R: res['Y'].shape[1]
   $J: res['X'].shape[1]
   $pve_out: conf['pve']
-  $meta: dict(true_coef=res['true_coef'], residual_correlation=res['residual_correlation'], original_Y=Y)
+  $meta: dict(true_coef=res['true_coef'], residual_variance=res['residual_variance'], original_Y=Y)
 
 # MASH 'simple_het_1' matrix
 # where off-diagonal is 0.8 sharing

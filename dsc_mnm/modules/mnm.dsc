@@ -6,8 +6,8 @@ mnm_base: mnm.R
   cfg: $configurations
   eff_mode: 'identity', 'low_het', 'mid_het', 'high_het', 'shared', 'singleton', 'mixture_1'
   L: 2, 1
-  missing_Y: TRUE, FALSE
-  resid_method: 'flash', 'diag', 'oracle'
+  missing_Y: FALSE, TRUE
+  resid_method: 'oracle', 'diag', 'flash'
   $result: result
 
 mnm_identity(mnm_base):
