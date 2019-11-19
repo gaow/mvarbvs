@@ -11,7 +11,8 @@ compute_cov_flash <- function(Y){
       fsd <- sapply(fl$fitted.g[[1]], '[[', "sd")
       covar <- diag(fl$residuals.sd^2) + crossprod(t(fl$flash.fit$EF[[2]]) * fsd)
     }
-    covar <- apply(Y, 2, var, na.rm=T) * cov2cor(covar)
+    s <- diag(apply(Y, 2, sd, na.rm=T))
+    covar <- s%*%cov2cor(covar)%*%s
     return(covar)
 }
 create_missing <- function(Y1, Y0) {
