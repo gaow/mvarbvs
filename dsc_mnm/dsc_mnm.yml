@@ -1,16 +1,13 @@
 DSC:
   midway2:
     description: UChicago RCC cluster Midway 2
-    address: localhost
-    paths:
-      home: /home/{user_name}
     queue_type: pbs
     status_check_interval: 30
     max_running_jobs: 50
     max_cores: 40
     max_walltime: "36:00:00"
     max_mem: 64G
-    job_template: |
+    task_template: |
       #!/bin/bash
       #{partition}
       #{account}
@@ -49,4 +46,4 @@ default:
 mnm:
   time_per_instance: 10m
   instances_per_job: 20
-  mem_per_instance: 3G
+  mem_per_instance: 6G
