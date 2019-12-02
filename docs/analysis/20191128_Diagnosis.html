@@ -395,7 +395,6 @@ body {
 <span class="c1"># cat(ex$DSC_DEBUG$script)</span>
 <span class="n">DSC_19D98699</span> <span class="o">&lt;-</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;mnm_20191116/oracle_generator/oracle_generator_1.pkl&#39;</span><span class="p">,</span><span class="s1">&#39;mnm_20191116/full_data/full_data_340.rds&#39;</span><span class="p">,</span><span class="s1">&#39;mnm_20191116/high_het/full_data_340_high_het_1.pkl&#39;</span><span class="p">),</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">read_dsc</span><span class="p">)</span>
 <span class="n">meta</span> <span class="o">&lt;-</span> <span class="n">DSC_19D98699</span><span class="err">$</span><span class="n">meta</span>
-<span class="n">true_pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -406,10 +405,23 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>And plot the results (PIP and CS):</p>
+<p>The original result from DSC is presented in a plot of PIP and CS, where true signal is in red:</p>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">true_pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -987,7 +999,6 @@ AAAAAElFTkSuQmCC"
 <span class="n">X</span> <span class="o">&lt;-</span> <span class="n">DSC_19D98699</span><span class="err">$</span><span class="n">X</span>
 <span class="n">Y</span> <span class="o">&lt;-</span> <span class="n">DSC_19D98699</span><span class="err">$</span><span class="n">Y</span>
 <span class="n">cfg</span> <span class="o">&lt;-</span> <span class="n">DSC_19D98699</span><span class="err">$</span><span class="n">configurations</span>
-<span class="n">L</span> <span class="o">&lt;-</span> <span class="mi">1</span>
 <span class="n">prior</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))]][[</span><span class="s1">&#39;high_het&#39;</span><span class="p">]]</span>
 </pre></div>
 
@@ -1047,7 +1058,8 @@ AAAAAElFTkSuQmCC"
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Use EE model,</p>
+<p>This data-set has also been saved to <a href="https://github.com/gaow/mmbr/issues/9#issue-531283569">here</a>. If you want to reproduce my results you can download the data-set from the link above, use <code>attach(readRDS(...))</code> to attach the data to the R workspace and continue with commands below.</p>
+<p>Use EE model and set $L=1$,</p>
 
 </div>
 </div>
@@ -1058,12 +1070,21 @@ AAAAAElFTkSuQmCC"
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Then fit with complete data, and with missing data:</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -1970,12 +1991,12 @@ AAAAAElFTkSuQmCC"
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[50]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">NULL</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">xUlist</span><span class="o">=</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))),</span> <span class="n">prior</span><span class="err">$</span><span class="n">xUlist</span><span class="p">),</span> <span class="n">prior_weights</span><span class="o">=</span><span class="n">prior</span><span class="err">$</span><span class="n">pi</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="n">prior</span><span class="err">$</span><span class="n">null_weight</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">top_mixtures</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">m1</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashMultipleRegression</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">resid_Y</span><span class="p">,</span> <span class="n">m_init</span><span class="p">)</span>
-<span class="n">m1</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">))</span>
+<span class="n">m1</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">save_summary_stats</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -2024,6 +2045,70 @@ AAAAAElFTkSuQmCC"
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m1</span><span class="err">$</span><span class="n">sbhat</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+9.7260960795359
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m1</span><span class="err">$</span><span class="n">sbhat</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<strong>chr12_12983795_G_T_b38:</strong> 2382
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
@@ -2034,12 +2119,12 @@ AAAAAElFTkSuQmCC"
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="prompt input_prompt">In&nbsp;[43]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">NULL</span><span class="p">,</span> <span class="n">NULL</span><span class="p">,</span> <span class="n">xUlist</span><span class="o">=</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">matrix</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))),</span> <span class="n">prior</span><span class="err">$</span><span class="n">xUlist</span><span class="p">),</span> <span class="n">prior_weights</span><span class="o">=</span><span class="n">prior</span><span class="err">$</span><span class="n">pi</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="n">prior</span><span class="err">$</span><span class="n">null_weight</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">top_mixtures</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">m2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashMultipleRegression</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">resid_Y</span><span class="p">,</span> <span class="n">m_init</span><span class="p">)</span>
-<span class="n">m2</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y_miss</span><span class="p">))</span>
+<span class="n">m2</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y_miss</span><span class="p">),</span> <span class="n">save_summary_stats</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -2087,6 +2172,188 @@ AAAAAElFTkSuQmCC"
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[57]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+253.813924015926
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The max z-score is 253 -- very problematic.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[54]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<tbody>
+	<tr><th scope=row>chr12_11891261_T_C_b38</th><td> 0.4948717 </td><td>-1.7559292 </td><td> 0.3815011 </td><td>-10.8785034</td><td> 0.05368848</td></tr>
+	<tr><th scope=row>chr12_11891459_T_TTA_b38</th><td>-1.1523837 </td><td> 0.7407770 </td><td>-0.4661889 </td><td> 10.2332597</td><td> 0.40654244</td></tr>
+	<tr><th scope=row>chr12_11892022_GAGCGC_G_b38</th><td> 1.7130447 </td><td>-2.7367410 </td><td> 1.3690730 </td><td>  1.1375130</td><td>-0.46137775</td></tr>
+	<tr><th scope=row>chr12_11892251_T_C_b38</th><td>-0.3714647 </td><td> 0.4306859 </td><td>-0.4341265 </td><td>-10.0125233</td><td> 0.76711878</td></tr>
+	<tr><th scope=row>chr12_11892330_G_T_b38</th><td> 0.7703803 </td><td>-1.3640789 </td><td> 0.6086061 </td><td> 37.7076708</td><td> 0.85151069</td></tr>
+	<tr><th scope=row>chr12_11893016_C_T_b38</th><td> 1.5577940 </td><td>-2.0090443 </td><td> 1.3341945 </td><td> 55.0781512</td><td> 0.03756813</td></tr>
+	<tr><th scope=row>chr12_11893355_C_CAAAG_b38</th><td> 0.9896949 </td><td>-0.7942333 </td><td> 0.8687819 </td><td> 17.6638363</td><td>-0.01745624</td></tr>
+	<tr><th scope=row>chr12_11893407_A_G_b38</th><td> 1.0823336 </td><td>-0.9151114 </td><td> 0.9533810 </td><td>  0.4000107</td><td> 0.22639267</td></tr>
+	<tr><th scope=row>chr12_11893495_A_G_b38</th><td>-0.2970784 </td><td> 0.5592687 </td><td>-0.2973645 </td><td> -9.9247467</td><td> 0.60814695</td></tr>
+	<tr><th scope=row>chr12_11893724_T_C_b38</th><td> 0.7911152 </td><td>-1.3464565 </td><td> 0.9176490 </td><td>-10.7181873</td><td> 0.44425421</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The 4th column (4th condition) has large z-scores. This is consistent with observed difference in $X^TY$ between missing and non-missing scenarios as shown in the debug log above. Removing the 4th condition:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)[,</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+7.48922087124872
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To find which row it is in:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)[,</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<strong>chr12_12983795_G_T_b38:</strong> 2382
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is indeed the true causal SNP.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now checkout the logBF:</p>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -4312,7 +4579,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The Log BF for the false positive variable in the presense of missing data is a lot higher than where the simulated signal lies, thus the false positive result.</p>
+<p>The lbf here are not under the null. They are insanely large! In particular the Log BF for the false positive variable in the presense of missing data is a lot higher than where the simulated signal lies, thus the false positive result.</p>
 
 </div>
 </div>
@@ -4763,14 +5030,14 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>There is not a big difference, and as expected the precomputed result are exactly the same here because the residual variance is diagonal.</p>
+<p>The outcome are largely comparable.</p>
 
 </div>
 </div>
 </div>
 <hr>
 Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/02b20bbcb319df5c06d5f9bd17eeeef74c5da27a/analysis/20191128_Diagnosis.ipynb"><code>analysis/20191128_Diagnosis.ipynb</code></a> committed by Gao Wang on Mon Dec 2 10:01:49 2019 <a href="http://github.com/gaow/mvarbvs/commit/02b20bbcb319df5c06d5f9bd17eeeef74c5da27a">revision 1, 02b20bb</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/ba4b20da47e8aa002e35ffdadc01b5ce50d08dc6/analysis/20191128_Diagnosis.ipynb"><code>analysis/20191128_Diagnosis.ipynb</code></a> committed by Gao Wang on Mon Dec 2 12:02:55 2019 <a href="http://github.com/gaow/mvarbvs/commit/ba4b20da47e8aa002e35ffdadc01b5ce50d08dc6">revision 3, ba4b20d</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>
