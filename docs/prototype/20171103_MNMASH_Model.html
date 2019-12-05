@@ -250,7 +250,8 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Prototype-of-VEM-in-M&amp;M-ASH-model">Prototype of VEM in M&amp;M ASH model<a class="anchor-link" href="#Prototype-of-VEM-in-M&amp;M-ASH-model">&#182;</a></h1><p>This is the VEM step of M&amp;M ASH model.</p>
 
@@ -258,7 +259,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>$\newcommand{\bs}[1]{\boldsymbol{#1}}$
 $\DeclareMathOperator*{\diag}{diag}$
@@ -278,7 +280,8 @@ $\DeclareMathOperator*{\dif}{d}$</p>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="M&amp;M-ASH-model">M&amp;M ASH model<a class="anchor-link" href="#M&amp;M-ASH-model">&#182;</a></h2><p>We assume the following multivariate, multiple regression model with $N$ samples, $J$ effects and $R$ conditions (and <strong>without covariates, for the time being</strong>)
 \begin{align}
@@ -290,33 +293,39 @@ where
 \bs{\Lambda} &amp;= \diag(\lambda_1,\ldots,\lambda_R).
 \end{align}</p>
 <p>We assume true effects $\bs{b}_j$ (rows of $\bs{B}$) are iid with prior distribution of mixtures of multivariate normals</p>
-$$p(\bs{b}_j) = \sum_{t = 0}^T\pi_t\N_R(\bs{b}_j | \bs{0}, \bs{V}_t),$$<p>Where the $\bs{V}_t$'s are $R \times R$ covariance matrices and the $\pi_t$'s are their weights.</p>
+<p>$$p(\bs{b}_j) = \sum_{t = 0}^T\pi_t\N_R(\bs{b}_j | \bs{0}, \bs{V}_t),$$</p>
+<p>Where the $\bs{V}_t$'s are $R \times R$ covariance matrices and the $\pi_t$'s are their weights.</p>
 <p>We place Gamma prior on $\bs{\Lambda}$</p>
-$$\lambda_r \overset{iid}{\sim} \gm(\alpha, \beta),$$<p>and set $\alpha = \beta = 0$ so that it is equivalent to estimating $\bs{\Lambda}$ via maximum likelihood.</p>
+<p>$$\lambda_r \overset{iid}{\sim} \gm(\alpha, \beta),$$</p>
+<p>and set $\alpha = \beta = 0$ so that it is equivalent to estimating $\bs{\Lambda}$ via maximum likelihood.</p>
 <p>We can augment the prior of $\bs{b}_j$ by indicator vector $\bs{\gamma}_j \in \mathbb{R}^T$ for membership of $\bs{b}_j$ into one of the $T$ mixture groups. The densities involved are</p>
-\begin{align}
+<p>\begin{align}
 p(\bs{Y},\bs{B},\bs{\Gamma},\bs{\Lambda}) &amp;= p(\bs{Y}|\bs{B}, \bs{\Lambda})p(\bs{B}|\bs{\Gamma})p(\bs{\Gamma})p(\bs{\Lambda}), \\
 p(\bs{Y}|\bs{B}, \bs{\Lambda}) &amp;= N_{N \times R}(\bs{X}\bs{B}, \bs{I}_N, \bs{\Lambda}^{-1}), \\
 p(\lambda_r|\alpha,\beta) &amp;= \frac{\beta^{\alpha}}{\Gamma(\alpha)}\lambda_r^{\alpha - 1}\exp\{-\beta\lambda_r\}, \\
 p(\bs{b}_j|\bs{\gamma}_j) &amp;= \prod_{t = 0}^T\left[\N(\bs{b}_j|\bs{0},\bs{V}_t)\right]^{\gamma_{jt}},\\
 p(\bs{\gamma}_j) &amp;= \prod_{t = 0}^{T} \pi_t^{\gamma_{jt}}.
-\end{align}<p><strong>We assume $V_t$'s and their corresponding $\pi_t$'s are known. In practice we use <code>mashr</code> to estimate these quantities and provide them to M&amp;M.</strong></p>
+\end{align}</p>
+<p><strong>We assume $V_t$'s and their corresponding $\pi_t$'s are known. In practice we use <code>mashr</code> to estimate these quantities and provide them to M&amp;M.</strong></p>
 <h3 id="Variational-approximation-to-densities">Variational approximation to densities<a class="anchor-link" href="#Variational-approximation-to-densities">&#182;</a></h3><p>For the posterior of $\bs{B}$ we seek an independent variational approximation based on</p>
-\begin{align}
+<p>\begin{align}
 q(\bs{B}, \bs{\Gamma}, \bs{\Lambda}) = q(\bs{\Lambda})\prod_{j = 1}^{J}q(\bs{b}_j,\bs{\gamma}_j),
-\end{align}<p>so that we can maximize over $q$ the following lower bound of the marginal log-likelihood</p>
-\begin{align}
+\end{align}</p>
+<p>so that we can maximize over $q$ the following lower bound of the marginal log-likelihood</p>
+<p>\begin{align}
 \log p(\bs{Y}) \geq \mathcal{L}(q) = \int q(\bs{B}, \bs{\Gamma}, \bs{\Lambda}) \log\left\{\frac{p(\bs{Y},\bs{B},\bs{\Gamma},\bs{\Lambda})}{q(\bs{B}, \bs{\Gamma}, \bs{\Lambda})}\right\}\dif\bs{B}\dif\bs{\Gamma}\dif\bs{\Lambda},
-\end{align}<p>Gao &amp; Wei have previously developed <a href="https://github.com/gaow/mvarbvs/blob/master/writeup/identity_cov/mnmash.pdf">a version that assumes $\Lambda = I_R$</a>. This version generalized it to a diagonal matrix with Gamma priors. <a href="https://www.overleaf.com/11985539jvwgjhrqnrry#/45465793/">David has developed a version</a> that assumes a diagonal plus low rank structure -- the model of that version is a bit different from shown here, and will be prototyped later after this version works.</p>
+\end{align}</p>
+<p>Gao &amp; Wei have previously developed <a href="https://github.com/gaow/mvarbvs/blob/master/writeup/identity_cov/mnmash.pdf">a version that assumes $\Lambda = I_R$</a>. This version generalized it to a diagonal matrix with Gamma priors. <a href="https://www.overleaf.com/11985539jvwgjhrqnrry#/45465793/">David has developed a version</a> that assumes a diagonal plus low rank structure -- the model of that version is a bit different from shown here, and will be prototyped later after this version works.</p>
 <h3 id="Core-updates">Core updates<a class="anchor-link" href="#Core-updates">&#182;</a></h3><p>The complete derivation of updates are documented elsewhere (in the two PDF write-ups whose links are shown above). Here I document core updates to guide implementation of the algorithm.</p>
 <p>Let $E[\bs{R}_{-j}] := \bs{Y} - \bs{X}\bs{\mu}_{\bs{B}} + \bs{x}_j\bs{\mu}_{\bs{B}[j, ]}^{\intercal}$, then</p>
-\begin{align}
+<p>\begin{align}
 \bs{\xi}_j &amp;= E\left[\bs{R}_{-j}\right]^{\intercal}\bs{x}_j\|\bs{x}_j\|^{-2}, \\
 \bs{\Sigma}_{jt} &amp;= \left(\bs{V}_t^{-1} + \|\bs{x}_j\|^2\bs{\Lambda}\right)^{-1}, \\
 \bs{\mu}_{jt} &amp;= \bs{\Sigma}_{jt}\bs{\Lambda}E\left[\bs{R}_{-k}\right]^{\intercal}\bs{x}_j, \\
 w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs{x}_j\|^{-2})}{\sum_{t = 0}^T\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs{x}_j\|^{-2})},\\
 \bs{\mu}_{\bs{B}[j, ]}  &amp;= \sum_{t = 0}^T w_{jt}\bs{\mu}_{jt}
-\end{align}<p>We update until the lower bound $\mathcal{L}(q)$ converges.</p>
+\end{align}</p>
+<p>We update until the lower bound $\mathcal{L}(q)$ converges.</p>
 <h2 id="Initialization">Initialization<a class="anchor-link" href="#Initialization">&#182;</a></h2><ul>
 <li>We fit <code>mashr</code> with effects learned from univariate analysis to obtain $\pi_t$ and $V_t$<ul>
 <li>For the first round the effects are "LD-polluted"</li>
@@ -348,7 +357,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <span class="n">attach</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -358,7 +367,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -388,7 +397,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">multivariate_normal</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -398,7 +407,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -412,7 +421,8 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Data-preview">Data preview<a class="anchor-link" href="#Data-preview">&#182;</a></h2>
 </div>
@@ -426,7 +436,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <div class=" highlight hl-sos"><pre><span></span><span class="n">X</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -436,7 +446,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[3]:</div>
+<div class="prompt output_prompt">Out[3]:</div>
 
 
 
@@ -465,7 +475,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -478,7 +488,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -488,7 +498,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[5]:</div>
+<div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -510,7 +520,8 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Multivariate-LASSO">Multivariate LASSO<a class="anchor-link" href="#Multivariate-LASSO">&#182;</a></h2><p>For initialization of effects. Here I use implementation via <code>sklearn</code>, as documented <a href="http://scikit-learn.org/stable/modules/linear_model.html#multi-task-lasso">here</a>. It is quite slow to compute a proper CV version of LASSO, though.</p>
 
@@ -529,7 +540,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -539,7 +550,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[6]:</div>
+<div class="prompt output_prompt">Out[6]:</div>
 
 
 
@@ -557,7 +568,8 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>First feature:</p>
 
@@ -576,7 +588,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -586,7 +598,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -682,7 +694,8 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Second feature:</p>
 
@@ -699,7 +712,7 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -709,7 +722,7 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -816,7 +829,8 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>First vs. 2nd feature:</p>
 
@@ -833,7 +847,7 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -843,7 +857,7 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -947,7 +961,8 @@ AAAAAElFTkSuQmCC
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Compare with univariate LASSO, first and 2nd features:</p>
 
@@ -964,7 +979,7 @@ AAAAAElFTkSuQmCC
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -974,7 +989,7 @@ AAAAAElFTkSuQmCC
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[10]:</div>
+<div class="prompt output_prompt">Out[10]:</div>
 
 
 
@@ -1001,7 +1016,7 @@ AAAAAElFTkSuQmCC
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1011,7 +1026,7 @@ AAAAAElFTkSuQmCC
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1143,7 +1158,7 @@ xQItPQAAAABJRU5ErkJggg==
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1153,7 +1168,7 @@ xQItPQAAAABJRU5ErkJggg==
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1258,7 +1273,8 @@ pX8AAAAASUVORK5CYII=
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="MASH-priors-and-weights">MASH priors and weights<a class="anchor-link" href="#MASH-priors-and-weights">&#182;</a></h2><p>As initialization we take univariate analysis summary statistics $\hat{\bs{B}}$ and $\bs{S}$ for fitting with <code>mashr</code>.</p>
 
@@ -1266,7 +1282,8 @@ pX8AAAAASUVORK5CYII=
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="VEM-implementation">VEM implementation<a class="anchor-link" href="#VEM-implementation">&#182;</a></h2><p>It is not working yet. Still trying to figure out what's going on.</p>
 
@@ -1376,7 +1393,7 @@ pX8AAAAASUVORK5CYII=
         <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1389,20 +1406,22 @@ pX8AAAAASUVORK5CYII=
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">MNMASH</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Checking-core-updates">Checking core updates<a class="anchor-link" href="#Checking-core-updates">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>First iteration.</p>
 
@@ -1417,7 +1436,7 @@ pX8AAAAASUVORK5CYII=
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1430,7 +1449,7 @@ pX8AAAAASUVORK5CYII=
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1440,7 +1459,7 @@ pX8AAAAASUVORK5CYII=
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1629,7 +1648,8 @@ Y - X @ B =
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Second iteration.</p>
 
@@ -1644,7 +1664,7 @@ Y - X @ B =
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1657,7 +1677,7 @@ Y - X @ B =
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1667,7 +1687,7 @@ Y - X @ B =
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1863,7 +1883,7 @@ Y - X @ B =
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">wdE</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1873,7 +1893,7 @@ Y - X @ B =
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[62]:</div>
+<div class="prompt output_prompt">Out[62]:</div>
 
 
 
@@ -1896,7 +1916,7 @@ Y - X @ B =
 <div class=" highlight hl-sos"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1906,7 +1926,7 @@ Y - X @ B =
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[63]:</div>
+<div class="prompt output_prompt">Out[63]:</div>
 
 
 
@@ -1922,7 +1942,8 @@ Y - X @ B =
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>3rd iteration.</p>
 
@@ -1938,7 +1959,7 @@ Y - X @ B =
 <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1948,7 +1969,7 @@ Y - X @ B =
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -1959,7 +1980,7 @@ Y - X @ B =
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
