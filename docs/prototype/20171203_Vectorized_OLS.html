@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -250,20 +249,16 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Computing-vectorized-OLS">Computing vectorized OLS<a class="anchor-link" href="#Computing-vectorized-OLS">&#182;</a></h1><p>Implementing univariate, simple OLS for multiple Y and multiple X without using loop. But uses Einstein summation in Python.</p>
 <p>The idea is to vectorize the calculation as much as possible. For OLS of $N$ samples looping over $J$ effects and $R$ conditions:</p>
-<p>$$\hat{\beta}_{jr} = (x_j^Tx_j)^{-1}x_j^Ty_r$$
-$$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\beta_r)}{N-2}$$</p>
-
+$$\hat{\beta}_{jr} = (x_j^Tx_j)^{-1}x_j^Ty_r$$$$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\beta_r)}{N-2}$$
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The computation can be vectorized, because:</p>
 <ul>
@@ -277,8 +272,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation">&#182;</a></h2>
 </div>
@@ -297,14 +291,13 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Expected-results">Expected results<a class="anchor-link" href="#Expected-results">&#182;</a></h3>
 </div>
@@ -335,14 +328,13 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <span class="n">res</span> <span class="o">=</span> <span class="n">get_summary_stats</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Compute-$\hat{\beta}$">Compute $\hat{\beta}$<a class="anchor-link" href="#Compute-$\hat{\beta}$">&#182;</a></h3>
 </div>
@@ -360,7 +352,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <span class="n">Bhat</span> <span class="o">=</span> <span class="n">XtY</span> <span class="o">/</span> <span class="n">XtX_vec</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -373,7 +365,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">Bhat</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -383,7 +375,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[4]:</div>
+    <div class="prompt output_prompt">Out[4]:</div>
 
 
 
@@ -408,7 +400,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -418,7 +410,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[5]:</div>
+    <div class="prompt output_prompt">Out[5]:</div>
 
 
 
@@ -436,8 +428,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Compute-$s(\hat{\beta})$">Compute $s(\hat{\beta})$<a class="anchor-link" href="#Compute-$s(\hat{\beta})$">&#182;</a></h3>
 </div>
@@ -453,7 +444,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Re</span> <span class="o">/</span> <span class="n">XtX_vec</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -466,7 +457,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">S</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -476,7 +467,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[10]:</div>
+    <div class="prompt output_prompt">Out[10]:</div>
 
 
 
@@ -501,7 +492,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -511,7 +502,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[11]:</div>
+    <div class="prompt output_prompt">Out[11]:</div>
 
 
 
@@ -529,8 +520,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Putting-all-together">Putting all together<a class="anchor-link" href="#Putting-all-together">&#182;</a></h2>
 </div>
@@ -561,14 +551,13 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
     <span class="k">return</span> <span class="n">Bhat</span><span class="p">,</span> <span class="n">S</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Remove-covariate">Remove covariate<a class="anchor-link" href="#Remove-covariate">&#182;</a></h2>
 </div>
@@ -586,7 +575,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -604,7 +593,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
     <span class="n">res</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -617,7 +606,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">res</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -627,7 +616,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[25]:</div>
+    <div class="prompt output_prompt">Out[25]:</div>
 
 
 
@@ -661,7 +650,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <span class="n">Y</span> <span class="o">-</span> <span class="n">Z</span> <span class="o">@</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Z</span><span class="p">)</span> <span class="o">@</span> <span class="n">Z</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">Y</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -671,7 +660,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[29]:</div>
+    <div class="prompt output_prompt">Out[29]:</div>
 
 
 
@@ -703,7 +692,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">Z</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -713,7 +702,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[27]:</div>
+    <div class="prompt output_prompt">Out[27]:</div>
 
 
 
@@ -745,7 +734,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">Y</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -755,7 +744,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[28]:</div>
+    <div class="prompt output_prompt">Out[28]:</div>
 
 
 
@@ -824,7 +813,7 @@ $$s(\hat{\beta}_{jr}) = \frac{(x_j^Tx_j)^{-1} (y_r - x_j\beta_r)^T(y_r - x_j\bet
         <span class="k">return</span> <span class="n">pformat</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 

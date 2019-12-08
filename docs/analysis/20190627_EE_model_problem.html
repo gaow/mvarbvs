@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -250,16 +249,14 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Problem-with-EE-model">Problem with EE model<a class="anchor-link" href="#Problem-with-EE-model">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>I discovered while working on the example of <a href="https://github.com/gaow/mmbr/blob/master/inst/prototypes/two_snps_dispute.ipynb">"two SNP dispute"</a> that for Exchangable Effect (EE) model, that is, setting MASH <code>alpha=0</code>, 
 there seems convergence issues with the algorithm, for the specific simulation below. <strong>I cannot reproduce the problem with <code>alpha=1</code> or with the 2nd block having positive sign of effect size ...</strong></p>
@@ -275,7 +272,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gaow</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="mi">13</span><span class="o">-</span><span class="n">May</span><span class="o">-</span><span class="mi">2019</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -285,7 +282,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -298,8 +295,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Find-negatively-correlation-SNPs">Find negatively correlation SNPs<a class="anchor-link" href="#Find-negatively-correlation-SNPs">&#182;</a></h2>
 </div>
@@ -313,14 +309,13 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">genotype</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;Multi_Tissues.ENSG00000145214.RDS&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">X</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Simulate-multivariate-phenotypes">Simulate multivariate phenotypes<a class="anchor-link" href="#Simulate-multivariate-phenotypes">&#182;</a></h2>
 </div>
@@ -339,7 +334,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="n">cor</span><span class="p">(</span><span class="n">genotype</span><span class="p">[,</span><span class="n">snp1</span><span class="p">],</span> <span class="n">genotype</span><span class="p">[,</span><span class="n">snp2</span><span class="p">])</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -349,7 +344,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -364,8 +359,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The two SNPs are negatively correlated.</p>
 
@@ -384,7 +378,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="k">print</span><span class="p">(</span><span class="n">sharing</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -394,7 +388,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -411,8 +405,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Here above I have a matrix block. I'm going to create a blocky structure next such that the two halves of traits are drawn from this sharing pattern, but there is no sharing in between them.</p>
 <p><strong>Notice here I set the effect size of the 2nd block to be negative</strong>.</p>
@@ -431,7 +424,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">snp2</span><span class="p">,</span> <span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">R</span><span class="p">])</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -441,7 +434,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -463,7 +456,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">genotype</span> <span class="o">%*%</span> <span class="n">b</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -476,7 +469,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">MASS</span><span class="p">::</span><span class="n">mvrnorm</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">R</span><span class="p">),</span> <span class="n">diag</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -489,14 +482,13 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">g</span> <span class="o">+</span> <span class="n">e</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Prepare-MASH-mixture-prior">Prepare MASH mixture prior<a class="anchor-link" href="#Prepare-MASH-mixture-prior">&#182;</a></h2>
 </div>
@@ -516,14 +508,13 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="n">mash_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Notice here I'm using the EE model by setting <code>alpha = 0</code>.</p>
 
@@ -531,8 +522,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Fit-MV-SuSiE">Fit MV-SuSiE<a class="anchor-link" href="#Fit-MV-SuSiE">&#182;</a></h2><p>Using EE model it takes quite a while to converge,</p>
 
@@ -553,7 +543,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="k">print</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -563,7 +553,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -577,8 +567,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Number of iterations,</p>
 
@@ -593,7 +582,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="err">$</span><span class="n">niter</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -603,7 +592,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -625,7 +614,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">snps</span> <span class="o">=</span> <span class="n">sub</span><span class="p">(</span><span class="s2">&quot;_[A-Z]*_[A-Z]*_b38&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">genotype</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -638,14 +627,13 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">rownames</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">coef</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;intercept&#39;</span><span class="p">,</span> <span class="n">snps</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Visualize-results">Visualize results<a class="anchor-link" href="#Visualize-results">&#182;</a></h2>
 </div>
@@ -661,7 +649,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -671,7 +659,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -693,7 +681,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">mmbr_plot</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -703,7 +691,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -726,7 +714,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -736,7 +724,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -758,7 +746,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">susie_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -768,7 +756,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -780,7 +768,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -804,7 +792,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mmbr_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -814,7 +802,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -826,7 +814,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -843,8 +831,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>While it seems capable (see below) of capturing the two simulated causal SNPs, there are a few more others also detected and show different signs of effect in different conditions. This is <a href="https://gaow.github.io/mvarbvs/analysis/20190627_two_snps_dispute.html">not a problem with EZ model, though</a>.</p>
 
@@ -859,7 +846,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">colnames</span><span class="p">(</span><span class="n">genotype</span><span class="p">)[</span><span class="n">snp1</span><span class="p">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -869,7 +856,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -891,7 +878,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">colnames</span><span class="p">(</span><span class="n">genotype</span><span class="p">)[</span><span class="n">snp2</span><span class="p">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -901,7 +888,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -916,8 +903,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Try-a-different-initialization">Try a different initialization<a class="anchor-link" href="#Try-a-different-initialization">&#182;</a></h2><p>Since I have simulated the data I can try initializat it from the truth,</p>
 
@@ -933,7 +919,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="n">coef_value</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -943,7 +929,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -965,8 +951,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>That is, two effects are non-zero and all other effects are zeros.</p>
 
@@ -988,7 +973,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="k">print</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -998,7 +983,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1019,7 +1004,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="err">$</span><span class="n">niter</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1029,7 +1014,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1055,7 +1040,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1065,7 +1050,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1087,7 +1072,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">susie_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1097,7 +1082,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1109,7 +1094,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1121,6 +1106,19 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 </div>
 
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span>
+</pre></div>
+
+    </div>
 </div>
 </div>
 

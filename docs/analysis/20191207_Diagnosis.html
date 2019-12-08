@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -250,8 +249,7 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Investigating-MASH-logBF-computation-under-EE-model">Investigating MASH logBF computation under EE model<a class="anchor-link" href="#Investigating-MASH-logBF-computation-under-EE-model">&#182;</a></h1><p>This is a continuation of a <a href="https://gaow.github.io/mvarbvs/analysis/20191204_Diagnosis.html">previous investigation</a>.</p>
 
@@ -259,8 +257,7 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Load-package-and-previous-results">Load package and previous results<a class="anchor-link" href="#Load-package-and-previous-results">&#182;</a></h2><p>Previous result can be <a href="https://github.com/gaow/mmbr/files/3935471/issue_9_EE_sumstats.tar.gz">downloaded here</a>. <code>good_lbf</code> in this dataset saves <code>lbf</code> from <code>mmbr:::BayesianMultivariateRegression</code>.</p>
 
@@ -275,7 +272,7 @@ body {
 <div class=" highlight hl-r"><pre><span></span>devtools<span class="o">::</span>load_all<span class="p">(</span><span class="s">&#39;/home/gaow/GIT/software/mashr&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -285,7 +282,7 @@ body {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -308,14 +305,13 @@ Loading required package: ashr
 dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</span><span class="s">&#39;issue_9_EE_sumstats.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Set-data">Set data<a class="anchor-link" href="#Set-data">&#182;</a></h2>
 </div>
@@ -329,7 +325,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>mash_data <span class="o">=</span> mash_set_data<span class="p">(</span>dat<span class="o">$</span>bhat<span class="p">,</span> dat<span class="o">$</span>sbhat<span class="p">,</span> V<span class="o">=</span>dat<span class="o">$</span>V<span class="p">,</span> alpha<span class="o">=</span><span class="m">0</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -342,7 +338,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span><span class="kp">names</span><span class="p">(</span>mash_data<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -352,7 +348,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -375,8 +371,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Compare-loglik">Compare loglik<a class="anchor-link" href="#Compare-loglik">&#182;</a></h2>
 </div>
@@ -390,7 +385,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>r1 <span class="o">=</span> calc_relative_lik_matrix<span class="p">(</span>mash_data<span class="p">,</span>dat<span class="o">$</span>xUlist<span class="p">,</span> algorithm.version <span class="o">=</span> <span class="s">&#39;Rcpp&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -403,7 +398,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>r2<span class="o">=</span> calc_relative_lik_matrix<span class="p">(</span>mash_data<span class="p">,</span>dat<span class="o">$</span>xUlist<span class="p">,</span> algorithm.version <span class="o">=</span> <span class="s">&#39;R&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -416,7 +411,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span><span class="kp">names</span><span class="p">(</span>r1<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -426,7 +421,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -452,7 +447,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>r1<span class="o">$</span>lfactors<span class="p">,</span> r2<span class="o">$</span>lfactors<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -465,14 +460,13 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>r1<span class="o">$</span>loglik_matrix<span class="p">,</span> r2<span class="o">$</span>loglik_matrix<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Loglik computations are okay.</p>
 
@@ -480,8 +474,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Compare-posterior">Compare posterior<a class="anchor-link" href="#Compare-posterior">&#182;</a></h2>
 </div>
@@ -495,7 +488,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>posterior_weights <span class="o">&lt;-</span> compute_posterior_weights<span class="p">(</span>dat<span class="o">$</span>pi_s<span class="p">,</span><span class="kp">exp</span><span class="p">(</span>r1<span class="o">$</span>loglik_matrix<span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -508,7 +501,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>p1 <span class="o">&lt;-</span> compute_posterior_matrices<span class="p">(</span>mash_data<span class="p">,</span> dat<span class="o">$</span>xUlist<span class="p">,</span> posterior_weights<span class="p">,</span> algorithm.version<span class="o">=</span><span class="s">&quot;Rcpp&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -521,7 +514,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>p2 <span class="o">&lt;-</span> compute_posterior_matrices<span class="p">(</span>mash_data<span class="p">,</span> dat<span class="o">$</span>xUlist<span class="p">,</span> posterior_weights<span class="p">,</span> algorithm.version<span class="o">=</span><span class="s">&quot;R&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -534,7 +527,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span><span class="kp">names</span><span class="p">(</span>p1<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -544,7 +537,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -573,7 +566,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>PosteriorMean<span class="p">,</span> p2<span class="o">$</span>PosteriorMean<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -586,7 +579,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>PosteriorSD<span class="p">,</span> p2<span class="o">$</span>PosteriorSD<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -599,7 +592,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>lfdr<span class="p">,</span> p2<span class="o">$</span>lfdr<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -612,7 +605,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>NegativeProb<span class="p">,</span> p2<span class="o">$</span>NegativeProb<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -625,14 +618,13 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>lfsr<span class="p">,</span> p2<span class="o">$</span>lfsr<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Posterior calculations also are consistent between R and Rcpp versions.</p>
 
@@ -640,8 +632,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="LBF-calculations">LBF calculations<a class="anchor-link" href="#LBF-calculations">&#182;</a></h2>
 </div>
@@ -656,7 +647,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 alt_loglik <span class="o">=</span> compute_alt_loglik_from_matrix_and_pi<span class="p">(</span>dat<span class="o">$</span>pi_s<span class="p">,</span>r1<span class="p">,</span>mash_data<span class="o">$</span>Shat_alpha<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -669,7 +660,7 @@ alt_loglik <span class="o">=</span> compute_alt_loglik_from_matrix_and_pi<span c
 <div class=" highlight hl-r"><pre><span></span>lbf <span class="o">=</span> alt_loglik<span class="o">-</span>null_loglik
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -682,7 +673,7 @@ alt_loglik <span class="o">=</span> compute_alt_loglik_from_matrix_and_pi<span c
 <div class=" highlight hl-r"><pre><span></span>plot<span class="p">(</span>dat<span class="o">$</span>good_lbf<span class="p">,</span> lbf<span class="p">,</span> xlab<span class="o">=</span><span class="s">&quot;BayesianMultivariate lbf&quot;</span><span class="p">,</span> ylab <span class="o">=</span> <span class="s">&quot;EE lbf&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -692,7 +683,7 @@ alt_loglik <span class="o">=</span> compute_alt_loglik_from_matrix_and_pi<span c
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1217,7 +1208,7 @@ kUCwAwAAABCJ/wcOf5gRh5n97wAAAABJRU5ErkJggg=="
 <div class=" highlight hl-r"><pre><span></span>plot<span class="p">(</span>dat<span class="o">$</span>bad_lbf<span class="p">,</span> lbf<span class="p">,</span> xlab<span class="o">=</span><span class="s">&quot;EE lbf (mmbr)&quot;</span><span class="p">,</span> ylab <span class="o">=</span> <span class="s">&quot;EE lbf (mashr)&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1227,7 +1218,7 @@ kUCwAwAAABCJ/wcOf5gRh5n97wAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1693,8 +1684,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>lbf indeed agrees with what <code>mmbr:::MashRegression</code> gives, not consistent with what <code>BayesianMultivariateRegression</code> says.</p>
 
@@ -1702,8 +1692,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Let's see what the loglik matrix tells us about these zero BF's,</p>
 
@@ -1718,7 +1707,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 <div class=" highlight hl-r"><pre><span></span><span class="p">(</span>r1<span class="o">$</span>loglik_matrix <span class="o">+</span> r1<span class="o">$</span>lfactors<span class="p">)[</span><span class="kp">which</span><span class="p">(</span>lbf<span class="o">&gt;</span><span class="m">1000</span><span class="p">),]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1728,7 +1717,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1778,7 +1767,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 <div class=" highlight hl-r"><pre><span></span><span class="kp">head</span><span class="p">((</span>r1<span class="o">$</span>loglik_matrix <span class="o">+</span> r1<span class="o">$</span>lfactors<span class="p">)[</span><span class="kp">which</span><span class="p">(</span><span class="kp">abs</span><span class="p">(</span>lbf<span class="p">)</span><span class="o">&lt;</span><span class="m">50</span><span class="p">),])</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1788,7 +1777,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1814,8 +1803,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It seems the loglik for null was wrong from the beginning. The reason <code>mmbr:::BayesianMultivariateRegression</code> does not have the issue is <a href="https://github.com/gaow/mmbr/blob/44a310e3894f516629ddeb3f877c938f4fbc5733/R/bayesian_multivariate_regression.R#L88">because it avoids numerical issues</a> when it tries to compute lbf, instead of using <code>dmvnorm()</code>.</p>
 
@@ -1823,8 +1811,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>And indeed, if I <a href="https://github.com/gaow/mmbr/blob/44a310e3894f516629ddeb3f877c938f4fbc5733/R/bayesian_multivariate_regression.R#L90">uncomment this line</a> using <code>dmvnorm()</code> to compute lbf, then the result agrees with <code>mmbr:::MashRegression</code> and also wrong <a href="https://gaow.github.io/mvarbvs/analysis/20191204_Diagnosis.html">for the example on this page</a>.</p>
 
@@ -1832,8 +1819,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="To-reproduce-the-&quot;good&quot;-lbf-with-summary-stats">To reproduce the "good" lbf with summary stats<a class="anchor-link" href="#To-reproduce-the-&quot;good&quot;-lbf-with-summary-stats">&#182;</a></h2>
 </div>
@@ -1848,7 +1834,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 S <span class="o">=</span> <span class="kp">lapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">nrow</span><span class="p">(</span>dat<span class="o">$</span>sbhat<span class="p">),</span> <span class="kr">function</span><span class="p">(</span>j<span class="p">)</span> <span class="kp">diag</span><span class="p">(</span>dat<span class="o">$</span>sbhat<span class="p">[</span>j<span class="p">,])</span> <span class="o">%*%</span> dat<span class="o">$</span>V <span class="o">%*%</span> <span class="kp">diag</span><span class="p">(</span>dat<span class="o">$</span>sbhat<span class="p">[</span>j<span class="p">,]))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1864,7 +1850,7 @@ good_lbf <span class="o">=</span> <span class="kp">log</span><span class="p">(</
 good_lbf<span class="p">[</span><span class="kp">which</span><span class="p">(</span><span class="kp">is.infinite</span><span class="p">(</span>good_lbf<span class="p">))]</span> <span class="o">=</span> <span class="m">0</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1877,7 +1863,7 @@ good_lbf<span class="p">[</span><span class="kp">which</span><span class="p">(</
 <div class=" highlight hl-r"><pre><span></span>plot<span class="p">(</span>dat<span class="o">$</span>good_lbf<span class="p">,</span> good_lbf<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1887,7 +1873,7 @@ good_lbf<span class="p">[</span><span class="kp">which</span><span class="p">(</
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2408,8 +2394,7 @@ AKATBDsAAACdINgBAADoBMEOAABAJwh2AAAAOvH/03ErBqwRW/8AAAAASUVORK5CYII="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2><p>We need to solve the loglik calculation issue in <code>mash</code>, because without fixing that, the posterior weights will be wrong and that will undermine MASH model. I'll try to come up with a minimal example vignette to post on <code>mashr</code> github.</p>
 
@@ -2417,8 +2402,7 @@ AKATBDsAAACdINgBAADoBMEOAABAJwh2AAAAOvH/03ErBqwRW/8AAAAASUVORK5CYII="
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Update">Update<a class="anchor-link" href="#Update">&#182;</a></h2><p>Yuxin pointed to me, after she looked at the data, that if I dont set <code>infinity</code> to zero but work instead at log scale I will be getting the same result as in EE model. Therefore I changed the mmbr code from:</p>
 
@@ -2439,7 +2423,7 @@ AKATBDsAAACdINgBAADoBMEOAABAJwh2AAAAOvH/03ErBqwRW/8AAAAASUVORK5CYII="
 plot<span class="p">(</span>dat<span class="o">$</span>good_lbf<span class="p">,</span> good_lbf<span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2449,7 +2433,7 @@ plot<span class="p">(</span>dat<span class="o">$</span>good_lbf<span class="p">,
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2968,8 +2952,7 @@ AACNINgBAABoBMEOAABAIwh2AAAAGkGwAwAA0Ij/B8rYxymVq0U9AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>But after the change, those <code>infinite</code> false signals which were once removed now comes back and contribute to bad lbf, leading to false positives in the results.</p>
 
