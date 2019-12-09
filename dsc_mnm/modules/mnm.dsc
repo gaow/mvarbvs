@@ -16,6 +16,6 @@ mnm_high_het(mnm_base):
   missing_Y: FALSE
   resid_method: 'oracle', 'diag', 'flash'
 
-mnm_high_het(mnm_high_het):
+mnm_high_het_missing(mnm_high_het):
   missing_Y: TRUE
   resid_method: 'diag', 'flash'
