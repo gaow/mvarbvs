@@ -12,23 +12,11 @@ mnm_base: mnm.R
   resid_method: 'oracle', 'diag', 'flash'
   $result: result
 
-mnm_identity(mnm_base):
-  eff_mode: 'identity'
-
-mnm_low_het(mnm_base):
-  eff_mode: 'low_het'
-
-mnm_mid_het(mnm_base):
-  eff_mode: 'mid_het'
-
 mnm_high_het(mnm_base):
   eff_mode: 'high_het'
+  missing_Y: FALSE
+  resid_method: 'oracle', 'diag', 'flash'
 
-mnm_shared(mnm_base):
-  eff_mode: 'shared'
-
-mnm_singleton(mnm_base):
-  eff_mode: 'singleton'
-
-mnm_mixture01(mnm_base):
-  eff_mode: 'mixture_1'
+mnm_high_het(mnm_high_het):
+  missing_Y: TRUE
+  resid_method: 'diag', 'flash'
