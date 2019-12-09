@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -249,7 +250,8 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="M&amp;M-ASH-benchmark-Part-I">M&amp;M ASH benchmark Part I<a class="anchor-link" href="#M&amp;M-ASH-benchmark-Part-I">&#182;</a></h1><p>Moving on to multivariate analysis we start with some performance benchmarks.</p>
 
@@ -257,7 +259,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <ul>
 <li>Perviously established benchmark <a href="https://github.com/gaow/mvarbvs/tree/master/dsc">here</a> has roughly implemented the framework of multivariate simulations but was incomplete and never used. The benchmark is now moved to <a href="https://github.com/stephenslab/mnm-twas/tree/master/dsc">here</a> to facilicate potential collaboration using M&amp;M for prediction. Development of DSC benchmark in this repo is therefore discontinuted.</li>
@@ -269,7 +272,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Aim,-data,-methods-and-experimental-design">Aim, data, methods and experimental design<a class="anchor-link" href="#Aim,-data,-methods-and-experimental-design">&#182;</a></h2><p>The relevant material are in a document on Overleaf shared with project collaborators and is being actively developed. I will not recap it in this note. However the narrative below will follow from the structure in that document.</p>
 <h3 id="Patterns-of-sharing-evaluated">Patterns of sharing evaluated<a class="anchor-link" href="#Patterns-of-sharing-evaluated">&#182;</a></h3><p>It is however useful to recap the patterns of sharing we evaluate in benchmark. They include:</p>
@@ -289,7 +293,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Benchmarks-evaluated">Benchmarks evaluated<a class="anchor-link" href="#Benchmarks-evaluated">&#182;</a></h2><h3 id="An-initial-benchmark-as-a-first-pass">An initial benchmark as a first pass<a class="anchor-link" href="#An-initial-benchmark-as-a-first-pass">&#182;</a></h3><p>As a first pass we use $R=5$ conditions on 100 toy data-sets. We put together evaluations of M&amp;M CS for experiments under several patterns of sharing as documented in the section above. To fit M&amp;M this time we simply input the underlying priors $U$ (and their weights in the context of mixture simlulation) and residual covariance $V$.</p>
 
@@ -297,7 +302,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 
 <pre><code>./finemap.dsc --target first_pass</code></pre>
@@ -314,7 +320,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mnm</span><span class="o">-</span><span class="n">twas</span><span class="o">/</span><span class="n">dsc</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -324,7 +330,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -345,7 +351,7 @@ body {
 <span class="n">out</span> <span class="o">=</span> <span class="n">dscquery</span><span class="p">(</span><span class="s1">&#39;finemap_output&#39;</span><span class="p">,</span> <span class="s2">&quot;hundred_data.dataset sharing_pattern.n_signal susie_scores.total susie_scores.valid susie_scores.size susie_scores.purity susie_scores.top&quot;</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -355,7 +361,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -383,7 +389,7 @@ Reading DSC outputs:
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -393,7 +399,7 @@ Reading DSC outputs:
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -427,13 +433,14 @@ Reading DSC outputs:
 <span class="n">colnames</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;pattern&#39;</span><span class="p">,</span> <span class="s1">&#39;total_true&#39;</span><span class="p">,</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;purity&#39;</span><span class="p">,</span> <span class="s1">&#39;top_hit&#39;</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Purity-of-CS">Purity of CS<a class="anchor-link" href="#Purity-of-CS">&#182;</a></h3>
 </div>
@@ -447,7 +454,7 @@ Reading DSC outputs:
 <div class=" highlight hl-sos"><pre><span></span><span class="n">aggregate</span><span class="p">(</span><span class="n">purity</span><span class="o">~</span><span class="n">pattern</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -457,7 +464,7 @@ Reading DSC outputs:
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -484,7 +491,8 @@ Reading DSC outputs:
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Size-of-CS">Size of CS<a class="anchor-link" href="#Size-of-CS">&#182;</a></h3>
 </div>
@@ -498,7 +506,7 @@ Reading DSC outputs:
 <div class=" highlight hl-sos"><pre><span></span><span class="n">aggregate</span><span class="p">(</span><span class="n">size</span><span class="o">~</span><span class="n">pattern</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -508,7 +516,7 @@ Reading DSC outputs:
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -535,7 +543,8 @@ Reading DSC outputs:
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Power">Power<a class="anchor-link" href="#Power">&#182;</a></h3>
 </div>
@@ -553,7 +562,7 @@ Reading DSC outputs:
 <span class="n">power</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -563,7 +572,7 @@ Reading DSC outputs:
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -590,7 +599,8 @@ Reading DSC outputs:
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="FDR">FDR<a class="anchor-link" href="#FDR">&#182;</a></h3>
 </div>
@@ -608,7 +618,7 @@ Reading DSC outputs:
 <span class="n">fdr</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -618,7 +628,7 @@ Reading DSC outputs:
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -645,7 +655,8 @@ Reading DSC outputs:
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Top-hit-rate-(how-often-the-strongest-SNP-is-causal)">Top-hit rate (how often the strongest SNP is causal)<a class="anchor-link" href="#Top-hit-rate-(how-often-the-strongest-SNP-is-causal)">&#182;</a></h3>
 </div>
@@ -663,7 +674,7 @@ Reading DSC outputs:
 <span class="n">top_rate</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -673,7 +684,7 @@ Reading DSC outputs:
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 

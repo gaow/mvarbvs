@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -249,7 +250,8 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Prepare-toy-example-data-set-for-M&amp;M-ASH-model">Prepare toy example data-set for M&amp;M ASH model<a class="anchor-link" href="#Prepare-toy-example-data-set-for-M&amp;M-ASH-model">&#182;</a></h1><p>Here I take a gene from 2 tissues, with covariates.</p>
 <p>The genotypes matrix should have complete data after imputation. However not all samples overlap in both tissues, making expression matrix. For the time being I'll make 2 versions: one version with missing expression matrix as is, the other version fills in the missing data using mean imputation (use mean for expression in the tissue in question).</p>
@@ -264,7 +266,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Data-exploration">Data exploration<a class="anchor-link" href="#Data-exploration">&#182;</a></h2>
 </div>
@@ -279,7 +282,7 @@ body {
 <span class="n">dat2</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;~/Documents/GTExV8/Lung.FMO2.pm1Mb.RDS&#39;</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -292,7 +295,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat1</span><span class="err">$</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -302,7 +305,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -326,7 +329,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -336,7 +339,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -361,7 +364,7 @@ body {
 <span class="nb">str</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -371,7 +374,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -394,7 +397,7 @@ body {
 <span class="nb">str</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">Z</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -404,7 +407,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -433,7 +436,7 @@ body {
 <span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">all_samples</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -443,7 +446,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -457,7 +460,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Removing-covariates">Removing covariates<a class="anchor-link" href="#Removing-covariates">&#182;</a></h2>
 </div>
@@ -472,13 +476,14 @@ body {
 <span class="n">dat2</span><span class="err">$</span><span class="n">y</span> <span class="o">=</span> <span class="o">.</span><span class="n">lm</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">dat2</span><span class="err">$</span><span class="n">Z</span><span class="p">,</span> <span class="n">dat2</span><span class="err">$</span><span class="n">y</span><span class="p">)</span><span class="err">$</span><span class="n">residuals</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Data-merger">Data merger<a class="anchor-link" href="#Data-merger">&#182;</a></h2><h3 id="y">y<a class="anchor-link" href="#y">&#182;</a></h3>
 </div>
@@ -499,7 +504,7 @@ body {
 <span class="n">y2</span><span class="err">$</span><span class="n">rows</span> <span class="o">=</span> <span class="n">rownames</span><span class="p">(</span><span class="n">y2</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -514,7 +519,7 @@ body {
 <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -527,7 +532,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -537,7 +542,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -570,7 +575,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -580,7 +585,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -595,7 +600,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="X">X<a class="anchor-link" href="#X">&#182;</a></h3>
 </div>
@@ -611,7 +617,7 @@ body {
 <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">X</span><span class="p">)),]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -624,7 +630,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dim</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -634,7 +640,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -653,7 +659,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Save-data:-with-missing-/-without-missing">Save data: with missing / without missing<a class="anchor-link" href="#Save-data:-with-missing-/-without-missing">&#182;</a></h2>
 </div>
@@ -672,13 +679,14 @@ body {
 <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">Y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">),</span> <span class="s1">&#39;~/Documents/GTExV8/Thyroid.Lung.FMO2.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Analyze-per-tissue-data-with-mr-ash">Analyze per-tissue data with mr-ash<a class="anchor-link" href="#Analyze-per-tissue-data-with-mr-ash">&#182;</a></h2>
 </div>
@@ -747,13 +755,14 @@ body {
 <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">[,</span><span class="n">which</span><span class="p">(</span><span class="n">colSums</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">)]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="For-thyroid">For thyroid<a class="anchor-link" href="#For-thyroid">&#182;</a></h2>
 </div>
@@ -780,7 +789,7 @@ body {
 <span class="n">mr_ash_out</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">betahat</span> <span class="o">=</span> <span class="n">betahat</span><span class="p">,</span> <span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -793,7 +802,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">lfsr</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -803,7 +812,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -847,7 +856,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span> <span class="n">decreasing</span> <span class="o">=</span> <span class="n">T</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -857,7 +866,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -901,7 +910,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">lasso_res</span> <span class="o">=</span> <span class="n">glmnet</span><span class="p">::</span><span class="n">glmnet</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_filled</span><span class="err">$</span><span class="n">Thyroid</span><span class="p">,</span> <span class="n">intercept</span> <span class="o">=</span> <span class="n">F</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -914,7 +923,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">coef</span><span class="p">(</span><span class="n">lasso_res</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -924,7 +933,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1388,7 +1397,8 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="For-Lung">For Lung<a class="anchor-link" href="#For-Lung">&#182;</a></h2>
 </div>
@@ -1415,7 +1425,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 <span class="n">mr_ash_out</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">betahat</span> <span class="o">=</span> <span class="n">betahat</span><span class="p">,</span> <span class="n">fit</span> <span class="o">=</span> <span class="n">fit</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1428,7 +1438,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">fit</span><span class="err">$</span><span class="n">lfsr</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1438,7 +1448,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1482,7 +1492,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">sort</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span> <span class="n">decreasing</span> <span class="o">=</span> <span class="n">T</span><span class="p">)[</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1492,7 +1502,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1537,7 +1547,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 <span class="n">plot</span><span class="p">(</span><span class="n">coef</span><span class="p">(</span><span class="n">lasso_res</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1547,7 +1557,7 @@ AACgCMIOAABAEYQdAACAIgg7AAAARRB2AAAAivg/l8Pj1P6Wn40AAAAASUVORK5CYII="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
