@@ -8,7 +8,7 @@
 DSC:
   define:
     simulate: high_het
-    mnm: mnm_high_het
+    mnm: mnm_high_het, mnm_high_het_missing
     score: susie_scores
   run:
     default: oracle_generator * full_data * simulate * mnm * score
