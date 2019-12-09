@@ -1,6 +1,5 @@
 mnm_base: mnm.R
   @CONF: R_libs = (mmbr@gaow/mmbr, flashier@willwerscheid/flashier)
-  @FILTER: not (missing_Y == "TRUE" and resid_method == "'oracle'")
   X: $X
   Y: $Y
   meta: $meta
