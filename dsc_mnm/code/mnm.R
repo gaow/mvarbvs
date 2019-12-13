@@ -43,6 +43,6 @@ if (resid_method == 'flash') {
 } else {
     resid_Y <- meta$residual_variance
 }
-m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), null_weight=prior$null_weight, alpha=alpha, max_mixture_len=-1)
-result = mmbr::msusie(X, Y, L=L, prior_variance=m_init, residual_variance=resid_Y, compute_objective=!(missing_Y), estimate_residual_variance=F, estimate_prior_variance=F)
+m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), null_weight=prior$null_weight, max_mixture_len=-1)
+result = mmbr::msusie(X, Y, L=L, prior_variance=m_init, residual_variance=resid_Y, compute_objective=!(missing_Y), estimate_residual_variance=F, estimate_prior_variance=T, estimate_prior_method='simple')
 #result$pip_conditions = mmbr::mmbr_get_pip_per_condition(result, m_init)
