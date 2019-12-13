@@ -37,10 +37,12 @@ def simulate_main(data, c):
         if c['n_traits'] < 2:
             raise ValueError(f'Cannot simulate {c["n_traits"]} under mode {eff_mode}')
         data['true_coef'], data['residual_variance'], data['prior'] = mash_sim(data, reg, c, eff_mode)
-    if c['center_data']:
-        reg.center_data()
+    if c['standardize']:
+        reg.standardize_data()
     data['X'] = reg.X
     data['Y'] = reg.Y
+    data['X_mean'] = reg.x_mean
+    data['X_csd'] = reg.x_scale
     if data['Y'].shape[1] == 1:
         data['varY'] = np.cov(data['Y'][:,0])
     else:
