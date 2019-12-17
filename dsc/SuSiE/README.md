@@ -1,4 +1,4 @@
-## Fine mapping benchmark
+## Univariate fine-mapping benchmark
 
 This benchmark is written in DSC with all DSC configurations and module scripts
 in SoS Notebook. To edit the notebook please use Jupyter Lab:
@@ -21,7 +21,7 @@ of contents for navigation.
 To run the benchmark, after editing the notebook first save them to module files
 
 ```
-./run.sos convert
+./export.sos
 ```
 
 Then run the benchmark from `*.dsc`. To see what are available for example,
