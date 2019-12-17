@@ -41,8 +41,8 @@ if (resid_method == 'flash') {
 } else if (resid_method == 'diag') {
     resid_Y <- compute_cov_diag(Y)
 } else {
-    resid_Y <- meta$residual_variance 
+    resid_Y <- meta$residual_variance
 }
-m_init = mmbr:::MashInitializer$new(NULL, NULL, xUlist=append(list(matrix(0,ncol(Y),ncol(Y))), prior$xUlist), prior_weights=prior$pi, null_weight=prior$null_weight, alpha=alpha, top_mixtures=-1)
-result = mmbr::msusie(X, Y, L=L, prior_variance=m_init, residual_variance=resid_Y, compute_objective=!(missing_Y), estimate_residual_variance=F, estimate_prior_variance=F)
+m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), null_weight=prior$null_weight, max_mixture_len=-1)
+result = mmbr::msusie(X, Y, L=L, prior_variance=m_init, residual_variance=resid_Y, compute_objective=!(missing_Y), estimate_residual_variance=F, estimate_prior_variance=T, estimate_prior_method='simple')
 #result$pip_conditions = mmbr::mmbr_get_pip_per_condition(result, m_init)
