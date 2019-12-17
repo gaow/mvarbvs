@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="ipynb_website:version" content="0.9.6" />
+<meta name="ipynb_website:version" content="0.9.7" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <link rel="stylesheet" type="text/css" href="../css/jt.css">
@@ -219,19 +218,11 @@ body {
 </li>
         
 <li>
-  <a href="../details.html">Details</a>
-</li>
-        
-<li>
   <a href="../analysis.html">Analysis</a>
 </li>
         
 <li>
   <a href="../prototype.html">Prototype</a>
-</li>
-        
-<li>
-  <a href="../dsc.html">Dsc</a>
 </li>
         
 <li>
@@ -276,15 +267,15 @@ body {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
-<span class="n">n</span> <span class="o">=</span> <span class="m">1000</span>
-<span class="n">p</span> <span class="o">=</span> <span class="m">1000</span>
-<span class="n">beta</span> <span class="o">=</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">p</span><span class="p">)</span>
-<span class="n">beta[1</span><span class="o">:</span><span class="m">4</span><span class="n">]</span> <span class="o">=</span> <span class="m">1</span>
-<span class="n">X</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">rnorm</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">p</span><span class="p">),</span><span class="n">nrow</span><span class="o">=</span><span class="n">n</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">beta</span> <span class="o">+</span> <span class="nf">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="kp">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+n <span class="o">=</span> <span class="m">1000</span>
+p <span class="o">=</span> <span class="m">1000</span>
+beta <span class="o">=</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span>p<span class="p">)</span>
+<span class="kp">beta</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">4</span><span class="p">]</span> <span class="o">=</span> <span class="m">1</span>
+X <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span>rnorm<span class="p">(</span>n<span class="o">*</span>p<span class="p">),</span>nrow<span class="o">=</span>n<span class="p">,</span>ncol<span class="o">=</span>p<span class="p">)</span>
+y <span class="o">=</span> X <span class="o">%*%</span> beta <span class="o">+</span> rnorm<span class="p">(</span>n<span class="p">)</span>
 <span class="c1">#&#39; res =susie(X,y,L=10)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">mmbr</span><span class="p">)</span>
+<span class="kn">library</span><span class="p">(</span>mmbr<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -323,9 +314,9 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">prior_var</span> <span class="o">=</span> <span class="m">0.2</span> <span class="o">*</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-<span class="n">residual_var</span> <span class="o">=</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span>prior_var <span class="o">=</span> <span class="m">0.2</span> <span class="o">*</span> <span class="kp">as.numeric</span><span class="p">(</span>var<span class="p">(</span>y<span class="p">))</span>
+residual_var <span class="o">=</span> <span class="kp">as.numeric</span><span class="p">(</span>var<span class="p">(</span>y<span class="p">))</span>
+data <span class="o">=</span> mmbr<span class="o">:::</span>DenseData<span class="o">$</span>new<span class="p">(</span>X<span class="p">,</span>y<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -338,7 +329,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">residual_var</span>
+<div class=" highlight hl-r"><pre><span></span>residual_var
 </pre></div>
 
     </div>
@@ -370,7 +361,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">prior_var</span>
+<div class=" highlight hl-r"><pre><span></span>prior_var
 </pre></div>
 
     </div>
@@ -402,8 +393,8 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m1</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">BayesianMultipleRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_var</span><span class="p">,</span> <span class="n">prior_var</span><span class="p">)</span>
-<span class="n">m1</span><span class="o">$</span><span class="nf">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">save_summary_stats</span> <span class="o">=</span> <span class="bp">T</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span>m1 <span class="o">=</span> mmbr<span class="o">:::</span>BayesianMultipleRegression<span class="o">$</span>new<span class="p">(</span><span class="kp">ncol</span><span class="p">(</span>X<span class="p">),</span> residual_var<span class="p">,</span> prior_var<span class="p">)</span>
+m1<span class="o">$</span>fit<span class="p">(</span>data<span class="p">,</span> save_summary_stats <span class="o">=</span> <span class="bp">T</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -435,7 +426,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">head</span><span class="p">(</span><span class="n">m1</span><span class="o">$</span><span class="n">posterior_b1</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="kp">head</span><span class="p">(</span>m1<span class="o">$</span>posterior_b1<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -477,7 +468,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m1</span>
+<div class=" highlight hl-r"><pre><span></span>m1
 </pre></div>
 
     </div>
@@ -545,9 +536,9 @@ Loading required package: ashr
 <div class=" highlight hl-r"><pre><span></span><span class="c1"># Assuming 1 out of $J$ are causal, we place a null weight $1-1/J$ a priori.</span>
 <span class="c1"># This will lead to some shrinkage</span>
 <span class="c1"># null_weight = 1 - 1 / ncol(X)</span>
-<span class="n">null_weight</span> <span class="o">=</span> <span class="m">0</span>
-<span class="n">prior_covar</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="m">0.2</span> <span class="o">*</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span> <span class="o">-</span> <span class="n">null_weight</span><span class="p">,</span> <span class="n">null_weight</span><span class="p">)</span>
-<span class="n">residual_covar</span> <span class="o">=</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+null_weight <span class="o">=</span> <span class="m">0</span>
+prior_covar <span class="o">=</span> mmbr<span class="o">:::</span>MashInitializer<span class="o">$</span>new<span class="p">(</span><span class="kt">list</span><span class="p">(</span><span class="m">0.2</span> <span class="o">*</span> cov<span class="p">(</span>y<span class="p">)),</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span> <span class="o">-</span> null_weight<span class="p">,</span> null_weight<span class="p">)</span>
+residual_covar <span class="o">=</span> cov<span class="p">(</span>y<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -560,7 +551,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">prior_covar</span><span class="o">$</span><span class="n">prior_covariance</span>
+<div class=" highlight hl-r"><pre><span></span>prior_covar<span class="o">$</span>prior_covariance
 </pre></div>
 
     </div>
@@ -608,7 +599,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">residual_covar</span>
+<div class=" highlight hl-r"><pre><span></span>residual_covar
 </pre></div>
 
     </div>
@@ -645,7 +636,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashMultipleRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">prior_covar</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span>m2 <span class="o">=</span> mmbr<span class="o">:::</span>MashMultipleRegression<span class="o">$</span>new<span class="p">(</span><span class="kp">ncol</span><span class="p">(</span>X<span class="p">),</span> residual_covar<span class="p">,</span> prior_covar<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -658,7 +649,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m2</span><span class="o">$</span><span class="nf">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">save_summary_stats</span> <span class="o">=</span> <span class="bp">T</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span>m2<span class="o">$</span>fit<span class="p">(</span>data<span class="p">,</span> save_summary_stats <span class="o">=</span> <span class="bp">T</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -671,7 +662,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">head</span><span class="p">(</span><span class="n">m2</span><span class="o">$</span><span class="n">posterior_b1</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="kp">head</span><span class="p">(</span>m2<span class="o">$</span>posterior_b1<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -713,7 +704,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m2</span>
+<div class=" highlight hl-r"><pre><span></span>m2
 </pre></div>
 
     </div>
@@ -790,7 +781,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">ashr</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="kn">library</span><span class="p">(</span>ashr<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -803,8 +794,8 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">a.out</span> <span class="o">=</span> <span class="nf">ash</span><span class="p">(</span><span class="nf">as.vector</span><span class="p">(</span><span class="n">m1</span><span class="o">$</span><span class="n">bhat</span><span class="p">),</span> <span class="nf">as.vector</span><span class="p">(</span><span class="n">m1</span><span class="o">$</span><span class="n">sbhat</span><span class="p">),</span> <span class="n">mixcompdist</span> <span class="o">=</span> <span class="s">&#39;normal&#39;</span><span class="p">)</span>
-<span class="nf">head</span><span class="p">(</span><span class="nf">get_pm</span><span class="p">(</span><span class="n">a.out</span><span class="p">))</span>
+<div class=" highlight hl-r"><pre><span></span>a.out <span class="o">=</span> ash<span class="p">(</span><span class="kp">as.vector</span><span class="p">(</span>m1<span class="o">$</span>bhat<span class="p">),</span> <span class="kp">as.vector</span><span class="p">(</span>m1<span class="o">$</span>sbhat<span class="p">),</span> mixcompdist <span class="o">=</span> <span class="s">&#39;normal&#39;</span><span class="p">)</span>
+<span class="kp">head</span><span class="p">(</span>get_pm<span class="p">(</span>a.out<span class="p">))</span>
 </pre></div>
 
     </div>
@@ -851,7 +842,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">prior_covar</span><span class="o">$</span><span class="n">mash_prior</span>
+<div class=" highlight hl-r"><pre><span></span>prior_covar<span class="o">$</span>mash_prior
 </pre></div>
 
     </div>
@@ -905,7 +896,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">mashr</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="kn">library</span><span class="p">(</span>mashr<span class="p">)</span>
 </pre></div>
 
     </div>
@@ -918,8 +909,8 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="nf">mash_set_data</span><span class="p">(</span><span class="n">m2</span><span class="o">$</span><span class="n">bhat</span><span class="p">,</span> <span class="n">m2</span><span class="o">$</span><span class="n">sbhat</span><span class="p">)</span>
-<span class="n">m.c</span> <span class="o">=</span> <span class="nf">mash</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">g</span> <span class="o">=</span> <span class="n">prior_covar</span><span class="o">$</span><span class="n">mash_prior</span><span class="p">,</span> <span class="n">fixg</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> <span class="n">algorithm</span> <span class="o">=</span><span class="s">&#39;Rcpp&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span>data <span class="o">=</span> mash_set_data<span class="p">(</span>m2<span class="o">$</span>bhat<span class="p">,</span> m2<span class="o">$</span>sbhat<span class="p">)</span>
+m.c <span class="o">=</span> mash<span class="p">(</span>data<span class="p">,</span> g <span class="o">=</span> prior_covar<span class="o">$</span>mash_prior<span class="p">,</span> fixg <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span> algorithm <span class="o">=</span><span class="s">&#39;Rcpp&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -953,7 +944,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m.c</span><span class="o">$</span><span class="n">fitted_g</span>
+<div class=" highlight hl-r"><pre><span></span>m.c<span class="o">$</span>fitted_g
 </pre></div>
 
     </div>
@@ -1007,7 +998,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">head</span><span class="p">(</span><span class="nf">get_pm</span><span class="p">(</span><span class="n">m.c</span><span class="p">))</span>
+<div class=" highlight hl-r"><pre><span></span><span class="kp">head</span><span class="p">(</span>get_pm<span class="p">(</span>m.c<span class="p">))</span>
 </pre></div>
 
     </div>
@@ -1057,8 +1048,8 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">U.c</span> <span class="o">=</span> <span class="nf">cov_canonical</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-<span class="nf">print</span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">U.c</span><span class="p">))</span>
+<div class=" highlight hl-r"><pre><span></span>U.c <span class="o">=</span> cov_canonical<span class="p">(</span>data<span class="p">)</span>
+<span class="kp">print</span><span class="p">(</span><span class="kp">names</span><span class="p">(</span>U.c<span class="p">))</span>
 </pre></div>
 
     </div>
@@ -1090,7 +1081,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m.c</span> <span class="o">=</span> <span class="nf">mash</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">U.c</span><span class="p">,</span> <span class="p">,</span> <span class="n">algorithm</span> <span class="o">=</span><span class="s">&#39;Rcpp&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span>m.c <span class="o">=</span> mash<span class="p">(</span>data<span class="p">,</span> U.c<span class="p">,</span> <span class="p">,</span> algorithm <span class="o">=</span><span class="s">&#39;Rcpp&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1126,7 +1117,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">head</span><span class="p">(</span><span class="nf">get_pm</span><span class="p">(</span><span class="n">m.c</span><span class="p">))</span>
+<div class=" highlight hl-r"><pre><span></span><span class="kp">head</span><span class="p">(</span>get_pm<span class="p">(</span>m.c<span class="p">))</span>
 </pre></div>
 
     </div>
@@ -1168,7 +1159,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m.c</span><span class="o">$</span><span class="n">fitted_g</span>
+<div class=" highlight hl-r"><pre><span></span>m.c<span class="o">$</span>fitted_g
 </pre></div>
 
     </div>
@@ -1381,7 +1372,7 @@ Loading required package: ashr
 
 </div>
 <hr>
-Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
+Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
 <p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/2564a3117f428a56fce27b8f18e44bac6961e918/analysis/20190627_mash_regression_univariate_degenerated.ipynb"><code>analysis/20190627_mash_regression_univariate_degenerated.ipynb</code></a> committed by Gao Wang on Fri Jun 28 11:36:27 2019 <a href="http://github.com/gaow/mvarbvs/commit/2564a3117f428a56fce27b8f18e44bac6961e918">revision 2, 2564a31</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>

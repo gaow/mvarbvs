@@ -7,7 +7,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="ipynb_website:version" content="0.9.6" />
+<meta name="ipynb_website:version" content="0.9.7" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
 <title>m&m ash</title>
@@ -186,19 +186,11 @@ $(document).ready(function () {
 </li>
         
 <li>
-  <a href="./details.html">Details</a>
-</li>
-        
-<li>
   <a href="./analysis.html">Analysis</a>
 </li>
         
 <li>
   <a href="./prototype.html">Prototype</a>
-</li>
-        
-<li>
-  <a href="./dsc.html">Dsc</a>
 </li>
         
 <li>
@@ -220,7 +212,7 @@ $(document).ready(function () {
 {%- endblock header -%}
 {% block footer %}
 <hr>
-Copyright &copy 2016-2018 Gao Wang et al at Stephens Lab, University of Chicago
+Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
 <!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
 
 </div>
