@@ -23,7 +23,7 @@ identity: lib_regression_simulator.py + \
   residual_mode: "identity"
   keep_ld: True
   standardize: True
-  # per-condition PVE when evaluated in univeriate framework
+  # per-condition PVE when evaluated in univariate framework
   pve: ${pve}
   $Y: res['Y']
   $R: res['Y'].shape[1]
