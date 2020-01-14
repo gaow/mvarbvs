@@ -8,7 +8,7 @@
 DSC:
   define:
     simulate: high_het, low_het, mid_het, shared, singleton, singleton_first, mixture01
-    mnm: mnm_high_het, mnm_high_het_missing,
+    mnm: mnm_high_het, mnm_low_het, mnm_mid_het, mnm_shared, mnm_singleton, mnm_singleton_first, mnm_mixture01
     score: susie_scores
   run:
     default: oracle_generator * full_data * simulate * mnm * score
