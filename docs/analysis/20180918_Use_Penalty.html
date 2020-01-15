@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -241,7 +242,8 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Adding-null-component-to-SuSiE">Adding null component to SuSiE<a class="anchor-link" href="#Adding-null-component-to-SuSiE">&#182;</a></h1><p>Here we evaluate the possible benefit adding a null component to SuSiE. The hope is that the CS will be easier to prune (without using purity) and that the pruned CS can achieve smaller FDR.</p>
 
@@ -249,7 +251,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="A-simple-simulation-case">A simple simulation case<a class="anchor-link" href="#A-simple-simulation-case">&#182;</a></h2>
 </div>
@@ -272,7 +275,7 @@ body {
 <span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">b</span> <span class="o">+</span> <span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -301,13 +304,14 @@ body {
 <span class="p">}</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Run-SuSiE-in-&quot;diagnostics&quot;-mode">Run SuSiE in "diagnostics" mode<a class="anchor-link" href="#Run-SuSiE-in-&quot;diagnostics&quot;-mode">&#182;</a></h3><p>"Diagnostics" means that we set no purity threshold and remove no duplicate CS. The PIP computation will be based on the un-processed result.</p>
 
@@ -315,7 +319,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>First, fit with SuSiE as is, but over-specifiy $L$ and report all CS obtained (setting <code>min_abs_corr</code> to zero)</p>
 
@@ -330,7 +335,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -340,7 +345,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -363,7 +368,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>So the 3rd and 4th CS are large. Now add a penalty to null,</p>
 
@@ -371,7 +377,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>As expected the CS got slightly narrower, and the PIP for the null is larger than $1/p$ (0.001 in this case). Now I increase the penalty,</p>
 
@@ -386,7 +393,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -396,7 +403,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -426,7 +433,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -436,7 +443,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -466,7 +473,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -476,7 +483,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -506,7 +513,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.98</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -516,7 +523,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -539,7 +546,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Run-SuSiE-in-default-mode">Run SuSiE in default mode<a class="anchor-link" href="#Run-SuSiE-in-default-mode">&#182;</a></h3><p>Here we set purity threshold to 0.1 and remove duplicate CS.</p>
 
@@ -554,7 +562,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">run_susie</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -564,7 +572,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -584,7 +592,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>In this example the default SuSiE with purity filter is good enough. No need to bother with a penalty.</p>
 
@@ -599,7 +608,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">run_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -609,7 +618,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -636,7 +645,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">run_susie</span><span class="p">(</span><span class="n">null_weight</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -646,7 +655,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -667,7 +676,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>At least from this example, we will get stuck to a null set only when <code>null_weight</code> is very high.</p>
 
@@ -675,7 +685,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="A-null-simulation">A null simulation<a class="anchor-link" href="#A-null-simulation">&#182;</a></h2><p>We simulate random data,</p>
 
@@ -694,13 +705,14 @@ body {
 <span class="n">y</span> <span class="o">=</span> <span class="n">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>and run SuSiE with / without purity filter:</p>
 
@@ -715,7 +727,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">diag_susie</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -725,7 +737,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -755,7 +767,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">run_susie</span><span class="p">()</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -765,7 +777,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -783,7 +795,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For this simple case, the purity filter itself is good enough to tell between signal and noise.</p>
 
@@ -791,7 +804,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="A-case-demonstrating-the-usefulness-of-penalty">A case demonstrating the usefulness of penalty<a class="anchor-link" href="#A-case-demonstrating-the-usefulness-of-penalty">&#182;</a></h2><p>I took this data-set from our simulation. This is a case SuSiE makes false discovery in multi-signal setting.</p>
 
@@ -806,7 +820,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">../</span><span class="n">dsc</span><span class="o">/</span><span class="n">susie_comparison</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -816,7 +830,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -836,7 +850,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;lm_less/liter_data_4_summarize_ld_1_lm_less_3.rds&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">data</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -853,7 +867,7 @@ body {
                <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">track_fit</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -867,13 +881,14 @@ body {
 <span class="n">b</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">b</span><span class="o">!=</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The data is noisy,</p>
 
@@ -888,7 +903,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;z-scores&#39;</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -898,7 +913,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1470,7 +1485,8 @@ AACK+H9BMQ020b05EgAAAABJRU5ErkJggg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>and SuSiE confidently makes a mistake,</p>
 
@@ -1485,7 +1501,7 @@ AACK+H9BMQ020b05EgAAAABJRU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">max_cs</span><span class="o">=</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;SuSiE&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">),</span> <span class="s1">&#39;CS identified&#39;</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1495,7 +1511,7 @@ AACK+H9BMQ020b05EgAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1821,7 +1837,8 @@ AECEsAMAiBB2AAARwg4AIELYAQBE/ARrGTIbkii80QAAAABJRU5ErkJggg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now let's run SuSiE with penalty 0.5,</p>
 
@@ -1839,7 +1856,7 @@ AECEsAMAiBB2AAARwg4AIELYAQBE/ARrGTIbkii80QAAAABJRU5ErkJggg=="
 <span class="n">s</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">purity</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1849,7 +1866,7 @@ AECEsAMAiBB2AAARwg4AIELYAQBE/ARrGTIbkii80QAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1866,7 +1883,7 @@ AECEsAMAiBB2AAARwg4AIELYAQBE/ARrGTIbkii80QAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1895,7 +1912,7 @@ AECEsAMAiBB2AAARwg4AIELYAQBE/ARrGTIbkii80QAAAABJRU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">max_cs</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;SuSiE&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">),</span> <span class="s1">&#39;CS identified&#39;</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1905,7 +1922,7 @@ AECEsAMAiBB2AAARwg4AIELYAQBE/ARrGTIbkii80QAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2482,7 +2499,8 @@ gg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It is not helping. Now try with 0.9,</p>
 
@@ -2498,7 +2516,7 @@ gg=="
 <span class="n">s</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">purity</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2508,7 +2526,7 @@ gg=="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -2526,7 +2544,7 @@ gg=="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2556,7 +2574,7 @@ gg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">max_cs</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;SuSiE&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">),</span> <span class="s1">&#39;CS identified&#39;</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2566,7 +2584,7 @@ gg=="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -3046,7 +3064,8 @@ hHvBLgAAAABJRU5ErkJggg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Another-real-data-example">Another real data example<a class="anchor-link" href="#Another-real-data-example">&#182;</a></h2>
 </div>
@@ -3060,7 +3079,7 @@ hHvBLgAAAABJRU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;lm_less/liter_data_12_summarize_ld_1_lm_less_3.pkl&#39;</span><span class="p">),</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">read_dsc</span><span class="p">)</span><span class="err">$</span><span class="n">data</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -3077,7 +3096,7 @@ hHvBLgAAAABJRU5ErkJggg=="
                <span class="n">tol</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">track_fit</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -3091,7 +3110,7 @@ hHvBLgAAAABJRU5ErkJggg=="
 <span class="n">b</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">b</span><span class="o">!=</span><span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -3104,7 +3123,7 @@ hHvBLgAAAABJRU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">fitted</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;z-scores&#39;</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -3114,7 +3133,7 @@ hHvBLgAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -3816,7 +3835,8 @@ f6dJaIVNTqc2AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It seems fine. But previous result,</p>
 
@@ -3831,7 +3851,7 @@ f6dJaIVNTqc2AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">s</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s2">&quot;fit_susie/liter_data_12_summarize_ld_1_lm_less_3_fit_susie_6.rds&quot;</span><span class="p">)</span><span class="err">$</span><span class="n">fitted</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -3847,7 +3867,7 @@ f6dJaIVNTqc2AAAAAElFTkSuQmCC"
 <span class="n">s</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">pip</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -3860,7 +3880,7 @@ f6dJaIVNTqc2AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;SuSiE&#39;</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">fitted</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="p">),</span> <span class="s1">&#39;CS identified&#39;</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -3870,7 +3890,7 @@ f6dJaIVNTqc2AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4442,7 +4462,7 @@ REREpBAMdkREREQK8f8BLztAmgOJfpIAAAAASUVORK5CYII="
 <span class="n">cat</span><span class="p">(</span><span class="n">debug</span><span class="err">$</span><span class="n">script</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4452,7 +4472,7 @@ REREpBAMdkREREQK8f8BLztAmgOJfpIAAAAASUVORK5CYII="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -4523,7 +4543,7 @@ saveRDS(list(posterior=posterior, fitted=fitted, DSC_DEBUG=dscrutils::save_sessi
 <div class=" highlight hl-sos"><pre><span></span><span class="k">print</span><span class="p">(</span><span class="n">debug</span><span class="err">$</span><span class="n">session</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4533,7 +4553,7 @@ saveRDS(list(posterior=posterior, fitted=fitted, DSC_DEBUG=dscrutils::save_sessi
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">

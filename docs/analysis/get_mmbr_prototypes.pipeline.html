@@ -375,7 +375,7 @@ bash: expand = True
          <div class="float-left"><a class="sos-logo" href="https://vatlab.github.io/sos-docs">
          <img src="http://vatlab.github.io/sos-docs/img/sos_icon.svg" alt="sos_icon">
          </a> &nbsp;See the output of command <samp>sos run get_mmbr_prototypes.sos -h</samp> for usage information</div>
-         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.20.13</samp></div>
+         <div class="float-right"><a href="https://vatlab.github.io/sos-docs/">SoS</a> version <samp>0.21.5</samp></div>
       </footer>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-dropdown/2.0.3/jquery.dropdown.js"></script>
@@ -949,17 +949,17 @@ let sos_keywords = new Set([
   // keywords
   'input:', 'output:', 'depends:', 'task:',
   // options
-  'expand',
+  'expand', 'provides',
   // input options
   'for_each', 'paired_with', 'group_with', 'pattern',
-  'named_output', 'output_from',
+  'named_output', 'output_from', 'concurrent',
   // functions
   'sos_run', 'fail_if', 'done_if', 'warn_if', 'skip_if',
-  'get_output',
+  'get_output', 'expand_pattern',
   // task options
-  'walltime', 'cores', 'mem', 'queue', 'to_host',
-  'from_host', 'map_vars', 'trunk_size', 'trunk_workers', 'workdir',
-  'concurrent', 'shared', 'env', 'prepend_path', 'tags',
+  'walltime', 'cores', 'mem', 'queue', 'to_host', 'nodes',
+  'from_host', 'trunk_size', 'trunk_workers', 'workdir',
+  'shared', 'env', 'prepend_path', 'tags',
   // targets
   'file_target', 'executable', 'sos_variable', 'env_variable',
   'sos_step', 'dynamic', 'remote', 'system_resource',
@@ -969,12 +969,16 @@ let sos_keywords = new Set([
   'csh:', 'tcsh', 'zsh:', 'perl:', 'ruby:', 'node:',
   'pandoc:', 'docker_build:', 'download:', 'julia:',
   'R:', 'matlab:', 'python:', 'python2:', 'python3:',
+  'singularity_build:',
+  // action options
+  'args', 'allow_error', 'container', 'engine', 'env',
+  'stdout', 'stderr', 'tracked',
   // magics
-  '%capture', '%cd', '%clear', '%debug', '%dict',
-  '%expand', '%get', '%matplotlib', '%preview', '%pull',
-  '%push', '%put', '%render', '%run', '%runfile', '%revisions',
+  '%capture', '%cd', '%env',
+  '%expand', '%get', '%matplotlib', '%preview',
+  '%put', '%render', '%run', '%runfile', '%revisions',
   '%save', '%set', '%sessioninfo', '%shutdown', '%sosrun',
-  '%sossave', '%task', '%toc', '%sandbox', '%use', '%with'
+  '%convert', '%task', '%use', '%with'
   ]
 )
 

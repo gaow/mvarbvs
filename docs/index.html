@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -204,7 +206,8 @@ $(document).ready(function () {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="M&amp;M-ASH">M&amp;M ASH<a class="anchor-link" href="#M&amp;M-ASH">&#182;</a></h1><p><em>Multivariate Bayesian variable selection via Adaptive Shrinkage, with applications to eQTL fine-mapping</em></p>
 <hr>
@@ -212,14 +215,16 @@ $(document).ready(function () {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Background">Background<a class="anchor-link" href="#Background">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="figures/mnm.png" alt=""></p>
 
@@ -227,7 +232,8 @@ $(document).ready(function () {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This project is mainly aimed at <a href="Modular_MNMASH.html#Motivation">fine-mapping for eQTL discovery in multiple tissues</a>. From methodology point of view it introduces an Empirical Bayes approach, ie, <a href="https://doi.org/10.1093/biostatistics/kxw041">adaptive shrinkage</a> for solving multivariate, multiple regression problem; hence the project code name <code>m&amp;m ash</code>.</p>
 <p>We started building the m&amp;m model in summer 2016. It is essentially a multivariate version of the variational algorithm that does <a href="https://github.com/stephenslab/mvash">univariate regression with adaptive shrinkage method</a> (credit to <a href="http://github.com/NKweiwang">Wei</a> and <a href="https://pcarbo.github.io/">Peter</a>). We have developed a version assuming <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/identity_cov">identity covariance</a> and a version assuming <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/lr_diag_cov">diagonal + low rank covariance</a> (credit to <a href="http://home.uchicago.edu/~dcgerard/home.html">David</a>), along with <a href="https://github.com/gaow/mnmashr">an implementation</a>. We then realized several limitations to it, from modeling and computational espects, that made us reconsider the design after some attempts to alleviate these issues (<a href="Start_Simple.html">limiting to a simpler problem</a> and <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/lr_diag_cov/dirichlet_ml">combine genome-wide information efficiently</a>).</p>
@@ -239,14 +245,16 @@ $(document).ready(function () {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Univeriate-analysis-(variable-selection-and-fine-mapping)">Univeriate analysis (variable selection and fine-mapping)<a class="anchor-link" href="#Univeriate-analysis-(variable-selection-and-fine-mapping)">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="figures/m-green.jpg" alt=""></p>
 
@@ -254,7 +262,8 @@ $(document).ready(function () {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The first module is to perform multiple regression with adaptive shrinkage for variable selection and fine-mapping</p>
 <h3 id="mr-ash-model"><code>mr-ash</code> model<a class="anchor-link" href="#mr-ash-model">&#182;</a></h3><p>This is being developed and implemented in the <a href="https://github.com/pcarbo/varbvs"><code>varbvs</code></a> package. We have created <a href="analysis/20170624_Simulation_Procedures.html">simulation data</a> based on GTEx. Here are some results:</p>
@@ -268,14 +277,16 @@ $(document).ready(function () {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Multivariate-analysis">Multivariate analysis<a class="anchor-link" href="#Multivariate-analysis">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="figures/m-yellow.png" alt=""></p>
 
@@ -283,7 +294,8 @@ $(document).ready(function () {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For the multivariate part, we've continued to make improvements to <a href="https://github.com/stephenslab/mashr"><code>mashr</code></a> (credit to <a href="http://stephenslab.uchicago.edu/">Matthew</a>) that makes it <a href="../analysis/20170615_MASHR_Benchmark.html">potentially suitable</a> for the scale of the GTEx project that now has &gt; 50 tissues and possibly multiple eQTL's per gene for ~20K genes.</p>
 
@@ -291,7 +303,8 @@ $(document).ready(function () {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Project-meetings">Project meetings<a class="anchor-link" href="#Project-meetings">&#182;</a></h2><p><a href="writeup/Meetings.html">Here</a> is minutes for project meetings.</p>
 

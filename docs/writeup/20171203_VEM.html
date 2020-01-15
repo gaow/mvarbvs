@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -241,7 +242,8 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Notes-on-fundamentals-of-EM-and-VEM">Notes on fundamentals of EM and VEM<a class="anchor-link" href="#Notes-on-fundamentals-of-EM-and-VEM">&#182;</a></h1><p>A refreshment of concepts based on notes from Matthew and David.</p>
 
@@ -249,7 +251,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>$\newcommand{\bs}[1]{\boldsymbol{#1}}$
 $\DeclareMathOperator*{\diag}{diag}$
@@ -269,7 +272,8 @@ $\DeclareMathOperator*{\dif}{d}$</p>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Problem">Problem<a class="anchor-link" href="#Problem">&#182;</a></h2><p>We need to make MLE of $\theta$ for $P(Y|\theta)$. The marginal $$\log P(Y|\theta) = \log \int P(Y,Z|\theta) \dif Z$$ is difficult to compute. 
 However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is easier. 
@@ -279,17 +283,19 @@ However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is ea
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Marginal-log-likelihood">Marginal log-likelihood<a class="anchor-link" href="#Marginal-log-likelihood">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For any normalized distribution $q(Z)$,</p>
-\begin{align}
+<p>\begin{align}
 \log P(Y|\theta) &amp; =  \log P(Y|\theta) \int_Z q(Z) \dif Z \\
 &amp; =  \int_Z \log P(Y|\theta) q(Z) \dif Z \\
 &amp; = \int_Z \log \frac{P(Y,Z|\theta)}{P(Z|Y,\theta)} q(Z) \dif Z \\
@@ -299,12 +305,14 @@ However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is ea
 &amp; = E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{q(Z)}] - E_q[\frac{P(Z|Y,\theta)}{q(Z)}] \\
 &amp; \ge E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{q(Z)}] \\
 &amp; = \mathcal{L}(q, \theta)
-\end{align}
+\end{align}</p>
+
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="EM">EM<a class="anchor-link" href="#EM">&#182;</a></h2><p>Maximize $\mathcal{L}(q, \theta)$ iteratively between $q$ and $\theta$, in a 2-step procedure:</p>
 <ol>
@@ -316,7 +324,8 @@ However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is ea
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="VEM-via-mean-field">VEM via mean-field<a class="anchor-link" href="#VEM-via-mean-field">&#182;</a></h2><ol>
 <li>$\underset{q \in \Omega}{max} \big( \log P(Y|\theta) \big ) $: set $q(Z) = \prod_i q(Z_i)$</li>

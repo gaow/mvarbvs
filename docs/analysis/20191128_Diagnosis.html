@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -241,7 +242,8 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Diagnosis-of-problems-revealed-in-benchmarks">Diagnosis of problems revealed in benchmarks<a class="anchor-link" href="#Diagnosis-of-problems-revealed-in-benchmarks">&#182;</a></h1><p>This notebook performs some diagnosis for problems identified from <a href="https://gaow.github.io/mvarbvs/analysis/20191116_MNM_Benchmark.html">this benchmark</a>.</p>
 
@@ -256,7 +258,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc_mnm</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -266,7 +268,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -279,7 +281,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Here I load previous benchmark results and identify some scenarios where there is a problem,</p>
 
@@ -294,7 +297,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">out</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;../data/finemap_output.20191116.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -308,7 +311,7 @@ body {
 <span class="n">colnames</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;n_traits&#39;</span><span class="p">,</span> <span class="s1">&#39;resid_method&#39;</span><span class="p">,</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="s1">&#39;EZ_model&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;purity&#39;</span><span class="p">,</span> <span class="s1">&#39;top_hit&#39;</span><span class="p">,</span> <span class="s1">&#39;total_true&#39;</span><span class="p">,</span> <span class="s1">&#39;total_true_included&#39;</span><span class="p">,</span> <span class="s1">&#39;overlap_var&#39;</span><span class="p">,</span> <span class="s1">&#39;overlap_cs&#39;</span><span class="p">,</span> <span class="s1">&#39;false_positive_cross_cond&#39;</span><span class="p">,</span> <span class="s1">&#39;false_negative_cross_cond&#39;</span><span class="p">,</span> <span class="s1">&#39;true_positive_cross_cond&#39;</span><span class="p">,</span> <span class="s1">&#39;elbo_converged&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -321,7 +324,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">bad</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">total</span><span class="o">-</span><span class="n">res</span><span class="err">$</span><span class="n">valid</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">),]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -334,7 +337,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">bad</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">bad</span><span class="err">$</span><span class="n">missing</span><span class="o">==</span><span class="n">TRUE</span> <span class="o">&amp;</span> <span class="n">bad</span><span class="err">$</span><span class="n">EZ_model</span><span class="o">==</span><span class="mi">1</span> <span class="o">&amp;</span> <span class="n">bad</span><span class="err">$</span><span class="n">n_traits</span><span class="o">==</span><span class="mi">5</span><span class="p">),]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -344,7 +347,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -370,7 +373,8 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Load the first line of dataset identified,</p>
 
@@ -388,13 +392,14 @@ body {
 <span class="n">meta</span> <span class="o">&lt;-</span> <span class="n">DSC_19D98699</span><span class="err">$</span><span class="n">meta</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The original result from DSC is presented in a plot of PIP and CS, where true signal is in red:</p>
 
@@ -409,7 +414,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">true_pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -422,7 +427,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">ex</span><span class="err">$</span><span class="n">result</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;Default SuSiE plot for cross-condition PIP&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -432,7 +437,7 @@ body {
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -905,7 +910,8 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It seems it completely missed out the causal variant.</p>
 <p>When analyzed with non-missing data input the result looks good (analysis changing <code>missing_Y</code> to <code>FALSE</code> is not shown here).</p>
@@ -914,7 +920,8 @@ AAAAAElFTkSuQmCC"
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Reproducing-the-problem-with-diagnostic-information">Reproducing the problem with diagnostic information<a class="anchor-link" href="#Reproducing-the-problem-with-diagnostic-information">&#182;</a></h2><p>Below I use simplified code from DSC script, and use <code>L=1</code> and <code>max_iter=1</code> this time to make it easier to manage.</p>
 
@@ -922,7 +929,8 @@ AAAAAElFTkSuQmCC"
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Additionally I temporarily changed the source code to:</p>
 <ol>
@@ -935,7 +943,8 @@ AAAAAElFTkSuQmCC"
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <div class="highlight"><pre><span></span><span class="gh">diff --git a/R/mash_multiple_regression.R b/R/mash_multiple_regression.R</span>
 <span class="gh">index bf50368..f012173 100644</span>
@@ -993,7 +1002,7 @@ AAAAAElFTkSuQmCC"
 <span class="n">prior</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))]][[</span><span class="s1">&#39;high_het&#39;</span><span class="p">]]</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1027,7 +1036,7 @@ AAAAAElFTkSuQmCC"
 <span class="p">}</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1041,13 +1050,14 @@ AAAAAElFTkSuQmCC"
 <span class="n">resid_Y</span> <span class="o">&lt;-</span> <span class="n">compute_cov_diag</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This data-set has also been saved to <a href="https://github.com/gaow/mmbr/issues/9#issue-531283569">here</a>. If you want to reproduce my results you can download the data-set from the link above, use <code>attach(readRDS(...))</code> to attach the data to the R workspace and continue with commands below.</p>
 <p>Use EE model and set $L=1$,</p>
@@ -1064,13 +1074,14 @@ AAAAAElFTkSuQmCC"
 <span class="n">L</span> <span class="o">=</span> <span class="mi">1</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Then fit with complete data, and with missing data:</p>
 
@@ -1086,7 +1097,7 @@ AAAAAElFTkSuQmCC"
 <span class="n">r1</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">precompute_covariance</span> <span class="o">=</span> <span class="n">F</span><span class="p">,</span> <span class="n">standardize</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1096,7 +1107,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1141,7 +1152,7 @@ AAAAAElFTkSuQmCC"
 <span class="n">r2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y_miss</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">precompute_covariance</span> <span class="o">=</span> <span class="n">F</span><span class="p">,</span> <span class="n">standardize</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1151,7 +1162,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1188,7 +1199,8 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>To plot and compare results,</p>
 
@@ -1203,7 +1215,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;No missing data&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1213,7 +1225,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1586,7 +1598,7 @@ QBL/AzYIgRwLuZJ5AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;With missing data&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -1596,7 +1608,7 @@ QBL/AzYIgRwLuZJ5AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -1965,7 +1977,8 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Problem reproduced with <code>L=1</code>. I would expect for such case after randomly removing what happens to be important information in data, there should be a power loss and we should not detect anything. But here, rather, it reports a false signal that we don't like.</p>
 
@@ -1973,7 +1986,8 @@ AAAAAElFTkSuQmCC"
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="More-diagnosis-from-single-effect-model">More diagnosis from single effect model<a class="anchor-link" href="#More-diagnosis-from-single-effect-model">&#182;</a></h2><p>For complete data,</p>
 
@@ -1990,7 +2004,7 @@ AAAAAElFTkSuQmCC"
 <span class="n">m1</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">save_summary_stats</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2000,7 +2014,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -2044,7 +2058,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m1</span><span class="err">$</span><span class="n">sbhat</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2054,7 +2068,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2076,7 +2090,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m1</span><span class="err">$</span><span class="n">sbhat</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2086,7 +2100,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2101,7 +2115,8 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For missing data,</p>
 
@@ -2118,7 +2133,7 @@ AAAAAElFTkSuQmCC"
 <span class="n">m2</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y_miss</span><span class="p">),</span> <span class="n">save_summary_stats</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2128,7 +2143,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -2172,7 +2187,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2182,7 +2197,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2197,7 +2212,8 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The max z-score is 253 -- very problematic.</p>
 
@@ -2212,7 +2228,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2222,7 +2238,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2251,7 +2267,8 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The 4th column (4th condition) has large z-scores. This is consistent with observed difference in $X^TY$ between missing and non-missing scenarios as shown in the debug log above. Removing the 4th condition:</p>
 
@@ -2266,7 +2283,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)[,</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2276,7 +2293,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2291,7 +2308,8 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>To find which row it is in:</p>
 
@@ -2306,7 +2324,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)[,</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2316,7 +2334,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2331,7 +2349,8 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This is indeed the true causal SNP.</p>
 
@@ -2339,7 +2358,8 @@ AAAAAElFTkSuQmCC"
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now checkout the logBF:</p>
 
@@ -2354,7 +2374,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">lbf</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2364,7 +2384,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -2797,7 +2817,7 @@ kCAgJAgICQI/jml31N9FdhwAAAAASUVORK5CYII="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">lbf</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -2807,7 +2827,7 @@ kCAgJAgICQI/jml31N9FdhwAAAAASUVORK5CYII="
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4568,7 +4588,8 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The lbf here are not under the null. They are insanely large! In particular the Log BF for the false positive variable in the presense of missing data is a lot higher than where the simulated signal lies, thus the false positive result.</p>
 <p>This must be a very obvious bug because the marginal statistics is even wrong here with missing data. It is easy to show that with <code>susieR::univariate_regression</code> function the result for missing data is very different from what I got here above.</p>
@@ -4577,7 +4598,8 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="More-diagnosis-using-precomputed-quantities">More diagnosis using precomputed quantities<a class="anchor-link" href="#More-diagnosis-using-precomputed-quantities">&#182;</a></h2><p>Missingness across samples:</p>
 
@@ -4592,7 +4614,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">summary</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span><span class="o">/</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4602,7 +4624,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4619,7 +4641,8 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Missingness across conditions:</p>
 
@@ -4634,7 +4657,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">apply</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> <span class="o">/</span> <span class="n">nrow</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4644,7 +4667,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4666,7 +4689,8 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Precomputed quantities with this data-set, compared with complete data:</p>
 
@@ -4684,7 +4708,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <span class="n">m2</span><span class="err">$</span><span class="n">precompute_cov_matrices</span><span class="p">(</span><span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">),</span> <span class="n">resid_Y</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4697,7 +4721,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">matrix</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">Vinv</span><span class="p">,</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4707,7 +4731,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4738,7 +4762,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">matrix</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">Vinv</span><span class="p">,</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4748,7 +4772,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4779,7 +4803,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">matrix</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">U0</span><span class="p">,</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4789,7 +4813,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4820,7 +4844,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">matrix</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">U0</span><span class="p">,</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4830,7 +4854,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4861,7 +4885,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">matrix</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">sigma_rooti</span><span class="p">,</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4871,7 +4895,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4902,7 +4926,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">matrix</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">sigma_rooti</span><span class="p">,</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4912,7 +4936,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4943,7 +4967,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4953,7 +4977,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -4985,7 +5009,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -4995,7 +5019,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 
@@ -5020,7 +5044,8 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The outcome are largely comparable.</p>
 

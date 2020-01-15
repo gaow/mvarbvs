@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -241,14 +242,16 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="mashr-R-vs.-C++-benchmark">mashr R vs. C++ benchmark<a class="anchor-link" href="#mashr-R-vs.-C++-benchmark">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We've recently implemented a C++ version of <code>mashr</code> which seems to perform very well on small scale toy data. How does it scale with data size? This notebook benchmarks speed of both implementations on small to larger scale of data.</p>
 <p>Before getting to the experiements let's recap the problem and its expected computational requirement. We are fitting <code>mash</code> model with data-set of $J$ effects, $R$ conditions, on $K$ priors each with $L$ grids. Often a straightforward loop is applied over all combinations, generating $LJK$ problems. Then for each problem it often involves some Gaussian density calculation which requires computing inverse of an $R$ matrix. So the computational should scale by the order of $O(LJKR^3)$.</p>
@@ -257,7 +260,8 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-benchmark">The benchmark<a class="anchor-link" href="#The-benchmark">&#182;</a></h2><p>Load data</p>
 
@@ -273,13 +277,14 @@ body {
 data <span class="o">&lt;-</span> <span class="kp">get</span><span class="p">(</span><span class="kp">load</span><span class="p">(</span><span class="s">&quot;../../data/cor_mash.rda&quot;</span><span class="p">))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Get test set</p>
 
@@ -303,7 +308,7 @@ w <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span
 w <span class="o">=</span> w <span class="o">/</span> LK
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -313,7 +318,7 @@ w <span class="o">=</span> w <span class="o">/</span> LK
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -327,7 +332,8 @@ w <span class="o">=</span> w <span class="o">/</span> LK
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Likelihood benchmark</p>
 
@@ -351,7 +357,7 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
               out.time<span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -361,7 +367,7 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -375,7 +381,8 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Posterior benchmark</p>
 
@@ -401,7 +408,7 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
               out.time<span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -411,7 +418,7 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -428,7 +435,8 @@ Calculations took 187.46 seconds.
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Result">Result<a class="anchor-link" href="#Result">&#182;</a></h2><p>I ran the benchmark a few times for 1) fixed $J$ and 2) fixed $R$. Here are the results in tables. <code>P</code> is number of priors, <code>TR</code> is time elapsed for <code>R</code>, <code>TC</code> is time elapsed for <code>C++</code>.</p>
 
@@ -436,7 +444,8 @@ Calculations took 187.46 seconds.
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Likelihood">Likelihood<a class="anchor-link" href="#Likelihood">&#182;</a></h3>
 </div>
@@ -452,7 +461,7 @@ lik <span class="o">=</span> pd.read_csv<span class="p">(</span><span class="s">
 lik
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -462,7 +471,7 @@ lik
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[71]:</div>
+<div class="prompt output_prompt">Out[71]:</div>
 
 
 
@@ -606,7 +615,7 @@ lik
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -620,7 +629,8 @@ lik
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
+</div>
+<div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Posterior">Posterior<a class="anchor-link" href="#Posterior">&#182;</a></h3>
 </div>
@@ -635,7 +645,7 @@ lik
 post
 </pre></div>
 
-    </div>
+</div>
 </div>
 </div>
 
@@ -645,7 +655,7 @@ post
 
 <div class="output_area">
 
-    <div class="prompt output_prompt">Out[73]:</div>
+<div class="prompt output_prompt">Out[73]:</div>
 
 
 
@@ -789,7 +799,7 @@ post
 
 <div class="output_area">
 
-    <div class="prompt"></div>
+<div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
