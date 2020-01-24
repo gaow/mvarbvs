@@ -4,12 +4,12 @@
 %include modules/simulate
 %include modules/mnm
 %include modules/score
+%include modules/atlasqtl
 
 DSC:
   define:
     simulate: high_het, low_het, mid_het, shared, singleton, singleton_first, mixture01
-    mnm: mnm_high_het, mnm_low_het, mnm_mid_het, mnm_shared, mnm_singleton, mnm_singleton_first, mnm_mixture01
-    competing: mthess, atlasqtl
+    method: mnm_high_het, mnm_low_het, mnm_mid_het, mnm_shared, mnm_singleton, mnm_singleton_first, mnm_mixture01, atlasqtl
     score: susie_scores
   run:
     default: oracle_generator * full_data * simulate * mnm * score
