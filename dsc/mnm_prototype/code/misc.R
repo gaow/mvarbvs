@@ -18,46 +18,65 @@ subset_N <- function(gene, N_sub){
     if(!is.null(N_sub)){
         Ntot <- nrow(gene$X)
         to_keep <- sort(sample(x=c(1:Ntot), size=N_sub, replace=F))
-                
+
         gene$X <- gene$X[to_keep, ]
         gene$y <- gene$y[to_keep]
         gene$Z <- gene$Z[to_keep, ]
-                            
+
         return(gene)
-    } else { ###If we don't want to subset individuals 
+    } else { ###If we don't want to subset individuals
         return(gene)
-    }   
+    }
 }
 
-    ###Functions to compute MAF and missing genotype rate
-    compute_maf <- function(geno){
-      f <- mean(geno,na.rm = TRUE)/2
-      return(min(f, 1-f))
+create_missing <- function(Y1, Y0) {
+    if (ncol(Y0) < ncol(Y1)) {
+        for (i in 1:(ncol(Y1) - ncol(Y0))) {
+            Y0 = cbind(Y0, sample(Y0[, sample.int(ncol(Y0), size=1)]))
+        }
     }
+    if (ncol(Y0) > ncol(Y1)) Y0 = Y0[,sample(1:ncol(Y1))]
+    res = Y1
+    res[which(is.na(Y0))] = NA
+    # it is possible that some rows of Y1 are made all NA
+    # here we have to make up for it
+    na_rows = which(apply(res, 1, function(x) all(is.na(x))))
+    for (i in na_rows) {
+	    non_na = sample.int(ncol(res), size=1)
+        res[i,non_na] = Y1[i,non_na]
+    }
+    return(res)
+}
 
-    compute_missing <- function(geno){
-      miss <- sum(is.na(geno))/length(geno)
-      return(miss)
-    }
-    
-    mean_impute <- function(geno){
-      f <- apply(geno, 2, function(x) mean(x,na.rm = TRUE))
-      for (i in 1:length(f)) geno[,i][which(is.na(geno[,i]))] <- f[i]
-      return(geno)
-    }
+###Functions to compute MAF and missing genotype rate
+compute_maf <- function(geno){
+   f <- mean(geno,na.rm = TRUE)/2
+   return(min(f, 1-f))
+}
 
-    is_zero_variance <- function(x) {
-      if (length(unique(x))==1) return(T)
-      else return(F)
-    }
+compute_missing <- function(geno){
+  miss <- sum(is.na(geno))/length(geno)
+  return(miss)
+}
 
-    ### Filter X matrix
-    filter_X <- function(X, missing_rate_thresh, maf_thresh) {
-        rm_col <- which(apply(X, 2, compute_missing) > missing_rate_thresh)
-        if (length(rm_col)) X <- X[, -rm_col]
-        rm_col <- which(apply(X, 2, compute_maf) < maf_thresh)
-        if (length(rm_col)) X <- X[, -rm_col]
-        rm_col <- which(apply(X, 2, is_zero_variance))
-        if (length(rm_col)) X <- X[, -rm_col]
-        return(mean_impute(X))
-    }
+mean_impute <- function(geno){
+  f <- apply(geno, 2, function(x) mean(x,na.rm = TRUE))
+  for (i in 1:length(f)) geno[,i][which(is.na(geno[,i]))] <- f[i]
+  return(geno)
+}
+
+is_zero_variance <- function(x) {
+  if (length(unique(x))==1) return(T)
+  else return(F)
+}
+
+### Filter X matrix
+filter_X <- function(X, missing_rate_thresh, maf_thresh) {
+    rm_col <- which(apply(X, 2, compute_missing) > missing_rate_thresh)
+    if (length(rm_col)) X <- X[, -rm_col]
+    rm_col <- which(apply(X, 2, compute_maf) < maf_thresh)
+    if (length(rm_col)) X <- X[, -rm_col]
+    rm_col <- which(apply(X, 2, is_zero_variance))
+    if (length(rm_col)) X <- X[, -rm_col]
+    return(mean_impute(X))
+}

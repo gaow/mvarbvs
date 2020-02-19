@@ -1,4 +1,4 @@
-mnm_base: mnm.R
+mnm_base: misc.R + mnm.R
   @CONF: R_libs = (mmbr@gaow/mmbr, flashier@willwerscheid/flashier)
   X: $X
   Y: $Y
