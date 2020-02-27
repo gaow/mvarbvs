@@ -91,8 +91,8 @@ susie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
       mu = m$b1[,true_idx,r]
       mu2 = m$b2[,true_idx,r]
       if (is.null(dim(mu))) {
-        mu = matrix(mu, length(mu), 1)
-        mu2 = matrix(mu2, length(mu2), 1)
+        mu = matrix(mu, 1, length(mu))
+        mu2 = matrix(mu2, 1, length(mu2))
       }
       sd_est = sqrt(mu2 - mu^2)
       quant_diff = 0
