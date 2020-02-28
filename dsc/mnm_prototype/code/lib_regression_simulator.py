@@ -395,8 +395,6 @@ class MultivariateMixture:
             if k not in self.pis:
                 self.pis[k] = 0
 
-
-
     def set_manual_mixture(self, mixture = dict(identity=0.1,equal_effects=0.2,singleton=0.2,simple_het_1=0.1,simple_het_2=0.1,simple_het_3=0.1,null=0)):
         '''
         example configuration is dictionary, see the `cfg` example above
@@ -406,6 +404,12 @@ class MultivariateMixture:
         default_keys = ['identity', 'equal_effects', 'singleton', 'simple_het_1', 'simple_het_2', 'simple_het_3', 'null']
         if set(list(cfg.keys())) != set(default_keys):
             raise ValueError(f"Input configuration has to contain all of these components: {default_keys}")
+        self.set_indep()
+        self.set_high_het()
+        self.set_mid_het()
+        self.set_low_het()
+        self.set_shared()
+        self.set_singleton('singleton')
         sum_values = sum(cfg.values())
         for k in cfg:
             cfg[k] = cfg[k] / sum_values
