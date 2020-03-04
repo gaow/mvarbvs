@@ -242,16 +242,14 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Continued-exploration-of-potential-problem-with-EE-model">Continued exploration of potential problem with EE model<a class="anchor-link" href="#Continued-exploration-of-potential-problem-with-EE-model">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Previously I've found an example that <a href="https://gaow.github.io/mvarbvs/analysis/20190627_two_snps_dispute_missing_data.html">works well with EZ model</a>, <a href="https://gaow.github.io/mvarbvs/analysis/20190627_EE_model_no_problem.html">roughly works with EE model for a slighly modified simulation data-set</a> but <a href="https://gaow.github.io/mvarbvs/analysis/20190627_EE_model_problem.html">does not work with EE model on this data-set</a>. Here I am trying to explore the problem a bit more, without implementing and checking for ELBO yet.</p>
 <p><strong>Note: my previous code has an error in the line <code>e = MASS::mvrnorm(1, rep(0,R), diag(R) * 1)</code> that only generated 6 numbers, and were added cyclicly to <code>g</code> to make <code>y</code>. That breaks things. After I fix the line to using <code>nrow(g)</code> I no longer can reproduce the problem as drastic as it was shown in the notebooks above.</strong></p>
@@ -264,17 +262,16 @@ body {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="kp">setwd</span><span class="p">(</span><span class="s">&quot;/home/gaow/tmp/13-May-2019&quot;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">setwd</span><span class="p">(</span><span class="s">&quot;/home/gaow/tmp/13-May-2019&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Set-up-the-simulation">Set up the simulation<a class="anchor-link" href="#Set-up-the-simulation">&#182;</a></h2><p>Copying codes from previous notebooks.</p>
 
@@ -286,26 +283,26 @@ body {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>genotype <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</span><span class="s">&#39;Multi_Tissues.ENSG00000145214.RDS&#39;</span><span class="p">)</span><span class="o">$</span>X
-P <span class="o">=</span> <span class="kp">ncol</span><span class="p">(</span>genotype<span class="p">)</span>
-R <span class="o">=</span> <span class="m">6</span>
-eff_factor <span class="o">=</span> <span class="m">1.5</span>
-snp1 <span class="o">=</span> <span class="m">184</span>
-snp2 <span class="o">=</span> <span class="m">354</span>
-<span class="kp">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
-b <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> P<span class="p">,</span> R<span class="p">)</span>
-coef_value <span class="o">=</span> b<span class="p">[</span><span class="kp">which</span><span class="p">(</span><span class="kp">apply</span><span class="p">(</span>b<span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="kp">sum</span><span class="p">)</span><span class="o">!=</span><span class="m">0</span><span class="p">),]</span>
-sharing <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">0.75</span><span class="p">,</span> <span class="p">(</span>R<span class="o">/</span><span class="m">2</span><span class="p">),</span> <span class="p">(</span>R<span class="o">/</span><span class="m">2</span><span class="p">))</span>
-<span class="kp">diag</span><span class="p">(</span>sharing<span class="p">)</span> <span class="o">=</span> <span class="m">1</span>
-b<span class="p">[</span>snp1<span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="p">(</span>R<span class="o">/</span><span class="m">2</span><span class="p">)]</span> <span class="o">=</span> <span class="kp">abs</span><span class="p">(</span>MASS<span class="o">::</span>mvrnorm<span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,(</span>R<span class="o">/</span><span class="m">2</span><span class="p">)),</span> sharing<span class="p">))</span> <span class="o">/</span> eff_factor
-b<span class="p">[</span>snp2<span class="p">,</span> <span class="p">(</span>R<span class="o">/</span><span class="m">2+1</span><span class="p">)</span><span class="o">:</span>R<span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="kp">abs</span><span class="p">(</span>MASS<span class="o">::</span>mvrnorm<span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,(</span>R<span class="o">/</span><span class="m">2</span><span class="p">)),</span> sharing<span class="p">))</span> <span class="o">/</span> eff_factor
-g <span class="o">=</span> genotype <span class="o">%*%</span> b
-e <span class="o">=</span> MASS<span class="o">::</span>mvrnorm<span class="p">(</span><span class="kp">nrow</span><span class="p">(</span>g<span class="p">),</span> <span class="kp">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span>R<span class="p">),</span> <span class="kp">diag</span><span class="p">(</span>R<span class="p">)</span> <span class="o">*</span> <span class="m">1</span><span class="p">)</span>
-Y <span class="o">=</span> g <span class="o">+</span> e
-snps <span class="o">=</span> <span class="kp">sub</span><span class="p">(</span><span class="s">&quot;_[A-Z]*_[A-Z]*_b38&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="kp">colnames</span><span class="p">(</span>genotype<span class="p">))</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">genotype</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;Multi_Tissues.ENSG00000145214.RDS&#39;</span><span class="p">)</span><span class="o">$</span><span class="n">X</span>
+<span class="n">P</span> <span class="o">=</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">genotype</span><span class="p">)</span>
+<span class="n">R</span> <span class="o">=</span> <span class="m">6</span>
+<span class="n">eff_factor</span> <span class="o">=</span> <span class="m">1.5</span>
+<span class="n">snp1</span> <span class="o">=</span> <span class="m">184</span>
+<span class="n">snp2</span> <span class="o">=</span> <span class="m">354</span>
+<span class="nf">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">R</span><span class="p">)</span>
+<span class="n">coef_value</span> <span class="o">=</span> <span class="n">b</span><span class="nf">[which</span><span class="p">(</span><span class="nf">apply</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="n">sum</span><span class="p">)</span><span class="o">!=</span><span class="m">0</span><span class="p">),</span><span class="n">]</span>
+<span class="n">sharing</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0.75</span><span class="p">,</span> <span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">),</span> <span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">))</span>
+<span class="nf">diag</span><span class="p">(</span><span class="n">sharing</span><span class="p">)</span> <span class="o">=</span> <span class="m">1</span>
+<span class="n">b[snp1</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">)</span><span class="n">]</span> <span class="o">=</span> <span class="nf">abs</span><span class="p">(</span><span class="n">MASS</span><span class="o">::</span><span class="nf">mvrnorm</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,(</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">)),</span> <span class="n">sharing</span><span class="p">))</span> <span class="o">/</span> <span class="n">eff_factor</span>
+<span class="n">b[snp2</span><span class="p">,</span> <span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="m">2+1</span><span class="p">)</span><span class="o">:</span><span class="n">R]</span> <span class="o">=</span> <span class="o">-</span><span class="nf">abs</span><span class="p">(</span><span class="n">MASS</span><span class="o">::</span><span class="nf">mvrnorm</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,(</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">)),</span> <span class="n">sharing</span><span class="p">))</span> <span class="o">/</span> <span class="n">eff_factor</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">genotype</span> <span class="o">%*%</span> <span class="n">b</span>
+<span class="n">e</span> <span class="o">=</span> <span class="n">MASS</span><span class="o">::</span><span class="nf">mvrnorm</span><span class="p">(</span><span class="nf">nrow</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">R</span><span class="p">),</span> <span class="nf">diag</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">*</span> <span class="m">1</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">g</span> <span class="o">+</span> <span class="n">e</span>
+<span class="n">snps</span> <span class="o">=</span> <span class="nf">sub</span><span class="p">(</span><span class="s">&quot;_[A-Z]*_[A-Z]*_b38&quot;</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="nf">colnames</span><span class="p">(</span><span class="n">genotype</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -315,22 +312,21 @@ snps <span class="o">=</span> <span class="kp">sub</span><span class="p">(</span
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>U1 <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span>R<span class="p">,</span>R<span class="p">)</span>
-U1<span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="p">(</span>R<span class="o">/</span><span class="m">2</span><span class="p">),</span><span class="m">1</span><span class="o">:</span><span class="p">(</span>R<span class="o">/</span><span class="m">2</span><span class="p">)]</span> <span class="o">=</span> sharing
-U2 <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span>R<span class="p">,</span>R<span class="p">)</span>
-U2<span class="p">[(</span>R<span class="o">/</span><span class="m">2+1</span><span class="p">)</span><span class="o">:</span>R<span class="p">,(</span>R<span class="o">/</span><span class="m">2+1</span><span class="p">)</span><span class="o">:</span>R<span class="p">]</span> <span class="o">=</span> sharing
-Ulist <span class="o">=</span> <span class="kt">list</span><span class="p">(</span>U1<span class="o">=</span>U1<span class="p">,</span> U2<span class="o">=</span>U2<span class="p">)</span>
-scaling <span class="o">=</span> <span class="kt">c</span><span class="p">(</span><span class="m">0.5</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="o">/</span> eff_factor
+<div class=" highlight hl-r"><pre><span></span><span class="n">U1</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">R</span><span class="p">)</span>
+<span class="n">U1[1</span><span class="o">:</span><span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">),</span><span class="m">1</span><span class="o">:</span><span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">)</span><span class="n">]</span> <span class="o">=</span> <span class="n">sharing</span>
+<span class="n">U2</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">R</span><span class="p">)</span>
+<span class="n">U2</span><span class="nf">[</span><span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="m">2+1</span><span class="p">)</span><span class="o">:</span><span class="n">R</span><span class="p">,(</span><span class="n">R</span><span class="o">/</span><span class="m">2+1</span><span class="p">)</span><span class="o">:</span><span class="n">R]</span> <span class="o">=</span> <span class="n">sharing</span>
+<span class="n">Ulist</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">U1</span><span class="o">=</span><span class="n">U1</span><span class="p">,</span> <span class="n">U2</span><span class="o">=</span><span class="n">U2</span><span class="p">)</span>
+<span class="n">scaling</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0.5</span><span class="p">,</span><span class="m">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">eff_factor</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="EE-model-setup">EE model setup<a class="anchor-link" href="#EE-model-setup">&#182;</a></h2>
 </div>
@@ -341,17 +337,16 @@ scaling <span class="o">=</span> <span class="kt">c</span><span class="p">(</spa
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>mash_init <span class="o">=</span> mmbr<span class="o">:::</span>MashInitializer<span class="o">$</span>new<span class="p">(</span>Ulist<span class="p">,</span> scaling<span class="p">,</span> alpha <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">mash_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Only-fit-the-residual">Only fit the residual<a class="anchor-link" href="#Only-fit-the-residual">&#182;</a></h2>
 </div>
@@ -362,16 +357,16 @@ scaling <span class="o">=</span> <span class="kt">c</span><span class="p">(</spa
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>start_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-res <span class="o">=</span> mmbr<span class="o">::</span>susie<span class="p">(</span>genotype<span class="p">,</span> e<span class="p">,</span>
-                  L<span class="o">=</span><span class="m">10</span><span class="p">,</span>V<span class="o">=</span>mash_init<span class="p">,</span>
-                  precompute_covariances<span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
-                  compute_objective<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
-end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-<span class="kp">print</span><span class="p">(</span>end_time <span class="o">-</span> start_time<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span>
+                  <span class="n">L</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="n">V</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
+                  <span class="n">precompute_covariances</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
+                  <span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -381,7 +376,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -391,7 +386,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -409,10 +404,10 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>susieR<span class="o">::</span>susie_plot<span class="p">(</span>res<span class="p">,</span>y<span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> xlab <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> add_legend <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">susieR</span><span class="o">::</span><span class="nf">susie_plot</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -422,7 +417,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -957,8 +952,7 @@ f+tINV7LGyYwAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Fit-residual-with-SER-model">Fit residual with SER model<a class="anchor-link" href="#Fit-residual-with-SER-model">&#182;</a></h2>
 </div>
@@ -969,10 +963,10 @@ f+tINV7LGyYwAAAAAElFTkSuQmCC"
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>devtools<span class="o">::</span>reload<span class="p">(</span>pkgload<span class="o">::</span>inst<span class="p">(</span><span class="s">&quot;mmbr&quot;</span><span class="p">))</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">devtools</span><span class="o">::</span><span class="nf">reload</span><span class="p">(</span><span class="n">pkgload</span><span class="o">::</span><span class="nf">inst</span><span class="p">(</span><span class="s">&quot;mmbr&quot;</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -982,7 +976,7 @@ f+tINV7LGyYwAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -1000,16 +994,16 @@ f+tINV7LGyYwAAAAAElFTkSuQmCC"
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>start_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-res <span class="o">=</span> mmbr<span class="o">::</span>susie<span class="p">(</span>genotype<span class="p">,</span> e<span class="p">,</span>
-                  L<span class="o">=</span><span class="m">1</span><span class="p">,</span> max_iter<span class="o">=</span><span class="m">1</span><span class="p">,</span> V<span class="o">=</span>mash_init<span class="p">,</span>
-                  precompute_covariances<span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
-                  compute_objective<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
-end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-<span class="kp">print</span><span class="p">(</span>end_time <span class="o">-</span> start_time<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span>
+                  <span class="n">L</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="m">1</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
+                  <span class="n">precompute_covariances</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
+                  <span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1019,7 +1013,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1037,10 +1031,10 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>susieR<span class="o">::</span>susie_plot<span class="p">(</span>res<span class="p">,</span>y<span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> xlab <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> add_legend <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">susieR</span><span class="o">::</span><span class="nf">susie_plot</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1050,7 +1044,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1542,8 +1536,7 @@ TkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>So there indeed is something with the residual. The EE model with full IBSS picks it up. Now it is a question of whether the model with the two causal SNP has better ELBO than the model with this in the residual. I will not know it unless I have the ELBO -- so I'm working on that next.</p>
 
@@ -1551,8 +1544,7 @@ TkSuQmCC"
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Fit-the-simulated-responses">Fit the simulated responses<a class="anchor-link" href="#Fit-the-simulated-responses">&#182;</a></h2>
 </div>
@@ -1563,16 +1555,16 @@ TkSuQmCC"
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>start_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-res2 <span class="o">=</span> mmbr<span class="o">::</span>susie<span class="p">(</span>genotype<span class="p">,</span> Y<span class="p">,</span>
-                  L<span class="o">=</span><span class="m">10</span><span class="p">,</span>V<span class="o">=</span>mash_init<span class="p">,</span>
-                  precompute_covariances<span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
-                  compute_objective<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
-end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-<span class="kp">print</span><span class="p">(</span>end_time <span class="o">-</span> start_time<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="n">res2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span>
+                  <span class="n">L</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="n">V</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
+                  <span class="n">precompute_covariances</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
+                  <span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1582,7 +1574,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -1592,7 +1584,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1610,10 +1602,10 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>susieR<span class="o">::</span>susie_plot<span class="p">(</span>res2<span class="p">,</span>y<span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> xlab <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> add_legend <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">susieR</span><span class="o">::</span><span class="nf">susie_plot</span><span class="p">(</span><span class="n">res2</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1623,7 +1615,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2080,10 +2072,10 @@ GkGwAwAA0AiCHQAAgEYQ7AAAADTi/wBc9Fd0WBLvbgAAAABJRU5ErkJggg=="
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>res2<span class="o">$</span>pip<span class="p">[</span>snp1<span class="p">]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res2</span><span class="o">$</span><span class="n">pip[snp1]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2093,7 +2085,7 @@ GkGwAwAA0AiCHQAAgEYQ7AAAADTi/wBc9Fd0WBLvbgAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2112,10 +2104,10 @@ GkGwAwAA0AiCHQAAgEYQ7AAAADTi/wBc9Fd0WBLvbgAAAABJRU5ErkJggg=="
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>res2<span class="o">$</span>pip<span class="p">[</span>snp2<span class="p">]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res2</span><span class="o">$</span><span class="n">pip[snp2]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2125,7 +2117,7 @@ GkGwAwAA0AiCHQAAgEYQ7AAAADTi/wBc9Fd0WBLvbgAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2140,8 +2132,7 @@ GkGwAwAA0AiCHQAAgEYQ7AAAADTi/wBc9Fd0WBLvbgAAAABJRU5ErkJggg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The signals are captured, but there seems to be a false signal at position 6000+.</p>
 
@@ -2149,8 +2140,7 @@ GkGwAwAA0AiCHQAAgEYQ7AAAADTi/wBc9Fd0WBLvbgAAAABJRU5ErkJggg=="
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="EZ-model-setup">EZ model setup<a class="anchor-link" href="#EZ-model-setup">&#182;</a></h2>
 </div>
@@ -2161,17 +2151,16 @@ GkGwAwAA0AiCHQAAgEYQ7AAAADTi/wBc9Fd0WBLvbgAAAABJRU5ErkJggg=="
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>mash_init <span class="o">=</span> mmbr<span class="o">:::</span>MashInitializer<span class="o">$</span>new<span class="p">(</span>Ulist<span class="p">,</span> scaling<span class="p">,</span> alpha <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">mash_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Only-fit-the-residual">Only fit the residual<a class="anchor-link" href="#Only-fit-the-residual">&#182;</a></h2>
 </div>
@@ -2182,16 +2171,16 @@ GkGwAwAA0AiCHQAAgEYQ7AAAADTi/wBc9Fd0WBLvbgAAAABJRU5ErkJggg=="
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>start_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-res <span class="o">=</span> mmbr<span class="o">::</span>susie<span class="p">(</span>genotype<span class="p">,</span> e<span class="p">,</span>
-                  L<span class="o">=</span><span class="m">10</span><span class="p">,</span>V<span class="o">=</span>mash_init<span class="p">,</span>
-                  precompute_covariances<span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
-                  compute_objective<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
-end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-<span class="kp">print</span><span class="p">(</span>end_time <span class="o">-</span> start_time<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span>
+                  <span class="n">L</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="n">V</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
+                  <span class="n">precompute_covariances</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
+                  <span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2201,7 +2190,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -2211,7 +2200,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -2229,10 +2218,10 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>susieR<span class="o">::</span>susie_plot<span class="p">(</span>res<span class="p">,</span>y<span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> xlab <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> add_legend <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">susieR</span><span class="o">::</span><span class="nf">susie_plot</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2242,7 +2231,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2895,8 +2884,7 @@ AAAAgCQQ2AEAAABIAoEdAAAAgCQQ2AEAAABI4v8BGYp7FO4A3YwAAAAASUVORK5CYII="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Fit-the-simulated-responses">Fit the simulated responses<a class="anchor-link" href="#Fit-the-simulated-responses">&#182;</a></h2>
 </div>
@@ -2907,16 +2895,16 @@ AAAAgCQQ2AEAAABIAoEdAAAAgCQQ2AEAAABI4v8BGYp7FO4A3YwAAAAASUVORK5CYII="
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>start_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-res2 <span class="o">=</span> mmbr<span class="o">::</span>susie<span class="p">(</span>genotype<span class="p">,</span> Y<span class="p">,</span>
-                  L<span class="o">=</span><span class="m">10</span><span class="p">,</span>V<span class="o">=</span>mash_init<span class="p">,</span>
-                  precompute_covariances<span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
-                  compute_objective<span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
-end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span class="p">()</span>
-<span class="kp">print</span><span class="p">(</span>end_time <span class="o">-</span> start_time<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="n">res2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span>
+                  <span class="n">L</span><span class="o">=</span><span class="m">10</span><span class="p">,</span><span class="n">V</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
+                  <span class="n">precompute_covariances</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">,</span>
+                  <span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2926,7 +2914,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -2936,7 +2924,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -2954,10 +2942,10 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>susieR<span class="o">::</span>susie_plot<span class="p">(</span>res2<span class="p">,</span>y<span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> main <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> xlab <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> add_legend <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">susieR</span><span class="o">::</span><span class="nf">susie_plot</span><span class="p">(</span><span class="n">res2</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2967,7 +2955,7 @@ end_time <span class="o">&lt;-</span> <span class="kp">Sys.time</span><span clas
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -3399,10 +3387,10 @@ RK5CYII="
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>res2<span class="o">$</span>pip<span class="p">[</span>snp1<span class="p">]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res2</span><span class="o">$</span><span class="n">pip[snp1]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -3412,7 +3400,7 @@ RK5CYII="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -3431,10 +3419,10 @@ RK5CYII="
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>res2<span class="o">$</span>pip<span class="p">[</span>snp2<span class="p">]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res2</span><span class="o">$</span><span class="n">pip[snp2]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -3444,7 +3432,7 @@ RK5CYII="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -3459,8 +3447,7 @@ RK5CYII="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Although the 2nd SNP did not make into the CS, there is no false positives. Here EZ seems conservative but this is a problem to worry later. Of immediate importance:</p>
 <ol>

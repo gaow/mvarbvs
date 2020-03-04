@@ -242,8 +242,7 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Diagnosis-of-possible-issues-with-EE-model">Diagnosis of possible issues with EE model<a class="anchor-link" href="#Diagnosis-of-possible-issues-with-EE-model">&#182;</a></h1><p>From <a href="https://gaow.github.io/mvarbvs/analysis/20191116_MNM_Benchmark.html">this benchmark</a> I see some runs with EE model has inflated FDR with no missing data. Here are some digging into it.</p>
 
@@ -258,7 +257,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc_mnm</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -268,7 +267,7 @@ body {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -281,8 +280,7 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Here I load previous benchmark results and identify some scenarios where there is a problem,</p>
 
@@ -297,7 +295,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">out</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;../data/finemap_output.20191116.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -311,7 +309,7 @@ body {
 <span class="n">colnames</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;n_traits&#39;</span><span class="p">,</span> <span class="s1">&#39;resid_method&#39;</span><span class="p">,</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="s1">&#39;EZ_model&#39;</span><span class="p">,</span> <span class="s1">&#39;L&#39;</span><span class="p">,</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;purity&#39;</span><span class="p">,</span> <span class="s1">&#39;top_hit&#39;</span><span class="p">,</span> <span class="s1">&#39;total_true&#39;</span><span class="p">,</span> <span class="s1">&#39;total_true_included&#39;</span><span class="p">,</span> <span class="s1">&#39;overlap_var&#39;</span><span class="p">,</span> <span class="s1">&#39;overlap_cs&#39;</span><span class="p">,</span> <span class="s1">&#39;false_positive_cross_cond&#39;</span><span class="p">,</span> <span class="s1">&#39;false_negative_cross_cond&#39;</span><span class="p">,</span> <span class="s1">&#39;true_positive_cross_cond&#39;</span><span class="p">,</span> <span class="s1">&#39;elbo_converged&#39;</span><span class="p">,</span> <span class="s1">&#39;filename&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -324,7 +322,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">bad</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">total</span><span class="o">-</span><span class="n">res</span><span class="err">$</span><span class="n">valid</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">),]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -338,7 +336,7 @@ body {
 <span class="n">nrow</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -348,7 +346,7 @@ body {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -363,8 +361,7 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>There are quite a few of them with 45 traits. But none seen for $R=5$ or $R=10$. Changing <code>EZ_model == 1</code> there is only one such instance as opposed to 412 here.</p>
 
@@ -379,7 +376,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">bad</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -389,7 +386,7 @@ body {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -415,8 +412,7 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Load the 3rd line of dataset identified -- that is, two CS identified but only one of them is valid:</p>
 
@@ -431,7 +427,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">ex</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;mnm_20191116/mnm_high_het/full_data_8_high_het_2_oracle_generator_1_mnm_high_het_9.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -445,14 +441,13 @@ body {
 <span class="n">meta</span> <span class="o">&lt;-</span> <span class="n">DSC_19D98699</span><span class="err">$</span><span class="n">meta</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The original result from DSC is presented in a plot of PIP and CS, where true signal is in red:</p>
 
@@ -467,7 +462,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">true_pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -480,7 +475,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">ex</span><span class="err">$</span><span class="n">result</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;EE model&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -490,7 +485,7 @@ body {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -873,8 +868,7 @@ E2t/6w3+sGIAAAAASUVORK5CYII="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Reproducing-the-problem-with-diagnostic-information">Reproducing the problem with diagnostic information<a class="anchor-link" href="#Reproducing-the-problem-with-diagnostic-information">&#182;</a></h2><p>Starting with analyzing with <code>L=1</code>:</p>
 
@@ -893,7 +887,7 @@ E2t/6w3+sGIAAAAASUVORK5CYII="
 <span class="n">prior</span> <span class="o">=</span> <span class="n">cfg</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">))]][[</span><span class="s1">&#39;high_het&#39;</span><span class="p">]]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -909,7 +903,7 @@ E2t/6w3+sGIAAAAASUVORK5CYII="
 <span class="p">}</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -923,7 +917,7 @@ E2t/6w3+sGIAAAAASUVORK5CYII="
 <span class="n">attach</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/home/gaow/tmp/05-Dec-2019/issue_9_EE.rds&#39;</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -936,14 +930,13 @@ E2t/6w3+sGIAAAAASUVORK5CYII="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">resid_Y</span> <span class="o">&lt;-</span> <span class="n">compute_cov_diag</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This data-set has also been saved to <a href="https://github.com/gaow/mmbr/issues/9#issuecomment-562207003">here</a>. If you want to reproduce my results you can download the data-set from the link above, use <code>attach(readRDS(...))</code> to attach the data to the R workspace and continue with commands below.</p>
 <p>Use EE model and set $L=1$,</p>
@@ -960,14 +953,13 @@ E2t/6w3+sGIAAAAASUVORK5CYII="
 <span class="n">r1</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">precompute_covariance</span> <span class="o">=</span> <span class="n">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>To plot and compare results,</p>
 
@@ -982,7 +974,7 @@ E2t/6w3+sGIAAAAASUVORK5CYII="
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;EE L=1&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -992,7 +984,7 @@ E2t/6w3+sGIAAAAASUVORK5CYII="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1412,8 +1404,7 @@ gg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>So with $L=1$ the first SNP was captured but with low PIP. This is apparently also the top BF. Now try <code>L=2</code> to verify the problem:</p>
 
@@ -1428,7 +1419,7 @@ gg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">r1</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">precompute_covariance</span> <span class="o">=</span> <span class="n">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1441,7 +1432,7 @@ gg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;EE L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1451,7 +1442,7 @@ gg=="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1853,8 +1844,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>But the logBF suggests the 2nd effect should not be considered significant:</p>
 
@@ -1869,7 +1859,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 <div class=" highlight hl-sos"><pre><span></span><span class="n">r1</span><span class="err">$</span><span class="n">lbf</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1879,7 +1869,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1898,8 +1888,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Diagnosis-using-Bayesian-multiple-regression-prior">Diagnosis using Bayesian multiple regression prior<a class="anchor-link" href="#Diagnosis-using-Bayesian-multiple-regression-prior">&#182;</a></h2><p>Here the MASH prior is very simple:</p>
 
@@ -1914,7 +1903,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">m_init</span><span class="err">$</span><span class="n">prior_variance</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1924,7 +1913,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1942,8 +1931,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>So prior variance is one matrix,</p>
 
@@ -1959,7 +1947,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 <span class="n">dim</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1969,7 +1957,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1988,8 +1976,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now fitting it with multivariate Bayesian regression routine not involving MASH. The result should be identical to using MASH EE model in this case:</p>
 
@@ -2004,14 +1991,13 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 <div class=" highlight hl-sos"><pre><span></span><span class="n">r2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">U</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It converged reasonably fast. The result remains the same:</p>
 
@@ -2026,7 +2012,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;Bayesian Multivariate regression L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2036,7 +2022,7 @@ KHYAAAAKQbEDAABQCIodAACAQlDsAAAAFIJiBwAAoBAUOwAAAIWg2AEAACjE/wOV3RfLi75L
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2529,8 +2515,7 @@ RU5ErkJggg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Current-EE-model-behavior">Current EE model behavior<a class="anchor-link" href="#Current-EE-model-behavior">&#182;</a></h2>
 </div>
@@ -2544,7 +2529,7 @@ RU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">m_init</span><span class="err">$</span><span class="n">precompute_cov_matrices</span><span class="p">(</span><span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">),</span><span class="n">resid_Y</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2557,7 +2542,7 @@ RU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">m_init</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">common_sbhat</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2567,7 +2552,7 @@ RU5ErkJggg=="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2582,8 +2567,7 @@ TRUE
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For data without center and scale,</p>
 
@@ -2599,7 +2583,7 @@ TRUE
 <span class="n">m_init</span><span class="err">$</span><span class="n">precomputed</span><span class="err">$</span><span class="n">common_sbhat</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2609,7 +2593,7 @@ TRUE
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2631,14 +2615,13 @@ FALSE
 <div class=" highlight hl-sos"><pre><span></span><span class="n">m_init</span><span class="err">$</span><span class="n">remove_precomputed</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>And not scaling does change result a bit though not completely, see below (why??):</p>
 
@@ -2653,7 +2636,7 @@ FALSE
 <div class=" highlight hl-sos"><pre><span></span><span class="n">r3</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">standardize</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2666,7 +2649,7 @@ FALSE
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r3</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;MASH EE not scale L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2676,7 +2659,7 @@ FALSE
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -3126,7 +3109,7 @@ YII="
 <span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r3</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;MASH EE no intercept L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -3136,7 +3119,7 @@ YII="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -3656,7 +3639,7 @@ AAAAAElFTkSuQmCC"
 <span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r3</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;MASH EE no intercept no scale L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -3666,7 +3649,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -4193,8 +4176,7 @@ KkGwAwAAUAmCHQAAgEr8fztVcFXcx/4wAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Using EZ model, however, gives a bit better result:</p>
 
@@ -4211,7 +4193,7 @@ KkGwAwAAUAmCHQAAgEr8fztVcFXcx/4wAAAAAElFTkSuQmCC"
 <span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r4</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;EZ L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4221,7 +4203,7 @@ KkGwAwAAUAmCHQAAgEr8fztVcFXcx/4wAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -4612,16 +4594,14 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="A-deeper-look-into-the-problem">A deeper look into the problem<a class="anchor-link" href="#A-deeper-look-into-the-problem">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now compare result of one run with <code>BayesianMultivariateRegression</code> vs <code>MashRegression</code>:</p>
 
@@ -4636,7 +4616,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4650,7 +4630,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <span class="n">A</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">save_summary_stats</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4665,7 +4645,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <span class="n">B</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">save_summary_stats</span> <span class="o">=</span> <span class="n">T</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4678,7 +4658,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">testthat:</span><span class="p">:</span><span class="n">expect_equal</span><span class="p">(</span><span class="n">A</span><span class="err">$</span><span class="n">bhat</span><span class="p">,</span><span class="n">B</span><span class="err">$</span><span class="n">bhat</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4691,7 +4671,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">testthat:</span><span class="p">:</span><span class="n">expect_equal</span><span class="p">(</span><span class="n">A</span><span class="err">$</span><span class="n">sbhat</span><span class="p">,</span> <span class="n">B</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4704,7 +4684,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">testthat:</span><span class="p">:</span><span class="n">expect_equal</span><span class="p">(</span><span class="n">A</span><span class="err">$</span><span class="n">posterior_b1</span><span class="p">,</span> <span class="n">B</span><span class="err">$</span><span class="n">posterior_b1</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4717,7 +4697,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">testthat:</span><span class="p">:</span><span class="n">expect_equal</span><span class="p">(</span><span class="k">as</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">A</span><span class="err">$</span><span class="n">posterior_b2</span><span class="p">),</span> <span class="k">as</span><span class="o">.</span><span class="n">vector</span><span class="p">(</span><span class="n">B</span><span class="err">$</span><span class="n">posterior_b2</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4730,7 +4710,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">testthat:</span><span class="p">:</span><span class="n">expect_equal</span><span class="p">(</span><span class="n">A</span><span class="err">$</span><span class="n">lbf</span><span class="p">,</span> <span class="n">B</span><span class="err">$</span><span class="n">lbf</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4743,7 +4723,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">A</span><span class="err">$</span><span class="n">lbf</span><span class="p">,</span> <span class="n">B</span><span class="err">$</span><span class="n">lbf</span><span class="p">,</span><span class="n">xlab</span><span class="o">=</span><span class="s1">&#39;BayesianMultivariate_lbf&#39;</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s1">&#39;EE_lbf&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -4753,7 +4733,7 @@ f0rCjafAoemXAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -5219,8 +5199,7 @@ BMEOAABAIwh2AAAAGkGwAwAA0Ij/B0k9tWnvXw2pAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>All seems fine and some lbf are very big. But there is nothing unusual about them.</p>
 
@@ -5235,7 +5214,7 @@ BMEOAABAIwh2AAAAGkGwAwAA0Ij/B0k9tWnvXw2pAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">B</span><span class="err">$</span><span class="n">bhat</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">B</span><span class="err">$</span><span class="n">lbf</span><span class="o">&gt;</span><span class="mi">800</span><span class="p">),])</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -5245,7 +5224,7 @@ BMEOAABAIwh2AAAAGkGwAwAA0Ij/B0k9tWnvXw2pAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -5278,7 +5257,7 @@ BMEOAABAIwh2AAAAGkGwAwAA0Ij/B0k9tWnvXw2pAAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">B</span><span class="err">$</span><span class="n">sbhat</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">B</span><span class="err">$</span><span class="n">lbf</span><span class="o">&gt;</span><span class="mi">800</span><span class="p">),])</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -5288,7 +5267,7 @@ BMEOAABAIwh2AAAAGkGwAwAA0Ij/B0k9tWnvXw2pAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -5314,8 +5293,7 @@ BMEOAABAIwh2AAAAGkGwAwAA0Ij/B0k9tWnvXw2pAAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Using EZ I get this,</p>
 
@@ -5333,7 +5311,7 @@ BMEOAABAIwh2AAAAGkGwAwAA0Ij/B0k9tWnvXw2pAAAAAElFTkSuQmCC"
 <span class="n">plot</span><span class="p">(</span><span class="n">A</span><span class="err">$</span><span class="n">lbf</span><span class="p">,</span> <span class="n">B</span><span class="err">$</span><span class="n">lbf</span><span class="p">,</span><span class="n">xlab</span><span class="o">=</span><span class="s1">&#39;BayesianMultivariate_lbf&#39;</span><span class="p">,</span> <span class="n">ylab</span><span class="o">=</span><span class="s1">&#39;EZ_lbf&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -5343,7 +5321,7 @@ BMEOAABAIwh2AAAAGkGwAwAA0Ij/B0k9tWnvXw2pAAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -5835,8 +5813,7 @@ aATBDgAAQCMIdgAAABpBsAMAANAIgh0AAIBG/D+CDfYrXt5eOwAAAABJRU5ErkJggg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The trends are the same but only lbf scale is smaller.</p>
 
@@ -5844,8 +5821,7 @@ aATBDgAAQCMIdgAAABpBsAMAANAIgh0AAIBG/D+CDfYrXt5eOwAAAABJRU5ErkJggg=="
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Impact-of-model-mis-specification">Impact of model mis-specification<a class="anchor-link" href="#Impact-of-model-mis-specification">&#182;</a></h2><p>What if the results are correct after all, but driven by mis-specified prior? Because <code>L=2</code> is wrong.</p>
 <h3 id="Estimate-prior-variance">Estimate prior variance<a class="anchor-link" href="#Estimate-prior-variance">&#182;</a></h3><p>So here I estimate prior variance for <code>BayesianMultivariateRegression</code>,</p>
@@ -5861,7 +5837,7 @@ aATBDgAAQCMIdgAAABpBsAMAANAIgh0AAIBG/D+CDfYrXt5eOwAAAABJRU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">r2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">U</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span><span class="o">=</span><span class="s1">&#39;simple&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -5874,7 +5850,7 @@ aATBDgAAQCMIdgAAABpBsAMAANAIgh0AAIBG/D+CDfYrXt5eOwAAAABJRU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;Bayesian Multivariate regression estimate prior, L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -5884,7 +5860,7 @@ aATBDgAAQCMIdgAAABpBsAMAANAIgh0AAIBG/D+CDfYrXt5eOwAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -6407,8 +6383,7 @@ AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now it seems to work! So this is a problem with model mis-specification.</p>
 
@@ -6416,8 +6391,7 @@ AAAAAElFTkSuQmCC"
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Update</strong> I also implemented the <code>simple</code> approach in MashRegression, by checking all <code>lbf</code> in the MASH multivarate regrssion and set prior to zero if they are all smaller than zero.</p>
 
@@ -6433,7 +6407,7 @@ AAAAAElFTkSuQmCC"
 <span class="n">r2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span><span class="o">=</span><span class="s1">&#39;simple&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -6446,7 +6420,7 @@ AAAAAElFTkSuQmCC"
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;Mash Regression estimate prior, L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -6456,7 +6430,7 @@ AAAAAElFTkSuQmCC"
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -6961,8 +6935,7 @@ AABJRU5ErkJggg=="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Add-a-null-weight-to-mash-prior">Add a null weight to mash prior<a class="anchor-link" href="#Add-a-null-weight-to-mash-prior">&#182;</a></h3><p>Add 99% null weight see if that's enough to bring down the 2nd false positive effect,</p>
 
@@ -6981,7 +6954,7 @@ AABJRU5ErkJggg=="
                   <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -6994,7 +6967,7 @@ AABJRU5ErkJggg=="
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">susieR:</span><span class="p">:</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">r2</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;EE with null weight = 0.99, L=2&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">true_pos</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -7004,7 +6977,7 @@ AABJRU5ErkJggg=="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -7485,8 +7458,7 @@ AABIgmAHAAAgCYIdAACAJP4PgQaG6Pjaoh8AAAAASUVORK5CYII="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It does not help.</p>
 
@@ -7501,7 +7473,7 @@ AABIgmAHAAAgCYIdAACAJP4PgQaG6Pjaoh8AAAAASUVORK5CYII="
 <div class=" highlight hl-sos"><pre><span></span><span class="n">m_init</span><span class="err">$</span><span class="n">prior_variance</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -7511,7 +7483,7 @@ AABIgmAHAAAgCYIdAACAJP4PgQaG6Pjaoh8AAAAASUVORK5CYII="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 

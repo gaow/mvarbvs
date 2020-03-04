@@ -242,8 +242,7 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Investigating-MASH-logBF-computation-under-EE-model">Investigating MASH logBF computation under EE model<a class="anchor-link" href="#Investigating-MASH-logBF-computation-under-EE-model">&#182;</a></h1><p>This is a continuation of a <a href="https://gaow.github.io/mvarbvs/analysis/20191204_Diagnosis.html">previous investigation</a>.</p>
 
@@ -251,8 +250,7 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Load-package-and-previous-results">Load package and previous results<a class="anchor-link" href="#Load-package-and-previous-results">&#182;</a></h2><p>Previous result can be <a href="https://github.com/gaow/mmbr/files/3935471/issue_9_EE_sumstats.tar.gz">downloaded here</a>. <code>good_lbf</code> in this dataset saves <code>lbf</code> from <code>mmbr:::BayesianMultivariateRegression</code>.</p>
 
@@ -264,10 +262,10 @@ body {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>devtools<span class="o">::</span>load_all<span class="p">(</span><span class="s">&#39;/home/gaow/GIT/software/mashr&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;/home/gaow/GIT/software/mashr&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -277,7 +275,7 @@ body {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -296,18 +294,17 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="kp">setwd</span><span class="p">(</span><span class="s">&#39;/home/gaow/tmp/07-Dec-2019&#39;</span><span class="p">)</span>
-dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</span><span class="s">&#39;issue_9_EE_sumstats.rds&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">setwd</span><span class="p">(</span><span class="s">&#39;/home/gaow/tmp/07-Dec-2019&#39;</span><span class="p">)</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;issue_9_EE_sumstats.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Set-data">Set data<a class="anchor-link" href="#Set-data">&#182;</a></h2>
 </div>
@@ -318,10 +315,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>mash_data <span class="o">=</span> mash_set_data<span class="p">(</span>dat<span class="o">$</span>bhat<span class="p">,</span> dat<span class="o">$</span>sbhat<span class="p">,</span> V<span class="o">=</span>dat<span class="o">$</span>V<span class="p">,</span> alpha<span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">mash_data</span> <span class="o">=</span> <span class="nf">mash_set_data</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">bhat</span><span class="p">,</span> <span class="n">dat</span><span class="o">$</span><span class="n">sbhat</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -331,10 +328,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="kp">names</span><span class="p">(</span>mash_data<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">mash_data</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -344,7 +341,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -367,8 +364,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Compare-loglik">Compare loglik<a class="anchor-link" href="#Compare-loglik">&#182;</a></h2>
 </div>
@@ -379,10 +375,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>r1 <span class="o">=</span> calc_relative_lik_matrix<span class="p">(</span>mash_data<span class="p">,</span>dat<span class="o">$</span>xUlist<span class="p">,</span> algorithm.version <span class="o">=</span> <span class="s">&#39;Rcpp&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">r1</span> <span class="o">=</span> <span class="nf">calc_relative_lik_matrix</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">xUlist</span><span class="p">,</span> <span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&#39;Rcpp&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -392,10 +388,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>r2<span class="o">=</span> calc_relative_lik_matrix<span class="p">(</span>mash_data<span class="p">,</span>dat<span class="o">$</span>xUlist<span class="p">,</span> algorithm.version <span class="o">=</span> <span class="s">&#39;R&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">r2</span><span class="o">=</span> <span class="nf">calc_relative_lik_matrix</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">xUlist</span><span class="p">,</span> <span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&#39;R&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -405,10 +401,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="kp">names</span><span class="p">(</span>r1<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">r1</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -418,7 +414,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -441,10 +437,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>r1<span class="o">$</span>lfactors<span class="p">,</span> r2<span class="o">$</span>lfactors<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">r1</span><span class="o">$</span><span class="n">lfactors</span><span class="p">,</span> <span class="n">r2</span><span class="o">$</span><span class="n">lfactors</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -454,17 +450,16 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>r1<span class="o">$</span>loglik_matrix<span class="p">,</span> r2<span class="o">$</span>loglik_matrix<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">r1</span><span class="o">$</span><span class="n">loglik_matrix</span><span class="p">,</span> <span class="n">r2</span><span class="o">$</span><span class="n">loglik_matrix</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Loglik computations are okay.</p>
 
@@ -472,8 +467,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Compare-posterior">Compare posterior<a class="anchor-link" href="#Compare-posterior">&#182;</a></h2>
 </div>
@@ -484,10 +478,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>posterior_weights <span class="o">&lt;-</span> compute_posterior_weights<span class="p">(</span>dat<span class="o">$</span>pi_s<span class="p">,</span><span class="kp">exp</span><span class="p">(</span>r1<span class="o">$</span>loglik_matrix<span class="p">))</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">posterior_weights</span> <span class="o">&lt;-</span> <span class="nf">compute_posterior_weights</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">pi_s</span><span class="p">,</span><span class="nf">exp</span><span class="p">(</span><span class="n">r1</span><span class="o">$</span><span class="n">loglik_matrix</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -497,10 +491,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>p1 <span class="o">&lt;-</span> compute_posterior_matrices<span class="p">(</span>mash_data<span class="p">,</span> dat<span class="o">$</span>xUlist<span class="p">,</span> posterior_weights<span class="p">,</span> algorithm.version<span class="o">=</span><span class="s">&quot;Rcpp&quot;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">p1</span> <span class="o">&lt;-</span> <span class="nf">compute_posterior_matrices</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span> <span class="n">dat</span><span class="o">$</span><span class="n">xUlist</span><span class="p">,</span> <span class="n">posterior_weights</span><span class="p">,</span> <span class="n">algorithm.version</span><span class="o">=</span><span class="s">&quot;Rcpp&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -510,10 +504,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>p2 <span class="o">&lt;-</span> compute_posterior_matrices<span class="p">(</span>mash_data<span class="p">,</span> dat<span class="o">$</span>xUlist<span class="p">,</span> posterior_weights<span class="p">,</span> algorithm.version<span class="o">=</span><span class="s">&quot;R&quot;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">p2</span> <span class="o">&lt;-</span> <span class="nf">compute_posterior_matrices</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span> <span class="n">dat</span><span class="o">$</span><span class="n">xUlist</span><span class="p">,</span> <span class="n">posterior_weights</span><span class="p">,</span> <span class="n">algorithm.version</span><span class="o">=</span><span class="s">&quot;R&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -523,10 +517,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="kp">names</span><span class="p">(</span>p1<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">p1</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -536,7 +530,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -562,10 +556,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>PosteriorMean<span class="p">,</span> p2<span class="o">$</span>PosteriorMean<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">p1</span><span class="o">$</span><span class="n">PosteriorMean</span><span class="p">,</span> <span class="n">p2</span><span class="o">$</span><span class="n">PosteriorMean</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -575,10 +569,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>PosteriorSD<span class="p">,</span> p2<span class="o">$</span>PosteriorSD<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">p1</span><span class="o">$</span><span class="n">PosteriorSD</span><span class="p">,</span> <span class="n">p2</span><span class="o">$</span><span class="n">PosteriorSD</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -588,10 +582,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>lfdr<span class="p">,</span> p2<span class="o">$</span>lfdr<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">p1</span><span class="o">$</span><span class="n">lfdr</span><span class="p">,</span> <span class="n">p2</span><span class="o">$</span><span class="n">lfdr</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -601,10 +595,10 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>NegativeProb<span class="p">,</span> p2<span class="o">$</span>NegativeProb<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">p1</span><span class="o">$</span><span class="n">NegativeProb</span><span class="p">,</span> <span class="n">p2</span><span class="o">$</span><span class="n">NegativeProb</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -614,17 +608,16 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>expect_equal<span class="p">(</span>p1<span class="o">$</span>lfsr<span class="p">,</span> p2<span class="o">$</span>lfsr<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">expect_equal</span><span class="p">(</span><span class="n">p1</span><span class="o">$</span><span class="n">lfsr</span><span class="p">,</span> <span class="n">p2</span><span class="o">$</span><span class="n">lfsr</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Posterior calculations also are consistent between R and Rcpp versions.</p>
 
@@ -632,8 +625,7 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="LBF-calculations">LBF calculations<a class="anchor-link" href="#LBF-calculations">&#182;</a></h2>
 </div>
@@ -644,11 +636,11 @@ dat <span class="o">=</span> <span class="kp">readRDS</span><span class="p">(</s
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>null_loglik <span class="o">=</span> compute_null_loglik_from_matrix<span class="p">(</span>r1<span class="p">,</span>mash_data<span class="o">$</span>Shat_alpha<span class="p">)</span>
-alt_loglik <span class="o">=</span> compute_alt_loglik_from_matrix_and_pi<span class="p">(</span>dat<span class="o">$</span>pi_s<span class="p">,</span>r1<span class="p">,</span>mash_data<span class="o">$</span>Shat_alpha<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">null_loglik</span> <span class="o">=</span> <span class="nf">compute_null_loglik_from_matrix</span><span class="p">(</span><span class="n">r1</span><span class="p">,</span><span class="n">mash_data</span><span class="o">$</span><span class="n">Shat_alpha</span><span class="p">)</span>
+<span class="n">alt_loglik</span> <span class="o">=</span> <span class="nf">compute_alt_loglik_from_matrix_and_pi</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">pi_s</span><span class="p">,</span><span class="n">r1</span><span class="p">,</span><span class="n">mash_data</span><span class="o">$</span><span class="n">Shat_alpha</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -658,10 +650,10 @@ alt_loglik <span class="o">=</span> compute_alt_loglik_from_matrix_and_pi<span c
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>lbf <span class="o">=</span> alt_loglik<span class="o">-</span>null_loglik
+<div class=" highlight hl-r"><pre><span></span><span class="n">lbf</span> <span class="o">=</span> <span class="n">alt_loglik</span><span class="o">-</span><span class="n">null_loglik</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -671,10 +663,10 @@ alt_loglik <span class="o">=</span> compute_alt_loglik_from_matrix_and_pi<span c
 <div class="prompt input_prompt">In&nbsp;[21]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>plot<span class="p">(</span>dat<span class="o">$</span>good_lbf<span class="p">,</span> lbf<span class="p">,</span> xlab<span class="o">=</span><span class="s">&quot;BayesianMultivariate lbf&quot;</span><span class="p">,</span> ylab <span class="o">=</span> <span class="s">&quot;EE lbf&quot;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">good_lbf</span><span class="p">,</span> <span class="n">lbf</span><span class="p">,</span> <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;BayesianMultivariate lbf&quot;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&quot;EE lbf&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -684,7 +676,7 @@ alt_loglik <span class="o">=</span> compute_alt_loglik_from_matrix_and_pi<span c
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1206,10 +1198,10 @@ kUCwAwAAABCJ/wcOf5gRh5n97wAAAABJRU5ErkJggg=="
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>plot<span class="p">(</span>dat<span class="o">$</span>bad_lbf<span class="p">,</span> lbf<span class="p">,</span> xlab<span class="o">=</span><span class="s">&quot;EE lbf (mmbr)&quot;</span><span class="p">,</span> ylab <span class="o">=</span> <span class="s">&quot;EE lbf (mashr)&quot;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">bad_lbf</span><span class="p">,</span> <span class="n">lbf</span><span class="p">,</span> <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;EE lbf (mmbr)&quot;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&quot;EE lbf (mashr)&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1219,7 +1211,7 @@ kUCwAwAAABCJ/wcOf5gRh5n97wAAAABJRU5ErkJggg=="
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1685,8 +1677,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>lbf indeed agrees with what <code>mmbr:::MashRegression</code> gives, not consistent with what <code>BayesianMultivariateRegression</code> says.</p>
 
@@ -1694,8 +1685,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Let's see what the loglik matrix tells us about these zero BF's,</p>
 
@@ -1707,10 +1697,10 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="p">(</span>r1<span class="o">$</span>loglik_matrix <span class="o">+</span> r1<span class="o">$</span>lfactors<span class="p">)[</span><span class="kp">which</span><span class="p">(</span>lbf<span class="o">&gt;</span><span class="m">1000</span><span class="p">),]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="p">(</span><span class="n">r1</span><span class="o">$</span><span class="n">loglik_matrix</span> <span class="o">+</span> <span class="n">r1</span><span class="o">$</span><span class="n">lfactors</span><span class="p">)</span><span class="nf">[which</span><span class="p">(</span><span class="n">lbf</span><span class="o">&gt;</span><span class="m">1000</span><span class="p">),</span><span class="n">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1720,7 +1710,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1767,10 +1757,10 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="kp">head</span><span class="p">((</span>r1<span class="o">$</span>loglik_matrix <span class="o">+</span> r1<span class="o">$</span>lfactors<span class="p">)[</span><span class="kp">which</span><span class="p">(</span><span class="kp">abs</span><span class="p">(</span>lbf<span class="p">)</span><span class="o">&lt;</span><span class="m">50</span><span class="p">),])</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">head</span><span class="p">((</span><span class="n">r1</span><span class="o">$</span><span class="n">loglik_matrix</span> <span class="o">+</span> <span class="n">r1</span><span class="o">$</span><span class="n">lfactors</span><span class="p">)</span><span class="nf">[which</span><span class="p">(</span><span class="nf">abs</span><span class="p">(</span><span class="n">lbf</span><span class="p">)</span><span class="o">&lt;</span><span class="m">50</span><span class="p">),</span><span class="n">]</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1780,7 +1770,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1806,8 +1796,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>It seems the loglik for null was wrong from the beginning. The reason <code>mmbr:::BayesianMultivariateRegression</code> does not have the issue is <a href="https://github.com/gaow/mmbr/blob/44a310e3894f516629ddeb3f877c938f4fbc5733/R/bayesian_multivariate_regression.R#L88">because it avoids numerical issues</a> when it tries to compute lbf, instead of using <code>dmvnorm()</code>.</p>
 
@@ -1815,8 +1804,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>And indeed, if I <a href="https://github.com/gaow/mmbr/blob/44a310e3894f516629ddeb3f877c938f4fbc5733/R/bayesian_multivariate_regression.R#L90">uncomment this line</a> using <code>dmvnorm()</code> to compute lbf, then the result agrees with <code>mmbr:::MashRegression</code> and also wrong <a href="https://gaow.github.io/mvarbvs/analysis/20191204_Diagnosis.html">for the example on this page</a>.</p>
 
@@ -1824,8 +1812,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="To-reproduce-the-&quot;good&quot;-lbf-with-summary-stats">To reproduce the "good" lbf with summary stats<a class="anchor-link" href="#To-reproduce-the-&quot;good&quot;-lbf-with-summary-stats">&#182;</a></h2>
 </div>
@@ -1836,11 +1823,11 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 <div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>U <span class="o">=</span> dat<span class="o">$</span>xUlist<span class="p">[[</span><span class="m">2</span><span class="p">]]</span>
-S <span class="o">=</span> <span class="kp">lapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">nrow</span><span class="p">(</span>dat<span class="o">$</span>sbhat<span class="p">),</span> <span class="kr">function</span><span class="p">(</span>j<span class="p">)</span> <span class="kp">diag</span><span class="p">(</span>dat<span class="o">$</span>sbhat<span class="p">[</span>j<span class="p">,])</span> <span class="o">%*%</span> dat<span class="o">$</span>V <span class="o">%*%</span> <span class="kp">diag</span><span class="p">(</span>dat<span class="o">$</span>sbhat<span class="p">[</span>j<span class="p">,]))</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">U</span> <span class="o">=</span> <span class="n">dat</span><span class="o">$</span><span class="n">xUlist[[2]]</span>
+<span class="n">S</span> <span class="o">=</span> <span class="nf">lapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">sbhat</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="nf">diag</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">sbhat[j</span><span class="p">,</span><span class="n">]</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">dat</span><span class="o">$</span><span class="n">V</span> <span class="o">%*%</span> <span class="nf">diag</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">sbhat[j</span><span class="p">,</span><span class="n">]</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1850,13 +1837,13 @@ S <span class="o">=</span> <span class="kp">lapply</span><span class="p">(</span
 <div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>S_inv <span class="o">=</span> <span class="kp">lapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>S<span class="p">),</span> <span class="kr">function</span><span class="p">(</span>j<span class="p">)</span> <span class="kp">solve</span><span class="p">(</span>S<span class="p">[[</span>j<span class="p">]]))</span>
-post_cov <span class="o">=</span> <span class="kp">lapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>S<span class="p">),</span> <span class="kr">function</span><span class="p">(</span>j<span class="p">)</span> U <span class="o">%*%</span> <span class="kp">solve</span><span class="p">(</span><span class="kp">diag</span><span class="p">(</span><span class="kp">nrow</span><span class="p">(</span>U<span class="p">))</span> <span class="o">+</span> S_inv<span class="p">[[</span>j<span class="p">]]</span> <span class="o">%*%</span> U<span class="p">))</span>
-good_lbf <span class="o">=</span> <span class="kp">log</span><span class="p">(</span><span class="kp">sapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>S<span class="p">),</span> <span class="kr">function</span><span class="p">(</span>j<span class="p">)</span> <span class="kp">sqrt</span><span class="p">(</span><span class="kp">det</span><span class="p">(</span>S<span class="p">[[</span>j<span class="p">]])</span><span class="o">/</span><span class="kp">det</span><span class="p">(</span>S<span class="p">[[</span>j<span class="p">]]</span><span class="o">+</span>U<span class="p">))</span><span class="o">*</span><span class="kp">exp</span><span class="p">(</span><span class="m">0.5</span><span class="o">*</span><span class="kp">t</span><span class="p">(</span>dat<span class="o">$</span>bhat<span class="p">[</span>j<span class="p">,])</span><span class="o">%*%</span>S_inv<span class="p">[[</span>j<span class="p">]]</span><span class="o">%*%</span>post_cov<span class="p">[[</span>j<span class="p">]]</span><span class="o">%*%</span>S_inv<span class="p">[[</span>j<span class="p">]]</span><span class="o">%*%</span>dat<span class="o">$</span>bhat<span class="p">[</span>j<span class="p">,])))</span>
-good_lbf<span class="p">[</span><span class="kp">which</span><span class="p">(</span><span class="kp">is.infinite</span><span class="p">(</span>good_lbf<span class="p">))]</span> <span class="o">=</span> <span class="m">0</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">S_inv</span> <span class="o">=</span> <span class="nf">lapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="nf">solve</span><span class="p">(</span><span class="n">S[[j]]</span><span class="p">))</span>
+<span class="n">post_cov</span> <span class="o">=</span> <span class="nf">lapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="n">U</span> <span class="o">%*%</span> <span class="nf">solve</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="nf">nrow</span><span class="p">(</span><span class="n">U</span><span class="p">))</span> <span class="o">+</span> <span class="n">S_inv[[j]]</span> <span class="o">%*%</span> <span class="n">U</span><span class="p">))</span>
+<span class="n">good_lbf</span> <span class="o">=</span> <span class="nf">log</span><span class="p">(</span><span class="nf">sapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="nf">sqrt</span><span class="p">(</span><span class="nf">det</span><span class="p">(</span><span class="n">S[[j]]</span><span class="p">)</span><span class="o">/</span><span class="nf">det</span><span class="p">(</span><span class="n">S[[j]]</span><span class="o">+</span><span class="n">U</span><span class="p">))</span><span class="o">*</span><span class="nf">exp</span><span class="p">(</span><span class="m">0.5</span><span class="o">*</span><span class="nf">t</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">bhat[j</span><span class="p">,</span><span class="n">]</span><span class="p">)</span><span class="o">%*%</span><span class="n">S_inv[[j]]</span><span class="o">%*%</span><span class="n">post_cov[[j]]</span><span class="o">%*%</span><span class="n">S_inv[[j]]</span><span class="o">%*%</span><span class="n">dat</span><span class="o">$</span><span class="n">bhat[j</span><span class="p">,</span><span class="n">]</span><span class="p">)))</span>
+<span class="n">good_lbf</span><span class="nf">[which</span><span class="p">(</span><span class="nf">is.infinite</span><span class="p">(</span><span class="n">good_lbf</span><span class="p">))</span><span class="n">]</span> <span class="o">=</span> <span class="m">0</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1866,10 +1853,10 @@ good_lbf<span class="p">[</span><span class="kp">which</span><span class="p">(</
 <div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>plot<span class="p">(</span>dat<span class="o">$</span>good_lbf<span class="p">,</span> good_lbf<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">good_lbf</span><span class="p">,</span> <span class="n">good_lbf</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1879,7 +1866,7 @@ good_lbf<span class="p">[</span><span class="kp">which</span><span class="p">(</
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2400,8 +2387,7 @@ AKATBDsAAACdINgBAADoBMEOAABAJwh2AAAAOvH/03ErBqwRW/8AAAAASUVORK5CYII="
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2><p>We need to solve the loglik calculation issue in <code>mash</code>, because without fixing that, the posterior weights will be wrong and that will undermine MASH model. I'll try to come up with a minimal example vignette to post on <code>mashr</code> github.</p>
 
@@ -2409,8 +2395,7 @@ AKATBDsAAACdINgBAADoBMEOAABAJwh2AAAAOvH/03ErBqwRW/8AAAAASUVORK5CYII="
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Update">Update<a class="anchor-link" href="#Update">&#182;</a></h2><p>Yuxin pointed to me, after she looked at the data, that if I dont set <code>infinity</code> to zero but work instead at log scale I will be getting the same result as in EE model. Therefore I changed the mmbr code from:</p>
 
@@ -2427,11 +2412,11 @@ AKATBDsAAACdINgBAADoBMEOAABAJwh2AAAAOvH/03ErBqwRW/8AAAAASUVORK5CYII="
 <div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>good_lbf <span class="o">=</span> <span class="kp">sapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="kp">length</span><span class="p">(</span>S<span class="p">),</span> <span class="kr">function</span><span class="p">(</span>j<span class="p">)</span> <span class="m">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="kp">log</span><span class="p">(</span><span class="kp">det</span><span class="p">(</span>S<span class="p">[[</span>j<span class="p">]]))</span> <span class="o">-</span> <span class="kp">log</span><span class="p">(</span><span class="kp">det</span><span class="p">(</span>S<span class="p">[[</span>j<span class="p">]]</span><span class="o">+</span>U<span class="p">)))</span> <span class="o">+</span> <span class="m">0.5</span><span class="o">*</span><span class="kp">t</span><span class="p">(</span>dat<span class="o">$</span>bhat<span class="p">[</span>j<span class="p">,])</span><span class="o">%*%</span>S_inv<span class="p">[[</span>j<span class="p">]]</span><span class="o">%*%</span>post_cov<span class="p">[[</span>j<span class="p">]]</span><span class="o">%*%</span>S_inv<span class="p">[[</span>j<span class="p">]]</span><span class="o">%*%</span>dat<span class="o">$</span>bhat<span class="p">[</span>j<span class="p">,])</span>
-plot<span class="p">(</span>dat<span class="o">$</span>good_lbf<span class="p">,</span> good_lbf<span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">good_lbf</span> <span class="o">=</span> <span class="nf">sapply</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">S</span><span class="p">),</span> <span class="nf">function</span><span class="p">(</span><span class="n">j</span><span class="p">)</span> <span class="m">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="nf">log</span><span class="p">(</span><span class="nf">det</span><span class="p">(</span><span class="n">S[[j]]</span><span class="p">))</span> <span class="o">-</span> <span class="nf">log</span><span class="p">(</span><span class="nf">det</span><span class="p">(</span><span class="n">S[[j]]</span><span class="o">+</span><span class="n">U</span><span class="p">)))</span> <span class="o">+</span> <span class="m">0.5</span><span class="o">*</span><span class="nf">t</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">bhat[j</span><span class="p">,</span><span class="n">]</span><span class="p">)</span><span class="o">%*%</span><span class="n">S_inv[[j]]</span><span class="o">%*%</span><span class="n">post_cov[[j]]</span><span class="o">%*%</span><span class="n">S_inv[[j]]</span><span class="o">%*%</span><span class="n">dat</span><span class="o">$</span><span class="n">bhat[j</span><span class="p">,</span><span class="n">]</span><span class="p">)</span>
+<span class="nf">plot</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">good_lbf</span><span class="p">,</span> <span class="n">good_lbf</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -2441,7 +2426,7 @@ plot<span class="p">(</span>dat<span class="o">$</span>good_lbf<span class="p">,
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -2960,8 +2945,7 @@ AACNINgBAABoBMEOAABAIwh2AAAAGkGwAwAA0Ij/B8rYxymVq0U9AAAAAElFTkSuQmCC"
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>But after the change, those <code>infinite</code> false signals which were once removed now comes back and contribute to bad lbf, leading to false positives in the results.</p>
 

@@ -242,8 +242,7 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Molecular-QTL-workflow">Molecular QTL workflow<a class="anchor-link" href="#Molecular-QTL-workflow">&#182;</a></h1>
 </div>
@@ -257,14 +256,13 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span> <span class="o">-</span><span class="n">n</span> <span class="mi">10</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Data">Data<a class="anchor-link" href="#Data">&#182;</a></h2><p>Molecular QTL data from <a href="http://eqtl.uchicago.edu/jointLCL/">Yang et al (2016) Science</a>. Input are genotypes of ~100 YRI samples with their molecular QTL data measured in LCL. 
 Alternative splicing (AS) data is of the primary interest here although this workflow can be used to analyze all phenotypes.</p>
@@ -279,8 +277,7 @@ chr1    880180  880422  chr1:880180:880422:clu_15502    0.201694364955  0.665990
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Analysis-plan">Analysis plan<a class="anchor-link" href="#Analysis-plan">&#182;</a></h2><ul>
 <li>For each analysis unit (gene, or intron cluster for AS), get the 100Kb to 1MB up/down-stream variants in genotypes</li>
@@ -292,8 +289,7 @@ chr1    880180  880422  chr1:880180:880422:clu_15502    0.201694364955  0.665990
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Workflow-overview">Workflow overview<a class="anchor-link" href="#Workflow-overview">&#182;</a></h2>
 </div>
@@ -307,7 +303,7 @@ chr1    880180  880422  chr1:880180:880422:clu_15502    0.201694364955  0.665990
 <div class=" highlight hl-sos"><pre><span></span><span class="err">!</span><span class="n">sos</span> <span class="n">run</span> <span class="mi">20180704</span><span class="n">_MolecularQTL_Workflow</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">-</span><span class="n">h</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -317,7 +313,7 @@ chr1    880180  880422  chr1:880180:880422:clu_15502    0.201694364955  0.665990
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -413,14 +409,13 @@ Sections
 <span class="n">pop</span> <span class="o">=</span> <span class="s1">&#39;YRI&#39;</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>and some <code>bash</code> variables</p>
 
@@ -428,8 +423,7 @@ Sections
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <div class="highlight"><pre><span></span><span class="nv">xdata</span><span class="o">=</span>/project/compbio/jointLCLs/genotype/hg19/YRI/genotypesYRI.gen.txt.gz
 <span class="nv">ydata</span><span class="o">=</span>/project/compbio/jointLCLs/phenotypes/fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF.txt.gz
@@ -442,16 +436,14 @@ Sections
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Preprocessing-analysis">Preprocessing analysis<a class="anchor-link" href="#Preprocessing-analysis">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The preprocessing pipeline can be executed locally, takes 3hrs on my 40-thread machine:</p>
 
@@ -463,16 +455,14 @@ Sections
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Regressing-out-top-PCs-on-phenotype">Regressing out top PCs on phenotype<a class="anchor-link" href="#Regressing-out-top-PCs-on-phenotype">&#182;</a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>There may well be better approach to control for covariates etc, but <a href="https://github.com/bmvdgeijn/WASP/blob/master/examples/example_data/H3K27ac/get_PCs.R">here</a> is workflow from the authors and was deemed sufficient. See their supplemental table of Yang et al 2016 for how many PC to use for each molecular QTLs.</p>
 <p>Need to cope with missing phenotype data here. See <code>na.omit</code> function call in <code>prcomp</code> and <code>na.actions=na.exclude</code>.</p>
@@ -514,14 +504,13 @@ Sections
     <span class="n">write</span><span class="o">.</span><span class="n">table</span><span class="p">(</span><span class="n">new</span><span class="o">.</span><span class="n">dat</span><span class="p">,</span> <span class="n">gzfile</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">}),</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">quote</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">col</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">names</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Extract-per-unit-variables">Extract per unit variables<a class="anchor-link" href="#Extract-per-unit-variables">&#182;</a></h3>
 </div>
@@ -595,14 +584,13 @@ Sections
         <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_files</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Summary-statistics-and-PVE-estimate">Summary statistics and PVE estimate<a class="anchor-link" href="#Summary-statistics-and-PVE-estimate">&#182;</a></h3><p>We want to estimate PVE from the top signal in each unit, to have an idea of how SuSiE prior variance should be configured. We can also compute summary statistics at this stage. We save only z-scores.</p>
 
@@ -650,14 +638,13 @@ Sections
 <span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>PVE can be assessed by</p>
 
@@ -673,16 +660,14 @@ Sections
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Finemapping-with-SuSiE">Finemapping with SuSiE<a class="anchor-link" href="#Finemapping-with-SuSiE">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>I make two sets of analysis, one with <code>--prior_var</code> set to using region level PVE based value, another to <code>--prior_var 0.096</code> the averaged value computed as above.</p>
 
@@ -690,8 +675,7 @@ Sections
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This step takes 3hrs on my 40-thread machine:</p>
 
@@ -759,7 +743,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
     <span class="p">}</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -787,7 +771,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
     <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -813,7 +797,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
     <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">purity</span><span class="o">=</span><span class="n">purity</span><span class="p">,</span><span class="n">high_pips</span><span class="o">=</span><span class="n">high_pips</span><span class="p">,</span><span class="n">cs</span><span class="o">=</span><span class="n">cs</span><span class="p">),</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -826,7 +810,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">compbio</span><span class="o">/</span><span class="n">jointLCLs</span><span class="o">/</span><span class="n">results</span><span class="o">/</span><span class="n">SuSiE</span><span class="o">/</span><span class="n">fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -836,7 +820,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -856,7 +840,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;SuSiE_CS_Summary.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -876,7 +860,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <span class="k">print</span><span class="p">(</span><span class="n">cnt</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -886,7 +870,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -907,8 +891,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Number-of-CS-with-different-sizes">Number of CS with different sizes<a class="anchor-link" href="#Number-of-CS-with-different-sizes">&#182;</a></h3>
 </div>
@@ -922,7 +905,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -932,7 +915,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -954,7 +937,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">size</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -964,7 +947,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -986,7 +969,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <div class=" highlight hl-sos"><pre><span></span><span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">size</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -996,7 +979,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1018,7 +1001,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <div class=" highlight hl-sos"><pre><span></span><span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">purity</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1028,7 +1011,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1050,7 +1033,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <div class=" highlight hl-sos"><pre><span></span><span class="n">mean</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">purity</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1060,7 +1043,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1082,7 +1065,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">high_pips</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1092,7 +1075,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1107,8 +1090,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="CS-overlapping-status">CS overlapping status<a class="anchor-link" href="#CS-overlapping-status">&#182;</a></h3><p>There is no overlapping CS in our results.</p>
 
@@ -1132,7 +1114,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 <span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1142,7 +1124,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1156,8 +1138,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb signal_summary \
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Finemapping-with-DAP">Finemapping with DAP<a class="anchor-link" href="#Finemapping-with-DAP">&#182;</a></h2><p>I made this for Kevin's analysis. Here is a list of analysis I've ran:</p>
 
@@ -1205,7 +1186,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
   <span class="p">}</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1253,14 +1234,13 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
 <span class="n">_input</span><span class="o">.</span><span class="n">zap</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Follow-up:-verify-with-CAVIAR">Follow-up: verify with CAVIAR<a class="anchor-link" href="#Follow-up:-verify-with-CAVIAR">&#182;</a></h2><p>I found ~1600 splicing QTLs. Only about 150 reports more than 1 CS. But most of these 2+ QTLs are from a scenarios that there seemingly is one signal cluster from the z-score but SuSiE decides to use two CS to capture that cluster.</p>
 <p>Another observation from the SuSiE analysis is that in a number of cases the smallest p-value is not picked up.</p>
@@ -1343,7 +1323,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
     <span class="n">system</span><span class="p">(</span><span class="s1">&#39;rm -f ${_output:n}.tmp.*&#39;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1378,14 +1358,13 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
     <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Follow-up:-verify-with-multiple-regression">Follow-up: verify with multiple regression<a class="anchor-link" href="#Follow-up:-verify-with-multiple-regression">&#182;</a></h2><p>For SuSiE 1 or more CS results we can construct a multiple regression model using variables (or top signal) from each CS, then get the residual, and regress it with the SNP that has top z-score, to see if the effect on the top SNP disappears.</p>
 
@@ -1426,7 +1405,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
   <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">top_pip</span><span class="o">=</span><span class="n">top_pip</span><span class="p">,</span> <span class="n">top_pval</span><span class="o">=</span><span class="n">top_pval</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1450,14 +1429,13 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
     <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Here are the top z-scores that remains significant after removing them from linear regression model:</p>
 
@@ -1472,7 +1450,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="o">/</span><span class="n">project</span><span class="o">/</span><span class="n">compbio</span><span class="o">/</span><span class="n">jointLCLs</span><span class="o">/</span><span class="n">results</span><span class="o">/</span><span class="n">SuSiE</span><span class="o">/</span><span class="n">fastqtl_qqnorm_ASintron_RNAseqGeuvadis_YangVCF_100Kb</span><span class="o">/</span><span class="n">lm_follow_up</span><span class="o">/</span><span class="n">top_cond_pval</span><span class="o">.</span><span class="n">png</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1482,7 +1460,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1494,7 +1472,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1506,7 +1484,7 @@ sos run analysis/20180704_MolecularQTL_Workflow.ipynb preprocess+DAP \
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 

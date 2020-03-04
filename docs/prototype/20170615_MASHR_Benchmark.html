@@ -242,16 +242,14 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="mashr-R-vs.-C++-benchmark">mashr R vs. C++ benchmark<a class="anchor-link" href="#mashr-R-vs.-C++-benchmark">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We've recently implemented a C++ version of <code>mashr</code> which seems to perform very well on small scale toy data. How does it scale with data size? This notebook benchmarks speed of both implementations on small to larger scale of data.</p>
 <p>Before getting to the experiements let's recap the problem and its expected computational requirement. We are fitting <code>mash</code> model with data-set of $J$ effects, $R$ conditions, on $K$ priors each with $L$ grids. Often a straightforward loop is applied over all combinations, generating $LJK$ problems. Then for each problem it often involves some Gaussian density calculation which requires computing inverse of an $R$ matrix. So the computational should scale by the order of $O(LJKR^3)$.</p>
@@ -260,8 +258,7 @@ body {
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="The-benchmark">The benchmark<a class="anchor-link" href="#The-benchmark">&#182;</a></h2><p>Load data</p>
 
@@ -273,18 +270,17 @@ body {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="kn">library</span><span class="p">(</span>mashr<span class="p">)</span>
-data <span class="o">&lt;-</span> <span class="kp">get</span><span class="p">(</span><span class="kp">load</span><span class="p">(</span><span class="s">&quot;../../data/cor_mash.rda&quot;</span><span class="p">))</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">mashr</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">get</span><span class="p">(</span><span class="nf">load</span><span class="p">(</span><span class="s">&quot;../../data/cor_mash.rda&quot;</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Get test set</p>
 
@@ -296,19 +292,19 @@ data <span class="o">&lt;-</span> <span class="kp">get</span><span class="p">(</
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>J <span class="o">=</span> <span class="m">100</span>
-R <span class="o">=</span> <span class="m">53</span>
-betahat <span class="o">&lt;-</span> data<span class="o">$</span>betahat<span class="p">[</span><span class="m">1</span><span class="o">:</span>R<span class="p">,</span> <span class="m">1</span><span class="o">:</span>J<span class="p">]</span>
-sebetahat <span class="o">&lt;-</span> data<span class="o">$</span>sebetahat<span class="p">[</span><span class="m">1</span><span class="o">:</span>R<span class="p">,</span> <span class="m">1</span><span class="o">:</span>J<span class="p">]</span>
-mash_data <span class="o">&lt;-</span> set_mash_data<span class="p">(</span><span class="kp">t</span><span class="p">(</span>betahat<span class="p">),</span> <span class="kp">t</span><span class="p">(</span>sebetahat<span class="p">))</span>
-Ulist <span class="o">&lt;-</span> expand_cov<span class="p">(</span>cov_canonical<span class="p">(</span>mash_data<span class="p">),</span> <span class="kt">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">)</span><span class="o">/</span><span class="m">10</span><span class="p">)</span>
-LK <span class="o">&lt;-</span> <span class="kp">length</span><span class="p">(</span>Ulist<span class="p">)</span>
-<span class="kp">print</span><span class="p">(</span>LK<span class="p">)</span>
-w <span class="o">=</span> <span class="kt">matrix</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> J<span class="p">,</span> LK<span class="p">)</span>
-w <span class="o">=</span> w <span class="o">/</span> LK
+<div class=" highlight hl-r"><pre><span></span><span class="n">J</span> <span class="o">=</span> <span class="m">100</span>
+<span class="n">R</span> <span class="o">=</span> <span class="m">53</span>
+<span class="n">betahat</span> <span class="o">&lt;-</span> <span class="n">data</span><span class="o">$</span><span class="n">betahat[1</span><span class="o">:</span><span class="n">R</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="n">J]</span>
+<span class="n">sebetahat</span> <span class="o">&lt;-</span> <span class="n">data</span><span class="o">$</span><span class="n">sebetahat[1</span><span class="o">:</span><span class="n">R</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="n">J]</span>
+<span class="n">mash_data</span> <span class="o">&lt;-</span> <span class="nf">set_mash_data</span><span class="p">(</span><span class="nf">t</span><span class="p">(</span><span class="n">betahat</span><span class="p">),</span> <span class="nf">t</span><span class="p">(</span><span class="n">sebetahat</span><span class="p">))</span>
+<span class="n">Ulist</span> <span class="o">&lt;-</span> <span class="nf">expand_cov</span><span class="p">(</span><span class="nf">cov_canonical</span><span class="p">(</span><span class="n">mash_data</span><span class="p">),</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">)</span><span class="o">/</span><span class="m">10</span><span class="p">)</span>
+<span class="n">LK</span> <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">Ulist</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">LK</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">1</span><span class="p">,</span> <span class="n">J</span><span class="p">,</span> <span class="n">LK</span><span class="p">)</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">/</span> <span class="n">LK</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -318,7 +314,7 @@ w <span class="o">=</span> w <span class="o">/</span> LK
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -332,8 +328,7 @@ w <span class="o">=</span> w <span class="o">/</span> LK
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Likelihood benchmark</p>
 
@@ -346,18 +341,18 @@ w <span class="o">=</span> w <span class="o">/</span> LK
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="c1">## Compute the likelihood matrix using the R implementation.</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="s">&quot;Computing %d x %d likelihood matrix for %d conditions using R version.\n&quot;</span><span class="p">,</span>J<span class="p">,</span>LK<span class="p">,</span>R<span class="p">))</span>
-out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span class="p">(</span>out1 <span class="o">&lt;-</span> calc_lik_matrix<span class="p">(</span>mash_data<span class="p">,</span>Ulist<span class="p">,</span>log <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>algorithm.version <span class="o">=</span> <span class="s">&quot;R&quot;</span><span class="p">))</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span><span class="s">&quot;Likelihood calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
-              out.time<span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&quot;Computing %d x %d likelihood matrix for %d conditions using R version.\n&quot;</span><span class="p">,</span><span class="n">J</span><span class="p">,</span><span class="n">LK</span><span class="p">,</span><span class="n">R</span><span class="p">))</span>
+<span class="n">out.time</span> <span class="o">&lt;-</span> <span class="nf">system.time</span><span class="p">(</span><span class="n">out1</span> <span class="o">&lt;-</span> <span class="nf">calc_lik_matrix</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">Ulist</span><span class="p">,</span><span class="n">log</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span><span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&quot;R&quot;</span><span class="p">))</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Likelihood calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
+              <span class="n">out.time[</span><span class="s">&quot;elapsed&quot;</span><span class="n">]</span><span class="p">))</span>
 <span class="c1">## Compute the likelihood matrix using the Rcpp implementation.</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="s">&quot;Computing %d x %d likelihood matrix for %d conditions using Rcpp version.\n&quot;</span><span class="p">,</span>J<span class="p">,</span>LK<span class="p">,</span>R<span class="p">))</span>
-out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span class="p">(</span>out2 <span class="o">&lt;-</span> calc_lik_matrix<span class="p">(</span>mash_data<span class="p">,</span>Ulist<span class="p">,</span>log <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span>algorithm.version <span class="o">=</span> <span class="s">&quot;Rcpp&quot;</span><span class="p">))</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span><span class="s">&quot;Likelihood calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
-              out.time<span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&quot;Computing %d x %d likelihood matrix for %d conditions using Rcpp version.\n&quot;</span><span class="p">,</span><span class="n">J</span><span class="p">,</span><span class="n">LK</span><span class="p">,</span><span class="n">R</span><span class="p">))</span>
+<span class="n">out.time</span> <span class="o">&lt;-</span> <span class="nf">system.time</span><span class="p">(</span><span class="n">out2</span> <span class="o">&lt;-</span> <span class="nf">calc_lik_matrix</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">Ulist</span><span class="p">,</span><span class="n">log</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span><span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&quot;Rcpp&quot;</span><span class="p">))</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Likelihood calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
+              <span class="n">out.time[</span><span class="s">&quot;elapsed&quot;</span><span class="n">]</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -367,7 +362,7 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -381,8 +376,7 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Posterior benchmark</p>
 
@@ -395,20 +389,20 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="c1">## Compute posterior using the R implementation.</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="s">&quot;Computing posterior for %d effects under %d conditions using R version.\n&quot;</span><span class="p">,</span>J<span class="p">,</span>R<span class="p">))</span>
-out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span class="p">(</span>out1 <span class="o">&lt;-</span> compute_posterior_matrices<span class="p">(</span>mash_data<span class="p">,</span>Ulist<span class="p">,</span>w<span class="p">,</span>
-                                     algorithm.version <span class="o">=</span> <span class="s">&quot;R&quot;</span><span class="p">))</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span><span class="s">&quot;Calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
-              out.time<span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&quot;Computing posterior for %d effects under %d conditions using R version.\n&quot;</span><span class="p">,</span><span class="n">J</span><span class="p">,</span><span class="n">R</span><span class="p">))</span>
+<span class="n">out.time</span> <span class="o">&lt;-</span> <span class="nf">system.time</span><span class="p">(</span><span class="n">out1</span> <span class="o">&lt;-</span> <span class="nf">compute_posterior_matrices</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">Ulist</span><span class="p">,</span><span class="n">w</span><span class="p">,</span>
+                                     <span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&quot;R&quot;</span><span class="p">))</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
+              <span class="n">out.time[</span><span class="s">&quot;elapsed&quot;</span><span class="n">]</span><span class="p">))</span>
 <span class="c1">## Compute posterior using the Rcpp implementation.</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="s">&quot;Computing posterior matrix for %d effects under %d conditions using Rcpp version.\n&quot;</span><span class="p">,</span>J<span class="p">,</span>R<span class="p">))</span>
-out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span class="p">(</span>out2 <span class="o">&lt;-</span>compute_posterior_matrices<span class="p">(</span>mash_data<span class="p">,</span>Ulist<span class="p">,</span>w<span class="p">,</span>
-                                     algorithm.version <span class="o">=</span> <span class="s">&quot;Rcpp&quot;</span><span class="p">))</span>
-<span class="kp">cat</span><span class="p">(</span><span class="kp">sprintf</span><span class="p">(</span><span class="kp">paste</span><span class="p">(</span><span class="s">&quot;Calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
-              out.time<span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&quot;Computing posterior matrix for %d effects under %d conditions using Rcpp version.\n&quot;</span><span class="p">,</span><span class="n">J</span><span class="p">,</span><span class="n">R</span><span class="p">))</span>
+<span class="n">out.time</span> <span class="o">&lt;-</span> <span class="nf">system.time</span><span class="p">(</span><span class="n">out2</span> <span class="o">&lt;-</span><span class="nf">compute_posterior_matrices</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">Ulist</span><span class="p">,</span><span class="n">w</span><span class="p">,</span>
+                                     <span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&quot;Rcpp&quot;</span><span class="p">))</span>
+<span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
+              <span class="n">out.time[</span><span class="s">&quot;elapsed&quot;</span><span class="n">]</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -418,7 +412,7 @@ out.time <span class="o">&lt;-</span> <span class="kp">system.time</span><span c
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -435,8 +429,7 @@ Calculations took 187.46 seconds.
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Result">Result<a class="anchor-link" href="#Result">&#182;</a></h2><p>I ran the benchmark a few times for 1) fixed $J$ and 2) fixed $R$. Here are the results in tables. <code>P</code> is number of priors, <code>TR</code> is time elapsed for <code>R</code>, <code>TC</code> is time elapsed for <code>C++</code>.</p>
 
@@ -444,8 +437,7 @@ Calculations took 187.46 seconds.
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Likelihood">Likelihood<a class="anchor-link" href="#Likelihood">&#182;</a></h3>
 </div>
@@ -456,12 +448,12 @@ Calculations took 187.46 seconds.
 <div class="prompt input_prompt">In&nbsp;[71]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>import pandas as pd
-lik <span class="o">=</span> pd.read_csv<span class="p">(</span><span class="s">&quot;../../data/mash_benchmark_loglik.txt&quot;</span><span class="p">)</span>
-lik
+<div class=" highlight hl-r"><pre><span></span><span class="n">import</span> <span class="n">pandas</span> <span class="n">as</span> <span class="n">pd</span>
+<span class="n">lik</span> <span class="o">=</span> <span class="nf">pd.read_csv</span><span class="p">(</span><span class="s">&quot;../../data/mash_benchmark_loglik.txt&quot;</span><span class="p">)</span>
+<span class="n">lik</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -471,7 +463,7 @@ lik
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[71]:</div>
+    <div class="prompt output_prompt">Out[71]:</div>
 
 
 
@@ -615,7 +607,7 @@ lik
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -629,8 +621,7 @@ lik
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Posterior">Posterior<a class="anchor-link" href="#Posterior">&#182;</a></h3>
 </div>
@@ -641,11 +632,11 @@ lik
 <div class="prompt input_prompt">In&nbsp;[73]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span>post <span class="o">=</span> pd.read_csv<span class="p">(</span><span class="s">&quot;../../data/mash_benchmark_posterior.txt&quot;</span><span class="p">)</span>
-post
+<div class=" highlight hl-r"><pre><span></span><span class="n">post</span> <span class="o">=</span> <span class="nf">pd.read_csv</span><span class="p">(</span><span class="s">&quot;../../data/mash_benchmark_posterior.txt&quot;</span><span class="p">)</span>
+<span class="n">post</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -655,7 +646,7 @@ post
 
 <div class="output_area">
 
-<div class="prompt output_prompt">Out[73]:</div>
+    <div class="prompt output_prompt">Out[73]:</div>
 
 
 
@@ -799,7 +790,7 @@ post
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
