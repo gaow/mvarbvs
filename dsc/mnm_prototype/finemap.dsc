@@ -12,13 +12,13 @@ DSC:
     method: mnm_high_het, mnm_low_het, mnm_mid_het, mnm_shared, mnm_singleton, mnm_singleton_first, mnm_mixture01, atlasqtl
     score: susie_scores
   run:
-    default: oracle_generator * full_data * simulate * mnm * score
+    default: oracle_generator * full_data * simulate * method * score
   exec_path: code
   output: finemap_output
   global:
     data_file: ../data/gtex-v8-manifest.txt
     # number of dataset to evaluate
-    n_dataset: 500
+    n_dataset: 300
     # number of conditions as a global variable
     R: 5, 10, 50
     # number of causal as a global variable, <0 is to use default
