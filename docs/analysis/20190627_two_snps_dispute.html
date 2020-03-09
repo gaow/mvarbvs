@@ -242,16 +242,14 @@ body {
   </div><!--/.container -->
 </div><!--/.navbar -->
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h1 id="Proof-of-concept:-the-Two-SNP-example">Proof of concept: the Two-SNP example<a class="anchor-link" href="#Proof-of-concept:-the-Two-SNP-example">&#182;</a></h1>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Here I pick up a particular data-set and make a very specific simulation case:</p>
 <ol>
@@ -271,7 +269,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gaow</span><span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="mi">13</span><span class="o">-</span><span class="n">May</span><span class="o">-</span><span class="mi">2019</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -281,7 +279,7 @@ body {
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -294,8 +292,7 @@ body {
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Find-negatively-correlation-SNPs">Find negatively correlation SNPs<a class="anchor-link" href="#Find-negatively-correlation-SNPs">&#182;</a></h2>
 </div>
@@ -309,7 +306,7 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">genotype</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;Multi_Tissues.ENSG00000089486.RDS&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">X</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -322,14 +319,13 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="n">ld</span> <span class="o">=</span> <span class="n">cor</span><span class="p">(</span><span class="n">genotype</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>From MASH paper the variants in question are:</p>
 
@@ -355,7 +351,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">ld</span><span class="p">[</span><span class="s2">&quot;chr16_4475264_C_T_b38&quot;</span><span class="p">,</span> <span class="s2">&quot;chr16_4544670_C_T_b38&quot;</span><span class="p">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -365,7 +361,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -387,7 +383,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">snp1</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">ld</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;chr16_4475264_C_T_b38&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -400,7 +396,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">snp2</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">ld</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;chr16_4544670_C_T_b38&quot;</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -413,7 +409,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">apply</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nb">sum</span><span class="p">)[</span><span class="n">snp1</span><span class="p">]</span> <span class="o">/</span> <span class="n">nrow</span><span class="p">(</span><span class="n">genotype</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -423,7 +419,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -445,7 +441,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">apply</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="nb">sum</span><span class="p">)[</span><span class="n">snp2</span><span class="p">]</span> <span class="o">/</span> <span class="n">nrow</span><span class="p">(</span><span class="n">genotype</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -455,7 +451,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -470,8 +466,7 @@ chr16:4544669-4544670</code></pre>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Simulate-multivariate-phenotypes">Simulate multivariate phenotypes<a class="anchor-link" href="#Simulate-multivariate-phenotypes">&#182;</a></h2>
 </div>
@@ -487,7 +482,7 @@ chr16:4544669-4544670</code></pre>
 <span class="n">eff_factor</span> <span class="o">=</span> <span class="mf">1.2</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -503,7 +498,7 @@ chr16:4544669-4544670</code></pre>
 <span class="n">diag</span><span class="p">(</span><span class="n">sharing</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -519,7 +514,7 @@ chr16:4544669-4544670</code></pre>
 <span class="k">print</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="n">snp2</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -529,7 +524,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -551,7 +546,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">g</span> <span class="o">=</span> <span class="n">genotype</span> <span class="o">%*%</span> <span class="n">b</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -564,7 +559,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">apply</span><span class="p">(</span><span class="n">g</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">sd</span><span class="p">)</span> <span class="o">*</span> <span class="n">eff_factor</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -574,7 +569,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -604,7 +599,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">e</span> <span class="o">=</span> <span class="n">MASS</span><span class="p">::</span><span class="n">mvrnorm</span><span class="p">(</span><span class="n">nrow</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="n">rep</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">R</span><span class="p">),</span> <span class="n">diag</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -617,14 +612,13 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">Y</span> <span class="o">=</span> <span class="n">g</span> <span class="o">+</span> <span class="n">e</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Prepare-MASH-mixture-prior">Prepare MASH mixture prior<a class="anchor-link" href="#Prepare-MASH-mixture-prior">&#182;</a></h2>
 </div>
@@ -644,14 +638,13 @@ chr16:4544669-4544670</code></pre>
 <span class="n">mash_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Fit-MV-SuSiE">Fit MV-SuSiE<a class="anchor-link" href="#Fit-MV-SuSiE">&#182;</a></h2>
 </div>
@@ -667,7 +660,7 @@ chr16:4544669-4544670</code></pre>
                   <span class="n">compute_objective</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -677,7 +670,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stderr output_text">
@@ -698,7 +691,7 @@ chr16:4544669-4544670</code></pre>
 <span class="c1"># conditions = c(&#39;Artery_Aorta&#39;, &#39;Artery_Coronary&#39;, &#39;Artery_Tibial&#39;, &#39;Caudate_basal_ganglia&#39;, &#39;Nucleus_accumbens_basal_ganglia&#39;, &#39;Putamen_basal_ganglia&#39;)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -712,22 +705,20 @@ chr16:4544669-4544670</code></pre>
 <span class="c1"># colnames(res$coef) = conditions</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Visualize-results">Visualize results<a class="anchor-link" href="#Visualize-results">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Notice that with causal SNP being correlated, the sum of PIP in a CS is &gt; 1.0.</p>
 
@@ -742,7 +733,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="err">$</span><span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">res</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="err">$</span><span class="n">L1</span><span class="p">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -752,7 +743,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -781,7 +772,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">res</span><span class="err">$</span><span class="n">pip</span><span class="p">[</span><span class="n">res</span><span class="err">$</span><span class="n">sets</span><span class="err">$</span><span class="n">cs</span><span class="err">$</span><span class="n">L2</span><span class="p">]</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -791,7 +782,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -842,7 +833,7 @@ chr16:4544669-4544670</code></pre>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -852,7 +843,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -874,7 +865,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">mmbr_plot</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -884,7 +875,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -907,7 +898,7 @@ chr16:4544669-4544670</code></pre>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -917,7 +908,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -939,7 +930,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">susie_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -949,7 +940,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -961,7 +952,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -985,7 +976,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mmbr_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -995,7 +986,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1007,7 +998,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1024,8 +1015,7 @@ chr16:4544669-4544670</code></pre>
 
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div>
-<div class="inner_cell">
+</div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For original effect size,</p>
 
@@ -1042,7 +1032,7 @@ chr16:4544669-4544670</code></pre>
 <span class="n">res</span><span class="err">$</span><span class="n">shat</span> <span class="o">=</span> <span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">univariate_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">sebetahat</span><span class="p">))</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1057,7 +1047,7 @@ chr16:4544669-4544670</code></pre>
 <span class="n">p</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">mmbr_plot</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">original_sumstat</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1067,7 +1057,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
@@ -1090,7 +1080,7 @@ chr16:4544669-4544670</code></pre>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1100,7 +1090,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1122,7 +1112,7 @@ chr16:4544669-4544670</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mmbr_plot_toy_original</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
-</div>
+    </div>
 </div>
 </div>
 
@@ -1132,7 +1122,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
@@ -1144,7 +1134,7 @@ chr16:4544669-4544670</code></pre>
 
 <div class="output_area">
 
-<div class="prompt"></div>
+    <div class="prompt"></div>
 
 
 
