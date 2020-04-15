@@ -1,18 +1,24 @@
-simulate_y: regression_simulator.R + \
-                R(res = simulate_main(X, meta, eff_mode, n_traits, n_signal, residual_mode))
+simulate_y_base: regression_simulator.R + \
+                R(res = simulate_main(X, prior_file, eff_mode, n_signal, var_Y, residual_mode))
   @CONF: R_libs=susieR
   X: $X
   Y: $Y
-  n_traits: ${R}
+  var_Y: $var_Y
+  prior_file: "${prior_file}"
   # set signal to <0 to use a default setting
+  eff_mode: "artificial_mixture_50", "gtex_mixture"
   n_signal: ${C}
-  eff_mode: "mixture_01"
-  residual_mode: "identity"
+  residual_mode: "identity", "var_Y"
   # per-condition PVE
   pve: ${pve}
   $Y: res$Y
-  $R: ncol(res$Y)
   $J: ncol(res$X)
-  $pve_out: conf['pve']
-  $meta: dict(true_coef=res['true_coef'], X_csd = res['X_csd'], X_mean = res['X_mean'],
-              residual_variance=res['residual_variance'], original_Y=Y)
+  $R: res$n_traits
+  $meta: list(true_coef=res$true_coef, X_csd=res$X_csd, X_mean=res$X_mean,
+              residual_variance=res$residual_variance, original_Y=Y, prior=res$prior)
+
+artificial_mixture(simulate_y_base):
+    eff_mode: "artificial_mixture_50"
+
+gtex_mixture(simulate_y_base):
+    eff_mode: "gtex_mixture"

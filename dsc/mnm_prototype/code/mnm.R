@@ -1,40 +1,8 @@
-compute_cov_diag <- function(Y){
-    covar <- diag(apply(Y, 2, var, na.rm=T))
-    return(covar)
+prior = meta$prior[[eff_mode]]
+if (is.null(prior)) {
+    # use default canonical mixture prior
+    prior = list(xUlist = mmbr:::create_cov_canonical(ncol(Y)))
 }
-
-compute_cov_flash <- function(Y){
-    fl <- flashier::flash(Y, var.type = 2, prior.family = c(flashier::prior.normal(), flashier::prior.normal.scale.mix()), backfit = TRUE, verbose.lvl=0)
-    if(fl$n.factors==0){
-      covar <- diag(fl$residuals.sd^2)
-    } else {
-      fsd <- sapply(fl$fitted.g[[1]], '[[', "sd")
-      covar <- diag(fl$residuals.sd^2) + crossprod(t(fl$flash.fit$EF[[2]]) * fsd)
-    }
-    s <- diag(apply(Y, 2, sd, na.rm=T))
-    covar <- s%*%cov2cor(covar)%*%s
-    return(covar)
-}
-create_missing <- function(Y1, Y0) {
-    if (ncol(Y0) < ncol(Y1)) {
-        for (i in 1:(ncol(Y1) - ncol(Y0))) {
-            Y0 = cbind(Y0, sample(Y0[, sample.int(ncol(Y0), size=1)]))
-        }
-    }
-    if (ncol(Y0) > ncol(Y1)) Y0 = Y0[,sample(1:ncol(Y1))]
-    res = Y1
-    res[which(is.na(Y0))] = NA
-    # it is possible that some rows of Y1 are made all NA
-    # here we have to make up for it
-    na_rows = which(apply(res, 1, function(x) all(is.na(x))))
-    for (i in na_rows) {
-	    non_na = sample.int(ncol(res), size=1)
-        res[i,non_na] = Y1[i,non_na]
-    }
-    return(res)
-}
-
-prior = cfg[[as.character(ncol(Y))]][[eff_mode]]
 if (missing_Y) Y = create_missing(Y, meta$original_Y)
 if (resid_method == 'flash') {
     resid_Y <- compute_cov_flash(Y)

@@ -8,7 +8,9 @@
 
 
 full_data: misc.R + R(data = readRDS(dataset);
-            X = center_scale(filter_X(data$X[,get_center(subset, ncol(data$X))], missing_rate_cutoff, maf_cutoff)))
+            X = center_scale(filter_X(data$X[,get_center(subset, ncol(data$X))], missing_rate_cutoff, maf_cutoff));
+            var_Y = compute_cov_flash(data$y_res))
+  @CONF: R_libs = flashier@willwerscheid/flashier
   tag: "full"
   dataset: Shell{head -${n_dataset} ${data_file}}
   subset: NULL
@@ -16,12 +18,13 @@ full_data: misc.R + R(data = readRDS(dataset);
   maf_cutoff: 0.05
   $X: X
   $Y: data$y_res
+  $var_Y: var_Y
   $N: nrow(X)
 
 lite_data(full_data):
   tag: "2k"
   subset: 2000
-             
+
 small_data(full_data):
   tag: "1k"
   subset: 1000

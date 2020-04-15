@@ -3,7 +3,6 @@ mnm_base: misc.R + mnm.R
   X: $X
   Y: $Y
   meta: $meta
-  cfg: $configurations
   eff_mode: 'identity', 'low_het', 'mid_het', 'high_het', 'shared', 'singleton', 'singleton_1', 'mixture_1'
   L: 1, 2, 10
   missing_Y: TRUE, FALSE
@@ -46,5 +45,20 @@ mnm_singleton_first(mnm_base):
 
 mnm_mixture01(mnm_base):
   eff_mode: 'mixture_1'
+  missing_Y: FALSE
+  resid_method: 'oracle', 'flash'
+
+mnm_oracle(mnm_base):
+  eff_mode: 'oracle'
+  missing_Y: FALSE
+  resid_method: 'oracle', 'flash'
+
+mnm_identity(mnm_base):
+  eff_mode: 'identity'
+  missing_Y: FALSE
+  resid_method: 'oracle', 'flash'
+
+mnm_naive(mnm_base):
+  eff_mode: 'naive'
   missing_Y: FALSE
   resid_method: 'oracle', 'flash'

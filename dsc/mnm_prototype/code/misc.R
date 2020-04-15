@@ -29,6 +29,23 @@ subset_N <- function(gene, N_sub){
     }
 }
 
+compute_cov_diag <- function(Y){
+    covar <- diag(apply(Y, 2, var, na.rm=T))
+    return(covar)
+}
+
+compute_cov_flash <- function(Y){
+    fl <- flashier::flash(Y, var.type = 2, prior.family = c(flashier::prior.normal(), flashier::prior.normal.scale.mix()), backfit = TRUE, verbose.lvl=0)
+    if(fl$n.factors==0){
+      covar <- diag(fl$residuals.sd^2)
+    } else {
+      fsd <- sapply(fl$fitted.g[[1]], '[[', "sd")
+      covar <- diag(fl$residuals.sd^2) + crossprod(t(fl$flash.fit$EF[[2]]) * fsd)
+    }
+    s <- diag(apply(Y, 2, sd, na.rm=T))
+    covar <- s%*%cov2cor(covar)%*%s
+    return(covar)
+}
 create_missing <- function(Y1, Y0) {
     if (ncol(Y0) < ncol(Y1)) {
         for (i in 1:(ncol(Y1) - ncol(Y0))) {

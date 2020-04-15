@@ -1,7 +1,7 @@
 # input is prob of having each of n effect variables
 # output is the number of effect variables for current data-set
 get_n_signal = function(p = c(0.3,0.3,0.2,0.1,0.1,0,0,0,0,0)) {
-    one_hot = rmultinom(1, 1, prob=p)[,1])
+    one_hot = rmultinom(1, 1, prob=p)[,1]
     return (which(one_hot == 1))
 }
 
@@ -19,9 +19,10 @@ get_effects = function(J, R, n, U, w) {
     which_b = sample(1:J,n)
     for (j in which_b) {
         # each effect comes from a mixture component with given prob
-        dist_index = rmultinom(1, 1, prob=w)[,1]
-        b[,j] = MASS::mvrnorm(n = 1, mu=rep(0,R), Sigma=U[[dist_index]])
+        dist_index = which(rmultinom(1, 1, prob=w)[,1] == 1)
+        b[j,] = MASS::mvrnorm(n = 1, mu=rep(0,R), Sigma=U[[dist_index]])
     }
+    return(b)
 }
 
 get_residual_correlation = function(residual, R) {
@@ -57,35 +58,39 @@ get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8
     }
     sigma = diag(sigma)
     residual_var = sigma %*% residual_corr %*% sigma
-    y = yhat + MASS::mvrnorm(n = nrow(X), mu=rep(0,R), Sigma=residual_var)
-    return(y = y, residual_var = residual_var)
+    y = yhat + MASS::mvrnorm(n = nrow(X), mu=rep(0,nrow(residual_var)), Sigma=residual_var)
+    return(list(y = y, residual_var = residual_var))
 }
 
-mash_sim = function(X, J, R, U, w, pve, n=NULL, residual=NULL) {
+mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL) {
     if (is.null(n) || n < 1) n = get_n_signal()
-    for (i in 1:length(U)) {
-        if (nrow(U[[i]])!=R) stop("Prior dimension does not match number of conditions")
+    R = nrow(U[[1]])
+    if (R == 1) stop("This simulator is not meant for univariate data")
+    for (i in 2:length(U)) {
+        if (nrow(U[[i]])!=R) stop("Prior dimension are inconsistent in the given mixture")
     }
     b = get_effects(J, R, n, U, w)
     residual_corr = get_residual_correlation(residual, R)
     y_sim = get_y(X, b, residual_corr, pve)
     # FIXME: format data for R = 1
-    return(Y=y_sim$y, true_coef=b, n_signal=n, residual_variance=y_sim$residual_var)
+    return(list(Y=y_sim$y, true_coef=b, n_signal=n, n_traits=R, residual_variance=y_sim$residual_var))
 }
 
 get_prior = function(U,w) {
-    return(list(xUlist = U, pi = w, null_weight = 0))
+    return(list(oracle=list(xUlist = U, pi = w, null_weight = 0),
+    identity = list(xUlist = list(identity=diag(nrow(U[[1]]))), pi=1, null_weight=0),
+    shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0)))
 }
 
-simulate_main = function(X, meta_file, prior, n_traits, n_signal, diag_residual) {
-    # meta = list(prior = list(...), residual = list(...))
-    meta = readRDS(meta_file)
-    X = susieR::set_X_attributes(X)
-    res = mash_sim(X, ncol(X), n_traits, meta$prior[[prior]]$U, meta$prior[[prior]]$w, pve, n_signal, meta$residual[[residual_mode]])
+simulate_main = function(X, prior_file, prior, n_signal, var_Y, residual_mode) {
+    prior_data = readRDS(prior_file)
+    X = susieR:::set_X_attributes(X)
+    if (residual_mode == 'identity') residual = NULL
+    else residual = var_Y
+    res = mash_sim(X, ncol(X), prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual)
     res$X = X
-    res$prior = get_prior(meta[[prior]]$U, meta[[prior]]$w)
+    res$prior = get_prior(prior_data[[prior]]$U, prior_data[[prior]]$w)
     res$X_mean = attributes(X)[["scaled:center"]]
     res$X_csd = attributes(X)[["scaled:scale"]]
-    res$varY = var(res$Y)
     return(res)
 }

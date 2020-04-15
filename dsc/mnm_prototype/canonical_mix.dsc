@@ -1,7 +1,7 @@
 #!/usr/bin/env dsc
 
 %include modules/data
-%include modules/simulate
+%include modules/simulate_canonical_mix
 %include modules/mnm
 %include modules/score
 %include modules/atlasqtl
