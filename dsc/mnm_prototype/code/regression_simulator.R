@@ -82,12 +82,13 @@ get_prior = function(U,w) {
     shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0)))
 }
 
-simulate_main = function(X, prior_file, prior, n_signal, var_Y, residual_mode) {
+simulate_main = function(X, Y, missing_Y, prior_file, prior, n_signal, var_Y, residual_mode) {
     prior_data = readRDS(prior_file)
     X = susieR:::set_X_attributes(X)
     if (residual_mode == 'identity') residual = NULL
     else residual = var_Y
     res = mash_sim(X, ncol(X), prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual)
+    if (missing_Y) res$Y = create_missing(res$Y, Y)
     res$X = X
     res$prior = get_prior(prior_data[[prior]]$U, prior_data[[prior]]$w)
     res$X_mean = attributes(X)[["scaled:center"]]
