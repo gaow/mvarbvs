@@ -4,7 +4,7 @@ mnm_base: misc.R + mnm.R
   Y: $Y
   meta: $meta
   eff_mode: 'identity', 'low_het', 'mid_het', 'high_het', 'shared', 'singleton', 'singleton_1', 'mixture_1'
-  L: 1, 2, 10
+  L: 10
   resid_method: 'oracle', 'diag', 'flash'
   $result: result
 
