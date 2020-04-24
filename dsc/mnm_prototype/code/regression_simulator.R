@@ -36,7 +36,7 @@ get_residual_correlation = function(residual, R) {
 
 # is_pve_variable_avg: the input PVE is the average PVE per variable.
 # That is, total PVE for that effect is number of effect variables * the PVE.
-get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8) {
+get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8, scale_y = FALSE) {
     yhat = X %*% b
     genetic_var = apply(yhat, 2, var)
     if (is_pve_variable_avg) {
@@ -59,6 +59,11 @@ get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8
     sigma = diag(sigma)
     residual_var = sigma %*% residual_corr %*% sigma
     y = yhat + MASS::mvrnorm(n = nrow(X), mu=rep(0,nrow(residual_var)), Sigma=residual_var)
+    if(scale_y){
+      sd_y = apply(y, 2, sd)
+      y = scale(y)
+      residual_var = t(residual_var / sd_y) / sd_y
+    }
     return(list(y = y, residual_var = residual_var))
 }
 
