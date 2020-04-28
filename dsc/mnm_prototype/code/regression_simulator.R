@@ -75,7 +75,7 @@ mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
     if (scale_y) {
         # y * diag(1/sd_y) = x * (b * diag(1/sd_y)) + (e * diag(1/sd_y))
         sd_y = apply(y_sim$y, 2, sd)
-        y_sim$y = scale(y_sim$y)
+        y_sim$y = t(t(y_sim$y) / sd_y)
         y_sim$residual_var = t(y_sim$residual_var / sd_y) / sd_y
         b = t(t(b) / sd_y)
         for (i in 2:length(U)) {
