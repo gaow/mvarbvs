@@ -36,7 +36,7 @@ get_residual_correlation = function(residual, R) {
 
 # is_pve_variable_avg: the input PVE is the average PVE per variable.
 # That is, total PVE for that effect is number of effect variables * the PVE.
-get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8, scale_y = FALSE) {
+get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8) {
     yhat = X %*% b
     genetic_var = apply(yhat, 2, var)
     if (is_pve_variable_avg) {
@@ -59,15 +59,10 @@ get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8
     sigma = diag(sigma)
     residual_var = sigma %*% residual_corr %*% sigma
     y = yhat + MASS::mvrnorm(n = nrow(X), mu=rep(0,nrow(residual_var)), Sigma=residual_var)
-    if(scale_y){
-      sd_y = apply(y, 2, sd)
-      y = scale(y)
-      residual_var = t(residual_var / sd_y) / sd_y
-    }
     return(list(y = y, residual_var = residual_var))
 }
 
-mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL) {
+mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
     if (is.null(n) || n < 1) n = get_n_signal()
     R = nrow(U[[1]])
     if (R == 1) stop("This simulator is not meant for univariate data")
@@ -77,8 +72,19 @@ mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL) {
     b = get_effects(J, R, n, U, w)
     residual_corr = get_residual_correlation(residual, R)
     y_sim = get_y(X, b, residual_corr, pve)
+    if (scale_y) {
+        # y * diag(1/sd_y) = x * (b * diag(1/sd_y)) + (e * diag(1/sd_y))
+        sd_y = apply(y_sim$y, 2, sd)
+        y_sim$y = scale(y_sim$y)
+        y_sim$residual_var = t(y_sim$residual_var / sd_y) / sd_y
+        b = t(t(b) / sd_y)
+        for (i in 2:length(U)) {
+            # b ~ N(0, diag(1/sd_y) * U * diag(1/sd_y))
+            U[[i]] = t(U[[i]] / sd_y) / sd_y
+        }
+    }
     # FIXME: format data for R = 1
-    return(list(Y=y_sim$y, true_coef=b, n_signal=n, n_traits=R, residual_variance=y_sim$residual_var))
+    return(list(Y=y_sim$y, true_coef=b, n_signal=n, n_traits=R, residual_variance=y_sim$residual_var, U=U))
 }
 
 get_prior = function(U,w) {
@@ -87,15 +93,15 @@ get_prior = function(U,w) {
     shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0)))
 }
 
-simulate_main = function(X, Y, missing_Y, prior_file, prior, n_signal, var_Y, residual_mode) {
+simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, var_Y, residual_mode) {
     prior_data = readRDS(prior_file)
     X = susieR:::set_X_attributes(X)
     if (residual_mode == 'identity') residual = NULL
     else residual = var_Y
-    res = mash_sim(X, ncol(X), prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual)
+    res = mash_sim(X, ncol(X), prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual, scale_Y)
     if (missing_Y) res$Y = create_missing(res$Y, Y)
     res$X = X
-    res$prior = get_prior(prior_data[[prior]]$U, prior_data[[prior]]$w)
+    res$prior = get_prior(res$U, prior_data[[prior]]$w)
     res$X_mean = attributes(X)[["scaled:center"]]
     res$X_csd = attributes(X)[["scaled:scale"]]
     return(res)

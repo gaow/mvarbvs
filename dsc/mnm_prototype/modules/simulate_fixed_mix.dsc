@@ -1,10 +1,11 @@
 simulate_y_base: regression_simulator.R + \
-                R(res = simulate_main(X, Y, missing_Y, prior_file, eff_mode, n_signal, var_Y, residual_mode))
+                R(res = simulate_main(X, Y, missing_Y, scale_Y, prior_file, eff_mode, n_signal, var_Y, residual_mode))
   @CONF: R_libs=susieR
   X: $X
   Y: $Y
   var_Y: $var_Y
   missing_Y: TRUE, FALSE
+  scale_Y: TRUE
   prior_file: "${prior_file}"
   # set signal to <0 to use a default setting
   eff_mode: "artificial_mixture_50", "gtex_mixture"
