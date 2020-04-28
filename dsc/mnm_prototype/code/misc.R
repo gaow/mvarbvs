@@ -11,8 +11,6 @@ get_center <- function(k,n) {
   return(start:end)
 }
 
-center_scale <- function(X) return(susieR:::set_X_attributes(as.matrix(X), center=TRUE, scale = TRUE))
-
 subset_N <- function(gene, N_sub){
     ###If we want to subset individuals
     if(!is.null(N_sub)){

@@ -82,9 +82,11 @@ mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
             # b ~ N(0, diag(1/sd_y) * U * diag(1/sd_y))
             U[[i]] = t(U[[i]] / sd_y) / sd_y
         }
+    } else {
+        sd_y = NA
     }
     # FIXME: format data for R = 1
-    return(list(Y=y_sim$y, true_coef=b, n_signal=n, n_traits=R, residual_variance=y_sim$residual_var, U=U))
+    return(list(Y=y_sim$y, true_coef=b, n_signal=n, n_traits=R, residual_variance=y_sim$residual_var, U=U, Y_sd=sd_y))
 }
 
 get_prior = function(U,w) {
@@ -95,14 +97,10 @@ get_prior = function(U,w) {
 
 simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, var_Y, residual_mode) {
     prior_data = readRDS(prior_file)
-    X = susieR:::set_X_attributes(X)
     if (residual_mode == 'identity') residual = NULL
     else residual = var_Y
     res = mash_sim(X, ncol(X), prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual, scale_Y)
     if (missing_Y) res$Y = create_missing(res$Y, Y)
-    res$X = X
     res$prior = get_prior(res$U, prior_data[[prior]]$w)
-    res$X_mean = attributes(X)[["scaled:center"]]
-    res$X_csd = attributes(X)[["scaled:scale"]]
     return(res)
 }

@@ -1,6 +1,7 @@
 simulate_y_base: regression_simulator.R + \
                 R(res = simulate_main(X, Y, missing_Y, scale_Y, prior_file, eff_mode, n_signal, var_Y, residual_mode))
   @CONF: R_libs=susieR
+  # here, X has already been centered and scaled
   X: $X
   Y: $Y
   var_Y: $var_Y
@@ -14,10 +15,10 @@ simulate_y_base: regression_simulator.R + \
   # per-condition PVE
   pve: ${pve}
   $Y: res$Y
-  $J: ncol(res$X)
+  $J: ncol(X)
   $R: res$n_traits
-  $meta: list(true_coef=res$true_coef, X_csd=res$X_csd, X_mean=res$X_mean,
-              residual_variance=res$residual_variance, original_Y=Y, prior=res$prior)
+  $meta: list(true_coef=res$true_coef, residual_variance=res$residual_variance,
+              original_Y=Y, Y_sd=res$Y_sd, prior=res$prior)
 
 artificial_mixture(simulate_y_base):
     eff_mode: "artificial_mixture_50"
