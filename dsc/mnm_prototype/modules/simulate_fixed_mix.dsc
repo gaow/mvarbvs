@@ -22,8 +22,10 @@ simulate_y_base: regression_simulator.R + \
 
 artificial_mixture(simulate_y_base):
     eff_mode: "artificial_mixture_50"
+    residual_mode: "var_Y"
     missing_Y: FALSE
 
 gtex_mixture(simulate_y_base):
     eff_mode: "gtex_mixture"
+    residual_mode: "var_Y"
     missing_Y: FALSE

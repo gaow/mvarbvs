@@ -4,15 +4,15 @@
 %include modules/simulate_fixed_mix
 %include modules/mnm
 %include modules/score
+%include modules/mthess
 %include modules/atlasqtl
 
 DSC:
   define:
     simulate: artificial_mixture, gtex_mixture
-    method: mnm_oracle, mnm_naive, mnm_identity, mnm_shared #, atlasqtl, mnm_ed
-    score: susie_scores
+    mnm: mnm_oracle, mnm_naive, mnm_identity, mnm_shared
   run:
-    default: lite_data * simulate * method * score
+    default: small_data * simulate * (mnm * susie_scores, atlasqtl) #, mthess)
   exec_path: code
   output: finemap_fixed_mixture
   global:

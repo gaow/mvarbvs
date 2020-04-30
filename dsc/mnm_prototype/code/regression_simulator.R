@@ -26,10 +26,9 @@ get_effects = function(J, R, n, U, w) {
 }
 
 get_residual_correlation = function(residual, R) {
-    if (is.null(residual)) {
+    if (is.null(residual) || nrow(residual) != R) {
         return(diag(R))
     } else {
-        if (nrow(residual) != R) stop("residual dimension mismatch")
         return(cov2cor(residual))
     }
 }

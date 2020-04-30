@@ -1,4 +1,6 @@
 # this is a temp solution to the problem with atlasqtl where perfectly correlated variables are removed
+# even though this patch attempts to address to the issue, unfortunately it failed to divide PIP by the number of occurances.
+# https://github.com/hruffieux/atlasqtl/commit/627385114a0559fdc8f957254db045437aaa85fb
 rmvd_recover = function(dat, all_snps) {
     # first column is remained, 2nd removed
     coll_x = cbind(names(dat$rmvd_coll_x), dat$rmvd_coll_x)
@@ -44,10 +46,10 @@ rmvd_recover = function(dat, all_snps) {
     return(as.matrix(d))
 }
 
-library(atlasqtl)
-# see `?atlasqtl`
-pat = meta$true_coef != 0
-p0 = c(mean(colSums(pat)), 10)
+# prior are mean and variance of expected number of effect variables
+# set variance to 9 to indicate \pm 3 and use mean of actual non-zero effects
+# I think this is quite fair
+p0 = c(mean(colSums(meta$true_coef != 0)), 9)
 result = atlasqtl::atlasqtl(Y = Y, X = X, p0 = p0, user_seed = DSC_REPLICATE)
 result$gam_vb_completed = rmvd_recover(result, colnames(X))
 # FIXME: have to discuss this
