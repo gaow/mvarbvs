@@ -16,14 +16,18 @@ rmvd_recover = function(dat, all_snps) {
         res[[name]] = length(res[[name]]) + 1
     }
     # create full result with removed being NA
-    new_pip = matrix(all_snps,length(all_snps),1)
-    colnames(new_pip) = c("snp")
+    options(stringsAsFactors = FALSE)
+    new_pip = as.data.frame(cbind(all_snps,1:length(all_snps)))
+    new_pip[,2] = as.numeric(new_pip[,2])
+    colnames(new_pip) = c("snp", "id")
     reported_pip = cbind(rownames(dat$gam_vb), dat$gam_vb)
     colnames(reported_pip) = c("snp", colnames(dat$gam_vb))
-    d = merge(new_pip, reported_pip, by='snp', all = T)
+    d = merge(new_pip, reported_pip, by='snp', all=T)
+    d =  d[order(d$id), ]
     if (!all(d$snp == all_snps)) stop("Merged table rows are messed up")
     ## life is hard ...
     d$snp = NULL
+    d$id = NULL
     d = as.data.frame(lapply(d, function(x) as.numeric(as.character(x))))
     rownames(d) = all_snps
     # fill PIPs for the removed
