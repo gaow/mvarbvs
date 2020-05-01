@@ -40,7 +40,9 @@ compute_cov_flash <- function(Y){
       fsd <- sapply(fl$fitted.g[[1]], '[[', "sd")
       covar <- diag(fl$residuals.sd^2) + crossprod(t(fl$flash.fit$EF[[2]]) * fsd)
     }
-    s <- diag(apply(Y, 2, sd, na.rm=T))
+    s <- apply(Y, 2, sd, na.rm=T)
+    if (length(s)>1) s = diag(s)
+    else s = matrix(s,1,1)
     covar <- s%*%cov2cor(covar)%*%s
     return(covar)
 }
