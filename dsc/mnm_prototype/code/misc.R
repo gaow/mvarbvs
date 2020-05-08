@@ -42,7 +42,10 @@ compute_cov_flash <- function(Y, error_cache = NULL){
       fsd <- sapply(fl$fitted.g[[1]], '[[', "sd")
       covar <- diag(fl$residuals.sd^2) + crossprod(t(fl$flash.fit$EF[[2]]) * fsd)
     }
-    if (nrow(covar) == 0) stop("Computed covariance matrix has zero rows")
+    if (nrow(covar) == 0) {
+      covar <- diag(ncol(Y))
+      stop("Computed covariance matrix has zero rows")
+    }
     }, error = function(e) {
       if (!is.null(error_cache)) {
         saveRDS(list(data=Y, message=warning(e)), error_cache)
