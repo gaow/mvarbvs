@@ -43,9 +43,13 @@ compute_cov_flash <- function(Y, error_cache = NULL){
       covar <- diag(fl$residuals.sd^2) + crossprod(t(fl$flash.fit$EF[[2]]) * fsd)
     }
     }, error = function(e) {
-      if (!is.null(error_cache)) saveRDS(list(data=Y, message=warning(e)), error_cache)
-      warning("FLASH failed. Using Identity matrix instead.")
-      warning(e)
+      if (!is.null(error_cache)) {
+        saveRDS(list(data=Y, message=warning(e)), error_cache)
+        warning("FLASH failed. Using Identity matrix instead.")
+        warning(e)
+      } else {
+        stop(e)
+      }
     })
     s <- apply(Y, 2, sd, na.rm=T)
     if (length(s)>1) s = diag(s)
