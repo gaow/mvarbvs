@@ -10,10 +10,11 @@
 DSC:
   define:
     simulate: artificial_mixture, gtex_mixture
+    simulate_identity: artificial_mixture_identity, gtex_mixture_identity
     mnm: mnm_oracle, mnm_naive, mnm_identity, mnm_shared
   run:
     default: small_data * simulate * (mnm * susie_scores, atlasqtl) #, mthess)
-    simulate_only: full_data * simulate # using command argument --n_dataset 20000 this should simulate 20000 data-sets and generate univariate summary stats, for learning about mixture prior using EB
+    simulate_only: full_data * simulate_identity # using command argument --n_dataset 20000 this should simulate 20000 data-sets and generate univariate summary stats, for learning about mixture prior using EB
   exec_path: code
   output: finemap_fixed_mixture
   global:

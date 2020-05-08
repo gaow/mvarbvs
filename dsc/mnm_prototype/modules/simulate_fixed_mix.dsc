@@ -31,3 +31,13 @@ gtex_mixture(simulate_y_base):
     eff_mode: "gtex_mixture"
     residual_mode: "var_Y"
     missing_Y: FALSE
+
+artificial_mixture_identity(simulate_y_base):
+    eff_mode: "artificial_mixture_50"
+    residual_mode: "identity"
+    missing_Y: FALSE
+
+gtex_mixture_identity(simulate_y_base):
+    eff_mode: "gtex_mixture"
+    residual_mode: "identity"
+    missing_Y: FALSE
