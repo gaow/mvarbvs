@@ -8,4 +8,6 @@
 #SBATCH --job-name=dsc-submitter
 #SBATCH --output=dsc-log-%J.out
 #SBATCH --error=dsc-log-%J.err
-./fixed_mix.dsc --host dsc_mnm.yml -o mnm_20200430 -s existing -e ignore &> mnm_20200430.log
+
+#./fixed_mix.dsc --host dsc_mnm.yml -o mnm_20200430 -s existing -e ignore &> mnm_20200430.log
+./fixed_mix.dsc --host dsc_mnm.yml --target simulate_only --n_dataset 20000 -o mnm_sumstats -s existing -e ignore &> mnm_sumstats.log

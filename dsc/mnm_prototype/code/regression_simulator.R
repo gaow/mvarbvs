@@ -94,12 +94,13 @@ get_prior = function(U,w) {
     shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0)))
 }
 
-simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, var_Y, residual_mode) {
+simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, var_Y, residual_mode, save_summary_stats) {
     prior_data = readRDS(prior_file)
     if (residual_mode == 'identity') residual = NULL
     else residual = var_Y
     res = mash_sim(X, ncol(X), prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual, scale_Y)
     if (missing_Y) res$Y = create_missing(res$Y, Y)
     res$prior = get_prior(res$U, prior_data[[prior]]$w)
+    if (save_summary_stats) res$sumstats = mm_regression(X, res$Y)
     return(res)
 }
