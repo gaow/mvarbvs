@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -330,7 +329,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
@@ -376,7 +375,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">X</span> <span class="n">Y</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
 <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">multivariate_normal</span>
 </pre></div>
 
@@ -410,7 +409,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
@@ -462,7 +461,7 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
@@ -515,9 +514,9 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">linear_model</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="c1"># model = linear_model.MultiTaskLassoCV(alphas = [(x+1)/100 for x in range(10)], fit_intercept = False)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">MultiTaskLasso</span><span class="p">(</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.04</span><span class="p">,</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">MultiTaskLasso</span><span class="p">(</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.04</span><span class="p">,</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
 </pre></div>
 
@@ -556,13 +555,13 @@ w_{jt} &amp;= \frac{\pi_t\N(\bs{\xi}_j|\bs{0}, \bs{V}_t + \bs{\Lambda}^{-1}\|\bs
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">]))],</span> <span class="n">model</span><span class="o">.</span><span class="n">coef_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -681,7 +680,7 @@ s2eUAwRMUQAAAABJRU5ErkJggg==
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
@@ -815,7 +814,7 @@ NSwGSVLDYpAkNSwGSVLDYpAkNSwGSVLj/wPmlxT8EzWbPwAAAABJRU5ErkJggg==
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
@@ -952,7 +951,7 @@ AAAAAElFTkSuQmCC
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="c1"># model = linear_model.LassoCV(alphas = [(x+1)/100 for x in range(10)], fit_intercept = False)</span>
-<span class="n">model</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="bp">False</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">linear_model</span><span class="o">.</span><span class="n">Lasso</span><span class="p">(</span><span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span><span class="p">,</span> <span class="n">fit_intercept</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
 <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
 </pre></div>
 
@@ -983,7 +982,7 @@ AAAAAElFTkSuQmCC
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
@@ -1124,7 +1123,7 @@ xQItPQAAAABJRU5ErkJggg==
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
@@ -1265,7 +1264,7 @@ pX8AAAAASUVORK5CYII=
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_cell celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
@@ -1299,10 +1298,10 @@ pX8AAAAASUVORK5CYII=
             <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_std</span><span class="p">),</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X_norm</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X_std</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_norm</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">R_all</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">Delta</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">update_lambda</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_all</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Delta</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_lambda</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -1310,33 +1309,33 @@ pX8AAAAASUVORK5CYII=
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">iLambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span><span class="p">)</span>
         <span class="c1"># B is M by K matrix</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">R_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_all</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span>
         <span class="c1"># K is number of effects</span>
         <span class="k">for</span> <span class="n">kk</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
             <span class="c1"># R[kk] is N x M, where M is number of conditions</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_all</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span><span class="n">kk</span><span class="p">],</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">kk</span><span class="p">,:]</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
             <span class="c1"># E[kk] is M x 1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">E</span><span class="p">[:,</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">T</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_std</span><span class="p">[:,</span><span class="n">kk</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">E</span><span class="p">[:,</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_std</span><span class="p">[:,</span><span class="n">kk</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
             <span class="c1"># Rx[kk] is M x 1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Rx</span><span class="p">[:,</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">T</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span><span class="n">kk</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Rx</span><span class="p">[:,</span><span class="n">kk</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[:,</span><span class="n">kk</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
             <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">wdE</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span><span class="n">tt</span><span class="p">]</span> <span class="o">=</span> <span class="n">multivariate_normal</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">E</span><span class="p">[:,</span><span class="n">kk</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> \
                                                           <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span> <span class="o">+</span> <span class="n">iLambda</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_norm</span><span class="p">[</span><span class="n">kk</span><span class="p">])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pi</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span>
             <span class="n">wdE_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wdE</span><span class="p">[</span><span class="n">kk</span><span class="p">,:])</span>
             <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
                 <span class="c1"># Can be made faster via low-rank approximation</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">Sigma</span><span class="p">[</span><span class="n">tt</span><span class="p">][</span><span class="n">kk</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_norm</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span><span class="p">)</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">Mu</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,</span><span class="n">tt</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sigma</span><span class="p">[</span><span class="n">tt</span><span class="p">][</span><span class="n">kk</span><span class="p">,:,:]</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rx</span><span class="p">[:,</span><span class="n">kk</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Sigma</span><span class="p">[</span><span class="n">tt</span><span class="p">][</span><span class="n">kk</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_norm</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span><span class="p">)</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="p">[</span><span class="n">tt</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Mu</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,</span><span class="n">tt</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sigma</span><span class="p">[</span><span class="n">tt</span><span class="p">][</span><span class="n">kk</span><span class="p">,:,:]</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">Rx</span><span class="p">[:,</span><span class="n">kk</span><span class="p">]</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span><span class="n">tt</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wdE</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span><span class="n">tt</span><span class="p">]</span> <span class="o">/</span> <span class="n">wdE_sum</span>
                 <span class="c1">#if self.gamma[kk,tt] != self.gamma[kk,tt]:</span>
                 <span class="c1">#    self.gamma[kk,tt] = 0</span>
             <span class="c1"># dot product for weighted sums</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">kk</span><span class="p">,:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mu</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,:]</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="n">kk</span><span class="p">,:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">kk</span><span class="p">,:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Mu</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,:]</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="n">kk</span><span class="p">,:]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_lambda</span><span class="p">:</span>
             <span class="c1"># Recalculate h, a M by M matrix</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">X_norm</span><span class="p">[</span><span class="n">kk</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">[</span><span class="n">kk</span><span class="p">,</span><span class="n">tt</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">square</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Mu</span><span class="p">[</span><span class="n">kk</span><span class="p">,:,</span><span class="n">tt</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">[</span><span class="n">kk</span><span class="p">,:])</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sigma</span><span class="p">[</span><span class="n">tt</span><span class="p">][</span><span class="n">kk</span><span class="p">,:,:]))</span> <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">V</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="k">for</span> <span class="n">kk</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])],</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
             <span class="c1"># Update Lambda</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">Delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R_all</span><span class="o">.</span><span class="n">T</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_all</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">R_all</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">R_all</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">H</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Delta</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">vem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -1360,12 +1359,12 @@ pX8AAAAASUVORK5CYII=
         <span class="bp">self</span><span class="o">.</span><span class="n">prt</span><span class="p">(</span><span class="s1">&#39;H&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prt</span><span class="p">(</span><span class="s1">&#39;Delta&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">prt</span><span class="p">(</span><span class="s1">&#39;Lambda&#39;</span><span class="p">)</span>
-        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;X @ B = </span><span class="se">\n</span><span class="s1">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">))</span>
-        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;Y - X @ B = </span><span class="se">\n</span><span class="s1">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="err">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;X @ B = </span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Y - X @ B = </span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">B</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">prt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
-        <span class="k">print</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;self.{variable}&#39;</span><span class="p">)))</span>
-        <span class="k">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">variable</span><span class="p">,</span> <span class="s1">&#39;=&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">eval</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;self.</span><span class="si">{</span><span class="n">variable</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1414,7 +1413,7 @@ pX8AAAAASUVORK5CYII=
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[59]:</div>
 <div class="inner_cell">
@@ -1641,7 +1640,7 @@ Y - X @ B =
 </div>
 
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[61]:</div>
 <div class="inner_cell">
@@ -1921,7 +1920,7 @@ Y - X @ B =
 </div>
 </div>
 </div>
-<div class="cell border-box-sizing code_cell rendered">
+<div class="cell border-box-sizing code_cell rendered celltag_report_output">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[64]:</div>
 <div class="inner_cell">
@@ -2141,7 +2140,7 @@ Y - X @ B =
 </div>
 <hr>
 Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/2936cf4ed5b7bf6d7398d0fa0ebff77e285bb1b4/prototype/20171103_MNMASH_Model.ipynb"><code>prototype/20171103_MNMASH_Model.ipynb</code></a> committed by Gao Wang on Wed Nov 29 14:31:31 2017 <a href="http://github.com/gaow/mvarbvs/commit/2936cf4ed5b7bf6d7398d0fa0ebff77e285bb1b4">revision 15, 2936cf4</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/2936cf4ed5b7bf6d7398d0fa0ebff77e285bb1b4/prototype/20171103_MNMASH_Model.ipynb"><code>prototype/20171103_MNMASH_Model.ipynb</code></a> committed by Gao Wang on Wed Nov 29 15:31:31 2017 <a href="http://github.com/gaow/mvarbvs/commit/2936cf4ed5b7bf6d7398d0fa0ebff77e285bb1b4">revision 15, 2936cf4</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

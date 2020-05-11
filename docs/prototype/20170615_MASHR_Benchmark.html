@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -294,8 +293,8 @@ body {
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">J</span> <span class="o">=</span> <span class="m">100</span>
 <span class="n">R</span> <span class="o">=</span> <span class="m">53</span>
-<span class="n">betahat</span> <span class="o">&lt;-</span> <span class="n">data</span><span class="o">$</span><span class="n">betahat[1</span><span class="o">:</span><span class="n">R</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="n">J]</span>
-<span class="n">sebetahat</span> <span class="o">&lt;-</span> <span class="n">data</span><span class="o">$</span><span class="n">sebetahat[1</span><span class="o">:</span><span class="n">R</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="n">J]</span>
+<span class="n">betahat</span> <span class="o">&lt;-</span> <span class="n">data</span><span class="o">$</span><span class="n">betahat</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="n">R</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="n">J</span><span class="p">]</span>
+<span class="n">sebetahat</span> <span class="o">&lt;-</span> <span class="n">data</span><span class="o">$</span><span class="n">sebetahat</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="n">R</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="n">J</span><span class="p">]</span>
 <span class="n">mash_data</span> <span class="o">&lt;-</span> <span class="nf">set_mash_data</span><span class="p">(</span><span class="nf">t</span><span class="p">(</span><span class="n">betahat</span><span class="p">),</span> <span class="nf">t</span><span class="p">(</span><span class="n">sebetahat</span><span class="p">))</span>
 <span class="n">Ulist</span> <span class="o">&lt;-</span> <span class="nf">expand_cov</span><span class="p">(</span><span class="nf">cov_canonical</span><span class="p">(</span><span class="n">mash_data</span><span class="p">),</span> <span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="m">20</span><span class="p">)</span><span class="o">/</span><span class="m">10</span><span class="p">)</span>
 <span class="n">LK</span> <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">Ulist</span><span class="p">)</span>
@@ -344,12 +343,12 @@ body {
 <span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&quot;Computing %d x %d likelihood matrix for %d conditions using R version.\n&quot;</span><span class="p">,</span><span class="n">J</span><span class="p">,</span><span class="n">LK</span><span class="p">,</span><span class="n">R</span><span class="p">))</span>
 <span class="n">out.time</span> <span class="o">&lt;-</span> <span class="nf">system.time</span><span class="p">(</span><span class="n">out1</span> <span class="o">&lt;-</span> <span class="nf">calc_lik_matrix</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">Ulist</span><span class="p">,</span><span class="n">log</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span><span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&quot;R&quot;</span><span class="p">))</span>
 <span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Likelihood calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
-              <span class="n">out.time[</span><span class="s">&quot;elapsed&quot;</span><span class="n">]</span><span class="p">))</span>
+              <span class="n">out.time</span><span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
 <span class="c1">## Compute the likelihood matrix using the Rcpp implementation.</span>
 <span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&quot;Computing %d x %d likelihood matrix for %d conditions using Rcpp version.\n&quot;</span><span class="p">,</span><span class="n">J</span><span class="p">,</span><span class="n">LK</span><span class="p">,</span><span class="n">R</span><span class="p">))</span>
 <span class="n">out.time</span> <span class="o">&lt;-</span> <span class="nf">system.time</span><span class="p">(</span><span class="n">out2</span> <span class="o">&lt;-</span> <span class="nf">calc_lik_matrix</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">Ulist</span><span class="p">,</span><span class="n">log</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">,</span><span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&quot;Rcpp&quot;</span><span class="p">))</span>
 <span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Likelihood calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
-              <span class="n">out.time[</span><span class="s">&quot;elapsed&quot;</span><span class="n">]</span><span class="p">))</span>
+              <span class="n">out.time</span><span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
 </pre></div>
 
     </div>
@@ -393,13 +392,13 @@ body {
 <span class="n">out.time</span> <span class="o">&lt;-</span> <span class="nf">system.time</span><span class="p">(</span><span class="n">out1</span> <span class="o">&lt;-</span> <span class="nf">compute_posterior_matrices</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">Ulist</span><span class="p">,</span><span class="n">w</span><span class="p">,</span>
                                      <span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&quot;R&quot;</span><span class="p">))</span>
 <span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
-              <span class="n">out.time[</span><span class="s">&quot;elapsed&quot;</span><span class="n">]</span><span class="p">))</span>
+              <span class="n">out.time</span><span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
 <span class="c1">## Compute posterior using the Rcpp implementation.</span>
 <span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="s">&quot;Computing posterior matrix for %d effects under %d conditions using Rcpp version.\n&quot;</span><span class="p">,</span><span class="n">J</span><span class="p">,</span><span class="n">R</span><span class="p">))</span>
 <span class="n">out.time</span> <span class="o">&lt;-</span> <span class="nf">system.time</span><span class="p">(</span><span class="n">out2</span> <span class="o">&lt;-</span><span class="nf">compute_posterior_matrices</span><span class="p">(</span><span class="n">mash_data</span><span class="p">,</span><span class="n">Ulist</span><span class="p">,</span><span class="n">w</span><span class="p">,</span>
                                      <span class="n">algorithm.version</span> <span class="o">=</span> <span class="s">&quot;Rcpp&quot;</span><span class="p">))</span>
 <span class="nf">cat</span><span class="p">(</span><span class="nf">sprintf</span><span class="p">(</span><span class="nf">paste</span><span class="p">(</span><span class="s">&quot;Calculations took %0.2f seconds.\n&quot;</span><span class="p">),</span>
-              <span class="n">out.time[</span><span class="s">&quot;elapsed&quot;</span><span class="n">]</span><span class="p">))</span>
+              <span class="n">out.time</span><span class="p">[</span><span class="s">&quot;elapsed&quot;</span><span class="p">]))</span>
 </pre></div>
 
     </div>
@@ -805,7 +804,7 @@ Calculations took 187.46 seconds.
 </div>
 <hr>
 Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/51e156d45b28468227430c32a761e083e514ff72/prototype/20170615_MASHR_Benchmark.ipynb"><code>prototype/20170615_MASHR_Benchmark.ipynb</code></a> committed by Gao Wang on Mon Aug 28 21:01:28 2017 <a href="http://github.com/gaow/mvarbvs/commit/51e156d45b28468227430c32a761e083e514ff72">revision 1, 51e156d</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/51e156d45b28468227430c32a761e083e514ff72/prototype/20170615_MASHR_Benchmark.ipynb"><code>prototype/20170615_MASHR_Benchmark.ipynb</code></a> committed by Gao Wang on Mon Aug 28 22:01:28 2017 <a href="http://github.com/gaow/mvarbvs/commit/51e156d45b28468227430c32a761e083e514ff72">revision 1, 51e156d</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

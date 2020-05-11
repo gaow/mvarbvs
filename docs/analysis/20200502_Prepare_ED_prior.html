@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>m&m ash</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">m&m ash</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Multivariate-EBNM-based-prior-for-M&amp;M">Multivariate EBNM based prior for M&amp;M<a class="anchor-link" href="#Multivariate-EBNM-based-prior-for-M&amp;M">&#182;</a></h1><p>Here for the simulation benchmark we prepare mixture prior based on a mulrivariate Emperical Bayes Normal Mean model (previously we use Extreme Deconvolution for the task).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Approach">Approach<a class="anchor-link" href="#Approach">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here is the analysis plan:</p>
+<ol>
+<li>Identify up to 20K genes where there is complete phenotype data to make a good / realistic residual variance estimate via FLASH</li>
+<li>Simulate 20K data under my phenotypic models (the latest DSC benchmark setting) and generate sumstats for them ; bhat and sbhat</li>
+<li>For each data-set, take the strongest gene-snp pair as the strong set</li>
+<li>Also select from each data-set perhaps 4 "random" gene-snp pair.</li>
+<li>then try to run your estimate of Vhat to get Vhat first, and run Yunqi / Peter's ED</li>
+</ol>
+<p>In GTEx we have &gt;35K genes. The reason we want to try using 20K is that 20K seems to have enough information learning about the pattern of sharing between conditions.</p>
+<p>But we "cheat" a bit by simulating under identity residual variance for all genes, and fit EBNM assuming residual variance is identity, too; or just estimating a global residual variance. This makes the problem easier. Because in practice residual can be different (though maybe similar!) for different genes.</p>
+<p>So the simplified plan is to only do 2~5 with 2 using just identity matrix for residual variance.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Workflow">Workflow<a class="anchor-link" href="#Workflow">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/project2/mstephens/gaow/mvarbvs/dsc/mnm_prototype/mnm_sumstats&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;artificial_mixture_identity&#39;</span> <span class="c1"># &#39;gtex_mixture_identity&#39;</span>
+<span class="kn">parameter:</span> <span class="n">per_chunk</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">project2</span><span class="o">/</span><span class="n">mstephens</span><span class="o">/</span><span class="n">gaow</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">mnm_prototype</span><span class="o">/</span><span class="n">mnm_sumstats</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/project2/mstephens/gaow/mvarbvs/dsc/mnm_prototype/mnm_sumstats</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Get-top-gene-SNP-and-random-gene-SNP-pairs-per-gene">Get top gene-SNP and random gene-SNP pairs per gene<a class="anchor-link" href="#Get-top-gene-SNP-and-random-gene-SNP-pairs-per-gene">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># extract data for MAHS from summary stats</span>
+<span class="p">[</span><span class="n">extract_1</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">999</span>
+<span class="kn">parameter:</span> <span class="n">n_random</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="kn">input:</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">cwd</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">/*.rds&#39;</span><span class="p">),</span> <span class="n">group_by</span> <span class="o">=</span> <span class="n">per_chunk</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cwd</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">/cache/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">_index</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">.rds&quot;</span>
+<span class="kn">task:</span> <span class="kp">trunk_workers</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s1">&#39;1h&#39;</span><span class="p">,</span> <span class="kp">trunk_size</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s1">&#39;4G&#39;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">tags</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s1">bn</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+    <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">seed</span><span class="p">})</span>
+    <span class="n">matxMax</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">mtx</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">max_idx</span> <span class="o">&lt;-</span> <span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mtx</span><span class="p">)</span>
+        <span class="n">colmn</span> <span class="o">&lt;-</span> <span class="n">max_idx</span> <span class="o">%/%</span> <span class="n">nrow</span><span class="p">(</span><span class="n">mtx</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">row</span> <span class="o">&lt;-</span> <span class="n">max_idx</span> <span class="o">%%</span> <span class="n">nrow</span><span class="p">(</span><span class="n">mtx</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span> <span class="n">matrix</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">colmn</span><span class="p">),</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">remove_rownames</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kp">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="n">rownames</span><span class="p">(</span><span class="n">x</span><span class="p">[[</span><span class="kp">name</span><span class="p">]])</span> <span class="o">=</span> <span class="n">NULL</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">extract_one_data</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">n_random</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1"># If cannot read the input for some reason then let it go. I dont care losing one.</span>
+        <span class="n">dat</span> <span class="o">=</span> <span class="n">tryCatch</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span><span class="err">$</span><span class="n">sumstats</span><span class="p">,</span> <span class="n">error</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">return</span><span class="p">(</span><span class="n">NULL</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="k">return</span><span class="p">(</span><span class="n">NULL</span><span class="p">)</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">dat</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)</span>
+        <span class="n">max_idx</span> <span class="o">=</span> <span class="n">matxMax</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="n">strong</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bhat</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">bhat</span><span class="p">[</span><span class="n">max_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">],,</span><span class="n">drop</span><span class="o">=</span><span class="n">F</span><span class="p">],</span> <span class="n">sbhat</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">sbhat</span><span class="p">[</span><span class="n">max_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">],,</span><span class="n">drop</span><span class="o">=</span><span class="n">F</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">max_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">2</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">max_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">nrow</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">sample_idx</span> <span class="o">=</span> <span class="mi">1</span><span class="p">:(</span><span class="n">max_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">sample_idx</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">:(</span><span class="n">max_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="n">max_idx</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">nrow</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+        <span class="p">}</span>
+        <span class="n">random_idx</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">sample_idx</span><span class="p">,</span> <span class="n">n_random</span><span class="p">,</span> <span class="n">replace</span> <span class="o">=</span> <span class="n">T</span><span class="p">)</span>
+        <span class="n">random</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">bhat</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">bhat</span><span class="p">[</span><span class="n">random_idx</span><span class="p">,,</span><span class="n">drop</span><span class="o">=</span><span class="n">F</span><span class="p">],</span> <span class="n">sbhat</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">sbhat</span><span class="p">[</span><span class="n">random_idx</span><span class="p">,,</span><span class="n">drop</span><span class="o">=</span><span class="n">F</span><span class="p">])</span>
+        <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">random</span> <span class="o">=</span> <span class="n">remove_rownames</span><span class="p">(</span><span class="n">random</span><span class="p">),</span>  <span class="n">strong</span> <span class="o">=</span> <span class="n">remove_rownames</span><span class="p">(</span><span class="n">strong</span><span class="p">)))</span>
+    <span class="p">}</span>
+    <span class="n">merge_data</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">one_data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span><span class="p">(</span><span class="n">one_data</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">one_data</span><span class="p">))</span> <span class="p">{</span>
+          <span class="k">return</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">for</span> <span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">one_data</span><span class="p">))</span> <span class="p">{</span>
+              <span class="k">for</span> <span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">one_data</span><span class="p">[[</span><span class="n">d</span><span class="p">]]))</span> <span class="p">{</span>
+                  <span class="n">res</span><span class="p">[[</span><span class="n">d</span><span class="p">]][[</span><span class="n">s</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">d</span><span class="p">]][[</span><span class="n">s</span><span class="p">]],</span> <span class="n">one_data</span><span class="p">[[</span><span class="n">d</span><span class="p">]][[</span><span class="n">s</span><span class="p">]])</span>
+              <span class="p">}</span>
+          <span class="p">}</span>
+          <span class="k">return</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">f</span> <span class="ow">in</span> <span class="n">c</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">,}))</span> <span class="p">{</span>
+      <span class="n">res</span> <span class="o">=</span> <span class="n">merge_data</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">extract_one_data</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">n_random</span><span class="p">}))</span>
+    <span class="p">}</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+  
+<span class="p">[</span><span class="n">extract_2</span><span class="p">]</span>
+<span class="kn">input:</span> <span class="n">group_by</span> <span class="o">=</span> <span class="s2">&quot;all&quot;</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cwd</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">.rds&quot;</span>
+<span class="kn">task:</span> <span class="kp">trunk_workers</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s1">&#39;1h&#39;</span><span class="p">,</span> <span class="kp">trunk_size</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s1">&#39;4G&#39;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">tags</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s1">bn</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+    <span class="n">merge_data</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">one_data</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span><span class="p">(</span><span class="n">one_data</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">for</span> <span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">one_data</span><span class="p">))</span> <span class="p">{</span>
+              <span class="k">for</span> <span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">one_data</span><span class="p">[[</span><span class="n">d</span><span class="p">]]))</span> <span class="p">{</span>
+                  <span class="n">res</span><span class="p">[[</span><span class="n">d</span><span class="p">]][[</span><span class="n">s</span><span class="p">]]</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">d</span><span class="p">]][[</span><span class="n">s</span><span class="p">]],</span> <span class="n">one_data</span><span class="p">[[</span><span class="n">d</span><span class="p">]][[</span><span class="n">s</span><span class="p">]])</span>
+              <span class="p">}</span>
+          <span class="p">}</span>
+          <span class="k">return</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">f</span> <span class="ow">in</span> <span class="n">c</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">,}))</span> <span class="p">{</span>
+      <span class="n">dat</span> <span class="o">=</span> <span class="n">merge_data</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="c1"># make output consistent in format with </span>
+    <span class="c1"># https://github.com/stephenslab/gtexresults/blob/master/workflows/mashr_flashr_workflow.ipynb</span>
+    <span class="n">saveRDS</span><span class="p">(</span>
+          <span class="nb">list</span><span class="p">(</span><span class="n">random</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="err">$</span><span class="n">sbhat</span><span class="p">,</span>
+           <span class="n">strong</span><span class="o">.</span><span class="n">z</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">strong</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">dat</span><span class="err">$</span><span class="n">strong</span><span class="err">$</span><span class="n">sbhat</span><span class="p">,</span> 
+           <span class="n">random</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="err">$</span><span class="n">bhat</span><span class="p">,</span>
+           <span class="n">strong</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">strong</span><span class="err">$</span><span class="n">bhat</span><span class="p">,</span>
+           <span class="n">random</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="err">$</span><span class="n">sbhat</span><span class="p">,</span>
+           <span class="n">strong</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">strong</span><span class="err">$</span><span class="n">sbhat</span><span class="p">),</span>
+          <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>To run it:</p>
+
+<pre><code>for m in artificial_mixture_identity gtex_mixture_identity; do 
+    sos run analysis/20200502_Prepare_ED_prior.ipynb extract --model $m -c midway2.yml -q midway2
+done</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Run-extreme-deconvolution-using-mashr">Run extreme deconvolution using <code>mashr</code><a class="anchor-link" href="#Run-extreme-deconvolution-using-mashr">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Before this, we need to run the following to generate FLASH mixture,</p>
+
+<pre><code>for m in artificial_mixture_identity gtex_mixture_identity; do
+sos run ~/GIT/gtexresults/workflows/mashr_flashr_workflow.ipynb flash \
+    --cwd /project2/mstephens/gaow/mvarbvs/dsc/mnm_prototype/mnm_sumstats/ \
+    --data /project2/mstephens/gaow/mvarbvs/dsc/mnm_prototype/mnm_sumstats/$m.rds \
+    --effect-model EE
+done</code></pre>
+<p>We will use <code>simple</code> method to compute the residual variance, as implemented in the pipeline below.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">ed_1</span><span class="p">,</span> <span class="n">teem_1</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s2">&quot;mashr&quot;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">npc</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="kn">input:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cwd</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">.rds&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cwd</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">.EE.flash.rds&quot;</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">cwd</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s2">.FLASH_PC</span><span class="si">{</span><span class="n">npc</span><span class="si">}</span><span class="s2">.rds&quot;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s2">n</span><span class="si">}</span><span class="s2">.stderr&quot;</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s2">n</span><span class="si">}</span><span class="s2">.stdout&quot;</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">mashr</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="o">.</span><span class="n">s</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="o">.</span><span class="n">b</span> <span class="o">==</span> <span class="mi">0</span> <span class="o">&amp;</span> <span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="o">.</span><span class="n">s</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1E3</span>
+    <span class="n">vhat</span> <span class="o">=</span> <span class="n">estimate_null_correlation_simple</span><span class="p">(</span><span class="n">mash_set_data</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">Shat</span><span class="o">=</span><span class="n">dat</span><span class="err">$</span><span class="n">random</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+    <span class="n">mash_data</span> <span class="o">=</span> <span class="n">mash_set_data</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">strong</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">Shat</span><span class="o">=</span><span class="n">dat</span><span class="err">$</span><span class="n">strong</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="n">vhat</span><span class="p">)</span>
+    <span class="c1"># FLASH matrices</span>
+    <span class="n">U</span><span class="o">.</span><span class="n">flash</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span><span class="n">r</span><span class="p">})</span>
+    <span class="c1"># SVD matrices</span>
+    <span class="n">U</span><span class="o">.</span><span class="n">pca</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="s2">&quot;cov_pca(mash_data, </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="n">npc</span> <span class="k">if</span> <span class="n">npc</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="s2">&quot;list()&quot;</span><span class="p">}</span>
+    <span class="c1"># Emperical cov matrix</span>
+    <span class="n">X</span><span class="o">.</span><span class="n">center</span> <span class="o">=</span> <span class="n">apply</span><span class="p">(</span><span class="n">mash_data</span><span class="err">$</span><span class="n">Bhat</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">Ulist</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">U</span><span class="o">.</span><span class="n">flash</span><span class="p">,</span> <span class="n">U</span><span class="o">.</span><span class="n">pca</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="s2">&quot;XX&quot;</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">center</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">X</span><span class="o">.</span><span class="n">center</span> <span class="o">/</span> <span class="n">nrow</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">center</span><span class="p">)))</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">mash_data</span> <span class="o">=</span> <span class="n">mash_data</span><span class="p">,</span> <span class="n">Ulist</span> <span class="o">=</span> <span class="n">Ulist</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">ed_2</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_input</span><span class="si">:</span><span class="s2">n</span><span class="si">}</span><span class="s2">.ED.rds&quot;</span>
+<span class="kn">task:</span> <span class="kp">trunk_workers</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s1">&#39;36h&#39;</span><span class="p">,</span> <span class="kp">trunk_size</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s1">&#39;4G&#39;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="kp">tags</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s1">bn</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s2">n</span><span class="si">}</span><span class="s2">.stderr&quot;</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s2">n</span><span class="si">}</span><span class="s2">.stdout&quot;</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">mashr</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="c1"># Denoised data-driven matrices</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">bovy_wrapper</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">mash_data</span><span class="p">,</span> <span class="n">dat</span><span class="err">$</span><span class="n">Ulist</span><span class="p">,</span> <span class="kp">logfile</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">5e-06</span><span class="p">)</span>
+    <span class="c1"># format to input for simulation with DSC (current pipeline)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">U</span><span class="o">=</span><span class="n">res</span><span class="err">$</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">w</span><span class="o">=</span><span class="n">res</span><span class="err">$</span><span class="n">pi</span><span class="p">,</span> <span class="n">loglik</span><span class="o">=</span><span class="n">scan</span><span class="p">(</span><span class="s2">&quot;$</span><span class="si">{_output:n}</span><span class="s2">.ED_loglike.log&quot;</span><span class="p">)),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">teem_2</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_input</span><span class="si">:</span><span class="s2">n</span><span class="si">}</span><span class="s2">.TEEM.rds&quot;</span>
+<span class="kn">task:</span> <span class="kp">trunk_workers</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s1">&#39;1h&#39;</span><span class="p">,</span> <span class="kp">trunk_size</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s1">&#39;4G&#39;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">tags</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s1">bn</span><span class="si">}</span><span class="s1">&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span><span class="p">,</span> <span class="n">stderr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s2">n</span><span class="si">}</span><span class="s2">.stderr&quot;</span><span class="p">,</span> <span class="n">stdout</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s2">n</span><span class="si">}</span><span class="s2">.stdout&quot;</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">mashr</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="c1"># Denoised data-driven matrices</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">teem_wrapper</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">mash_data</span><span class="p">,</span> <span class="n">dat</span><span class="err">$</span><span class="n">Ulist</span><span class="p">)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>sos run analysis/20200502_Prepare_ED_prior.ipynb ed --model artificial_mixture_identity -c midway2.yml -q midway2
+sos run analysis/20200502_Prepare_ED_prior.ipynb ed --model gtex_mixture_identity -c midway2.yml -q midway2
+sos run analysis/20200502_Prepare_ED_prior.ipynb teem --model artificial_mixture_identity -c midway2.yml -q midway2
+sos run analysis/20200502_Prepare_ED_prior.ipynb teem --model gtex_mixture_identity -c midway2.yml -q midway2</code></pre>
+<p>It takes many hours to run ED (almost a day) but only a few minutes to run TEEM. In fact TEEM on <code>gtex_mixture</code> based data converged in a second.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">tmp</span><span class="o">/</span><span class="mi">07</span><span class="o">-</span><span class="n">May</span><span class="o">-</span><span class="mi">2020</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/home/gw/tmp/07-May-2020</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-driven-prior-via-ED">Data-driven prior via ED<a class="anchor-link" href="#Data-driven-prior-via-ED">&#182;</a></h2><p>For the artifically simulated mixture,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">a1</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;artificial_mixture_identity.FLASH_PC3.ED.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">names</span><span class="p">(</span><span class="n">a1</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'U'</li><li>'w'</li><li>'loglik'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">a1</span><span class="err">$</span><span class="n">loglik</span><span class="p">[</span><span class="n">length</span><span class="p">(</span><span class="n">a1</span><span class="err">$</span><span class="n">loglik</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+95.40111
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">a1</span><span class="err">$</span><span class="n">w</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0.898314146466091</li><li>0</li><li>0</li><li>0.000648316043920725</li><li>0.0637063706095047</li><li>0.0373311668804688</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">names</span><span class="p">(</span><span class="n">a1</span><span class="err">$</span><span class="n">U</span><span class="p">)[</span><span class="n">which</span><span class="p">(</span><span class="n">a1</span><span class="err">$</span><span class="n">w</span><span class="o">&gt;</span><span class="mf">0.0001</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'tFLASH'</li><li>'PCA_3'</li><li>'tPCA'</li><li>'XX'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The component with strongest weight is <code>tFLASH</code>. <code>tPCA</code> and the empirical covariance (<code>XX</code>) also have some weights.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For mixture simulated based on GTEx V8 ED matrices,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">g1</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;gtex_mixture_identity.FLASH_PC3.ED.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">g1</span><span class="err">$</span><span class="n">loglik</span><span class="p">[</span><span class="n">length</span><span class="p">(</span><span class="n">g1</span><span class="err">$</span><span class="n">loglik</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+109.608395
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">g1</span><span class="err">$</span><span class="n">w</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>4.20166971058565e-10</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0</li><li>0.032953661814357</li><li>9.41047531858211e-06</li><li>0</li><li>0</li><li>0.966986560055189</li><li>5.03672349327372e-05</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">names</span><span class="p">(</span><span class="n">g1</span><span class="err">$</span><span class="n">U</span><span class="p">)[</span><span class="n">which</span><span class="p">(</span><span class="n">g1</span><span class="err">$</span><span class="n">w</span><span class="o">&gt;</span><span class="mf">0.0001</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'tFLASH'</li><li>'tPCA'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Again, most weights are on <code>tFLASH</code> and <code>tPCA</code>. Only this time <code>tPCA</code> seems to have more weights than <code>tFLASH</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-driven-prior-via-TEEM">Data-driven prior via TEEM<a class="anchor-link" href="#Data-driven-prior-via-TEEM">&#182;</a></h2><p>Currently two caveats:</p>
+<ol>
+<li>we don't have interface for bhat/sbhat so the result is based on z-score without transforming back to original scale bhat.</li>
+<li>we don't have interface for non-identity residual covariance so the result is based on assuming identity covariance, although identity covariance is indeed the oracle covariance for the residual.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">a2</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;artificial_mixture_identity.FLASH_PC3.TEEM.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">names</span><span class="p">(</span><span class="n">a2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'w'</li><li>'U'</li><li>'objective'</li><li>'maxd'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">a2</span><span class="err">$</span><span class="n">objective</span><span class="p">[</span><span class="n">length</span><span class="p">(</span><span class="n">a2</span><span class="err">$</span><span class="n">objective</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+-1514460.34911569
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">a2</span><span class="err">$</span><span class="n">w</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>0.000150168583502527</li><li>0.063706313615437</li><li>0.00173940219644464</li><li>2.25625779570696e-05</li><li>2.7441573335457e-05</li><li>0.0004013500687758</li><li>0.000100004694516837</li><li>0.0176210839689777</li><li>0.59431789907055</li><li>0.321461600239074</li><li>0.000452173411430355</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">names</span><span class="p">(</span><span class="n">a2</span><span class="err">$</span><span class="n">U</span><span class="p">)[</span><span class="n">which</span><span class="p">(</span><span class="n">a2</span><span class="err">$</span><span class="n">w</span><span class="o">&gt;</span><span class="mf">0.0001</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'FLASH_1'</li><li>'FLASH_2'</li><li>'FLASH_3'</li><li>'tFLASH'</li><li>'PCA_1'</li><li>'PCA_2'</li><li>'PCA_3'</li><li>'tPCA'</li><li>'XX'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>Different from ED results, most weights here are on <code>PCA_3</code> and <code>tPCA</code>, and not <code>tFLASH</code> and <code>XX</code>.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">g2</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;gtex_mixture_identity.FLASH_PC3.TEEM.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">g2</span><span class="err">$</span><span class="n">objective</span><span class="p">[</span><span class="n">length</span><span class="p">(</span><span class="n">g2</span><span class="err">$</span><span class="n">objective</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+-1525155.70712717
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">g2</span><span class="err">$</span><span class="n">w</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>1.71955676871705e-63</li><li>1.39777288788456e-143</li><li>1.68845728397329e-142</li><li>7.84691317226551e-93</li><li>3.24486241601681e-107</li><li>1.31455241438438e-135</li><li>1.33653510640492e-138</li><li>5.87864927988118e-88</li><li>1.57715878286267e-134</li><li>2.62148379045725e-134</li><li>1.98384163132785e-132</li><li>1.19591756153686e-134</li><li>1.09691032521019e-133</li><li>2.11605318408162e-141</li><li>6.15309550806711e-125</li><li>2.0494773131503e-139</li><li>1.67913095261693e-114</li><li>5.63191011607809e-123</li><li>5.66285674684209e-139</li><li>8.03469169954033e-87</li><li>1.6871925107188e-63</li><li>1.7426880628207e-146</li><li>1.64210838312768e-146</li><li>1</li><li>9.35210690850578e-87</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">names</span><span class="p">(</span><span class="n">g2</span><span class="err">$</span><span class="n">U</span><span class="p">)[</span><span class="n">which</span><span class="p">(</span><span class="n">g2</span><span class="err">$</span><span class="n">w</span><span class="o">&gt;</span><span class="mf">0.0001</span><span class="p">)]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+'tPCA'
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><strong>In ED result, <code>tPCA</code> gets 96% weights and <code>tFLASH</code> 3%. Here <code>tPCA</code> gets 100% weights.</strong></p>
+
+</div>
+</div>
+</div>
+<hr>
+Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/1937602790916d1dc6646762caf027a16eb29474/analysis/20200502_Prepare_ED_prior.ipynb"><code>analysis/20200502_Prepare_ED_prior.ipynb</code></a> committed by Gao Wang on Mon May 11 12:18:26 2020 <a href="http://github.com/gaow/mvarbvs/commit/1937602790916d1dc6646762caf027a16eb29474">revision 7, 1937602</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+</div>
+</div>
+</body>
+</html>
