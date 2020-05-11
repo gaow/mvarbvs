@@ -88,10 +88,12 @@ mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
     return(list(Y=y_sim$y, true_coef=b, n_signal=n, n_traits=R, residual_variance=y_sim$residual_var, U=U, Y_sd=sd_y))
 }
 
-get_prior = function(U,w) {
-    return(list(oracle=list(xUlist = U, pi = w, null_weight = 0),
-    identity = list(xUlist = list(identity=diag(nrow(U[[1]]))), pi=1, null_weight=0),
-    shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0)))
+get_prior = function(U,prior) {
+    return(list(oracle=list(xUlist = U, pi = prior$w, null_weight = 0),
+        identity = list(xUlist = list(identity=diag(nrow(U[[1]]))), pi=1, null_weight=0),
+        shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0),
+        naive = list(xUlist = mmbr:::create_cov_canonical(nrow(U[[1]]))),
+        ED = list(xUlist = prior$ED$U, pi = prior$ED$w, null_weight=0)))
 }
 
 simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, var_Y, residual_mode, save_summary_stats) {
@@ -100,7 +102,7 @@ simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, 
     else residual = var_Y
     res = mash_sim(X, ncol(X), prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual, scale_Y)
     if (missing_Y) res$Y = create_missing(res$Y, Y)
-    res$prior = get_prior(res$U, prior_data[[prior]]$w)
+    res$prior = get_prior(res$U, prior_data[[prior]])
     if (save_summary_stats) res$sumstats = mm_regression(X, res$Y)
     return(res)
 }

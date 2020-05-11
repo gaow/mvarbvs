@@ -7,7 +7,7 @@ simulate_y_base: regression_simulator.R + regression.R + \
   var_Y: $var_Y
   missing_Y: TRUE, FALSE
   scale_Y: TRUE
-  save_summary_stats: TRUE
+  save_summary_stats: FALSE
   prior_file: "${prior_file}"
   # set signal to <0 to use a default setting
   eff_mode: "artificial_mixture_50", "gtex_mixture"
@@ -32,12 +32,17 @@ gtex_mixture(simulate_y_base):
     residual_mode: "var_Y"
     missing_Y: FALSE
 
+# These are for simulating some data
+# to estimate empirical prior covariances
+# https://gaow.github.io/mvarbvs/analysis/20200502_Prepare_ED_prior.html
 artificial_mixture_identity(simulate_y_base):
     eff_mode: "artificial_mixture_50"
     residual_mode: "identity"
     missing_Y: FALSE
+    save_summary_stats: TRUE
 
 gtex_mixture_identity(simulate_y_base):
     eff_mode: "gtex_mixture"
     residual_mode: "identity"
     missing_Y: FALSE
+    save_summary_stats: TRUE

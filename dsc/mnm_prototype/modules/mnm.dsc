@@ -6,6 +6,7 @@ mnm_base: misc.R + mnm.R
   eff_mode: 'identity', 'low_het', 'mid_het', 'high_het', 'shared', 'singleton', 'singleton_1', 'mixture_1'
   L: 10
   resid_method: 'oracle', 'diag', 'flash'
+  n_thread: 5
   $result: result
 
 mnm_high_het(mnm_base):
@@ -46,4 +47,8 @@ mnm_identity(mnm_base):
 
 mnm_naive(mnm_base):
   eff_mode: 'naive'
+  resid_method: 'oracle', 'flash'
+
+mnm_ed(mnm_base):
+  eff_mode: 'ED'
   resid_method: 'oracle', 'flash'
