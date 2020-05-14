@@ -3,48 +3,52 @@ mnm_base: misc.R + mnm.R
   X: $X
   Y: $Y
   meta: $meta
-  cfg: $configurations
   eff_mode: 'identity', 'low_het', 'mid_het', 'high_het', 'shared', 'singleton', 'singleton_1', 'mixture_1'
-  L: 1, 2, 10
-  missing_Y: TRUE, FALSE
+  L: 10
   resid_method: 'oracle', 'diag', 'flash'
+  n_thread: 5
   $result: result
 
 mnm_high_het(mnm_base):
   eff_mode: 'high_het'
-  missing_Y: FALSE
-  resid_method: 'oracle', 'flash'
-
-mnm_high_het_missing(mnm_high_het):
-  missing_Y: TRUE
   resid_method: 'oracle', 'flash'
 
 mnm_low_het(mnm_base):
   eff_mode: 'low_het'
-  missing_Y: FALSE
   resid_method: 'oracle', 'flash'
 
 mnm_mid_het(mnm_base):
   eff_mode: 'mid_het'
-  missing_Y: FALSE
   resid_method: 'oracle', 'flash'
 
 mnm_shared(mnm_base):
   eff_mode: 'shared'
-  missing_Y: FALSE
   resid_method: 'oracle', 'flash'
 
 mnm_singleton(mnm_base):
   eff_mode: 'singleton'
-  missing_Y: FALSE
   resid_method: 'oracle', 'flash'
 
 mnm_singleton_first(mnm_base):
   eff_mode: 'singleton_1'
-  missing_Y: FALSE
   resid_method: 'oracle', 'flash'
 
 mnm_mixture01(mnm_base):
   eff_mode: 'mixture_1'
-  missing_Y: FALSE
+  resid_method: 'oracle', 'flash'
+
+mnm_oracle(mnm_base):
+  eff_mode: 'oracle'
+  resid_method: 'oracle', 'flash'
+
+mnm_identity(mnm_base):
+  eff_mode: 'identity'
+  resid_method: 'oracle', 'flash'
+
+mnm_naive(mnm_base):
+  eff_mode: 'naive'
+  resid_method: 'oracle', 'flash'
+
+mnm_ed(mnm_base):
+  eff_mode: 'ED'
   resid_method: 'oracle', 'flash'

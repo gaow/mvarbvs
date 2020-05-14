@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -296,7 +295,7 @@ body {
 <span class="kn">parameter:</span> <span class="n">susie_prior</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
 <span class="c1"># null weight options to evaluate</span>
 <span class="kn">parameter:</span> <span class="n">null_weight</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">]</span>
-<span class="n">dirname</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/hard_case/&#39;</span><span class="p">)</span>
+<span class="n">dirname</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">cwd</span><span class="si">:</span><span class="s1">a</span><span class="si">}</span><span class="s1">/hard_case/&#39;</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">fmtP</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span>
@@ -320,7 +319,7 @@ body {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">power_1</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/Power_comparison_{date}.rds&#39;</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s1">/Power_comparison_</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s1">.rds&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">dap_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">br</span><span class="p">},</span>
                         <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;full_data.dataset full_data lm_less03 lm_less03.pve lm_less03.n_signal fit_dap&quot;</span><span class="p">)</span>
@@ -344,9 +343,9 @@ body {
 <span class="c1"># to match with DAP -ld_control 0.25</span>
 <span class="c1"># to match with susie 95% mappable CS, we set dap cutoff to 0.95 also</span>
 <span class="n">dap_cluster_cutoff</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;cluster_prob&#39;</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cluster_avg_r2&#39;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)]</span>
-<span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dap_cluster_cutoff&#39;</span><span class="p">,</span> <span class="s1">&#39;null_weight&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_prior&#39;</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/Power_comparison_{date}_{_dap_cluster_cutoff[0]}_prior_{fmtP(_susie_prior)}_null_{fmtP(_null_weight)}.rds&#39;</span>
-<span class="kn">R:</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+<span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dap_cluster_cutoff&#39;</span><span class="p">,</span> <span class="s1">&#39;null_weight&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_prior&#39;</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s1">/Power_comparison_</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">_dap_cluster_cutoff</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">_prior_</span><span class="si">{</span><span class="n">fmtP</span><span class="p">(</span><span class="n">_susie_prior</span><span class="p">)</span><span class="si">}</span><span class="s1">_null_</span><span class="si">{</span><span class="n">fmtP</span><span class="p">(</span><span class="n">_null_weight</span><span class="p">)</span><span class="si">}</span><span class="s1">.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">stdout</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s1">n</span><span class="si">}</span><span class="s1">.log&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="n">dap_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">dap</span>
     <span class="n">susie_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">susie</span>
@@ -414,8 +413,8 @@ body {
                     <span class="p">}</span>
                   <span class="p">}</span>
                 <span class="p">}</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s1">&#39;==============&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;==============&#39;</span><span class="p">))</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s1">&#39;==============&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;==============&#39;</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span>
                 <span class="n">susie_tc</span> <span class="o">=</span> <span class="n">susie_tc</span> <span class="o">+</span> <span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span>
                 <span class="c1"># DAP in cluster</span>
                 <span class="n">dap_cluster_raw</span> <span class="o">=</span> <span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="err">$$</span><span class="p">{</span><span class="n">_dap_cluster_cutoff</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">_dap_cluster_cutoff</span><span class="p">[</span><span class="mi">1</span><span class="p">]}),</span> <span class="p">]</span>
@@ -435,35 +434,35 @@ body {
                     <span class="p">}</span>
                     <span class="n">dap_signals</span> <span class="o">=</span> <span class="n">dap_signals</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">signals</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">unique</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)))</span>
                 <span class="p">}</span>
-                <span class="k">print</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)</span>
                 <span class="n">dap_tc</span> <span class="o">=</span> <span class="n">dap_tc</span> <span class="o">+</span> <span class="n">length</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)</span>
                 <span class="c1">## BEGIN debug</span>
                 <span class="c1">## susie made more true discovery than DAP</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">susie_dc</span> <span class="o">&gt;</span> <span class="n">dap_dc</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="k">print</span><span class="p">(</span><span class="s1">&#39;DAP miss&#39;</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">dap_files</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DAP miss&#39;</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">dap_files</span><span class="p">)</span>
                 <span class="p">}</span>
                 <span class="c1">## DAP made false discovery, susie did not</span>
                 <span class="c1">## under n = 1</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">dap_dc</span> <span class="o">&amp;&amp;</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="k">print</span><span class="p">(</span><span class="s1">&#39;DAP false discovery&#39;</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">dap_files</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DAP false discovery&#39;</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">dap_files</span><span class="p">)</span>
                 <span class="p">}</span>
                 <span class="c1">## SuSiE made false discovery</span>
                 <span class="c1">## under n = 3</span>
                 <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">susie_dc</span> <span class="o">&amp;&amp;</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
-                  <span class="k">print</span><span class="p">(</span><span class="s1">&#39;SuSiE false discovery in data ...&#39;</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">))</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">susie_dc</span><span class="p">)</span>
-                  <span class="k">print</span><span class="p">(</span><span class="n">susie_files</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;SuSiE false discovery in data ...&#39;</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">))</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">susie_dc</span><span class="p">)</span>
+                  <span class="nb">print</span><span class="p">(</span><span class="n">susie_files</span><span class="p">)</span>
                 <span class="p">}</span>  
                 <span class="c1">## END debug</span>
                 <span class="n">susie_dc</span> <span class="o">=</span> <span class="mi">0</span>
@@ -482,7 +481,7 @@ body {
     <span class="n">colnames</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="n">headers</span>
     <span class="n">rownames</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">result</span><span class="p">[,</span><span class="mi">1</span><span class="p">])</span>
     <span class="n">saveRDS</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
-    <span class="n">saveRDS</span><span class="p">(</span><span class="n">overlap_cs</span><span class="p">,</span> <span class="s2">&quot;${_output:n}.overlap_status.rds&quot;</span><span class="p">)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">overlap_cs</span><span class="p">,</span> <span class="s2">&quot;$</span><span class="si">{_output:n}</span><span class="s2">.overlap_status.rds&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -605,7 +604,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/bf9fa774798ab1c5c81c6567972908e4ffbd8504/analysis/20180615_Power_DAP.ipynb"><code>analysis/20180615_Power_DAP.ipynb</code></a> committed by Gao Wang on Thu Dec 13 11:29:33 2018 <a href="http://github.com/gaow/mvarbvs/commit/bf9fa774798ab1c5c81c6567972908e4ffbd8504">revision 9, bf9fa77</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/bf9fa774798ab1c5c81c6567972908e4ffbd8504/analysis/20180615_Power_DAP.ipynb"><code>analysis/20180615_Power_DAP.ipynb</code></a> committed by Gao Wang on Thu Dec 13 12:29:33 2018 <a href="http://github.com/gaow/mvarbvs/commit/bf9fa774798ab1c5c81c6567972908e4ffbd8504">revision 9, bf9fa77</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

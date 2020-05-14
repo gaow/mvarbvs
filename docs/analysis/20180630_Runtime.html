@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -282,7 +281,7 @@ body {
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
 <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/github/mvarbvs/dsc&#39;</span><span class="p">)</span>
-<span class="n">dirname</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/susie_comparison/&#39;</span><span class="p">)</span>
+<span class="n">dirname</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">cwd</span><span class="si">:</span><span class="s1">a</span><span class="si">}</span><span class="s1">/susie_comparison/&#39;</span><span class="p">)</span>
 <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;1008&#39;</span>
 <span class="n">susie_prior</span> <span class="o">=</span> <span class="mf">0.1</span>
 <span class="n">null_weight</span> <span class="o">=</span> <span class="mf">0.0</span>
@@ -308,7 +307,7 @@ body {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">speed_1</span><span class="p">]</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/speed_comparison_{date}.rds&#39;</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">dirname</span><span class="si">}</span><span class="s1">/speed_comparison_</span><span class="si">{</span><span class="n">date</span><span class="si">}</span><span class="s1">.rds&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">dap_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">br</span><span class="p">},</span> 
                         <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;liter_data.dataset lm_less.n_signal fit_dap&quot;</span><span class="p">)</span>
@@ -341,8 +340,8 @@ body {
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">speed_2</span><span class="p">]</span>
 <span class="c1"># CAVIAR and FINEMAP runs were paralleled for performance. Need to factor it in</span>
 <span class="n">paralleled</span> <span class="o">=</span> <span class="mi">2</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}_prior_{fmtP(susie_prior)}_null_{fmtP(null_weight)}.rds&#39;</span>
-<span class="kn">R:</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_input</span><span class="si">:</span><span class="s1">n</span><span class="si">}</span><span class="s1">_prior_</span><span class="si">{</span><span class="n">fmtP</span><span class="p">(</span><span class="n">susie_prior</span><span class="p">)</span><span class="si">}</span><span class="s1">_null_</span><span class="si">{</span><span class="n">fmtP</span><span class="p">(</span><span class="n">null_weight</span><span class="p">)</span><span class="si">}</span><span class="s1">.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">stdout</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_output</span><span class="si">:</span><span class="s1">n</span><span class="si">}</span><span class="s1">.log&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
     <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="n">dap_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">dap</span>
     <span class="n">caviar_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">caviar</span>
@@ -382,8 +381,8 @@ body {
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">speed_3</span><span class="p">]</span>
-<span class="kn">input:</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
-<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.png&#39;</span>
+<span class="kn">input:</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="kn">output:</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">_input</span><span class="si">:</span><span class="s1">n</span><span class="si">}</span><span class="s1">.png&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
     <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
     <span class="n">library</span><span class="p">(</span><span class="n">reshape2</span><span class="p">)</span>
@@ -398,7 +397,7 @@ body {
       <span class="n">labs</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="n">x</span><span class="o">=</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="s2">&quot;time elapsed (seconds)&quot;</span><span class="p">)</span><span class="o">+</span>
       <span class="n">geom_boxplot</span><span class="p">(</span><span class="n">width</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="o">+</span>
       <span class="n">theme_cowplot</span><span class="p">()</span>
-    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
     <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
 
@@ -462,7 +461,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">t</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">c</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">t</span><span class="p">(</span><span class="n">apply</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">c</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
 </pre></div>
 
     </div>
@@ -884,7 +883,7 @@ xA4AAACAJ5DYAQAAAPAEEjsAAAAAnkBiBwAAAMAT/wfKHxDz+dG3IQAAAABJRU5ErkJggg=="
 </div>
 <hr>
 Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/b1f62efffba43870efe11679f0432eb486c5580f/analysis/20180630_Runtime.ipynb"><code>analysis/20180630_Runtime.ipynb</code></a> committed by Gao Wang on Mon Oct 22 00:29:47 2018 <a href="http://github.com/gaow/mvarbvs/commit/b1f62efffba43870efe11679f0432eb486c5580f">revision 5, b1f62ef</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/b1f62efffba43870efe11679f0432eb486c5580f/analysis/20180630_Runtime.ipynb"><code>analysis/20180630_Runtime.ipynb</code></a> committed by Gao Wang on Mon Oct 22 01:29:47 2018 <a href="http://github.com/gaow/mvarbvs/commit/b1f62efffba43870efe11679f0432eb486c5580f">revision 5, b1f62ef</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

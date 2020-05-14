@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -407,7 +406,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">true_pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">true_pos</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">apply</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1006,7 +1005,7 @@ AAAAAElFTkSuQmCC"
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">DSC_REPLICATE</span><span class="p">)</span>
 <span class="n">compute_cov_diag</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">Y</span><span class="p">){</span>
-    <span class="n">covar</span> <span class="o">&lt;-</span> <span class="n">diag</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">covar</span> <span class="o">&lt;-</span> <span class="n">diag</span><span class="p">(</span><span class="n">apply</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
     <span class="k">return</span><span class="p">(</span><span class="n">covar</span><span class="p">)</span>
 <span class="p">}</span>
 
@@ -1019,7 +1018,7 @@ AAAAAElFTkSuQmCC"
     <span class="k">if</span> <span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y0</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y1</span><span class="p">))</span> <span class="n">Y0</span> <span class="o">=</span> <span class="n">Y0</span><span class="p">[,</span><span class="n">sample</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">Y1</span><span class="p">))]</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">Y1</span>
     <span class="n">res</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">Y0</span><span class="p">))]</span> <span class="o">=</span> <span class="n">NA</span>
-    <span class="n">na_rows</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nb">all</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
+    <span class="n">na_rows</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">apply</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="nb">all</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">x</span><span class="p">))))</span>
     <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">na_rows</span><span class="p">)</span> <span class="p">{</span>
 	    <span class="n">non_na</span> <span class="o">=</span> <span class="n">sample</span><span class="o">.</span><span class="n">int</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">res</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">res</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">non_na</span><span class="p">]</span> <span class="o">=</span> <span class="n">Y1</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">non_na</span><span class="p">]</span>
@@ -2074,7 +2073,7 @@ AAAAAElFTkSuQmCC"
 <div class="prompt input_prompt">In&nbsp;[59]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m1</span><span class="err">$</span><span class="n">sbhat</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m1</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m1</span><span class="err">$</span><span class="n">sbhat</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -2304,7 +2303,7 @@ AAAAAElFTkSuQmCC"
 <div class="prompt input_prompt">In&nbsp;[58]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)[,</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">m2</span><span class="err">$</span><span class="n">bhat</span><span class="o">/</span><span class="n">m2</span><span class="err">$</span><span class="n">sbhat</span><span class="p">)[,</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -4590,7 +4589,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">summary</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span><span class="o">/</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">))</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">summary</span><span class="p">(</span><span class="n">apply</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span><span class="o">/</span> <span class="n">ncol</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -4632,7 +4631,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="nb">apply</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> <span class="o">/</span> <span class="n">nrow</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">apply</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">i</span><span class="p">)))</span> <span class="o">/</span> <span class="n">nrow</span><span class="p">(</span><span class="n">Y_miss</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -5030,7 +5029,7 @@ AkEMEEISCGKAEJJAEAP+H5bUslpEmKJTAAAAAElFTkSuQmCC"
 </div>
 <hr>
 Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/decac986523e9ab51ac86af671bab1bfc2107b79/analysis/20191128_Diagnosis.ipynb"><code>analysis/20191128_Diagnosis.ipynb</code></a> committed by Gao Wang on Thu Dec 5 11:38:20 2019 <a href="http://github.com/gaow/mvarbvs/commit/decac986523e9ab51ac86af671bab1bfc2107b79">revision 4, decac98</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/decac986523e9ab51ac86af671bab1bfc2107b79/analysis/20191128_Diagnosis.ipynb"><code>analysis/20191128_Diagnosis.ipynb</code></a> committed by Gao Wang on Thu Dec 5 12:38:20 2019 <a href="http://github.com/gaow/mvarbvs/commit/decac986523e9ab51ac86af671bab1bfc2107b79">revision 4, decac98</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

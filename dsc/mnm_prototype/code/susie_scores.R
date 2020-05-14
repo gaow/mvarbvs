@@ -97,18 +97,18 @@ susie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
       sd_est = sqrt(mu2 - mu^2)
       quant_diff = 0
       for (i in 1:length(truth)) {
-        quant_diff = quant_diff + abs(KScorrect::pmixnorm(truth[i], mu[,i], sd_est[,i], rep(1/length(mu[,i]), length(mu[,i]))) - 0.5)
+        quant_diff = quant_diff + abs(KScorrect::pmixnorm(truth[i], mu[i,], sd_est[i,], rep(1/length(mu[i,]), length(mu[i,]))) - 0.5)
       }
       estimate_diff = append(estimate_diff, quant_diff / length(truth))
     }
   }
   overlaps = check_overlap(cs)
-  return(list(total=total, valid=valid, size=size, purity=purity, top=top_hit, 
+  return(list(total=total, valid=valid, size=size, purity=purity, top=top_hit,
               overlap_var = overlaps$snp, overlap_cs = overlaps$cs,
-              n_signal=length(beta_idx), 
-              included_signal = sum(beta_idx %in% unlist(cs)), 
-              false_pos_cond_discoveries = false_positive_condition_cs, 
-              true_cond_discoveries = true_positive_condition_cs, 
+              n_signal=length(beta_idx),
+              included_signal = sum(beta_idx %in% unlist(cs)),
+              false_pos_cond_discoveries = false_positive_condition_cs,
+              true_cond_discoveries = true_positive_condition_cs,
               false_neg_cond_discoveries = false_neg_condition_cs,
               avg_diff_eff_size_percentile = mean(estimate_diff),
               converged = (m$convergence$delta >=0 && m$convergence$converged)))
