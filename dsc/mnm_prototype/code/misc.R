@@ -109,7 +109,8 @@ filter_X <- function(X, missing_rate_thresh, maf_thresh) {
     if (length(rm_col)) X <- X[, -rm_col]
     rm_col <- which(apply(X, 2, compute_maf) < maf_thresh)
     if (length(rm_col)) X <- X[, -rm_col]
+    X <- mean_impute(X)
     rm_col <- which(apply(X, 2, is_zero_variance))
     if (length(rm_col)) X <- X[, -rm_col]
-    return(mean_impute(X))
+    return(X)
 }
