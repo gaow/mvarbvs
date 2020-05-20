@@ -257,7 +257,7 @@ body {
 <li>paired sharing eg a pair of tissues</li>
 <li>block sharing eg brain</li>
 </ol>
-
+<h3 id="With-50-conditions">With 50 conditions<a class="anchor-link" href="#With-50-conditions">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -373,10 +373,14 @@ body {
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now assign some weights:</p>
 <ol>
-<li>singleton total 30%</li>
-<li>shared total 30%</li>
-<li>paired 20%</li>
-<li>blocked 20%</li>
+<li>singleton total 35%<ul>
+<li>singleton_1 has 10% (to be picked up later by ED methods)</li>
+<li>singleton_2 to singleton_26 has 25% (1% each )</li>
+</ul>
+</li>
+<li>shared total 25%</li>
+<li>paired 20% (hopefully picked up by ED methods)</li>
+<li>blocked 20% (hopefully picked up by ED methods)</li>
 </ol>
 
 </div>
@@ -387,7 +391,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0.3</span><span class="o">/</span><span class="m">50</span><span class="p">,</span><span class="m">50</span><span class="p">),</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0.3</span><span class="o">/</span><span class="m">5</span><span class="p">,</span><span class="m">5</span><span class="p">),</span><span class="m">0.2</span><span class="p">,</span><span class="m">0.2</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0.01</span><span class="p">,</span><span class="m">25</span><span class="p">),</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="m">24</span><span class="p">),</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0.25</span><span class="o">/</span><span class="m">5</span><span class="p">,</span><span class="m">5</span><span class="p">),</span> <span class="m">0.2</span><span class="p">,</span> <span class="m">0.2</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -400,41 +404,20 @@ body {
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">artificial_mixture_50</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">U</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span><span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">w</span><span class="o">&gt;</span><span class="m">0</span><span class="p">)]</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Mixture-from-GTEx">Mixture from GTEx<a class="anchor-link" href="#Mixture-from-GTEx">&#182;</a></h2><p>Using <a href="https://github.com/stephenslab/gtexresults/blob/master/workflows/gtex6_mash_analysis.ipynb">this workflow</a>,</p>
-
-</div>
-</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">prior</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;../data/FastQTLSumStats.mash.FL_PC3.rds&#39;</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="p">)[</span><span class="m">1</span><span class="o">:</span><span class="m">30</span><span class="p">]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -457,8 +440,41 @@ body {
 .list-inline>li {display: inline-block}
 .list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
 </style>
-<ol class=list-inline><li>'ED_FLASH_1'</li><li>'ED_FLASH_2'</li><li>'ED_FLASH_3'</li><li>'ED_FLASH_4'</li><li>'ED_FLASH_5'</li><li>'ED_FLASH_6'</li><li>'ED_FLASH_7'</li><li>'ED_FLASH_8'</li><li>'ED_FLASH_9'</li><li>'ED_FLASH_10'</li><li>'ED_FLASH_11'</li><li>'ED_FLASH_12'</li><li>'ED_FLASH_13'</li><li>'ED_FLASH_14'</li><li>'ED_FLASH_15'</li><li>'ED_FLASH_16'</li><li>'ED_FLASH_17'</li><li>'ED_FLASH_18'</li><li>'ED_FLASH_19'</li><li>'ED_FLASH_20'</li><li>'ED_FLASH_21'</li><li>'ED_FLASH_22'</li><li>'ED_FLASH_23'</li><li>'ED_tFLASH'</li><li>'ED_PCA_1'</li><li>'ED_PCA_2'</li><li>'ED_PCA_3'</li><li>'ED_tPCA'</li><li>'ED_XX'</li><li>'identity'</li></ol>
+<ol class=list-inline><li>'singleton_1'</li><li>'singleton_2'</li><li>'singleton_3'</li><li>'singleton_4'</li><li>'singleton_5'</li><li>'singleton_6'</li><li>'singleton_7'</li><li>'singleton_8'</li><li>'singleton_9'</li><li>'singleton_10'</li><li>'singleton_11'</li><li>'singleton_12'</li><li>'singleton_13'</li><li>'singleton_14'</li><li>'singleton_15'</li><li>'singleton_16'</li><li>'singleton_17'</li><li>'singleton_18'</li><li>'singleton_19'</li><li>'singleton_20'</li><li>'singleton_21'</li><li>'singleton_22'</li><li>'singleton_23'</li><li>'singleton_24'</li><li>'singleton_25'</li><li>'singleton_26'</li><li>'shared_1'</li><li>'shared_2'</li><li>'shared_3'</li><li>'shared_4'</li><li>'shared_5'</li><li>'paired_1'</li><li>'blocked_1'</li></ol>
 
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">w</span><span class="o">&gt;</span><span class="m">0</span><span class="p">)]</span>
+<span class="nf">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+1
 </div>
 
 </div>
@@ -472,7 +488,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="p">)[</span><span class="m">31</span><span class="o">:</span><span class="m">79</span><span class="p">]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">length</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -490,13 +506,7 @@ body {
 
 
 <div class="output_html rendered_html output_subarea ">
-<style>
-.list-inline {list-style: none; margin:0; padding: 0}
-.list-inline>li {display: inline-block}
-.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
-</style>
-<ol class=list-inline><li>'Adipose_Subcutaneous'</li><li>'Adipose_Visceral_Omentum'</li><li>'Adrenal_Gland'</li><li>'Artery_Aorta'</li><li>'Artery_Coronary'</li><li>'Artery_Tibial'</li><li>'Brain_Amygdala'</li><li>'Brain_Anterior_cingulate_cortex_BA24'</li><li>'Brain_Caudate_basal_ganglia'</li><li>'Brain_Cerebellar_Hemisphere'</li><li>'Brain_Cerebellum'</li><li>'Brain_Cortex'</li><li>'Brain_Frontal_Cortex_BA9'</li><li>'Brain_Hippocampus'</li><li>'Brain_Hypothalamus'</li><li>'Brain_Nucleus_accumbens_basal_ganglia'</li><li>'Brain_Putamen_basal_ganglia'</li><li>'Brain_Spinal_cord_cervical_c-1'</li><li>'Brain_Substantia_nigra'</li><li>'Breast_Mammary_Tissue'</li><li>'Cells_Cultured_fibroblasts'</li><li>'Cells_EBV-transformed_lymphocytes'</li><li>'Colon_Sigmoid'</li><li>'Colon_Transverse'</li><li>'Esophagus_Gastroesophageal_Junction'</li><li>'Esophagus_Mucosa'</li><li>'Esophagus_Muscularis'</li><li>'Heart_Atrial_Appendage'</li><li>'Heart_Left_Ventricle'</li><li>'Kidney_Cortex'</li><li>'Liver'</li><li>'Lung'</li><li>'Minor_Salivary_Gland'</li><li>'Muscle_Skeletal'</li><li>'Nerve_Tibial'</li><li>'Ovary'</li><li>'Pancreas'</li><li>'Pituitary'</li><li>'Prostate'</li><li>'Skin_Not_Sun_Exposed_Suprapubic'</li><li>'Skin_Sun_Exposed_Lower_leg'</li><li>'Small_Intestine_Terminal_Ileum'</li><li>'Spleen'</li><li>'Stomach'</li><li>'Testis'</li><li>'Thyroid'</li><li>'Uterus'</li><li>'Vagina'</li><li>'Whole_Blood'</li></ol>
-
+33
 </div>
 
 </div>
@@ -510,35 +520,10 @@ body {
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="p">)[</span><span class="m">80</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="p">))]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">artificial_mixture_50</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">U</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span><span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area">
-
-    <div class="prompt"></div>
-
-
-
-<div class="output_html rendered_html output_subarea ">
-<style>
-.list-inline {list-style: none; margin:0; padding: 0}
-.list-inline>li {display: inline-block}
-.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
-</style>
-<ol class=list-inline><li>'equal_effects'</li><li>'simple_het_1'</li><li>'simple_het_2'</li><li>'simple_het_3'</li></ol>
-
-</div>
-
-</div>
-
 </div>
 </div>
 
@@ -546,8 +531,7 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here I will remove the singleton components because in MASH paper we don't see weights on those components anyways after we include others.</p>
-
+<h3 id="With-6-conditions">With 6 conditions<a class="anchor-link" href="#With-6-conditions">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -556,7 +540,15 @@ body {
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior</span><span class="p">[</span><span class="o">-</span><span class="nf">c</span><span class="p">(</span><span class="m">31</span><span class="o">:</span><span class="m">79</span><span class="p">)]</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">R</span><span class="o">=</span><span class="m">6</span>
+<span class="n">prior</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="nf">create_cov_canonical</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+<span class="n">paired</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">R</span><span class="p">)</span>
+<span class="n">paired</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="p">]</span> <span class="o">=</span> <span class="m">1</span>
+<span class="n">prior</span><span class="p">[[</span><span class="s">&#39;paired_1&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">paired</span>
+<span class="n">block</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">R</span><span class="p">)</span>
+<span class="n">block</span><span class="p">[</span><span class="m">1</span><span class="o">:</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="m">1</span><span class="o">:</span><span class="n">R</span><span class="o">/</span><span class="m">2</span><span class="p">]</span> <span class="o">=</span> <span class="m">1</span>
+<span class="n">block</span><span class="p">[(</span><span class="n">R</span><span class="o">/</span><span class="m">2+1</span><span class="p">)</span><span class="o">:</span><span class="n">R</span><span class="p">,</span> <span class="p">(</span><span class="n">R</span><span class="o">/</span><span class="m">2+1</span><span class="p">)</span><span class="o">:</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="m">1</span>
+<span class="n">prior</span><span class="p">[[</span><span class="s">&#39;blocked_1&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">block</span>
 </pre></div>
 
     </div>
@@ -592,7 +584,7 @@ body {
 .list-inline>li {display: inline-block}
 .list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
 </style>
-<ol class=list-inline><li>'ED_FLASH_1'</li><li>'ED_FLASH_2'</li><li>'ED_FLASH_3'</li><li>'ED_FLASH_4'</li><li>'ED_FLASH_5'</li><li>'ED_FLASH_6'</li><li>'ED_FLASH_7'</li><li>'ED_FLASH_8'</li><li>'ED_FLASH_9'</li><li>'ED_FLASH_10'</li><li>'ED_FLASH_11'</li><li>'ED_FLASH_12'</li><li>'ED_FLASH_13'</li><li>'ED_FLASH_14'</li><li>'ED_FLASH_15'</li><li>'ED_FLASH_16'</li><li>'ED_FLASH_17'</li><li>'ED_FLASH_18'</li><li>'ED_FLASH_19'</li><li>'ED_FLASH_20'</li><li>'ED_FLASH_21'</li><li>'ED_FLASH_22'</li><li>'ED_FLASH_23'</li><li>'ED_tFLASH'</li><li>'ED_PCA_1'</li><li>'ED_PCA_2'</li><li>'ED_PCA_3'</li><li>'ED_tPCA'</li><li>'ED_XX'</li><li>'identity'</li><li>'equal_effects'</li><li>'simple_het_1'</li><li>'simple_het_2'</li><li>'simple_het_3'</li></ol>
+<ol class=list-inline><li>'singleton_1'</li><li>'singleton_2'</li><li>'singleton_3'</li><li>'singleton_4'</li><li>'singleton_5'</li><li>'singleton_6'</li><li>'shared_1'</li><li>'shared_2'</li><li>'shared_3'</li><li>'shared_4'</li><li>'shared_5'</li><li>'paired_1'</li><li>'blocked_1'</li></ol>
 
 </div>
 
@@ -601,13 +593,44 @@ body {
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now assign some weights:</p>
+<ol>
+<li>singleton total 30%<ul>
+<li>singleton_1, singleton_3, singleton_5 each has 10%</li>
+</ul>
+</li>
+<li>shared total 30%</li>
+<li>paired 20%</li>
+<li>blocked 20%</li>
+</ol>
+
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">length</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0.1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0.1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="m">0.1</span><span class="p">,</span> <span class="m">0</span><span class="p">,</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0.3</span><span class="o">/</span><span class="m">5</span><span class="p">,</span> <span class="m">5</span><span class="p">),</span> <span class="m">0.2</span><span class="p">,</span> <span class="m">0.2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">w</span><span class="o">&gt;</span><span class="m">0</span><span class="p">)]</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -625,33 +648,17 @@ body {
 
 
 <div class="output_html rendered_html output_subarea ">
-34
-</div>
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'singleton_1'</li><li>'singleton_3'</li><li>'singleton_5'</li><li>'shared_1'</li><li>'shared_2'</li><li>'shared_3'</li><li>'shared_4'</li><li>'shared_5'</li><li>'paired_1'</li><li>'blocked_1'</li></ol>
 
 </div>
 
 </div>
-</div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
-</div><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p>I'll assign 50% weights on ED_tFLASH, ED_tPCA and ED_XX, and 50% on the rest of them,</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="nf">rep</span><span class="p">(</span><span class="m">0.5</span><span class="o">/</span><span class="m">31</span><span class="p">,</span><span class="m">23</span><span class="p">),</span> <span class="m">0.5</span><span class="o">/</span><span class="m">3</span><span class="p">,</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0.5</span><span class="o">/</span><span class="m">31</span><span class="p">,</span><span class="m">3</span><span class="p">),</span> <span class="m">0.5</span><span class="o">/</span><span class="m">3</span><span class="p">,</span> <span class="m">0.5</span><span class="o">/</span><span class="m">3</span><span class="p">,</span> <span class="nf">rep</span><span class="p">(</span><span class="m">0.5</span><span class="o">/</span><span class="m">31</span><span class="p">,</span><span class="m">5</span><span class="p">))</span>
-<span class="n">gtex_mixture</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">U</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span><span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
 
@@ -661,7 +668,8 @@ body {
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">w</span><span class="o">&gt;</span><span class="m">0</span><span class="p">)]</span>
+<span class="nf">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -693,7 +701,285 @@ body {
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">saveRDS</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">gtex_mixture</span><span class="o">=</span><span class="n">gtex_mixture</span><span class="p">,</span> <span class="n">artificial_mixture_50</span><span class="o">=</span><span class="n">artificial_mixture_50</span><span class="p">),</span> <span class="s">&#39;../data/prior_simulation.rds&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">length</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+10
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">artificial_mixture_6</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">U</span><span class="o">=</span><span class="n">prior</span><span class="p">,</span><span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Mixture-from-GTEx">Mixture from GTEx<a class="anchor-link" href="#Mixture-from-GTEx">&#182;</a></h2><p>Using <a href="20200502_Prepare_ED_prior.html">this workflow</a>,</p>
+
+<pre><code>sos run ~/GIT/gtexresults/workflows/mashr_flashr_workflow.ipynb flash \
+    --cwd /project2/compbio/GTEx_eQTL/mashr_flashr_workflow_output \
+    --data /project2/compbio/GTEx_eQTL/mashr_flashr_workflow_output/FastQTLSumStats.mash.rds \
+    --effect-model EE -c midway2.yml -q midway2
+sos run analysis/20200502_Prepare_ED_prior.ipynb ed \
+    --cwd /project2/compbio/GTEx_eQTL/mashr_flashr_workflow_output \
+    --model FastQTLSumStats.mash -c midway2.yml -q midway2</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">prior</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;../data/FastQTLSumStats.mash.FL_PC3.ED.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="o">$</span><span class="n">U</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'FLASH_1'</li><li>'FLASH_2'</li><li>'FLASH_3'</li><li>'FLASH_4'</li><li>'FLASH_5'</li><li>'FLASH_6'</li><li>'FLASH_7'</li><li>'FLASH_8'</li><li>'FLASH_9'</li><li>'FLASH_10'</li><li>'FLASH_11'</li><li>'FLASH_12'</li><li>'FLASH_13'</li><li>'FLASH_14'</li><li>'FLASH_15'</li><li>'FLASH_16'</li><li>'FLASH_17'</li><li>'FLASH_18'</li><li>'FLASH_19'</li><li>'FLASH_20'</li><li>'tFLASH'</li><li>'PCA_1'</li><li>'PCA_2'</li><li>'PCA_3'</li><li>'tPCA'</li><li>'XX'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="nf">length</span><span class="p">(</span><span class="n">prior</span><span class="o">$</span><span class="n">U</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+26
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Most weighths are in <code>tFLASH</code> and <code>XX</code>,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="o">$</span><span class="n">U</span><span class="p">)[</span><span class="n">prior</span><span class="o">$</span><span class="n">w</span><span class="o">&gt;</span><span class="m">0.1</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'tFLASH'</li><li>'XX'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>But many other weights are also non-trivial</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">prior</span><span class="o">$</span><span class="n">U</span><span class="p">)[</span><span class="n">prior</span><span class="o">$</span><span class="n">w</span><span class="o">&gt;</span><span class="m">0.001</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'FLASH_1'</li><li>'FLASH_3'</li><li>'FLASH_5'</li><li>'FLASH_6'</li><li>'FLASH_7'</li><li>'FLASH_8'</li><li>'FLASH_9'</li><li>'FLASH_10'</li><li>'FLASH_11'</li><li>'FLASH_12'</li><li>'FLASH_13'</li><li>'FLASH_14'</li><li>'FLASH_16'</li><li>'FLASH_17'</li><li>'FLASH_18'</li><li>'FLASH_19'</li><li>'FLASH_20'</li><li>'tFLASH'</li><li>'tPCA'</li><li>'XX'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">tol</span> <span class="o">=</span> <span class="m">1E-12</span>
+<span class="n">U</span> <span class="o">=</span> <span class="n">prior</span><span class="o">$</span><span class="n">U</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">prior</span><span class="o">$</span><span class="n">w</span><span class="o">&gt;</span><span class="n">tol</span><span class="p">)]</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">prior</span><span class="o">$</span><span class="n">w</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">prior</span><span class="o">$</span><span class="n">w</span><span class="o">&gt;</span><span class="n">tol</span><span class="p">)]</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+<span class="n">gtex_mixture</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">U</span><span class="o">=</span><span class="n">U</span><span class="p">,</span><span class="n">w</span><span class="o">=</span><span class="n">w</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<style>
+.list-inline {list-style: none; margin:0; padding: 0}
+.list-inline>li {display: inline-block}
+.list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
+</style>
+<ol class=list-inline><li>'FLASH_1'</li><li>'FLASH_2'</li><li>'FLASH_3'</li><li>'FLASH_4'</li><li>'FLASH_5'</li><li>'FLASH_6'</li><li>'FLASH_7'</li><li>'FLASH_8'</li><li>'FLASH_9'</li><li>'FLASH_10'</li><li>'FLASH_11'</li><li>'FLASH_12'</li><li>'FLASH_13'</li><li>'FLASH_14'</li><li>'FLASH_15'</li><li>'FLASH_16'</li><li>'FLASH_17'</li><li>'FLASH_18'</li><li>'FLASH_19'</li><li>'FLASH_20'</li><li>'tFLASH'</li><li>'PCA_1'</li><li>'PCA_3'</li><li>'tPCA'</li><li>'XX'</li></ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="nf">saveRDS</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">gtex_mixture</span><span class="o">=</span><span class="n">gtex_mixture</span><span class="p">,</span> <span class="n">artificial_mixture_50</span><span class="o">=</span><span class="n">artificial_mixture_50</span><span class="p">,</span> <span class="n">artificial_mixture_6</span><span class="o">=</span><span class="n">artificial_mixture_6</span><span class="p">),</span> <span class="s">&#39;../data/prior_simulation.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -711,7 +997,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;../data/prior_simulation.rds&#39;</span><span class="p">)</span>
@@ -724,7 +1010,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">gtex_mixture</span><span class="p">)</span>
@@ -770,10 +1056,10 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">gtex_ed_mixture</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;~/tmp/07-May-2020/gtex_mixture_identity.FLASH_PC3.ED.rds&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">gtex_ed_mixture</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;~/tmp/19-May-2020/gtex_mixture_identity.FL_PC3.ED.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -783,7 +1069,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">gtex_ed_mixture</span><span class="p">)</span>
@@ -821,10 +1107,10 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">artificial_ed_mixture_50</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;~/tmp/07-May-2020/artificial_mixture_identity.FLASH_PC3.ED.rds&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">artificial_ed_mixture_50</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;~/tmp/19-May-2020/artificial_mixture_identity.FL_PC3.ED.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -834,7 +1120,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">artificial_ed_mixture_50</span><span class="p">)</span>
@@ -873,17 +1159,17 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Filter the components by weight cutoff <code>0.00001</code>,</p>
+<p>Filter the components by weight cutoff <code>1E-15</code>,</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">tol</span> <span class="o">=</span> <span class="m">0.00001</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">tol</span> <span class="o">=</span> <span class="m">1E-15</span>
 <span class="n">artificial_ed_mixture_50</span><span class="o">$</span><span class="n">U</span> <span class="o">=</span> <span class="n">artificial_ed_mixture_50</span><span class="o">$</span><span class="n">U</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">artificial_ed_mixture_50</span><span class="o">$</span><span class="n">w</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">)]</span>
 <span class="n">artificial_ed_mixture_50</span><span class="o">$</span><span class="n">w</span> <span class="o">=</span> <span class="n">artificial_ed_mixture_50</span><span class="o">$</span><span class="n">w</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">artificial_ed_mixture_50</span><span class="o">$</span><span class="n">w</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">)]</span>
 <span class="n">gtex_ed_mixture</span><span class="o">$</span><span class="n">U</span> <span class="o">=</span> <span class="n">gtex_ed_mixture</span><span class="o">$</span><span class="n">U</span><span class="p">[</span><span class="nf">which</span><span class="p">(</span><span class="n">gtex_ed_mixture</span><span class="o">$</span><span class="n">w</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">)]</span>
@@ -897,7 +1183,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">artificial_ed_mixture_50</span><span class="o">$</span><span class="n">U</span><span class="p">)</span>
@@ -923,7 +1209,7 @@ body {
 .list-inline>li {display: inline-block}
 .list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
 </style>
-<ol class=list-inline><li>'tFLASH'</li><li>'PCA_3'</li><li>'tPCA'</li><li>'XX'</li></ol>
+<ol class=list-inline><li>'tFLASH'</li><li>'PCA_1'</li><li>'tPCA'</li><li>'XX'</li></ol>
 
 </div>
 
@@ -935,7 +1221,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">artificial_ed_mixture_50</span><span class="o">$</span><span class="n">w</span>
@@ -961,7 +1247,7 @@ body {
 .list-inline>li {display: inline-block}
 .list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
 </style>
-<ol class=list-inline><li>0.898314146466091</li><li>0.000648316043920725</li><li>0.0637063706095047</li><li>0.0373311668804688</li></ol>
+<ol class=list-inline><li>4.31744384080165e-06</li><li>3.02306174722007e-05</li><li>0.989816261946727</li><li>0.0101491899919994</li></ol>
 
 </div>
 
@@ -973,7 +1259,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">names</span><span class="p">(</span><span class="n">gtex_ed_mixture</span><span class="o">$</span><span class="n">U</span><span class="p">)</span>
@@ -1011,7 +1297,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[35]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">gtex_ed_mixture</span><span class="o">$</span><span class="n">w</span>
@@ -1037,7 +1323,7 @@ body {
 .list-inline>li {display: inline-block}
 .list-inline>li:not(:last-child)::after {content: "\00b7"; padding: 0 .5ex}
 </style>
-<ol class=list-inline><li>0.032953661814357</li><li>0.966986560055189</li><li>5.03672349327372e-05</li></ol>
+<ol class=list-inline><li>0.199279999999847</li><li>0.735617110811586</li><li>0.0651028891885703</li></ol>
 
 </div>
 
@@ -1049,7 +1335,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[39]:</div>
+<div class="prompt input_prompt">In&nbsp;[36]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">dat</span><span class="o">$</span><span class="n">artificial_mixture_50</span><span class="o">$</span><span class="n">ED</span> <span class="o">=</span> <span class="n">artificial_ed_mixture_50</span>
@@ -1063,7 +1349,7 @@ body {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[40]:</div>
+<div class="prompt input_prompt">In&nbsp;[37]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="s">&#39;../data/prior_simulation.rds&#39;</span><span class="p">)</span>
@@ -1076,7 +1362,7 @@ body {
 </div>
 <hr>
 Copyright &copy 2016-2019 Gao Wang et al at Stephens Lab, University of Chicago
-<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/c61a878ce96689c523d2fbdda8eeec829328bc83/analysis/20200402_create_prior_mixture.ipynb"><code>analysis/20200402_create_prior_mixture.ipynb</code></a> committed by Gao Wang on Mon May 11 15:50:51 2020 <a href="http://github.com/gaow/mvarbvs/commit/c61a878ce96689c523d2fbdda8eeec829328bc83">revision 2, c61a878</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
+<p><small>Exported from <a href="http://github.com/gaow/mvarbvs/blob/14f396f8aedf4d91d29d603af4c4dcea078d42d2/analysis/20200402_create_prior_mixture.ipynb"><code>analysis/20200402_create_prior_mixture.ipynb</code></a> committed by Gao Wang on Tue May 19 13:42:51 2020 <a href="http://github.com/gaow/mvarbvs/commit/14f396f8aedf4d91d29d603af4c4dcea078d42d2">revision 8, 14f396f</a> <a href="https://stephenslab.github.io/ipynb-website/notes.html#Note-about-commit-ids"><span class="fa fa-question-circle"></span></a></small></p>
 </div>
 </div>
 </body>

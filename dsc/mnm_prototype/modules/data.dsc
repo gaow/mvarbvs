@@ -11,6 +11,7 @@ full_data: misc.R + R(data = readRDS(dataset);
             X = filter_X(data$X, missing_rate_cutoff, maf_cutoff);
             X = susieR:::set_X_attributes(X[,get_center(subset, ncol(X))]);
             X_scaled = t((t(X) - attributes(X)[["scaled:center"]]) / attributes(X)[["scaled:scale"]]);
+            r = cor(X);
             var_Y = compute_cov_flash(data$y_res, flash_error))
   @CONF: R_libs = flashier@willwerscheid/flashier
   tag: "full"
@@ -22,6 +23,7 @@ full_data: misc.R + R(data = readRDS(dataset);
   $X: X_scaled
   $G: X
   $Y: data$y_res
+  $ld: r
   $var_Y: var_Y
   $N: nrow(X)
 
