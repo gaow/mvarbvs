@@ -1,4 +1,4 @@
-simulate_y_base: regression_simulator.R + regression.R + \
+simulate_y_base: misc.R + regression_simulator.R + regression.R + \
                 R(res = simulate_main(X, Y, missing_Y, scale_Y, prior_file, eff_mode, n_signal, var_Y, residual_mode, save_summary_stats))
   @CONF: R_libs=susieR
   # here, X has already been centered and scaled
@@ -27,10 +27,19 @@ artificial_mixture(simulate_y_base):
     residual_mode: "var_Y"
     missing_Y: FALSE
 
+artificial_mixture_missing(artificial_mixture):
+    save_summary_stats: TRUE
+    eff_mode: "artificial_mixture_6"
+    missing_Y: TRUE, FALSE 
+
 gtex_mixture(simulate_y_base):
     eff_mode: "gtex_mixture"
     residual_mode: "var_Y"
     missing_Y: FALSE
+
+gtex_mixture_missing(gtex_mixture):
+    save_summary_stats: TRUE
+    missing_Y: TRUE, FALSE
 
 # These are for simulating some data
 # to estimate empirical prior covariances
