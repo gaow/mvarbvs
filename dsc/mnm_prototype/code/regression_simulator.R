@@ -46,7 +46,7 @@ get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8
     }
     # this is vector of residual variance scalar
     sigma = sqrt(genetic_var / pve - genetic_var)
-    sigma[which(is.infinite(sigma))] = 0
+    sigma[which(is.infinite(sigma) | is.nan(sigma))] = 0
     # some sigma can be zero due to lack of effect variables in that column of b
     # we have to set the corresponding residual variance to a reasonable default number
     # maybe the smallest of the rest of sigma?
