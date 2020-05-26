@@ -10,7 +10,7 @@
 #SBATCH --error=dsc-log-%J.err
 
 # 1. extract data from `simulate_only` pipeline in DSC 
-#for m in gtex_mixture_identity; do 
+#for m in artificial_mixture_identity gtex_mixture_identity; do 
 #    sos run analysis/20200502_Prepare_ED_prior.ipynb extract --model $m -c midway2.yml -q midway2 -s build
 #done
 # 2. Run FLASH for data extracted
@@ -21,6 +21,6 @@
 #    --effect-model EE -c midway2.yml -q midway2
 #done
 # 3. Run ED for artificial mixture
-# sos run analysis/20200502_Prepare_ED_prior.ipynb ed --model artificial_mixture_identity -c midway2.yml -q midway2
+sos run analysis/20200502_Prepare_ED_prior.ipynb ed --model artificial_mixture_identity -c midway2.yml -q midway2
 # 4. Run ED for GTEx mixture
-sos run analysis/20200502_Prepare_ED_prior.ipynb ed --model gtex_mixture_identity -c midway2.yml -q midway2
+# sos run analysis/20200502_Prepare_ED_prior.ipynb ed --model gtex_mixture_identity -c midway2.yml -q midway2
