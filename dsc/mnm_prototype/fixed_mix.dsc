@@ -13,7 +13,7 @@ DSC:
     simulate: artificial_mixture, gtex_mixture
     simulate_missing: artificial_mixture_missing
     simulate_identity: artificial_mixture_identity, gtex_mixture_identity
-    # mnm: mnm_oracle, mnm_naive, mnm_ed, mnm_identity, mnm_shared
+    mnm: mnm_oracle, mnm_naive, mnm_ed, mnm_identity, mnm_shared
     mnm_missing: mnm_oracle, mnm_rss_oracle, mnm_rss_naive
   run:
     default: small_data * simulate * (mnm * susie_scores, atlasqtl) #, mthess)
