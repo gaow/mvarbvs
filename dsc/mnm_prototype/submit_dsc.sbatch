@@ -10,8 +10,8 @@
 #SBATCH --error=dsc-log-%J.err
 
 # Run the main DSC
-./fixed_mix.dsc --host dsc_mnm.yml -o mnm_20200510 -s existing -e ignore &> mnm_20200510.log
+#./fixed_mix.dsc --host dsc_mnm.yml -o mnm_20200510 -s existing -e ignore &> mnm_20200510.log
 # Run the mthess DSC
-#./fixed_mix.dsc --target mthess -o mthess_20200526 -s existing -e ignore -c 38 --n_dataset 200 &> mnm_20200526.log
+./fixed_mix.dsc --host dsc_mnm.yml --target mthess -o mthess_20200526 -s existing -e ignore --n_dataset 200 &> mnm_20200526.log
 # Run data generation step only to get data for ED estimate
 #./fixed_mix.dsc --host dsc_mnm.yml --target simulate_only --n_dataset 25000 -o mnm_sumstats -s existing -e ignore &> mnm_sumstats.log
