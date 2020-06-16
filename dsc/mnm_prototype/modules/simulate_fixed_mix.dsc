@@ -27,12 +27,16 @@ artificial_mixture(simulate_y_base):
     residual_mode: "var_Y"
     missing_Y: FALSE
 
+artificial_mixture_missing(artificial_mixture):
+    save_summary_stats: TRUE
+    missing_Y: FALSE, TRUE
+
 artificial_mixture_small(simulate_y_base):
     eff_mode: "artificial_mixture_6"
     residual_mode: "var_Y"
     missing_Y: FALSE
 
-artificial_mixture_missing(artificial_mixture):
+artificial_mixture_small_missing(artificial_mixture):
     save_summary_stats: TRUE
     eff_mode: "artificial_mixture_6"
     missing_Y: TRUE, FALSE

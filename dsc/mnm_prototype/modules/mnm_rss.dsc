@@ -8,7 +8,7 @@ mnm_rss_base: mnm_rss.R
   L: 10
   resid_method: 'oracle'
   prior_scale: 'oracle'
-  n_thread: 1
+  n_thread: 5
   $result: result
   $prior: prior
 
@@ -23,6 +23,8 @@ mnm_rss_mid_het(mnm_rss_base):
 
 mnm_rss_shared(mnm_rss_base):
   eff_mode: 'shared'
+  prior_scale: 'oracle','simulated'
+  resid_method: 'oracle'
 
 mnm_rss_singleton(mnm_rss_base):
   eff_mode: 'singleton'
@@ -43,4 +45,13 @@ mnm_rss_naive(mnm_rss_base):
   prior_scale: 'oracle','simulated'
   resid_method: 'oracle'
 
+mnm_rss_ed(mnm_rss_base):
+  eff_mode: 'ED'
+  prior_scale: 'oracle','simulated'
+  resid_method: 'oracle'
+
+mnm_rss_identity(mnm_rss_base):
+  eff_mode: 'identity'
+  prior_scale: 'oracle','simulated'
+  resid_method: 'oracle'
 
