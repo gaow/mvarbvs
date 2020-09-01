@@ -17,12 +17,15 @@ get_effects = function(J, R, n, U, w) {
     if (J<n) stop("J should be greater than n")
     b = matrix(0, J, R)
     which_b = sample(1:J,n)
+    Ub = list()
     for (j in which_b) {
         # each effect comes from a mixture component with given prob
         dist_index = which(rmultinom(1, 1, prob=w)[,1] == 1)
         b[j,] = MASS::mvrnorm(n = 1, mu=rep(0,R), Sigma=U[[dist_index]])
+        # keep track of which matrix the effect came from
+        Ub[[length(Ub) + 1]] = U[[dist_index]]
     }
-    return(b)
+    return(list(b=b,Ub=Ub))
 }
 
 get_residual_correlation = function(residual, R) {
@@ -61,14 +64,22 @@ get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8
     return(list(y = y, residual_var = residual_var))
 }
 
-mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
+# main simulation function where
+# X is genotype, 
+# U and w are mash mixture prior components and weights
+# pve is per variable pve in this simulation, see `get_y` where `is_pve_variable_avg=TRUE`
+# n is the number of true effects, default to NULL to use my default setting (see `get_n_signal()`)
+# residual is diagonal by default value NULL
+# scale_y is a boolean indicating whether or not the output variable y is to be scaled or not
+mash_sim = function(X, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
     if (is.null(n) || n < 1) n = get_n_signal()
     R = nrow(U[[1]])
     if (R == 1) stop("This simulator is not meant for univariate data")
     for (i in 2:length(U)) {
         if (nrow(U[[i]])!=R) stop("Prior dimension are inconsistent in the given mixture")
     }
-    b = get_effects(J, R, n, U, w)
+    effects = get_effects(ncol(X), R, n, U, w)
+    b = effects$b
     residual_corr = get_residual_correlation(residual, R)
     y_sim = get_y(X, b, residual_corr, pve)
     if (scale_y) {
@@ -85,8 +96,22 @@ mash_sim = function(X, J, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
         sd_y = NA
     }
     # FIXME: format data for R = 1
-    return(list(Y=y_sim$y, true_coef=b, n_signal=n, n_traits=R, residual_variance=y_sim$residual_var, U=U, Y_sd=sd_y))
+    return(list(Y=y_sim$y, true_coef=b, n_signal=n, n_traits=R, 
+                residual_variance=y_sim$residual_var, U=U, 
+                true_U=effects$Ub, Y_sd=sd_y))
 }
+
+# A wrapper function to mash_sim to work with Fabio's mr_mash DSC code
+mr_mash_sim = function(X, U, w, pve, n=NULL, residual=NULL, scale_y=TRUE) {
+    output = mash_sim(X,U,w,pve,n,residual,scale_y=FALSE)
+    return(list(X=X, Y=output$Y, B=output$true_coef, 
+              V=output$residual_variance, 
+              intercepts=rep(0,ncol(Y)), 
+              causal_variables= NA, # FIXME: can be achieved by parsing output$true_coef 
+              causal_responses=NA,  # FIXME: can be achieved by parsing U and output$true_coef
+              Sigma=true_U, 
+              Gamma=NA)) # FIXME: is it still necessary now that X is from real data?
+} 
 
 get_prior = function(U,prior) {
     return(list(oracle=list(xUlist = U, pi = prior$w, null_weight = 0),
