@@ -104,13 +104,16 @@ mash_sim = function(X, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
 # A wrapper function to mash_sim to work with Fabio's mr_mash DSC code
 mr_mash_sim = function(X, U, w, pve, n=NULL, residual=NULL, scale_y=TRUE) {
     output = mash_sim(X,U,w,pve,n,residual,scale_y=FALSE)
+    causal_variables = which(apply(output$true_coef, 1, function(x) any(x) != 0))
+    causal_responses = list()
+    for (i in causal_variables)                               
     return(list(X=X, Y=output$Y, B=output$true_coef, 
               V=output$residual_variance, 
               intercepts=rep(0,ncol(Y)), 
-              causal_variables= NA, # FIXME: can be achieved by parsing output$true_coef 
-              causal_responses=NA,  # FIXME: can be achieved by parsing U and output$true_coef
-              Sigma=true_U, 
-              Gamma=NA)) # FIXME: is it still necessary now that X is from real data?
+              causal_variables= causal_variables, 
+              causal_responses= which(apply(output$true_coef, 2, function(x) any(x) != 0)),
+              Sigma=output$true_U, 
+              Gamma=NA))
 } 
 
 get_prior = function(U,prior) {
