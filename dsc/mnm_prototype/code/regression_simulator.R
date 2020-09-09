@@ -36,16 +36,16 @@ get_residual_correlation = function(residual, R) {
     }
 }
 
-# is_pve_variable_avg: the input PVE is the average PVE per variable.
-# That is, total PVE for that effect is number of effect variables * the PVE.
-get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8) {
+# is_pve_total: the input PVE is the total PVE for all variables
+# If set to FALSE then it is per variable PVE, and total PVE for that effect is number of effect variables * the PVE.
+get_y = function(X, b, residual_corr, pve, is_pve_total=FALSE, max_pve=0.8) {
     yhat = X %*% b
     genetic_var = apply(yhat, 2, var)
-    if (is_pve_variable_avg) {
+    if (is_pve_total) {
+        pve = rep(pve, ncol(b))
+    } else {
         pve = pve * apply(b, 2, function(x) length(which(x!=0)))
         pve[which(pve>max_pve)] = max_pve
-    } else {
-        pve = rep(pve, ncol(b))
     }
     # this is vector of residual variance scalar
     sigma = sqrt(genetic_var / pve - genetic_var)
@@ -64,14 +64,22 @@ get_y = function(X, b, residual_corr, pve, is_pve_variable_avg=TRUE, max_pve=0.8
     return(list(y = y, residual_var = residual_var))
 }
 
+get_prior = function(U,prior) {
+    return(list(oracle=list(xUlist = U, pi = prior$w, null_weight = 0),
+        identity = list(xUlist = list(identity=diag(nrow(U[[1]]))), pi=1, null_weight=0),
+        shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0),
+        naive = list(xUlist = mmbr:::create_cov_canonical(nrow(U[[1]]))),
+        ED = list(xUlist = prior$ED$U, pi = prior$ED$w, null_weight=0)))
+}
+
 # main simulation function where
 # X is genotype, 
 # U and w are mash mixture prior components and weights
-# pve is per variable pve in this simulation, see `get_y` where `is_pve_variable_avg=TRUE`
+# pve is per variable pve or total pve, see `is_pve_total` in `get_y`
 # n is the number of true effects, default to NULL to use my default setting (see `get_n_signal()`)
 # residual is diagonal by default value NULL
 # scale_y is a boolean indicating whether or not the output variable y is to be scaled or not
-mash_sim = function(X, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
+mash_sim = function(X, U, w, pve, n=NULL, is_pve_total=FALSE, residual=NULL,scale_y=TRUE) {
     if (is.null(n) || n < 1) n = get_n_signal()
     R = nrow(U[[1]])
     if (R == 1) stop("This simulator is not meant for univariate data")
@@ -81,7 +89,7 @@ mash_sim = function(X, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
     effects = get_effects(ncol(X), R, n, U, w)
     b = effects$b
     residual_corr = get_residual_correlation(residual, R)
-    y_sim = get_y(X, b, residual_corr, pve)
+    y_sim = get_y(X, b, residual_corr, pve, is_pve_total)
     if (scale_y) {
         # y * diag(1/sd_y) = x * (b * diag(1/sd_y)) + (e * diag(1/sd_y))
         sd_y = apply(y_sim$y, 2, sd)
@@ -101,36 +109,39 @@ mash_sim = function(X, U, w, pve, n=NULL, residual=NULL,scale_y=TRUE) {
                 true_U=effects$Ub, Y_sd=sd_y))
 }
 
-# A wrapper function to mash_sim to work with Fabio's mr_mash DSC code
-mr_mash_sim = function(X, U, w, pve, n=NULL, residual=NULL, scale_y=TRUE) {
-    output = mash_sim(X,U,w,pve,n,residual,scale_y=FALSE)
-    causal_variables = which(apply(output$true_coef, 1, function(x) any(x) != 0))
-    causal_responses = list()
-    for (i in causal_variables)                               
-    return(list(X=X, Y=output$Y, B=output$true_coef, 
-              V=output$residual_variance, 
-              intercepts=rep(0,ncol(Y)), 
-              causal_variables= causal_variables, 
-              causal_responses= which(apply(output$true_coef, 2, function(x) any(x) != 0)),
-              Sigma=output$true_U, 
-              Gamma=NA))
-} 
-
-get_prior = function(U,prior) {
-    return(list(oracle=list(xUlist = U, pi = prior$w, null_weight = 0),
-        identity = list(xUlist = list(identity=diag(nrow(U[[1]]))), pi=1, null_weight=0),
-        shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0),
-        naive = list(xUlist = mmbr:::create_cov_canonical(nrow(U[[1]]))),
-        ED = list(xUlist = prior$ED$U, pi = prior$ED$w, null_weight=0)))
-}
-
 simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, var_Y, residual_mode, save_summary_stats) {
     prior_data = readRDS(prior_file)
     if (residual_mode == 'identity') residual = NULL
     else residual = var_Y
-    res = mash_sim(X, ncol(X), prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual, scale_Y)
-    if (missing_Y) res$Y = create_missing(res$Y, Y)
+    res = mash_sim(X, prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual, scale_Y)
+    if (missing_Y && !is.null(Y)) res$Y = create_missing(res$Y, Y)
     res$prior = get_prior(res$U, prior_data[[prior]])
     if (save_summary_stats) res$sumstats = mm_regression(X, res$Y)
     return(res)
+}
+
+# A wrapper function to mash_sim to work with Fabio's mr_mash DSC code
+# missing_Y: whether or not to create missing values in Y based on original Y input
+# prior_file: RDS file for prior database 
+# prior: a string of a key in the RDS file to extract the prior to be used
+# See `mash_sim` for documentation on other input parameters
+mr_mash_sim = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, is_pve_total, var_Y, residual_mode) {
+    prior_data = readRDS(prior_file)
+    if (residual_mode == 'identity') residual = NULL
+    else residual = var_Y
+    res = mash_sim(X,prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, is_pve_total, residual, scale_Y)
+    if (missing_Y && !is.null(Y)) res$Y = create_missing(res$Y, Y)
+    causal_variables = which(apply(res$true_coef, 1, function(x) any(x) != 0))
+    causal_responses = list()
+    for (i in 1:length(causal_variables)) {
+        causal_responses[[i]] = which(res$true_coef[causal_variables[i],] != 0)
+    }
+    return(list(X=X, Y=res$Y, 
+              B=res$true_coef, 
+              V=res$residual_variance, 
+              intercepts=rep(0,ncol(res$Y)), # because we have not simulated intercept term in Y. 
+              causal_variables= causal_variables, 
+              causal_responses= causal_responses,
+              Sigma=res$true_U, 
+              Gamma=NA))
 }

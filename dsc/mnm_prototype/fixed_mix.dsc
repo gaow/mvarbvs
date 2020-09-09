@@ -31,6 +31,6 @@ DSC:
     n_dataset: 500
     # number of causal as a global variable, <0 is to use default
     C: -1
-    # This is per eQTL heritability, with is_pve_average set to TRUE in regression_simulator.R
+    # This is per eQTL heritability, with is_pve_total set to FALSE in regression_simulator.R
     # see Figure 1 of this paper: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4028055/
     pve: 0.15
