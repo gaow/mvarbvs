@@ -39,7 +39,13 @@ get_residual_correlation = function(residual, R) {
 # is_pve_total: the input PVE is the total PVE for all variables
 # If set to FALSE then it is per variable PVE, and total PVE for that effect is number of effect variables * the PVE.
 get_y = function(X, b, residual_corr, pve, is_pve_total=FALSE, max_pve=0.8) {
-    yhat = X %*% b
+    if('scaled:scale' %in% names(attributes(X)) ){
+      sb = b/attr(X,"scaled:scale")
+      Xsb <- X %*% sb
+      yhat <- t(t(Xsb) - colMeans(Xsb))
+    }else{
+      yhat = X %*% b
+    }
     genetic_var = apply(yhat, 2, var)
     if (is_pve_total) {
         pve = rep(pve, ncol(b))
@@ -58,8 +64,7 @@ get_y = function(X, b, residual_corr, pve, is_pve_total=FALSE, max_pve=0.8) {
     } else {
         sigma[which(sigma == 0)] = min(sigma[which(sigma!=0)])
     }
-    sigma = diag(sigma)
-    residual_var = sigma %*% residual_corr %*% sigma
+    residual_var = t(t(residual_corr * sigma) * sigma)
     y = yhat + MASS::mvrnorm(n = nrow(X), mu=rep(0,nrow(residual_var)), Sigma=residual_var)
     return(list(y = y, residual_var = residual_var))
 }
@@ -79,7 +84,7 @@ get_prior = function(U,prior) {
 # n is the number of true effects, default to NULL to use my default setting (see `get_n_signal()`)
 # residual is diagonal by default value NULL
 # scale_y is a boolean indicating whether or not the output variable y is to be scaled or not
-mash_sim = function(X, U, w, pve, n=NULL, is_pve_total=FALSE, residual=NULL,scale_y=TRUE) {
+mash_sim = function(X, U, w, pve, is_pve_total=FALSE, n=NULL, residual=NULL,scale_y=TRUE) {
     if (is.null(n) || n < 1) n = get_n_signal()
     R = nrow(U[[1]])
     if (R == 1) stop("This simulator is not meant for univariate data")
@@ -109,14 +114,25 @@ mash_sim = function(X, U, w, pve, n=NULL, is_pve_total=FALSE, residual=NULL,scal
                 true_U=effects$Ub, Y_sd=sd_y))
 }
 
-simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, n_signal, var_Y, residual_mode, save_summary_stats) {
+simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, pve, is_pve_total, n_signal, var_Y, residual_mode, save_summary_stats, plink, prefix='data', save_suff_stats) {
+    if(!is.matrix(X)){
+      geno.file = X
+      X = get_genotype(geno.file)
+    }
     prior_data = readRDS(prior_file)
     if (residual_mode == 'identity') residual = NULL
     else residual = var_Y
-    res = mash_sim(X, prior_data[[prior]]$U, prior_data[[prior]]$w, pve, n_signal, residual, scale_Y)
+    res = mash_sim(X, prior_data[[prior]]$U, prior_data[[prior]]$w, pve, is_pve_total, n_signal, residual, scale_Y)
     if (missing_Y && !is.null(Y)) res$Y = create_missing(res$Y, Y)
     res$prior = get_prior(res$U, prior_data[[prior]])
-    if (save_summary_stats) res$sumstats = mm_regression(X, res$Y)
+    if (save_summary_stats){
+      if(plink){
+        res$sumstats = mm_regression_plink(geno.file, res$Y, attr(X, 'sample_names'), prefix)
+      }else{
+        res$sumstats = mm_regression(X, res$Y)
+      }
+    }
+    if (save_suff_stats) res$suff = mm_sufficient(X, res$Y) # XtX is not involved
     return(res)
 }
 

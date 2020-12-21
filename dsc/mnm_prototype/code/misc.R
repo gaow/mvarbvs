@@ -114,3 +114,21 @@ filter_X <- function(X, missing_rate_thresh, maf_thresh) {
     if (length(rm_col)) X <- X[, -rm_col]
     return(X)
 }
+
+get_genotype <- function(geno_file){
+  library(data.table)
+  library(Matrix)
+  geno <- fread(paste0(geno_file, '.raw.gz'),sep = "\t",header = TRUE,stringsAsFactors = FALSE)
+  class(geno) <- "data.frame"
+  # Extract the genotypes.
+  X <- as(as.matrix(geno[-(1:6)]), 'dgCMatrix')
+  cm = colMeans(X,na.rm = TRUE)
+  csd = susieR:::compute_colSds(X)
+  csd[csd == 0] = 1
+  attr(X,"scaled:center") = cm
+  attr(X,"scaled:scale") = csd
+  attr(X,"sample_names") = geno[,2]
+  return(X)
+}
+
+
