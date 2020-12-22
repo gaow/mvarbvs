@@ -3,7 +3,7 @@ mnm_base: misc.R + mnm.R
   X: $X
   Y: $Y
   meta: $meta
-  eff_mode: 'identity', 'low_het', 'mid_het', 'high_het', 'shared', 'singleton', 'singleton_1', 'mixture_1'
+  eff_mode: 'oracle','identity', 'shared', 'naive', 'ED'
   L: 10
   resid_method: 'oracle', 'diag', 'flash'
   n_thread: 1

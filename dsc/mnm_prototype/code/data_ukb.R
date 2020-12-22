@@ -7,7 +7,7 @@ geno.file = paste0(genotype_dir, 'bloodcells_chr',
 ld.file = paste0(ld_dir, 'bloodcells_chr',
                    chr, '.', start, '.', end, '.matrix')
 ldeigen.file = paste0(ldeigen_dir, 'bloodcells_chr',
-                   chr, '.', start, '.', end, '.rds')
+                   chr, '.', start, '.', end, '.eigen.rds')
 varY = readRDS(varY_file)$Y.cov
 
 
