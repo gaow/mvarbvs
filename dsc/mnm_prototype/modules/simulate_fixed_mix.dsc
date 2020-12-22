@@ -22,7 +22,7 @@ simulate_y_base: misc.R + regression_simulator.R + regression.R + \
   $J: ncol(X)
   $R: res$n_traits
   $meta: list(true_coef=res$true_coef, residual_variance=res$residual_variance,
-              original_Y=Y, Y_sd=res$Y_sd, prior=res$prior)
+              original_Y=Y, Y_sd=res$Y_sd, prior=res$prior, eff_mode = eff_mode)
   $sumstats: res$sumstats
   $suffstats: res$suff
 

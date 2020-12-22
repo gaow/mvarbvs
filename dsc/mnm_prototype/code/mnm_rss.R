@@ -1,15 +1,15 @@
 library(data.table)
 Z = as.matrix(sumstats$bhat/sumstats$sbhat)
 Z[is.na(Z)] = 0
-prior = meta$prior[[eff_mode]]
+prior = meta$prior[[prior]]
 if(resid_method == 'identity'){
   resid_Z = diag(ncol(Z))
 }else if(resid_method == 'oracle'){
   resid_Z = meta$residual_variance
 }else if(resid_method == 'nullz'){
-  resid_Z = nullzcor
+  resid_Z = readRDS(nullz_file)[[meta$eff_mode]]
 }else if(resid_method == 'varY'){
-  resid_Z = cor(Y)
+  resid_Z = cov2cor(suffstats$YtY / (suffstats$N-1))
 }
 
 LD = as.matrix(fread(ld))
