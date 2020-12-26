@@ -1,4 +1,4 @@
-susie_base: susie.R
+susie: susie.R
   @CONF: R_libs = susieR
   X: $X
   Y: $Y

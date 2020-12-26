@@ -8,14 +8,14 @@ if(resid_method == 'identity'){
   resid_Z = meta$residual_variance
 }else if(resid_method == 'nullz'){
   resid_Z = readRDS(nullz_file)[[meta$eff_mode]]
-}else if(resid_method == 'varY'){
+}else if(resid_method == 'corY'){
   resid_Z = cov2cor(suffstats$YtY / (suffstats$N-1))
 }
 
 LD = as.matrix(fread(ld))
 ldeigen = readRDS(ldeigen)
 
-m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=xUlist, weights=prior$pi), 
+m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), 
                                  null_weight=prior$null_weight, max_mixture_len=-1)
 result = mmbr::msusie_rss(Z, LD, eigenR = ldeigen, L=L, prior_variance=m_init, residual_variance=resid_Z, 
                           compute_objective=TRUE, estimate_residual_variance=F, 

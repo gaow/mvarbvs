@@ -1,18 +1,18 @@
 library(susieR)
 
-susie_rss_analyze = function(z, R, L) {
+susie_rss_analyze = function(z, R, L, estimate_residual_variance) {
   fit = tryCatch(susie_rss(z, R, L=L,
-                           max_iter = 1000),
+                           max_iter = 1000, estimate_residual_variance = estimate_residual_variance),
                  error = function(e) list(sets = NULL, pip=NULL))
   return(fit)
 }
 
-susie_rss_multiple = function(Z, R, L) {
+susie_rss_multiple = function(Z, R, L, estimate_residual_variance) {
   fitted = list()
   posterior = list()
   if (is.null(dim(Z))) Z = matrix(ncol=1, Z)
   for (r in 1:ncol(Z)) {
-    fitted[[r]] = susie_rss_analyze(Z[,r], R, L)
+    fitted[[r]] = susie_rss_analyze(Z[,r], R, L, estimate_residual_variance)
     if(is.null(fitted[[r]]$sets))
       posterior[[r]] = NULL
     else
@@ -24,5 +24,5 @@ susie_rss_multiple = function(Z, R, L) {
 library(data.table);
 Z = sumstats$bhat/sumstats$shat;
 R = as.matrix(fread(ld));
-res = susie_rss_multiple(Z, R, L)
+res = susie_rss_multiple(Z, R, L, estimate_residual_variance)
 
