@@ -1,7 +1,7 @@
 library(data.table)
 Z = as.matrix(sumstats$bhat/sumstats$sbhat)
 Z[is.na(Z)] = 0
-prior = meta$prior[[prior]]
+priorU = meta$prior[[prior]]
 if(resid_method == 'identity'){
   resid_Z = diag(ncol(Z))
 }else if(resid_method == 'oracle'){
@@ -15,8 +15,12 @@ if(resid_method == 'identity'){
 LD = readRDS(ld)
 ldeigen = readRDS(ldeigen)
 
-m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), 
-                                 null_weight=prior$null_weight, max_mixture_len=-1)
+if(prior == 'oracle'){
+  priorU$xUlist = lapply(priorU$xUlist, function(U) U * suffstats$N)
+}
+
+m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=priorU$xUlist, weights=priorU$pi), 
+                                 null_weight=priorU$null_weight, max_mixture_len=-1)
 result = mmbr::msusie_rss(Z, LD, eigenR = ldeigen, L=L, prior_variance=m_init, residual_variance=resid_Z, 
                           compute_objective=TRUE, estimate_residual_variance=F, 
                           estimate_prior_variance=T, estimate_prior_method='EM', 
