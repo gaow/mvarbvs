@@ -12,7 +12,7 @@ if(resid_method == 'identity'){
   resid_Z = cov2cor(suffstats$YtY / (suffstats$N-1))
 }
 
-LD = as.matrix(fread(ld))
+LD = readRDS(ld)
 ldeigen = readRDS(ldeigen)
 
 m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), 

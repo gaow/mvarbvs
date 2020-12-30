@@ -4,16 +4,19 @@
 %include modules/simulate_fixed_mix
 %include modules/mnm
 %include modules/mnm_rss
+%include modules/mnm_suff
+%include modules/susie_rss
 %include modules/score
 
 DSC:
   define:
     simulate: artificial_mixture_ukb, ukb_bloodcells_mixture
     mnm: mnm_oracle, mnm_naive
-    mnm_rss: mnm_oracle, mnm_rss_oracle, mnm_rss_naive, mnm_rss_ed, mnm_rss_identity, mnm_rss_shared
+    mnm_rss: mnm_rss_oracle, mnm_rss_naive, mnm_rss_ed, mnm_rss_identity, mnm_rss_shared
+    mnm_suff: mnm_suff_oracle, mnm_suff_naive, mnm_suff_ed, mnm_suff_identity, mnm_suff_shared
   run:
-    default: data_ukb * simulate * mnm * susie_scores
-    simulate_only: data_ukb * simulate # using command argument --n_dataset 20000 this should simulate 20000 data-sets and generate univariate summary stats, for learning about mixture prior using EB
+    default: data_ukb * simulate * ((mnm_suff_oracle, mnm_rss) * susie_scores, susie_rss)
+    simulate_only: data_ukb * simulate 
   exec_path: code
   output: output/ukb_rss
   global:

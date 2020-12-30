@@ -64,6 +64,7 @@ get_y = function(X, b, residual_corr, pve, is_pve_total=FALSE, max_pve=0.8) {
     } else {
         sigma[which(sigma == 0)] = min(sigma[which(sigma!=0)])
     }
+    sigma = rep(max(sigma), length(sigma)) # this makes pve be the max pve cross conditions, ow the pve are all same and the effect sizes are all same.
     residual_var = t(t(residual_corr * sigma) * sigma)
     y = yhat + MASS::mvrnorm(n = nrow(X), mu=rep(0,nrow(residual_var)), Sigma=residual_var)
     return(list(y = y, residual_var = residual_var))
@@ -101,9 +102,14 @@ mash_sim = function(X, U, w, pve, is_pve_total=FALSE, n=NULL, residual=NULL,scal
         y_sim$y = t(t(y_sim$y) / sd_y)
         y_sim$residual_var = t(y_sim$residual_var / sd_y) / sd_y
         b = t(t(b) / sd_y)
-        for (i in 2:length(U)) {
+        for (i in 1:length(U)) {
             # b ~ N(0, diag(1/sd_y) * U * diag(1/sd_y))
             U[[i]] = t(U[[i]] / sd_y) / sd_y
+            eigenU = eigen(U, symmetric = T)
+            if(any(eigenU$values<0)){
+              eigenU$values[eigenU$values < 0] = 0
+              U[[i]] = eigenU$vectors %*% (t(eigenU$vectors) * eigenU$values)
+            }
         }
     } else {
         sd_y = NA
@@ -114,7 +120,8 @@ mash_sim = function(X, U, w, pve, is_pve_total=FALSE, n=NULL, residual=NULL,scal
                 true_U=effects$Ub, Y_sd=sd_y))
 }
 
-simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, pve, is_pve_total, n_signal, var_Y, residual_mode, save_summary_stats, plink, prefix='data', save_suff_stats) {
+simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, simulate_z, pve, is_pve_total, n_signal, var_Y, 
+                         residual_mode, save_summary_stats, plink, prefix='data', save_suff_stats) {
     if(!is.matrix(X)){
       geno.file = X
       X = get_genotype(geno.file)

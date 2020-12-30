@@ -1,6 +1,9 @@
 library(data.table)
 prior = meta$prior[[eff_mode]]
 
+suffstats$XtY = as.matrix(suffstats$XtY)
+suffstats$YtY = as.matrix(suffstats$YtY)
+
 if (resid_method == 'covY') {
   resid_Y <- suffstats$YtY / (suffstats$N-1)
 } else if (resid_method == 'diag') {
@@ -9,7 +12,7 @@ if (resid_method == 'covY') {
   resid_Y <- meta$residual_variance
 }
 
-XtX = as.matrix(fread(ld)) * suffstats$N
+XtX = readRDS(ld) * suffstats$N
 
 m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), 
                                  null_weight=prior$null_weight, max_mixture_len=-1)
