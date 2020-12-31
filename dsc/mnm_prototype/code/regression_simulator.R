@@ -105,7 +105,7 @@ mash_sim = function(X, U, w, pve, is_pve_total=FALSE, n=NULL, residual=NULL,scal
         for (i in 1:length(U)) {
             # b ~ N(0, diag(1/sd_y) * U * diag(1/sd_y))
             U[[i]] = t(U[[i]] / sd_y) / sd_y
-            eigenU = eigen(U, symmetric = T)
+            eigenU = eigen(U[[i]], symmetric = T)
             if(any(eigenU$values<0)){
               eigenU$values[eigenU$values < 0] = 0
               U[[i]] = eigenU$vectors %*% (t(eigenU$vectors) * eigenU$values)
@@ -120,15 +120,18 @@ mash_sim = function(X, U, w, pve, is_pve_total=FALSE, n=NULL, residual=NULL,scal
                 true_U=effects$Ub, Y_sd=sd_y))
 }
 
-simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, simulate_z, pve, is_pve_total, n_signal, var_Y, 
+simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, pve, is_pve_total, n_signal, var_Y, 
                          residual_mode, save_summary_stats, plink, prefix='data', save_suff_stats) {
     if(!is.matrix(X)){
       geno.file = X
       X = get_genotype(geno.file)
     }
     prior_data = readRDS(prior_file)
-    if (residual_mode == 'identity') residual = NULL
-    else residual = var_Y
+    if (residual_mode == 'identity'){
+      residual = NULL
+    }else{
+      residual = var_Y
+    }
     res = mash_sim(X, prior_data[[prior]]$U, prior_data[[prior]]$w, pve, is_pve_total, n_signal, residual, scale_Y)
     if (missing_Y && !is.null(Y)) res$Y = create_missing(res$Y, Y)
     res$prior = get_prior(res$U, prior_data[[prior]])
