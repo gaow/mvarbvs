@@ -30,4 +30,4 @@ DSC:
     n_dataset: 600
     # number of causal as a global variable, <0 is to use default
     C: -1
-    pve: 0.002
+    pve: 0.001
