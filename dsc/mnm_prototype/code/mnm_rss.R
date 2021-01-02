@@ -16,7 +16,14 @@ LD = readRDS(ld)
 ldeigen = readRDS(ldeigen)
 
 if(prior == 'oracle'){
-  priorU$xUlist = lapply(priorU$xUlist, function(U) U * suffstats$N)
+  for (i in 1:length(priorU$xUlist)) {
+    priorU$xUlist[[i]] = priorU$xUlist[[i]] * suffstats$N
+    eigenU = eigen(priorU$xUlist[[i]], symmetric = T)
+    if(any(eigenU$values<0)){
+      eigenU$values[eigenU$values < 0] = 0
+      priorU$xUlist[[i]] = eigenU$vectors %*% (t(eigenU$vectors) * eigenU$values)
+    }
+  }
 }
 
 m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=priorU$xUlist, weights=priorU$pi), 

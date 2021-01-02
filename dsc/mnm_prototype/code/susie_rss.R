@@ -22,7 +22,7 @@ susie_rss_multiple = function(Z, R, L, estimate_residual_variance) {
 }
 
 library(data.table);
-Z = sumstats$bhat/sumstats$shat;
+Z = sumstats$bhat/sumstats$sbhat;
 R = readRDS(ld);
 res = susie_rss_multiple(Z, R, L, estimate_residual_variance)
 

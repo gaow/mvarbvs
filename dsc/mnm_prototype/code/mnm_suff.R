@@ -12,7 +12,7 @@ if (resid_method == 'covY') {
   resid_Y <- meta$residual_variance
 }
 
-XtX = readRDS(ld) * suffstats$N
+XtX = readRDS(ld) * (suffstats$N - 1)
 
 m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), 
                                  null_weight=prior$null_weight, max_mixture_len=-1)

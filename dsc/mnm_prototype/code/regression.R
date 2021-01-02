@@ -36,7 +36,7 @@ mm_regression_plink = function(geno.file, Y, Y_sample, prefix) {
   write.table(Y, paste0(prefix, 'pheno'), quote=FALSE, row.names = FALSE)
   cmd = paste0('/project2/mstephens/software/plink-2.0/plink2 --pfile ', geno.file, 
                ' --glm hide-covar no-x-sex omit-ref --pheno ', paste0(prefix, 'pheno'),
-               ' --threads 4 --memory 28000 ',
+               ' --threads 4 --memory 38000 ',
                ' --out ', prefix)
   system(cmd)
   
