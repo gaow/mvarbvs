@@ -9,7 +9,7 @@ if(resid_method == 'identity'){
 }else if(resid_method == 'nullz'){
   resid_Z = readRDS(nullz_file)[[meta$eff_mode]]
 }else if(resid_method == 'corY'){
-  resid_Z = cov2cor(suffstats$YtY / (suffstats$N-1))
+  resid_Z = cov2cor(as.matrix(suffstats$YtY) / (suffstats$N-1))
 }
 
 LD = readRDS(ld)
