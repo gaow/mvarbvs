@@ -24,5 +24,5 @@ susie_suff_multiple = function(XtX, XtY, YtY, n, L) {
 library(data.table);
 
 XtX = readRDS(ld) * suffstats$N
-res = susie_suff_multiple(XtX, suffstats$XtY, suffstats$YtY, suffstats$N, L)
+res = susie_suff_multiple(XtX, as.matrix(suffstats$XtY), as.matrix(suffstats$YtY), suffstats$N, L)
 
