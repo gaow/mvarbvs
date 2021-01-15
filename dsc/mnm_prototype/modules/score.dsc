@@ -17,6 +17,7 @@ mvsusie_scores: mvsusie_scores.R + R(sc = mvsusie_scores($(result), $(meta)$true
     $purity_cond_cs: sc$purity_cond_cs
     $avg_diff_eff_size_percentile: sc$avg_diff_eff_size_percentile
     $converged: sc$converged
+    $cs_correlation: sc$cs_correlation 
 
 susie_scores: susie_scores.R + R(sc = susie_scores_multiple($(fitted), $(meta)$true_coef))
     $total: sc$total
@@ -27,4 +28,5 @@ susie_scores: susie_scores.R + R(sc = susie_scores_multiple($(fitted), $(meta)$t
     $top: sc$top
     $objective: sc$objective
     $converged: sc$converged
+    $cs_correlation: sc$cs_correlation 
     $pip: sc$pip

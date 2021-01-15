@@ -42,13 +42,14 @@ susie_scores = function(sets, pip, true_coef) {
 }
 
 susie_scores_multiple = function(res, truth) {
-  total = valid = top = objective = converged = vector()
+  total = valid = top = objective = converged = cs_corr = vector()
   pip = size = purity = avgr2 = list()
   for (r in 1:length(res)) {
     out = susie_scores(res[[r]]$sets, res[[r]]$pip, truth[,r])
     total[r] = out$total
     valid[r] = out$valid
     top[r] = out$top
+    cs_corr[r] = max(abs(res[[r]]$cs_corr[upper.tri(res[[r]]$cs_corr)]))
     if(is.null(susieR::susie_get_objective(res[[r]]))){
       objective[r] = NA
       converged[r] = NA
@@ -62,6 +63,6 @@ susie_scores_multiple = function(res, truth) {
     avgr2[[r]] = out$avgr2
   }
   return(list(total=total, valid=valid, size=size, purity=purity, avgr2=avgr2, top=top, 
-              objective=objective, converged=converged,
+              objective=objective, converged=converged, cs_correlation = max(cs_corr),
               pip = do.call(cbind, pip)))
 }

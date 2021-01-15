@@ -130,6 +130,7 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
     }
   }
   overlaps = check_overlap(cs)
+  cs_corr = max(abs(m$cs_corr[upper.tri(m$cs_corr)]))
   return(list(total=total, valid=valid, size=size, purity=purity, avgr2=avgr2, top=top_hit,
               overlap_var = overlaps$snp, overlap_cs = overlaps$cs,
               n_signal=length(beta_idx),
@@ -142,5 +143,6 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
               purity_cond_cs = condition_cs_purity,
               avgr2_cond_cs = condition_cs_avgr2, 
               avg_diff_eff_size_percentile = mean(estimate_diff),
+              cs_correlation = cs_corr,
               converged = m$convergence$converged))
 }
