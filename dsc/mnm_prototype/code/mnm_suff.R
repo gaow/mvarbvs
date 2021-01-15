@@ -21,4 +21,4 @@ result = mmbr::msusie_suff_stat(XtX, suffstats$XtY, suffstats$YtY, suffstats$N, 
                                 compute_objective=TRUE, estimate_residual_variance=F, 
                                 estimate_prior_variance=T, estimate_prior_method='EM', 
                                 precompute_covariances=T, n_thread=n_thread, max_iter=1000)
-result$pip_conditions = mmbr:::mmbr_get_pip_per_condition(result, m_init)
+result$cs_corr = susieR:::get_cs_correlation(result, Xcorr=cov2cor(XtX))

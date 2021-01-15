@@ -13,6 +13,7 @@ susie_suff_multiple = function(XtX, XtY, YtY, n, L) {
   if (is.null(dim(XtY))) XtY = matrix(ncol=1, XtY)
   for (r in 1:ncol(XtY)) {
     fitted[[r]] = susie_suff_analyze(XtX, XtY[,r], YtY[r,r], n, L)
+    fitted[[r]]$cs_corr = susieR:::get_cs_correlation(fitted[[r]], Xcorr=cov2cor(XtX))
     if(is.null(fitted[[r]]$sets))
       posterior[[r]] = NULL
     else

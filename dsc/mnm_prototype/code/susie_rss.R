@@ -13,6 +13,7 @@ susie_rss_multiple = function(Z, R, L, estimate_residual_variance) {
   if (is.null(dim(Z))) Z = matrix(ncol=1, Z)
   for (r in 1:ncol(Z)) {
     fitted[[r]] = susie_rss_analyze(Z[,r], R, L, estimate_residual_variance)
+    fitted[[r]]$cs_corr = susieR:::get_cs_correlation(fitted[[r]], Xcorr=R)
     if(is.null(fitted[[r]]$sets))
       posterior[[r]] = NULL
     else

@@ -32,4 +32,4 @@ result = mmbr::msusie_rss(Z, LD, eigenR = ldeigen, L=L, prior_variance=m_init, r
                           compute_objective=TRUE, estimate_residual_variance=F, 
                           estimate_prior_variance=T, estimate_prior_method='EM', 
                           precompute_covariances=T, n_thread=n_thread, max_iter=1000)
-result$pip_conditions = mmbr:::mmbr_get_pip_per_condition(result, m_init)
+result$cs_corr = susieR:::get_cs_correlation(result, Xcorr=LD)
