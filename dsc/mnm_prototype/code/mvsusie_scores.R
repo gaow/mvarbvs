@@ -130,7 +130,7 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
     }
   }
   overlaps = check_overlap(cs)
-  cs_corr = max(abs(m$cs_corr[upper.tri(m$cs_corr)]))
+  cs_corr = ifelse(!is.na(m$cs_corr), max(abs(m$cs_corr[upper.tri(m$cs_corr)])), NA)
   return(list(total=total, valid=valid, size=size, purity=purity, avgr2=avgr2, top=top_hit,
               overlap_var = overlaps$snp, overlap_cs = overlaps$cs,
               n_signal=length(beta_idx),
