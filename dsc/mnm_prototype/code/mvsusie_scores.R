@@ -47,7 +47,7 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
   if (is.null(dim(true_coef))) beta_idx = which(true_coef != 0)
   else beta_idx = which(rowSums(true_coef != 0)>0)
   cs = sets$cs
-  cs_significant = mmbr::mmbr_get_cs_lfsr(m) < lfsr_cutoff # L by R
+  cs_significant = m$single_effect_lfsr < lfsr_cutoff # L by R
   condition_cs_status = matrix(NA, nrow(cs_significant), ncol(cs_significant)) # 9 for FP, 1 for TP, -1 for FN, 0 for TN
   condition_cs_size = matrix(NA, nrow(cs_significant), ncol(cs_significant))
   condition_cs_purity = matrix(NA, nrow(cs_significant), ncol(cs_significant))
