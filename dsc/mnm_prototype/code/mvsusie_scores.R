@@ -20,6 +20,18 @@ check_overlap = function(cs) {
   }
 }
 
+mtx_to_list = function(m){
+  lapply(seq_len(ncol(m)), function(i){
+    x = m[,i]
+    idx = which(!is.na(x))
+    if(length(idx) == 0){
+      return(NA)
+    }else{
+      return(x[idx])
+    }
+  })
+}
+
 #' @title Compare SuSiE fits to truth
 #' @param sets a list of susie CS info from susie fit
 #' @param pip probability for p variables
@@ -33,18 +45,23 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
   sets = m$sets
   pip = m$pip
   if (is.null(dim(true_coef))) beta_idx = which(true_coef != 0)
-  else beta_idx = which(apply(true_coef, 1, sum) != 0)
+  else beta_idx = which(rowSums(true_coef != 0)>0)
   cs = sets$cs
-  cs_significant = mmbr::mmbr_get_cs_lfsr(m) < lfsr_cutoff
+  cs_significant = mmbr::mmbr_get_cs_lfsr(m) < lfsr_cutoff # L by R
   condition_cs_status = matrix(NA, nrow(cs_significant), ncol(cs_significant)) # 9 for FP, 1 for TP, -1 for FN, 0 for TN
+  condition_cs_size = matrix(NA, nrow(cs_significant), ncol(cs_significant))
+  condition_cs_purity = matrix(NA, nrow(cs_significant), ncol(cs_significant))
+  condition_cs_avgr2 = matrix(NA, nrow(cs_significant), ncol(cs_significant))
   cs_idx = unlist(sets$cs_index)
   if (is.null(cs)) {
-    size = 0
+    size = NA
     total = 0
-    purity = 0
+    purity = NA
+    avgr2 = NA
   } else {
     size = sapply(cs,length)
     purity = as.vector(sets$purity[,1])
+    avgr2 = as.vector(sets$purity[,2])^2
     total = length(cs)
   }
   valid = 0
@@ -62,13 +79,18 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
           for (e in 1:nrow(cs_significant)) {
             if (e %in% cs_idx) {
               cs_condition = cs[[which(cs_idx == e)]]
-              if (cs_significant[e,r] == 1 && any(cs_condition %in% which(true_coef[,r] != 0))) {
+              if(cs_significant[e,r] == 1){
+                condition_cs_size[e,r] = length(cs_condition)
+                condition_cs_purity[e,r] = sets$purity[which(cs_idx == e),1]
+                condition_cs_avgr2[e,r] = sets$purity[which(cs_idx == e),2]^2
+              }
+              if (cs_significant[e,r] == 1 && any(cs_condition %in% which(true_coef[,r] != 0))) { # TP
                 condition_cs_status[e,r] = 1
-              } else if (cs_significant[e,r] == 1 && !any(cs_condition %in% which(true_coef[,r] != 0))) {
+              } else if (cs_significant[e,r] == 1 && !any(cs_condition %in% which(true_coef[,r] != 0))) { # FP
                 condition_cs_status[e,r] = 9
-              } else if (cs_significant[e,r] == 0 && length(which(true_coef[,r] != 0)) > 0) {
+              } else if (cs_significant[e,r] == 0 && length(which(true_coef[,r] != 0)) > 0) { # FN
                 condition_cs_status[e,r] = -1
-              } else {
+              } else { # TN
                 condition_cs_status[e,r] = 0
               }
             }
@@ -76,9 +98,14 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
         }
       }
   }
-  false_positive_condition_cs = length(which(condition_cs_status == 9))
-  true_positive_condition_cs = length(which(condition_cs_status == 1))
-  false_neg_condition_cs = length(which(condition_cs_status == -1))
+  total_condition_cs = colSums(cs_significant) # length R vector
+  false_positive_condition_cs = colSums(condition_cs_status == 9, na.rm=T)
+  true_positive_condition_cs = colSums(condition_cs_status == 1,na.rm=T)
+  false_neg_condition_cs = colSums(condition_cs_status == -1,na.rm=T)
+  condition_cs_size = mtx_to_list(condition_cs_size) # length R list
+  condition_cs_purity = mtx_to_list(condition_cs_purity)
+  condition_cs_avgr2 = mtx_to_list(condition_cs_avgr2)
+  
   # effect size estimates
   # for each true effect, look at its b1 and b2 estimate, sum them over, compute stderr,
   # and see the percentile of the true parameter with respect to the estimate
@@ -103,13 +130,17 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
     }
   }
   overlaps = check_overlap(cs)
-  return(list(total=total, valid=valid, size=size, purity=purity, top=top_hit,
+  return(list(total=total, valid=valid, size=size, purity=purity, avgr2=avgr2, top=top_hit,
               overlap_var = overlaps$snp, overlap_cs = overlaps$cs,
               n_signal=length(beta_idx),
               included_signal = sum(beta_idx %in% unlist(cs)),
+              total_cond_discoveries = total_condition_cs,
               false_pos_cond_discoveries = false_positive_condition_cs,
               true_cond_discoveries = true_positive_condition_cs,
               false_neg_cond_discoveries = false_neg_condition_cs,
+              size_cond_cs = condition_cs_size,
+              purity_cond_cs = condition_cs_purity,
+              avgr2_cond_cs = condition_cs_avgr2, 
               avg_diff_eff_size_percentile = mean(estimate_diff),
               converged = m$convergence$converged))
 }

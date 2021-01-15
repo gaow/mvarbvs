@@ -17,10 +17,10 @@ susie_scores = function(sets, pip, true_coef) {
   }
   cs = sets$cs
   if (is.null(cs)) {
-    size = 0
+    size = NA
     total = 0
-    purity = 0
-    avgr2 = 0
+    purity = NA
+    avgr2 = NA
   } else {
     size = sapply(cs,length)
     purity = as.vector(sets$purity[,1])
