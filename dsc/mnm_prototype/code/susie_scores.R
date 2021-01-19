@@ -49,7 +49,7 @@ susie_scores_multiple = function(res, truth) {
     total[r] = out$total
     valid[r] = out$valid
     top[r] = out$top
-    cs_corr[r] = ifelse(!is.na(res[[r]]$cs_corr), max(abs(res[[r]]$cs_corr[upper.tri(res[[r]]$cs_corr)])), NA)
+    cs_corr[r] = ifelse(all(!is.na(res[[r]]$cs_corr)), max(abs(res[[r]]$cs_corr[upper.tri(res[[r]]$cs_corr)])), NA)
     if(is.null(susieR::susie_get_objective(res[[r]]))){
       objective[r] = NA
       converged[r] = NA
