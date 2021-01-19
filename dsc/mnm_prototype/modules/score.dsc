@@ -30,3 +30,4 @@ susie_scores: susie_scores.R + R(sc = susie_scores_multiple($(fitted), $(meta)$t
     $converged: sc$converged
     $cs_correlation: sc$cs_correlation 
     $pip: sc$pip
+    $n_causal: sc$expected
