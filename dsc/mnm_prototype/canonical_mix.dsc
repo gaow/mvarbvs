@@ -1,5 +1,7 @@
 #!/usr/bin/env dsc
 
+# DSC benchmark for fine-mapping, assuming "canonical" mixture patterns for prior effects
+
 %include modules/data
 %include modules/simulate_canonical_mix
 %include modules/mnm

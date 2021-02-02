@@ -21,6 +21,7 @@ mm_regression = function(X, Y, Z=NULL,center=TRUE,scale=TRUE) {
     colnames(out$bhat) = colnames(Y)
     colnames(out$sbhat) = colnames(Y)
   }
+  # `out` is a list of bhat and sbhat
   return(out)
 }
 

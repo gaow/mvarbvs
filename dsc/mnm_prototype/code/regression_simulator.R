@@ -1,6 +1,9 @@
 # input is prob of having each of n effect variables
 # output is the number of effect variables for current data-set
-get_n_signal = function(p = c(0.3,0.3,0.2,0.1,0.1,0,0,0,0,0)) {
+get_n_signal = function(option) {
+    p = c(1,0,0,0,0,0,0,0,0,0)
+    if (option == -1) p = c(0.3,0.3,0.2,0.1,0.1,0,0,0,0,0))
+    if (option == -2) p = c(0.25,0.2,0.15,0.15,0.1,0.05,0.05,0.02,0.02,0.01)
     one_hot = rmultinom(1, 1, prob=p)[,1]
     return (which(one_hot == 1))
 }
@@ -86,7 +89,7 @@ get_prior = function(U,prior) {
 # residual is diagonal by default value NULL
 # scale_y is a boolean indicating whether or not the output variable y is to be scaled or not
 mash_sim = function(X, U, w, pve, is_pve_total=FALSE, n=NULL, residual=NULL,scale_y=TRUE) {
-    if (is.null(n) || n < 1) n = get_n_signal()
+    if (is.null(n) || n < 1) n = get_n_signal(n)
     R = nrow(U[[1]])
     if (R == 1) stop("This simulator is not meant for univariate data")
     for (i in 2:length(U)) {
