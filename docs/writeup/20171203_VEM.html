@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=writeupDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=writeupArray;
+            var docs_map=writeupArrayMap;
+            var pos=writeupArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Notes-on-fundamentals-of-EM-and-VEM">Notes on fundamentals of EM and VEM<a class="anchor-link" href="#Notes-on-fundamentals-of-EM-and-VEM">&#182;</a></h1><p>A refreshment of concepts based on notes from Matthew and David.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>$\newcommand{\bs}[1]{\boldsymbol{#1}}$
+$\DeclareMathOperator*{\diag}{diag}$
+$\DeclareMathOperator*{\cov}{cov}$
+$\DeclareMathOperator*{\rank}{rank}$
+$\DeclareMathOperator*{\var}{var}$
+$\DeclareMathOperator*{\tr}{tr}$
+$\DeclareMathOperator*{\veco}{vec}$
+$\DeclareMathOperator*{\uniform}{\mathcal{U}niform}$
+$\DeclareMathOperator*{\argmin}{arg\ min}$
+$\DeclareMathOperator*{\argmax}{arg\ max}$
+$\DeclareMathOperator*{\N}{N}$
+$\DeclareMathOperator*{\gm}{Gamma}$
+$\DeclareMathOperator*{\dif}{d}$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Problem">Problem<a class="anchor-link" href="#Problem">&#182;</a></h2><p>We need to make MLE of $\theta$ for $P(Y|\theta)$. The marginal $$\log P(Y|\theta) = \log \int P(Y,Z|\theta) \dif Z$$ is difficult to compute. 
+However $$\log P(Y|\theta) = \log \int P(Y|Z, \theta) P(Z|\theta) \dif Z$$ is easier. 
+<strong>Note that $P(Y|Z, \theta)$ is likelihood, $P(Z|\theta)$ is posterior</strong>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Marginal-log-likelihood">Marginal log-likelihood<a class="anchor-link" href="#Marginal-log-likelihood">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For any normalized distribution $q(Z)$,</p>
+\begin{align}
+\log P(Y|\theta) &amp; =  \log P(Y|\theta) \int_Z q(Z) \dif Z \\
+&amp; =  \int_Z \log P(Y|\theta) q(Z) \dif Z \\
+&amp; = \int_Z \log \frac{P(Y,Z|\theta)}{P(Z|Y,\theta)} q(Z) \dif Z \\
+&amp; = \int_Z \log \frac{P(Y,Z|\theta)q(Z)}{P(Z|Y,\theta)q(Z)} q(Z) \dif Z \\
+&amp; = \int_Z \log \frac{P(Y|Z,\theta)P(Z|\theta)}{q(Z)} \frac{q(Z)}{P(Z|Y,\theta)} q(Z) \dif Z \\
+&amp; = \int_Z \log P(Y|Z,\theta) q(Z) \dif Z + \int_Z  \frac{P(Z|\theta)}{q(Z)} q(Z) \dif Z + \int_Z  \frac{q(Z)}{P(Z|Y,\theta)} q(Z) \dif Z \\
+&amp; = E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{q(Z)}] - E_q[\frac{P(Z|Y,\theta)}{q(Z)}] \\
+&amp; \ge E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{q(Z)}] \\
+&amp; = \mathcal{L}(q, \theta)
+\end{align}
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="EM">EM<a class="anchor-link" href="#EM">&#182;</a></h2><p>Maximize $\mathcal{L}(q, \theta)$ iteratively between $q$ and $\theta$, in a 2-step procedure:</p>
+<ol>
+<li>$\underset{q}{max} \big( \log P(Y|\theta) \big ) $: simply set $q(Z) = P(Z|Y,\theta^{(current)})$</li>
+<li>$\underset{\theta}{max} \big( E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{P(Z|Y,\theta^{(current)})}] \big)$</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="VEM-via-mean-field">VEM via mean-field<a class="anchor-link" href="#VEM-via-mean-field">&#182;</a></h2><ol>
+<li>$\underset{q \in \Omega}{max} \big( \log P(Y|\theta) \big ) $: set $q(Z) = \prod_i q(Z_i)$</li>
+<li>$\underset{\theta}{max} \big( E_q[\log P(Y|Z,\theta)] + E_q[\frac{P(Z|\theta)}{\prod_i q(Z_i)}] \big)$</li>
+</ol>
+
+</div>
+</div>
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>

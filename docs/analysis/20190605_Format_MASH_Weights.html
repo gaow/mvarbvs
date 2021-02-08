@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Format-MASH-weights-for-M&amp;M">Format MASH weights for M&amp;M<a class="anchor-link" href="#Format-MASH-weights-for-M&amp;M">&#182;</a></h1><p>Previously I've analyzed GTEx V8 data with MASH. Here I'll format it for use with V7 data that we have extracted genotypes for.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">Documents</span><span class="o">/</span><span class="n">GTExV8</span><span class="o">/</span><span class="n">Toys</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/project/mstephens/SuSiE/gtex_data/Toys</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here is our dataset:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;Multi_Tissues.ENSG00000025772.RDS&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[28]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">X</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'GTEX-1117F'</li>
+	<li>'GTEX-111CU'</li>
+	<li>'GTEX-111FC'</li>
+	<li>'GTEX-111VG'</li>
+	<li>'GTEX-111YS'</li>
+	<li>'GTEX-1122O'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[29]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">tail</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">X</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'GTEX-ZYVF'</li>
+	<li>'GTEX-ZYW4'</li>
+	<li>'GTEX-ZYY3'</li>
+	<li>'GTEX-ZZ64'</li>
+	<li>'GTEX-ZZPT'</li>
+	<li>'GTEX-ZZPU'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">y_res</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'GTEX-1117F'</li>
+	<li>'GTEX-111CU'</li>
+	<li>'GTEX-111FC'</li>
+	<li>'GTEX-111VG'</li>
+	<li>'GTEX-111YS'</li>
+	<li>'GTEX-1122O'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">tail</span><span class="p">(</span><span class="n">rownames</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">y_res</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'GTEX-ZYVF'</li>
+	<li>'GTEX-ZYW4'</li>
+	<li>'GTEX-ZYY3'</li>
+	<li>'GTEX-ZZ64'</li>
+	<li>'GTEX-ZZPT'</li>
+	<li>'GTEX-ZZPU'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">y_res</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'Adipose_Subcutaneous'</li>
+	<li>'Adipose_Visceral_Omentum'</li>
+	<li>'Adrenal_Gland'</li>
+	<li>'Artery_Aorta'</li>
+	<li>'Artery_Coronary'</li>
+	<li>'Artery_Tibial'</li>
+	<li>'Brain_Amygdala'</li>
+	<li>'Brain_Anterior_cingulate_cortex_BA24'</li>
+	<li>'Brain_Caudate_basal_ganglia'</li>
+	<li>'Brain_Cerebellar_Hemisphere'</li>
+	<li>'Brain_Cerebellum'</li>
+	<li>'Brain_Cortex'</li>
+	<li>'Brain_Frontal_Cortex_BA9'</li>
+	<li>'Brain_Hippocampus'</li>
+	<li>'Brain_Hypothalamus'</li>
+	<li>'Brain_Nucleus_accumbens_basal_ganglia'</li>
+	<li>'Brain_Putamen_basal_ganglia'</li>
+	<li>'Brain_Spinal_cord_cervical_c-1'</li>
+	<li>'Brain_Substantia_nigra'</li>
+	<li>'Breast_Mammary_Tissue'</li>
+	<li>'Cells_Cultured_fibroblasts'</li>
+	<li>'Cells_EBV-transformed_lymphocytes'</li>
+	<li>'Colon_Sigmoid'</li>
+	<li>'Colon_Transverse'</li>
+	<li>'Esophagus_Gastroesophageal_Junction'</li>
+	<li>'Esophagus_Mucosa'</li>
+	<li>'Esophagus_Muscularis'</li>
+	<li>'Heart_Atrial_Appendage'</li>
+	<li>'Heart_Left_Ventricle'</li>
+	<li>'Kidney_Cortex'</li>
+	<li>'Liver'</li>
+	<li>'Lung'</li>
+	<li>'Minor_Salivary_Gland'</li>
+	<li>'Muscle_Skeletal'</li>
+	<li>'Nerve_Tibial'</li>
+	<li>'Ovary'</li>
+	<li>'Pancreas'</li>
+	<li>'Pituitary'</li>
+	<li>'Prostate'</li>
+	<li>'Skin_Not_Sun_Exposed_Suprapubic'</li>
+	<li>'Skin_Sun_Exposed_Lower_leg'</li>
+	<li>'Small_Intestine_Terminal_Ileum'</li>
+	<li>'Spleen'</li>
+	<li>'Stomach'</li>
+	<li>'Testis'</li>
+	<li>'Thyroid'</li>
+	<li>'Uterus'</li>
+	<li>'Vagina'</li>
+	<li>'Whole_Blood'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Here is the model we've previously learned via MASH on V8 data,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">mash</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/project/compbio/GTEx_eQTL/mashr_flashr_workflow_output/FastQTLSumStats.mash.FL_PC3.mash_model_est_v.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dim</span><span class="p">(</span><span class="n">mash</span><span class="err">$</span><span class="n">fitted_g</span><span class="err">$</span><span class="n">Ulist</span><span class="p">[[</span><span class="mi">1</span><span class="p">]])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>49</li>
+	<li>49</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It seems to have 49 tissues. Need to find out if they are the same 49 tissues here,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">sumstats</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s2">&quot;/home/gaow/GIT/github/mvarbvs/fastqtl_to_mash_output/FastQTLSumStats.mash.rds&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="nb">all</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">sumstats</span><span class="err">$</span><span class="n">strong</span><span class="o">.</span><span class="n">z</span><span class="p">)</span> <span class="o">==</span> <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">y_res</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+TRUE
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Great, this is a perfect match! I can safely use the precomputed weight for this analysis. No formatting needed.</p>
+
+</div>
+</div>
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>

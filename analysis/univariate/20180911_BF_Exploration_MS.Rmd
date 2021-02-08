@@ -1,0 +1,66 @@
+---
+title: "caviar test"
+author: "Matthew Stephens"
+date: "September 11, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r}
+library(susieR)
+set.seed(1)
+data(N2finemapping.rds)
+dat = N2finemapping
+names(dat)
+r = 1
+fitted = susie(dat$X, dat$Y[,r], L=5,
+               estimate_residual_variance=TRUE, 
+               scaled_prior_variance=0.2,
+               tol=1e-3, track_fit=TRUE)
+sets = susie_get_cs(fitted,
+            coverage = 0.95,
+            X = dat$X, 
+            min_abs_corr = 0.1)
+pip = susie_get_pip(fitted, sets$cs_index)
+z_score = susieR:::calc_z(dat$X, dat$Y[,r])
+b = dat$true_coef[,r]
+
+```
+
+try BF for true variables
+```{r}
+# simple BF, X an n by p matrix
+log10BF = function(X,y,sigmaa){
+p = ncol(X)
+n = nrow(X)
+X = cbind(rep(1,n),X)
+invnu = diag(c(0,rep(1/sigmaa^2,p)))
+invOmega = invnu + t(X) %*% X
+B = solve(invOmega, t(X) %*% cbind(y))
+invOmega0 = n
+return(-0.5*log10(det(invOmega)) + 0.5*log10(invOmega0) - p*log10(sigmaa) -(n/2) * (log10( t(y- X %*% B) %*% y) - log10(t(y) %*% y - n*mean(y)^2) ))  
+}
+
+x = scale(dat$X)
+y = scale(dat$Y[,r])
+log10BF(x[,which(b!=0)], y,1)
+log10BF(x[,which(b!=0)], y,2)
+log10BF(x[,which(b!=0)], y,0.5)
+
+```
+
+The top finemap config was (780,916), with reported log10bf  of 15.22015.
+
+```{r}
+ log10BF(x[,c(780,916)], y,0.05)
+ log10BF(x[,which(b!=0)], y,0.05)
+ 
+ log10BF(x[,c(780,916)], y,0.1)
+ log10BF(x[,which(b!=0)], y,0.1)
+ 
+```

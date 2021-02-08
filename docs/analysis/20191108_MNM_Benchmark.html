@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="M&amp;M-benchmark-VIII">M&amp;M benchmark VIII<a class="anchor-link" href="#M&amp;M-benchmark-VIII">&#182;</a></h1><p>This benchmark uses the latest GTEx V8 genotype data and evaluated the pipeline in the presence of missing data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<ol>
+<li>the number of conditions are increased to $R=45$</li>
+<li>missing data in expression are simulated according to missingness pattern in the actual expression cross tissues; Both <code>flashier::flash</code> methods and simple diagonal methods were used to compute covariance of response to use as residual covariance.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2><ol>
+<li>Our pipeline with missing data has high false positive rates even though the simulated residual correlation is diagonal.</li>
+<li>When the underlying pattern of residual covariance is diagonal, FLASH based method suffer from quite a bit power loss as shown in simulations without missing data.</li>
+</ol>
+<h2 id="Next-steps-for-this-investigation">Next steps for this investigation<a class="anchor-link" href="#Next-steps-for-this-investigation">&#182;</a></h2><ol>
+<li>Figure out the problem (hopefully bug) with missing data handling in <code>mmbr</code>. <ul>
+<li><strong>An obvious thing to do is to add more unit tests for missing data</strong> although we already have a couple of unit tests for it. But hopefully more tests can catch something obvious.</li>
+</ul>
+</li>
+<li>Add a diagnostic function to compute in between CS correlation.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The benchmark is now under <code>dsc_mnm</code>, running on UChicago RCC midway</p>
+
+<pre><code>./finemap.dsc --host mnm_dsc.yaml</code></pre>
+<p>This executes the <code>default</code> pipeline in <code>finemap.dsc</code> file, as of today (2019.11.08).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc_mnm</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/project2/mstephens/gaow/mvarbvs/dsc_mnm</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="n">Sys</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="s1">&#39;finemap_output&#39;</span><span class="p">,</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;simulate&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm.resid_method&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm.missing_Y&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.total&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.valid&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.size&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.purity&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.top&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.n_causal&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.included_causal&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.overlap&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.false_pos_cond_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.false_neg_cond_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_scores.true_cond_discoveries&#39;</span><span class="p">),</span> <span class="n">verbose</span> <span class="o">=</span> <span class="n">F</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">&lt;-</span> <span class="n">Sys</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>Time difference of 14.60613 secs</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>DSC</th><th scope=col>simulate</th><th scope=col>mnm.resid_method</th><th scope=col>mnm.missing_Y</th><th scope=col>susie_scores.total</th><th scope=col>susie_scores.valid</th><th scope=col>susie_scores.size</th><th scope=col>susie_scores.purity</th><th scope=col>susie_scores.top</th><th scope=col>susie_scores.n_causal</th><th scope=col>susie_scores.included_causal</th><th scope=col>susie_scores.overlap</th><th scope=col>susie_scores.false_pos_cond_discoveries</th><th scope=col>susie_scores.false_neg_cond_discoveries</th><th scope=col>susie_scores.true_cond_discoveries</th></tr></thead>
+<tbody>
+	<tr><td>1        </td><td>mid_het  </td><td>flash    </td><td>TRUE     </td><td>2        </td><td>2        </td><td>23.5     </td><td>0.8482883</td><td>2        </td><td>1        </td><td>1        </td><td> 23      </td><td> 0       </td><td>  4      </td><td> 86      </td></tr>
+	<tr><td>1        </td><td>mid_het  </td><td>flash    </td><td>TRUE     </td><td>1        </td><td>1        </td><td>13.0     </td><td>0.9527061</td><td>1        </td><td>3        </td><td>2        </td><td>  0      </td><td> 0       </td><td>  8      </td><td> 37      </td></tr>
+	<tr><td>1        </td><td>mid_het  </td><td>flash    </td><td>TRUE     </td><td>6        </td><td>1        </td><td> 2.0     </td><td>0.9974367</td><td>0        </td><td>1        </td><td>1        </td><td>  0      </td><td>16       </td><td>216      </td><td> 38      </td></tr>
+	<tr><td>1        </td><td>mid_het  </td><td>flash    </td><td>TRUE     </td><td>5        </td><td>5        </td><td>37.0     </td><td>0.9691339</td><td>0        </td><td>2        </td><td>2        </td><td>125      </td><td> 0       </td><td> 57      </td><td>168      </td></tr>
+	<tr><td>1        </td><td>mid_het  </td><td>flash    </td><td>TRUE     </td><td>1        </td><td>1        </td><td>20.0     </td><td>0.9178380</td><td>0        </td><td>2        </td><td>1        </td><td>  0      </td><td> 0       </td><td>  1      </td><td> 44      </td></tr>
+	<tr><td>1        </td><td>mid_het  </td><td>flash    </td><td>TRUE     </td><td>1        </td><td>1        </td><td>12.0     </td><td>0.9302628</td><td>0        </td><td>3        </td><td>1        </td><td>  0      </td><td> 0       </td><td>  6      </td><td> 39      </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dim</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>400</li>
+	<li>15</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">saveRDS</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="s1">&#39;../data/finemap_output.20191108.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">out</span><span class="p">[,</span><span class="o">-</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span>
+<span class="n">colnames</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;resid_method&#39;</span><span class="p">,</span> <span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;purity&#39;</span><span class="p">,</span> <span class="s1">&#39;top_hit&#39;</span><span class="p">,</span> <span class="s1">&#39;total_true&#39;</span><span class="p">,</span> <span class="s1">&#39;total_true_included&#39;</span><span class="p">,</span> <span class="s1">&#39;overlap&#39;</span><span class="p">,</span> <span class="s1">&#39;false_positive_cross_cond&#39;</span><span class="p">,</span> <span class="s1">&#39;false_negative_cross_cond&#39;</span><span class="p">,</span> <span class="s1">&#39;true_positive_cross_cond&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Purity-of-CS">Purity of CS<a class="anchor-link" href="#Purity-of-CS">&#182;</a></h3><p>Yes purity is higher with missing data --- but because many of those CS are false positives! (see below)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">purity</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">purity</span><span class="o">~</span><span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+<span class="n">purity</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>resid_method</th><th scope=col>missing</th><th scope=col>purity</th></tr></thead>
+<tbody>
+	<tr><td>diag     </td><td>FALSE    </td><td>0.9670738</td></tr>
+	<tr><td>flash    </td><td>FALSE    </td><td>0.6914748</td></tr>
+	<tr><td>diag     </td><td> TRUE    </td><td>0.9349031</td></tr>
+	<tr><td>flash    </td><td> TRUE    </td><td>0.8479686</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Size-of-CS">Size of CS<a class="anchor-link" href="#Size-of-CS">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">size</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">size</span><span class="o">~</span><span class="n">resid_method</span><span class="o">+</span><span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+<span class="n">size</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>resid_method</th><th scope=col>missing</th><th scope=col>size</th></tr></thead>
+<tbody>
+	<tr><td>diag </td><td>FALSE</td><td>6.00 </td></tr>
+	<tr><td>flash</td><td>FALSE</td><td>7.00 </td></tr>
+	<tr><td>diag </td><td> TRUE</td><td>7.75 </td></tr>
+	<tr><td>flash</td><td> TRUE</td><td>7.25 </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Power-of-CS">Power of CS<a class="anchor-link" href="#Power-of-CS">&#182;</a></h3><p><strong>Notice here that many CS overlap -- this is not what was observed with $R=5$.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">total_true_included</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">total_true_included</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">total_true</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">total_true</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">overlap</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">overlap</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">total_true_included</span><span class="p">,</span> <span class="n">total_true</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;resid_method&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">))</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span>  <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;resid_method&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">))</span>
+<span class="n">power</span><span class="err">$</span><span class="n">power</span> <span class="o">=</span> <span class="n">power</span><span class="err">$</span><span class="n">total_true_included</span><span class="o">/</span><span class="n">power</span><span class="err">$</span><span class="n">total_true</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">power</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">power</span><span class="err">$</span><span class="n">missing</span><span class="p">),]</span>
+<span class="n">power</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>resid_method</th><th scope=col>missing</th><th scope=col>total_true_included</th><th scope=col>total_true</th><th scope=col>overlap</th><th scope=col>power</th></tr></thead>
+<tbody>
+	<tr><th scope=row>1</th><td>diag     </td><td>FALSE    </td><td>158      </td><td>162      </td><td>194.40   </td><td>0.9753086</td></tr>
+	<tr><th scope=row>3</th><td>flash    </td><td>FALSE    </td><td>116      </td><td>162      </td><td>103.48   </td><td>0.7160494</td></tr>
+	<tr><th scope=row>2</th><td>diag     </td><td> TRUE    </td><td>140      </td><td>162      </td><td>242.23   </td><td>0.8641975</td></tr>
+	<tr><th scope=row>4</th><td>flash    </td><td> TRUE    </td><td>112      </td><td>162      </td><td>119.73   </td><td>0.6913580</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="FDR-of-CS">FDR of CS<a class="anchor-link" href="#FDR-of-CS">&#182;</a></h3><p><strong>The high FDR explains the seemingly high power, and is consistent with the observations that CS are "purer".</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">valid</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">valid</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">total</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">total</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">fdr</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;resid_method&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">))</span>
+<span class="n">fdr</span><span class="err">$</span><span class="n">fdr</span> <span class="o">=</span> <span class="p">(</span><span class="n">fdr</span><span class="err">$</span><span class="n">total</span> <span class="o">-</span> <span class="n">fdr</span><span class="err">$</span><span class="n">valid</span><span class="p">)</span><span class="o">/</span><span class="n">fdr</span><span class="err">$</span><span class="n">total</span>
+<span class="n">fdr</span> <span class="o">=</span> <span class="n">fdr</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">fdr</span><span class="err">$</span><span class="n">missing</span><span class="p">),]</span>
+<span class="n">fdr</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>resid_method</th><th scope=col>missing</th><th scope=col>valid</th><th scope=col>total</th><th scope=col>fdr</th></tr></thead>
+<tbody>
+	<tr><th scope=row>1</th><td>diag       </td><td>FALSE      </td><td>320        </td><td>320        </td><td>0.000000000</td></tr>
+	<tr><th scope=row>3</th><td>flash      </td><td>FALSE      </td><td>169        </td><td>170        </td><td>0.005882353</td></tr>
+	<tr><th scope=row>2</th><td>diag       </td><td> TRUE      </td><td>281        </td><td>369        </td><td>0.238482385</td></tr>
+	<tr><th scope=row>4</th><td>flash      </td><td> TRUE      </td><td>190        </td><td>284        </td><td>0.330985915</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Power-for-per-signal-per-condition-estimates">Power for per signal per condition estimates<a class="anchor-link" href="#Power-for-per-signal-per-condition-estimates">&#182;</a></h3><p>We compute lfsr on per signal per condition basis. We call it a signal in the condition if lfsr is smaller than 0.05.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">tp</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">true_positive_cross_cond</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">fn</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">false_negative_cross_cond</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;resid_method&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">power</span><span class="err">$</span><span class="n">power</span> <span class="o">=</span> <span class="n">power</span><span class="err">$</span><span class="n">true_positive_cross_cond</span><span class="o">/</span><span class="p">(</span><span class="n">power</span><span class="err">$</span><span class="n">true_positive_cross_cond</span> <span class="o">+</span> <span class="n">power</span><span class="err">$</span><span class="n">false_negative_cross_cond</span><span class="p">)</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">power</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">power</span><span class="err">$</span><span class="n">missing</span><span class="p">),]</span>
+<span class="n">power</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>resid_method</th><th scope=col>missing</th><th scope=col>true_positive_cross_cond</th><th scope=col>false_negative_cross_cond</th><th scope=col>power</th></tr></thead>
+<tbody>
+	<tr><th scope=row>1</th><td>diag     </td><td>FALSE    </td><td>8871     </td><td> 5529    </td><td>0.6160417</td></tr>
+	<tr><th scope=row>3</th><td>flash    </td><td>FALSE    </td><td>4467     </td><td> 3176    </td><td>0.5844564</td></tr>
+	<tr><th scope=row>2</th><td>diag     </td><td> TRUE    </td><td>4311     </td><td>10076    </td><td>0.2996455</td></tr>
+	<tr><th scope=row>4</th><td>flash    </td><td> TRUE    </td><td>3613     </td><td> 7168    </td><td>0.3351266</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="FDR-for-per-signal-per-condition-estimates">FDR for per signal per condition estimates<a class="anchor-link" href="#FDR-for-per-signal-per-condition-estimates">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">tp</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">true_positive_cross_cond</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">fp</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">false_positive_cross_cond</span> <span class="o">~</span> <span class="n">resid_method</span> <span class="o">+</span> <span class="n">missing</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">fdr</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">tp</span><span class="p">,</span> <span class="n">fp</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;resid_method&quot;</span><span class="p">,</span> <span class="s2">&quot;missing&quot;</span><span class="p">))</span>
+<span class="n">fdr</span><span class="err">$</span><span class="n">fdr</span> <span class="o">=</span> <span class="n">fdr</span><span class="err">$</span><span class="n">false_positive_cross_cond</span><span class="o">/</span><span class="p">(</span><span class="n">fdr</span><span class="err">$</span><span class="n">true_positive_cross_cond</span> <span class="o">+</span> <span class="n">fdr</span><span class="err">$</span><span class="n">false_positive_cross_cond</span><span class="p">)</span>
+<span class="n">fdr</span> <span class="o">=</span> <span class="n">fdr</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">fdr</span><span class="err">$</span><span class="n">missing</span><span class="p">),]</span>
+<span class="n">fdr</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>resid_method</th><th scope=col>missing</th><th scope=col>true_positive_cross_cond</th><th scope=col>false_positive_cross_cond</th><th scope=col>fdr</th></tr></thead>
+<tbody>
+	<tr><th scope=row>1</th><td>diag       </td><td>FALSE      </td><td>8871       </td><td>   0       </td><td>0.000000000</td></tr>
+	<tr><th scope=row>3</th><td>flash      </td><td>FALSE      </td><td>4467       </td><td>   7       </td><td>0.001564595</td></tr>
+	<tr><th scope=row>2</th><td>diag       </td><td> TRUE      </td><td>4311       </td><td>2218       </td><td>0.339715117</td></tr>
+	<tr><th scope=row>4</th><td>flash      </td><td> TRUE      </td><td>3613       </td><td>1999       </td><td>0.356200998</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>

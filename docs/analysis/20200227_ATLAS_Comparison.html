@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Comparing-M&amp;M-with-atlas-qtl">Comparing M&amp;M with atlas-qtl<a class="anchor-link" href="#Comparing-M&amp;M-with-atlas-qtl">&#182;</a></h1><p>See <a href="20200110_atlasqtl_demo.html">here</a> for some background information. Since <code>atlas-qtl</code> does not give credible sets we compare here the marginal PIP in terms of calibration and precision-recall curves.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-benchmark">The benchmark<a class="anchor-link" href="#The-benchmark">&#182;</a></h2><p>The benchmark is executed locally because <code>mthess</code> can take very long time to complete.</p>
+
+<pre><code>./finemap.dsc --host dsc_mnm.yml -o mnm_20200124 --touch -e ignore</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/home/gaow/GIT/mvarbvs/dsc/mnm_prototype&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">data_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;mnm_20200124/&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;0502&#39;</span>
+<span class="k">def</span> <span class="nf">fmtP</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="PIP-extraction">PIP extraction<a class="anchor-link" href="#PIP-extraction">&#182;</a></h2><p>I'll for now only extract file names and get the values as needed after.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Extract meta info</span>
+<span class="p">[</span><span class="n">pip_1</span><span class="p">,</span><span class="n">roc_1</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}/PIP_comparison_{date}.pips_meta.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">data_dir</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">target</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;full_data.dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;simulate.n_traits&quot;</span><span class="p">,</span> <span class="s2">&quot;simulate.n_signal&quot;</span><span class="p">,</span> <span class="s2">&quot;simulate&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">),</span> <span class="n">module</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">files</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;simulate&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">),</span> <span class="n">group</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;method: mnm_high_het mnm_mixture01 atlasqtl&quot;</span><span class="p">,</span> <span class="s2">&quot;methods:&quot;</span><span class="p">),</span> <span class="n">ignore</span><span class="o">.</span><span class="n">missing</span><span class="o">.</span><span class="n">file</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+    <span class="c1"># remove bad files</span>
+    <span class="n">bad_files</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">f</span> <span class="ow">in</span> <span class="n">meta</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="err">!</span><span class="nb">file</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;${data_dir}/&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span><span class="s1">&#39;.rds&#39;</span><span class="p">)))</span> <span class="n">bad_files</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">bad_files</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">bad_files</span><span class="p">)),]</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gaow</span><span class="o">/</span><span class="n">GIT</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">mnm_prototype</span><span class="o">/</span><span class="n">mnm_20200124</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/project2/mstephens/gaow/mvarbvs/dsc/mnm_prototype/mnm_20200124</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;PIP_comparison_0302.pips_meta.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>DSC</th><th scope=col>full_data.dataset</th><th scope=col>simulate.n_traits</th><th scope=col>simulate.n_signal</th><th scope=col>simulate</th><th scope=col>method</th><th scope=col>full_data.output.file</th><th scope=col>simulate.output.file</th><th scope=col>method.output.file</th></tr></thead>
+<tbody>
+	<tr><td>1                                                                        </td><td>~/Documents/GTExV8/Multi_Tissue_Toys/ENSG00000000003.14.Multi_Tissues.rds</td><td>5                                                                        </td><td>-1                                                                       </td><td>high_het                                                                 </td><td>mnm_high_het                                                             </td><td>full_data/full_data_1                                                    </td><td>high_het/full_data_1_high_het_1                                          </td><td>mnm_high_het/full_data_1_high_het_1_oracle_generator_1_mnm_high_het_1    </td></tr>
+	<tr><td>1                                                                        </td><td>~/Documents/GTExV8/Multi_Tissue_Toys/ENSG00000000005.5.Multi_Tissues.rds </td><td>5                                                                        </td><td>-1                                                                       </td><td>high_het                                                                 </td><td>mnm_high_het                                                             </td><td>full_data/full_data_2                                                    </td><td>high_het/full_data_2_high_het_1                                          </td><td>mnm_high_het/full_data_2_high_het_1_oracle_generator_1_mnm_high_het_1    </td></tr>
+	<tr><td>1                                                                        </td><td>~/Documents/GTExV8/Multi_Tissue_Toys/ENSG00000000419.12.Multi_Tissues.rds</td><td>5                                                                        </td><td>-1                                                                       </td><td>high_het                                                                 </td><td>mnm_high_het                                                             </td><td>full_data/full_data_3                                                    </td><td>high_het/full_data_3_high_het_1                                          </td><td>mnm_high_het/full_data_3_high_het_1_oracle_generator_1_mnm_high_het_1    </td></tr>
+	<tr><td>1                                                                        </td><td>~/Documents/GTExV8/Multi_Tissue_Toys/ENSG00000000457.13.Multi_Tissues.rds</td><td>5                                                                        </td><td>-1                                                                       </td><td>high_het                                                                 </td><td>mnm_high_het                                                             </td><td>full_data/full_data_4                                                    </td><td>high_het/full_data_4_high_het_1                                          </td><td>mnm_high_het/full_data_4_high_het_1_oracle_generator_1_mnm_high_het_1    </td></tr>
+	<tr><td>1                                                                        </td><td>~/Documents/GTExV8/Multi_Tissue_Toys/ENSG00000000460.16.Multi_Tissues.rds</td><td>5                                                                        </td><td>-1                                                                       </td><td>high_het                                                                 </td><td>mnm_high_het                                                             </td><td>full_data/full_data_5                                                    </td><td>high_het/full_data_5_high_het_1                                          </td><td>mnm_high_het/full_data_5_high_het_1_oracle_generator_1_mnm_high_het_1    </td></tr>
+	<tr><td>1                                                                        </td><td>~/Documents/GTExV8/Multi_Tissue_Toys/ENSG00000000938.12.Multi_Tissues.rds</td><td>5                                                                        </td><td>-1                                                                       </td><td>high_het                                                                 </td><td>mnm_high_het                                                             </td><td>full_data/full_data_6                                                    </td><td>high_het/full_data_6_high_het_1                                          </td><td>mnm_high_het/full_data_6_high_het_1_oracle_generator_1_mnm_high_het_1    </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">unique</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">simulate</span><span class="o">.</span><span class="n">n_traits</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>5</li>
+	<li>10</li>
+	<li>50</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Extract PIP</span>
+<span class="p">[</span><span class="n">pip_2</span><span class="p">,</span><span class="n">roc_2</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">mnm_method</span> <span class="o">=</span> <span class="s1">&#39;mnm_high_het+mnm_low_het&#39;</span>
+<span class="kn">parameter:</span> <span class="n">simulate_method</span> <span class="o">=</span> <span class="s1">&#39;high_het&#39;</span>
+<span class="kn">parameter:</span> <span class="n">n_traits</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="kn">parameter:</span> <span class="n">sub_set</span> <span class="o">=</span> <span class="mi">1200</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}/PIP_comparison_{date}.pips.{simulate_method}_{mnm_method}_{n_traits}_{sub_set}.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}&#39;</span>
+
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="c1"># apply some filters</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">method</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">c</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">mnm_method</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;+&#39;</span><span class="p">)])},</span> <span class="s1">&#39;atlasqtl&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">meta</span><span class="err">$</span><span class="n">simulate</span> <span class="o">==</span> <span class="s1">&#39;${simulate_method}&#39;</span> <span class="o">&amp;</span> <span class="n">meta</span><span class="err">$</span><span class="n">simulate</span><span class="o">.</span><span class="n">n_traits</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">n_traits</span><span class="p">}),]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">sub_set</span><span class="p">}</span><span class="o">&lt;</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="err">$</span><span class="p">{</span><span class="n">sub_set</span><span class="p">}</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span>
+      <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">sample</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">))[</span><span class="mi">1</span><span class="p">:</span><span class="err">$</span><span class="p">{</span><span class="n">sub_set</span><span class="p">}],]</span>
+    <span class="p">}</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span>
+    <span class="c1"># now collect matrices for each method, of two columns: pip and true_coef</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">true_coef</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">dscrutils</span><span class="p">:::</span><span class="n">read_dsc</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">simulate</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.pkl&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="c1"># make it a vector</span>
+      <span class="n">true_coef</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">true_coef</span><span class="p">)</span>
+      <span class="n">method</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;atlasqtl&quot;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">pip</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">:::</span><span class="n">read_dsc</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">result</span><span class="err">$</span><span class="n">gam_vb_completed</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="n">tmp</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">:::</span><span class="n">read_dsc</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">result</span>
+          <span class="c1"># approximate PIP using condition specific 1 - lfsr</span>
+          <span class="n">pip</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">mmbr_get_lfsr</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="c1"># PIP is matrix of P (SNPs) by R (conditions); now make it a vector</span>
+      <span class="n">pip</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">pip</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="err">!</span><span class="p">(</span><span class="n">method</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">names</span><span class="p">(</span><span class="n">res</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pip</span> <span class="o">=</span> <span class="n">pip</span><span class="p">,</span> <span class="n">truth</span> <span class="o">=</span> <span class="n">true_coef</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">pip</span><span class="p">,</span> <span class="n">pip</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">truth</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">truth</span><span class="p">,</span> <span class="n">true_coef</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">%%</span><span class="mi">100</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">unique</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">method</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]])</span>
+    <span class="p">}</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s2">&quot;PIP_comparison_0302.pips.high_het_mnm_high_het+mnm_low_het_50_500.rds&quot;</span><span class="p">)</span>
+<span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'mnm_high_het'</li>
+	<li>'atlasqtl'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now let's peep into the result:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">atlasqtl</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pip</th><th scope=col>truth</th></tr></thead>
+<tbody>
+	<tr><td>4.097906e-05</td><td>0           </td></tr>
+	<tr><td>2.606266e-05</td><td>0           </td></tr>
+	<tr><td>3.117386e-05</td><td>0           </td></tr>
+	<tr><td>3.306454e-05</td><td>0           </td></tr>
+	<tr><td>4.816789e-05</td><td>0           </td></tr>
+	<tr><td>3.272972e-05</td><td>0           </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[21]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">atlasqtl</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">atlasqtl</span><span class="p">[,</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">),])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pip</th><th scope=col>truth</th></tr></thead>
+<tbody>
+	<tr><td>3.209868e-05</td><td>1           </td></tr>
+	<tr><td>2.472211e-05</td><td>1           </td></tr>
+	<tr><td>4.558600e-07</td><td>1           </td></tr>
+	<tr><td>2.115187e-05</td><td>1           </td></tr>
+	<tr><td>4.447844e-06</td><td>1           </td></tr>
+	<tr><td>3.126282e-05</td><td>1           </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">colSums</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">atlasqtl</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">atlasqtl</span><span class="p">[,</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">),])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<dl class=dl-horizontal>
+	<dt>pip</dt>
+		<dd>4.51497298369468</dd>
+	<dt>truth</dt>
+		<dd>4950</dd>
+</dl>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>It seems atlasqtl somehow missed almost all signals? Let's see how M&amp;M works</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">mnm_high_het</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pip</th><th scope=col>truth</th></tr></thead>
+<tbody>
+	<tr><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td></tr>
+	<tr><td>0</td><td>0</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">mnm_high_het</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">mnm_high_het</span><span class="p">[,</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">),])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pip</th><th scope=col>truth</th></tr></thead>
+<tbody>
+	<tr><td>0.9105833</td><td>1        </td></tr>
+	<tr><td>0.9105833</td><td>1        </td></tr>
+	<tr><td>0.9105833</td><td>1        </td></tr>
+	<tr><td>0.9105833</td><td>1        </td></tr>
+	<tr><td>0.9105833</td><td>1        </td></tr>
+	<tr><td>0.9105833</td><td>1        </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">colSums</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">mnm_high_het</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">mnm_high_het</span><span class="p">[,</span><span class="mi">2</span><span class="p">]</span><span class="o">==</span><span class="mi">1</span><span class="p">),])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<dl class=dl-horizontal>
+	<dt>pip</dt>
+		<dd>18997.4584939351</dd>
+	<dt>truth</dt>
+		<dd>37150</dd>
+</dl>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This seems reasonable.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Looking-into-issues-with-atlasqtl">Looking into issues with atlasqtl<a class="anchor-link" href="#Looking-into-issues-with-atlasqtl">&#182;</a></h2><p>Take one run for example:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;atlasqtl/full_data_100_high_het_1_atlasqtl_1.rds&#39;</span><span class="p">)</span>
+<span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'beta_vb'</li>
+	<li>'gam_vb'</li>
+	<li>'theta_vb'</li>
+	<li>'X_beta_vb'</li>
+	<li>'zeta_vb'</li>
+	<li>'converged'</li>
+	<li>'it'</li>
+	<li>'lb_opt'</li>
+	<li>'diff_lb'</li>
+	<li>'p0'</li>
+	<li>'rmvd_coll_x'</li>
+	<li>'pip'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dim</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">result</span><span class="err">$</span><span class="n">gam_vb</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>1479</li>
+	<li>5</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now check the corresponding input file:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">idat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;full_data/full_data_100.rds&#39;</span><span class="p">)</span>
+<span class="n">dim</span><span class="p">(</span><span class="n">idat</span><span class="err">$</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>838</li>
+	<li>2446</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>There are 2466 variables in input, but only 1479 in output of <code>atlasqtl</code>! Let's run the code and see what happens:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">cat</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">script</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>## r script UUID: 97106506
+library(atlasqtl)
+DSC_22B90227 &lt;- list()
+DSC_22B90227 &lt;- dscrutils:::load_inputs(c(&#39;mnm_20200124/full_data/full_data_100.rds&#39;,&#39;mnm_20200124/high_het/full_data_100_high_het_1.pkl&#39;), dscrutils:::read_dsc)
+DSC_REPLICATE &lt;- DSC_22B90227$DSC_DEBUG$replicate
+X &lt;- DSC_22B90227$X
+Y &lt;- DSC_22B90227$Y
+meta &lt;- DSC_22B90227$meta
+TIC_22B90227 &lt;- proc.time()
+set.seed(DSC_REPLICATE)
+
+## BEGIN DSC CORE
+library(atlasqtl)
+pat = meta$true_coef != 0
+p0 = c(mean(colSums(pat)), 10)
+result = atlasqtl::atlasqtl(Y = Y, X = X, p0 = p0, user_seed = DSC_REPLICATE)
+result$pip = as.vector(1 - apply(1 - result$gam_vb, 1, prod))
+## END DSC CORE
+
+saveRDS(list(result=result, DSC_DEBUG=dscrutils:::save_session(TIC_22B90227, DSC_REPLICATE)), &#39;mnm_20200124/atlasqtl/full_data_100_high_het_1_atlasqtl_1.rds&#39;)
+
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">library</span><span class="p">(</span><span class="n">atlasqtl</span><span class="p">)</span>
+<span class="n">DSC_22B90227</span> <span class="o">&lt;-</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">DSC_22B90227</span> <span class="o">&lt;-</span> <span class="n">dscrutils</span><span class="p">:::</span><span class="n">load_inputs</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="s1">&#39;full_data/full_data_100.rds&#39;</span><span class="p">,</span><span class="s1">&#39;high_het/full_data_100_high_het_1.pkl&#39;</span><span class="p">),</span> <span class="n">dscrutils</span><span class="p">:::</span><span class="n">read_dsc</span><span class="p">)</span>
+<span class="n">DSC_REPLICATE</span> <span class="o">&lt;-</span> <span class="n">DSC_22B90227</span><span class="err">$</span><span class="n">DSC_DEBUG</span><span class="err">$</span><span class="n">replicate</span>
+<span class="n">X</span> <span class="o">&lt;-</span> <span class="n">DSC_22B90227</span><span class="err">$</span><span class="n">X</span>
+<span class="n">Y</span> <span class="o">&lt;-</span> <span class="n">DSC_22B90227</span><span class="err">$</span><span class="n">Y</span>
+<span class="n">meta</span> <span class="o">&lt;-</span> <span class="n">DSC_22B90227</span><span class="err">$</span><span class="n">meta</span>
+<span class="n">TIC_22B90227</span> <span class="o">&lt;-</span> <span class="n">proc</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">DSC_REPLICATE</span><span class="p">)</span>
+
+<span class="c1">## BEGIN DSC CORE</span>
+<span class="n">library</span><span class="p">(</span><span class="n">atlasqtl</span><span class="p">)</span>
+<span class="n">pat</span> <span class="o">=</span> <span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span> <span class="o">!=</span> <span class="mi">0</span>
+<span class="n">p0</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">colSums</span><span class="p">(</span><span class="n">pat</span><span class="p">)),</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">atlasqtl</span><span class="p">::</span><span class="n">atlasqtl</span><span class="p">(</span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">X</span><span class="p">,</span> <span class="n">p0</span> <span class="o">=</span> <span class="n">p0</span><span class="p">,</span> <span class="n">user_seed</span> <span class="o">=</span> <span class="n">DSC_REPLICATE</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
+======================= 
+== PREPROCESSING ... == 
+======================= 
+
+== Checking the annealing schedule ... 
+
+... done. == 
+
+== Preparing the data ... 
+
+Presence of collinear variables. 967 redundant.
+Removing corresponding columns and saving their ids in the function output ... 
+... done. == 
+
+== Preparing the hyperparameters ... 
+
+list_hyper set automatically. 
+... done. == 
+
+== Preparing the parameter initialization ... 
+
+Seed set to user_seed 1. 
+list_init set automatically. 
+... done. == 
+
+**************************************************** 
+Number of samples: 838
+Number of (non-redundant) candidate predictors: 1479
+Number of responses: 5
+**************************************************** 
+
+======================================================= 
+== ATLASQTL: fast global-local hotspot QTL detection == 
+======================================================= 
+
+** Annealing with geometric spacing ** 
+
+Iteration 1... 
+Temperature = 2
+
+Iteration 5... 
+Temperature = 1.47
+
+** Exiting annealing mode. **
+
+Iteration 10... 
+ELBO = -2230.541
+
+Iteration 50... 
+ELBO = -1999.938
+
+Convergence obtained after 51 iterations. 
+Optimal marginal log-likelihood variational lower bound (ELBO) = -1999.867. 
+
+... done. == 
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And here is the problem:</p>
+
+<pre><code>== Preparing the data ... 
+
+Presence of collinear variables. 967 redundant.
+Removing corresponding columns and saving their ids in the function output ... 
+... done. ==</code></pre>
+<p>967 redundant variables removed plus 1479 remaining is 2446 variables.</p>
+<p><strong>For results to be comparable we'll have to either preprocess input removing these collinear variables before we run M&amp;M, or somehow (perhaps impossible?) post process the PIPs from atlasqtl to recover the actual expected PIP</strong>. Or, we contact the authors to clarify it ...</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Documentation for <code>atlasqtl</code>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="err">?</span><span class="n">atlasqtl</span><span class="p">::</span><span class="n">atlasqtl</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Now the question is how "collinear" those SNPs are.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">names</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'beta_vb'</li>
+	<li>'gam_vb'</li>
+	<li>'theta_vb'</li>
+	<li>'X_beta_vb'</li>
+	<li>'zeta_vb'</li>
+	<li>'converged'</li>
+	<li>'it'</li>
+	<li>'lb_opt'</li>
+	<li>'diff_lb'</li>
+	<li>'p0'</li>
+	<li>'rmvd_coll_x'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">result</span><span class="err">$</span><span class="n">rmvd_coll_x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<dl class=dl-horizontal>
+	<dt>chr7_86482150_T_A_b38</dt>
+		<dd>'chr7_86482210_GAAGA_G_b38'</dd>
+	<dt>chr7_86482150_T_A_b38</dt>
+		<dd>'chr7_86482300_A_T_b38'</dd>
+	<dt>chr7_86484748_C_T_b38</dt>
+		<dd>'chr7_86485234_T_C_b38'</dd>
+	<dt>chr7_86485238_G_A_b38</dt>
+		<dd>'chr7_86485290_C_A_b38'</dd>
+	<dt>chr7_86483690_A_G_b38</dt>
+		<dd>'chr7_86485763_G_A_b38'</dd>
+	<dt>chr7_86483690_A_G_b38</dt>
+		<dd>'chr7_86486045_A_G_b38'</dd>
+</dl>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">coll_x</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">names</span><span class="p">(</span><span class="n">result</span><span class="err">$</span><span class="n">rmvd_coll_x</span><span class="p">),</span> <span class="n">result</span><span class="err">$</span><span class="n">rmvd_coll_x</span><span class="p">)</span>
+<span class="n">head</span><span class="p">(</span><span class="n">coll_x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<tbody>
+	<tr><th scope=row>chr7_86482150_T_A_b38</th><td>chr7_86482150_T_A_b38    </td><td>chr7_86482210_GAAGA_G_b38</td></tr>
+	<tr><th scope=row>chr7_86482150_T_A_b38</th><td>chr7_86482150_T_A_b38    </td><td>chr7_86482300_A_T_b38    </td></tr>
+	<tr><th scope=row>chr7_86484748_C_T_b38</th><td>chr7_86484748_C_T_b38    </td><td>chr7_86485234_T_C_b38    </td></tr>
+	<tr><th scope=row>chr7_86485238_G_A_b38</th><td>chr7_86485238_G_A_b38    </td><td>chr7_86485290_C_A_b38    </td></tr>
+	<tr><th scope=row>chr7_86483690_A_G_b38</th><td>chr7_86483690_A_G_b38    </td><td>chr7_86485763_G_A_b38    </td></tr>
+	<tr><th scope=row>chr7_86483690_A_G_b38</th><td>chr7_86483690_A_G_b38    </td><td>chr7_86486045_A_G_b38    </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">cor_x</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">coll_x</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">cor_x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cor</span><span class="p">(</span><span class="n">X</span><span class="p">[,</span><span class="n">coll_x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="n">X</span><span class="p">[,</span><span class="n">coll_x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]])</span>
+<span class="p">}</span>
+
+<span class="n">summary</span><span class="p">(</span><span class="n">cor_x</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+      1       1       1       1       1       1 </pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So indeed only the ones with perfect correlation are removed.</p>
+<p><strong>Update: I have now added a post-processing function to atlasqtl to report back PIP avarged among co-linear input. See <code>pip_2</code> above.</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="PIP-calibration">PIP calibration<a class="anchor-link" href="#PIP-calibration">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Calibration and ROC data</span>
+<span class="p">[</span><span class="n">pip_3</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">bin_size</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.pip_evaluation.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+  <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+  <span class="n">bins</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">})</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">}</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">},</span> <span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">})</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">})</span>
+  <span class="n">pip_cali</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">NA</span><span class="p">,</span> <span class="n">nrow</span><span class="p">(</span><span class="n">bins</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">data_in_bin</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]),]</span>
+        <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">data_in_bin</span><span class="p">[,</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">data_in_bin</span><span class="p">[,</span><span class="mi">2</span><span class="p">])</span>
+        <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">nrow</span><span class="p">(</span><span class="n">data_in_bin</span><span class="p">)</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span> <span class="o">/</span> <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="mi">3</span><span class="p">]</span>
+  <span class="p">}</span>
+  <span class="n">saveRDS</span><span class="p">(</span><span class="n">pip_cali</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Calibration plot</span>
+<span class="p">[</span><span class="n">pip_4</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;cowplot&#39;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.pip_evaluation.png&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">cowplot</span><span class="p">)</span>
+    <span class="n">rename</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mnm_high_het</span> <span class="o">=</span> <span class="s1">&#39;M&amp;M (oracle)&#39;</span><span class="p">,</span> <span class="n">mnm_mixture01</span> <span class="o">=</span> <span class="s1">&#39;M&amp;M (default)&#39;</span><span class="p">,</span> <span class="n">mthess</span> <span class="o">=</span> <span class="s1">&#39;MT-HESS (default)&#39;</span><span class="p">,</span> <span class="n">atlasqtl</span> <span class="o">=</span> <span class="s1">&#39;atlasqtl&#39;</span><span class="p">)</span>
+    <span class="n">dot_plot</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ggplot</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">mean_pip</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">observed_freq</span><span class="p">))</span> <span class="o">+</span> 
+          <span class="n">geom_errorbar</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="n">observed_freq</span><span class="o">-</span><span class="n">se</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">observed_freq</span><span class="o">+</span><span class="n">se</span><span class="p">),</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">width</span><span class="o">=.</span><span class="mo">01</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;#002b36&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># 21 is filled circle</span>
+          <span class="n">xlab</span><span class="p">(</span><span class="s2">&quot;Mean PIP&quot;</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">ylab</span><span class="p">(</span><span class="s2">&quot;Observed frequency&quot;</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">coord_cartesian</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">xlim</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span>
+          <span class="n">geom_abline</span><span class="p">(</span><span class="n">slope</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">intercept</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">colour</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">ggtitle</span><span class="p">(</span><span class="n">rename</span><span class="p">[[</span><span class="kp">name</span><span class="p">]])</span> <span class="o">+</span>
+          <span class="n">expand_limits</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span>                        <span class="c1"># Expand y range</span>
+          <span class="n">theme_cowplot</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kp">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+      <span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]][,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]][,</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]][,</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]][,</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="mi">2</span>
+      <span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]]</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]])</span>
+      <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]])</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;mean_pip&quot;</span><span class="p">,</span> <span class="s2">&quot;observed_freq&quot;</span><span class="p">,</span> <span class="s2">&quot;se&quot;</span><span class="p">)</span>
+      <span class="n">pdf</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="s1">&#39;_&#39;</span> <span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+      <span class="k">print</span><span class="p">(</span><span class="n">dot_plot</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]]))</span>
+      <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+      <span class="n">system</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;convert -density 120 &quot;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="s1">&#39;_&#39;</span> <span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="s1">&#39;_&#39;</span> <span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;.png&#39;</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">idx</span><span class="p">),</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;convert +append&#39;</span><span class="p">,</span> <span class="n">paste</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">collapse</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">system</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s1">&#39;rm -f&#39;</span><span class="p">,</span> <span class="n">paste</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">collapse</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">PIP_comparison_0302</span><span class="o">.</span><span class="n">pips</span><span class="o">.</span><span class="n">pip_evaluation</span><span class="o">.</span><span class="n">png</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> PIP_comparison_0302.pips.pip_evaluation.png (27.9 KiB):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="ROC-/-PR-curves">ROC / PR curves<a class="anchor-link" href="#ROC-/-PR-curves">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Data for ROC</span>
+<span class="p">[</span><span class="n">roc_3</span><span class="p">]</span>
+<span class="n">pip_cutoff</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.roc.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">roc_data</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">pip_cutoff</span><span class="p">},</span> <span class="mf">0.999</span><span class="p">),</span> <span class="n">connect_org</span> <span class="o">=</span> <span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="mi">500</span>
+        <span class="n">ttv</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">grid</span><span class="p">)</span><span class="o">/</span><span class="n">grid</span>
+        <span class="n">ttv</span> <span class="o">=</span> <span class="n">ttv</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">ttv</span><span class="o">&gt;=</span><span class="n">cutoff</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">ttv</span><span class="o">&lt;=</span><span class="n">cutoff</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+        <span class="n">rst1</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">sapply</span><span class="p">(</span><span class="n">ttv</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">c</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">d1</span><span class="p">[,</span><span class="mi">2</span><span class="p">][</span><span class="n">d1</span><span class="p">[,</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">]),</span> <span class="n">length</span><span class="p">(</span><span class="n">d1</span><span class="p">[,</span><span class="mi">2</span><span class="p">][</span><span class="n">d1</span><span class="p">[,</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">]))))</span>
+        <span class="n">rst1</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">rst1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d1</span><span class="p">[,</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">rst1</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">rst1</span><span class="p">)</span>
+        <span class="n">colnames</span><span class="p">(</span><span class="n">rst1</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;true_positive&#39;</span><span class="p">,</span> <span class="s1">&#39;total_positive&#39;</span><span class="p">,</span> <span class="s1">&#39;total_signal&#39;</span><span class="p">)</span>
+        <span class="n">rst2</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">cbind</span><span class="p">(</span><span class="n">rst1</span><span class="err">$</span><span class="n">true_positive</span> <span class="o">/</span> <span class="n">rst1</span><span class="err">$</span><span class="n">total_positive</span><span class="p">,</span> <span class="n">rst1</span><span class="err">$</span><span class="n">true_positive</span> <span class="o">/</span> <span class="n">rst1</span><span class="err">$</span><span class="n">total_signal</span><span class="p">,</span>  <span class="n">ttv</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">connect_org</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1"># make a stair to origin</span>
+            <span class="n">rst2</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">rst2</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.995</span><span class="p">,</span> <span class="n">rst2</span><span class="p">[</span><span class="n">nrow</span><span class="p">(</span><span class="n">rst2</span><span class="p">),</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">rst2</span><span class="p">[</span><span class="n">nrow</span><span class="p">(</span><span class="n">rst2</span><span class="p">),</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rst2</span><span class="p">[</span><span class="n">nrow</span><span class="p">(</span><span class="n">rst2</span><span class="p">),</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="n">rst2</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">rst2</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="p">}</span>
+        <span class="n">colnames</span><span class="p">(</span><span class="n">rst2</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;Precision&#39;</span><span class="p">,</span> <span class="s1">&#39;Recall&#39;</span><span class="p">,</span> <span class="s1">&#39;Threshold&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">counts</span> <span class="o">=</span> <span class="n">rst1</span><span class="p">,</span> <span class="n">rates</span> <span class="o">=</span> <span class="n">rst2</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Computing ROC data ...&quot;</span><span class="p">)</span>
+    <span class="n">roc</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">roc</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="n">roc_data</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]])</span>
+    <span class="p">}</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">roc</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/home/gaow/GIT/mvarbvs/dsc/mnm_prototype/mnm_20200124/PIP_comparison_0302.pips.roc.rds&#39;</span><span class="p">)</span>
+<span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>'mnm_high_het'</li>
+	<li>'atlasqtl'</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Plot for ROC</span>
+<span class="p">[</span><span class="n">roc_4</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;scam&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">chunks</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="kn">parameter:</span> <span class="n">smooth</span> <span class="o">=</span> <span class="s1">&#39;FALSE&#39;</span>
+<span class="kn">parameter:</span> <span class="n">opt</span> <span class="o">=</span> <span class="s2">&quot;lwd = 2, xlim = c(0,0.8), ylim = c(0,0.8)&quot;</span>
+<span class="kn">parameter:</span> <span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;FDR vs Power&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.roc.pdf&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;#A60628&#39;</span><span class="p">,</span> <span class="s1">&#39;#7A68A6&#39;</span><span class="p">,</span> <span class="s1">&#39;#348ABD&#39;</span><span class="p">,</span> <span class="s1">&#39;#467821&#39;</span><span class="p">,</span> <span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s1">&#39;#188487&#39;</span><span class="p">,</span> <span class="s1">&#39;#E2A233&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;#A9A9A9&#39;</span><span class="p">,</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="s1">&#39;#FF00FF&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFD700&#39;</span><span class="p">,</span> <span class="s1">&#39;#ADFF2F&#39;</span><span class="p">,</span> <span class="s1">&#39;#00FFFF&#39;</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">scam</span><span class="p">)</span>
+    <span class="n">create_chunks</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">splitted</span> <span class="o">=</span> <span class="n">suppressWarnings</span><span class="p">(</span><span class="n">split</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">))</span>
+      <span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">splitted</span><span class="p">[[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">splitted</span><span class="p">[[</span><span class="n">length</span><span class="p">(</span><span class="n">splitted</span><span class="p">)]][</span><span class="n">length</span><span class="p">(</span><span class="n">splitted</span><span class="p">[[</span><span class="n">length</span><span class="p">(</span><span class="n">splitted</span><span class="p">)]])]))</span>
+    <span class="p">}</span>
+    <span class="n">make_smooth</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">subset</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">chunks</span><span class="p">},</span> <span class="n">smooth</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">smooth</span><span class="p">})</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">smooth</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="n">subset</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">subset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+              <span class="n">x</span> <span class="o">=</span> <span class="n">create_chunks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+              <span class="n">y</span> <span class="o">=</span> <span class="n">create_chunks</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+          <span class="p">}</span>
+          <span class="n">dat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">cbind</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+          <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+          <span class="n">y</span><span class="o">=</span><span class="n">predict</span><span class="p">(</span><span class="n">scam</span><span class="p">(</span><span class="n">y</span> <span class="o">~</span> <span class="n">s</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bs</span> <span class="o">=</span> <span class="s2">&quot;mpi&quot;</span><span class="p">),</span> <span class="n">data</span> <span class="o">=</span> <span class="n">dat</span><span class="p">))</span>
+      <span class="p">}</span>
+      <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">add_text</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.06</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">thresholds</span> <span class="o">==</span> <span class="n">threshold</span><span class="p">)</span>
+        <span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">delta</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">cex</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    <span class="p">}</span>
+    <span class="n">rename</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mnm_high_het</span> <span class="o">=</span> <span class="s1">&#39;M&amp;M (oracle)&#39;</span><span class="p">,</span> <span class="n">mnm_mixture01</span> <span class="o">=</span> <span class="s1">&#39;M&amp;M (default)&#39;</span><span class="p">,</span> <span class="n">mthess</span> <span class="o">=</span> <span class="s1">&#39;MT-HESS (default)&#39;</span><span class="p">,</span> <span class="n">atlasqtl</span> <span class="o">=</span> <span class="s1">&#39;atlasqtl (default)&#39;</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+    <span class="n">pdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">width</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">yy</span> <span class="o">=</span> <span class="n">make_smooth</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">rates</span><span class="err">$</span><span class="n">Precision</span><span class="p">,</span> <span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">rates</span><span class="err">$</span><span class="n">Recall</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">plot</span><span class="p">(</span><span class="n">yy</span><span class="err">$</span><span class="n">x</span><span class="p">,</span> <span class="n">yy</span><span class="err">$</span><span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s2">&quot;power&quot;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span><span class="s2">&quot;FDR&quot;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;${main}&quot;</span><span class="p">,</span> <span class="n">bty</span><span class="o">=</span><span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">opt</span><span class="p">})</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">lines</span><span class="p">(</span><span class="n">yy</span><span class="err">$</span><span class="n">x</span><span class="p">,</span> <span class="n">yy</span><span class="err">$</span><span class="n">y</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="err">$</span><span class="p">{</span><span class="n">opt</span><span class="p">})</span>
+        <span class="p">}</span>
+        <span class="c1">#add_text(dat[[method]]$rates$Threshold, yy$x, yy$y, 0.9, colors[i])</span>
+        <span class="n">add_text</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">rates</span><span class="err">$</span><span class="n">Threshold</span><span class="p">,</span> <span class="n">yy</span><span class="err">$</span><span class="n">x</span><span class="p">,</span> <span class="n">yy</span><span class="err">$</span><span class="n">y</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rename</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="p">}</span>
+    <span class="n">legend</span><span class="p">(</span><span class="s2">&quot;bottomright&quot;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">],</span> <span class="n">lty</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">cex</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">PIP_comparison_0302</span><span class="o">.</span><span class="n">pips</span><span class="o">.</span><span class="n">roc</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<div class="sos_hint">> PIP_comparison_0302.pips.roc.pdf (8.7 KiB):</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAu4AAALuCAMAAADGw2P4AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAgY0hSTQAAeiYAAICEAAD6AAAAgOgAAHUwAADqYAAAOpgAABdwnLpRPAAAAVlQTFRF////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApgYopgYopgYopgYopgYopgYopgYopgYopgYopgYopgYopgYopgYopgYoAAAAAAAAAAAAemimemimemimemimemimemimemimemimemimemimemimemimemimemimYwQYVwMVNwINQQIQGgEGGwEHFhMeiQUhcgQbKyQ6BQQHWUx5T0RsCwkPjj9yAAAAow8zmCdSfWKffl+bg1aPf16alS5bkTZliEl+gVmTi0J1hFSMiUh9gViSAAAAi0N3iUd8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAApgYoemimTQMTZAQYbwQbalqQOTFNegQdCAcLWUx6MSpCKSM3QTdZoBM5lydShk6Eow0wmiBKlC1ajzpriUd8////hTHXqgAAAFx0Uk5TACKIZkQzd6rumRHdu8xVdfTa8ewRiO5VIne7qjPdZsxEmb7v9zO77lV3zCKImUSqEWbd0dbj3/Hf+MSftua7wM119b/N2c2nl6evx/Hf7OPfzaOZW4fjp4bZ+fbu6Y8JAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAAAlgAAAJYAcUb+8AAAL5VJREFUeNrtnfdj206an4lBb9zsniSri7qspa9t2ZaV3nMpl7LJpbe7kTbZu0vdlPv/fwmmAYNGESTAQfk8P9giAGIG5IPhi8HgndUKAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMBYsUgdtrx4ZTuOW3pLeWPPcQapi+NYpj8bMDscWoctryzy7eItte2DMBqkLjHpZ78ASHbUndIkV6/hHWkvXtbrEriH7xWAnJ11L5RueAdNBqoLfAd9srvuudJNutP1QHXp5TwCQCAUCx0dtlxbbJNYqOeJt4i2Xm67JoEI7nuuy1oViuYd9IdQjNSWlxZHoYgsomJV0eq6Yl3vdYnSlqoBsC876b5a+fy1XazSgowkj4ByrPxXovbKskX35ft1sUoFRWv+PtXYu2yX8gXffVRbvHJ4P2pxFZ2vXBOcRMtkR90tLWKp6k7quruleJ7/NsRiP35+EVovs1oXrSD5+8L2Q4p9ptrbxKmYFnuQUVYWHakO/ETsz02r1QVLYUfdZfNerNJ0DxuCGR54h/JFkO/LVgqWunra6hLnBbm19635n3wPXvG2iP/JfjlkKCTOLHnTQOhuBRS6L5VddfdykWq6xw2XqqRo0GVTb+V/Fd6+U5e8oOr7Il1seSam+R74mZeW3iF+Z4TuDbEXWApCsUS/e8+XV3UX23n5qkJ3uxCvwNJ6VbzcRikmIWGgBSCVMkjtZSTb9iSRErNzK8m3lV047E+i1hJ1WPpFNn9LQKH7cqn3dQvdqrq7xQIZQkuEgWF1v1oQnZRPFP5X5Df8JJR1t1LVMAt3faasE6iTy1MnnSXr7aiibHWC8JJEHBTmFWHnm0/Qnb9MdtVdW0Dr1GzXmvRVHsuIsqKi3KCpLvKXRl7Tsk0CFcGs1GkXyj/Y2rWsg6e2tOQvjoyl7LwkoXvQ25A2MDn60D1uEMjKJV/n4ouyfNFRUuqqbKsLl9jJG29GfmHMYxhXtP2++KmwlOV+3rir+uZtP4XtC6aX1j1puPWp4goRiogIRp0eZL1jXXi0Qko/BI46j0K5X1aQKzS3VR0D3etELU2KXxywTOqDCETjW9Vdi6sb2uCGkVxcPRacx6qZV5eqoo33rJa66PB4nSjvV0XNHFlAyF/HvJBIbLlurGKuO6L2JbNrR6SIkNf5qnzMjIgQ6sF7JNtkS2tSrXjrb0JVd1/rP6x0TzqygJjH8D4/kdZiy1XrzwR0Xzy76i56R9x8VWFNKrSr4Yvzw1ZBDSMiJeErMU3ll0YtbtFdFBzZPKTx+CbqBwW6g2Z21T0upK7o3jCGgCMDaW69dv/U1YwPyvdVW+oSNgczMnQJ+Sv21oS/n10lyF5THXbCQffFs6Pujhay7Kg77/uO+VVjpX/d8tQ9z/J9ppa66HdolcqO+ovIATDs5OGdn1Zexdr1BHRfPLvpLu9rusWqqu4NfTO8VbbrVjMs0lBuS13EZYNVKo7/ySqVyrqw/+P8tIjVKVECui+enXSXI7sSbVVV94bebK5poMUysR6vJzvrLvov5S+EOPHECzVKkuS1UO8O9R2FScZ6Bd3Bdt3jhKOGI7raqh10X6n3qVhG101ou1MwI7UWQx5TLQiytSte/W91z1YbssOvEqD74tmqexmir9pFd9X6KqnFqMqY5I/87XapqkbFpNkVpziD0tLy0mBL+RZudsBK8oudQvfFs7vuYWlVYY2ntapN+y6kjuLKLsludcmbbkl+U0s09SJcLz8yWxogr2oL3RfPrrrH6/Kq6rOqjZlm4vJ5UpWwem+qVXd5SlVtlz8sYjfc5XycTLkomSMHui+eXXQPknBdXVV9vKPRUlJt+K1Q22vtHe26r5zih0FLWaYNwpdlFSMT3CQvSJ0D0B0cGcvmHSVJaHdMPOYS9ramoTbb3xH2kQEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFgWkeOK/0lKaUoi0/UBYDCchFIaeKuVG1NO4JquEgADYQvHqRdlTTtNY/gO5osVsPglzP4NKWVxTORTmpiuFQCDkEluZ//xpt3LF3Vp3i3ThwDArsSyKbcojeWi7E+y+w4sGpo+BgB2RDTuGSn11TLtz/dxEPqAyUCpI/5IiiY96WIwdAfTIY/Y00JbtO5gpqjY3aU0kPeXusXu0B1MB0JpmGnusp4Zec2ZdOqZge5gOkRB1qwnmexBJr6fab5OuvW7Q3cwIdxA3FW1WasuRxF06UqH7mBKWOyWaurIW01sIEGnMQTQHUwU208S3+72HugOFgR0BwsCuoMFAd3BgoDuYMo4lNLWlZFT5WfQHUyYrbrHtM6fM11jAPZmq+5eUuXn9BemawzA3rB4pcPmP6O/Y7rGABwL6A4WBHQHCwK6g4lh2URcd4akS9jOge5gUthpqV8x7JZJA7qDCREltY70TmMioTuYEKxp9z1HNOmOw7KidvIduoPp4FGalqMXJ8gf0t4F6A6mQ0rjqttunoxjF6D7yDk5fT37YLoSY6FJbb9LnhnoPmbOLy5fM65M12Ms5FnENEiXQY7QfbRcn968Cm5NV2UsNKVQ8rtkOYXu4+Q8d/31bmO6MqMhrV+XOp26ZqD7GNnc566fXpuuzIiwKY1L4UzkoWdm6tzeKdcvzk3XZWT4NBM+9OSzScRnWZbWHd4P3UfG+ekZXG8lItWbqkEX26H7uLhWUcz9xnRVRooTBprscceJJqH7aDi/vZeXp2enaNi34HiEJIlPyLrzTEvQfRyc5AH76x36HQcDuo+BD3lPzOvVxnRl5gx0N84HdXH6enZ1iyhmUKC7WT7cK9dv0MM+PNDdINdFu36PYWDHALqbQhsmcHV7Yro2CwG6G+Hk9hKuGwC6H5+T2yu4bgbofmQ01zFM4OhA92OiuY6OGBNA96NxfQHXTQPdj8LJh/sbuG4e6D4850Wz/np2D9cNAt0H5sNpPvbr9e4UN5PMAt2HRBv6hfEwYwC6D8XmNL+TlIXraNZHAXQfAl3116sLhOtjAbr3y/nF5aWmOoZ+jQvo3iNaz7q4Mt2YrhEoA917Qu9ZF50wGA0zPqB7LxR5kF5vLk+h+liB7gdzXepZ35iuDtgCdD+Mk4s79KxPB+h+ACcfikvTy43p2oD3ge77oQ3lRQgzHaD7HpQ6YW6Q8ms6QPeuFKkyMMBxckD3Lpxorp/df9hsTFcIdAO674werl9dbExXB+wBdN+N86LDEekDpgt03wHtRlIWwsD16QLd30PL9oVh61MHum9Fi2EwKdgMgO7tnOQZS5EBaSZA9zaK50zvcGk6F6B7I5u8fx3t+pyA7jXOb6/yKQYwxnFeQPcyG23w+hX6YeYGdC84KZp13EuaJ9Bdoj+TdIN7STMFumdsbrVRjpdICzNfFq/7uT6eF836zFm27nq+Utw2XQDL1f369LJo18/ucWW6BBaq+6YY9/V6+WGDZn0hLFD3k/KFKW4kLYil6X5+cakF67gwXRiL0l0PYa7QrC+QxeiuhzB4JGmpLER3Ld0X+hsXzBJ0Py8e00AIs2xmr3sx7gshDJi57reXebi+MV0XYJ45677Jg5hL3DOdDY7N/4tISmng293ePFvdi/R2mA5sRqxjmrD/7YAKUrfL2+epu+Y6UsPMCZIJznRfM9PjhDkfWB3eP0Pd9Y6YW9OVAX3iZHqHWXMeZZ6HTHM3Efrvytx0vy4m8MXjd7PDp5THLjalpLJoN2am+y3i9TmjLA9poBZFhfk7MC/dN2JMzB1cnyeUrvn/iRbBJF2imTnpfnIpLk4xSGCuQPeckwvRtKNlny8xDfn/hMb5skAu24m56K6mrcbN0zlD5HWpS6kjF3mUdrjVNA/dP8jumDPEMbMmCmjgsT+ya1XRH7OmNIh238EMdL9W/ew3p+h5nDns9lIQeo6TUhrajpfQTo375HUv5htA1+MScGJaJug0ambSuhdz4Z3dYxz7MojsVJc97DKEYNK6FwNjMOBxUVhrQsIkIcRzur51qrpf509Z3+ABJbArk9S9CNhxTwl0YXq6n+RPKOHqFHRkcrrfqiAGE4SBzkxM9w9nCNiBBhsB376SVPld+udN17gDFwjYQYmtulf76Bm/NF3jXTm5krIjiAGK2bbu0vZ70/UAYyJynC6d71OJ3dWcMhemKwKmzDR038i+R6QBAwcxCd3lE6g36GYHhzEB3U9O5cAY0xUBo8CyScIJyfzGzJyLx5Su0PcIGKUBkTLbzO6MXPdz9Uye6YqAURAltY70+Yx331whaAc6rGn3PUc06Y7D0qLO5WkmNRTscmO6JmAkeJSm5ejFCWbxrKpKowHZQUFK46rbLqXe7jsYp+4qjcbrPa5QQUGT2j71d9/BCHXPG/azUwx7BDpFepkCMuksYnnDfnOBW6igTFP6U3+6WcTyhh3ZwEADaf261JlsFjE07GA7NqVxKZyJvIn2zKBhB+/jszlqWBYxDvHZbDXrDu8fie5o2MEuRKR6UzXoYvsodEfDDnbGCQNN9ph0iGRWY9AdDTvohuMRkiQ+Ietu48NW5nVHww6OiFnd5VxKaNjBcTCp+zVm3ADHxaTufHjvGRp2cDRM6s7ymp6a/gDAkjCoO3sE9cr08YNFYU73DUscszF9/GBRGNP95AxJksCxMaX7+R1CGXB0DOl+zp5DvTN98GBpmNGdx+03eDAPHBkjuou0YBvTxw4WhwHdT3hCjbuN6UMHy+P4up/zcTK4vQQMcHTd+exKZ0hvCkxwbN152H6Hi1RghOPqznvbX+8wKAyY4ai68/5HhO3AGMfUnQcyZ8jmC4xxPN2veSBziTx4wBxH0/0U0xIA4xxJd/FQKgIZYJaj6C4nE7tCjwwwyzF0/4CmHYyD4XWXUwCfomkHxhladyn7zcb0gQIwtO5qcnc07WAUDKm7kv0efe1gHAynO2QHo2Mo3SE7GCHD6A7ZwSgZQvfze8gORkn/ukN2UCeh1HQVGH3rDtlBE7PUXcmOYb6gDOk2Q95Q9Kl7LvvG9FGB0ZHStNusYYPQn+6QHWwh8mlqvn3vS3fIDrZhERJTSpMcM9XoR3fIDrbjVKf/NVONPnSXT29AdtCKm1QwU43DdT85PYPsYBocqjtkBxPiMN2V7EjnCybBIbor2W+Q4BTsgB0mlGZBO3GNVWF/3SE76IKb8h6ZTPfsH8tQJfbVHbKDTrhB5nocC91pYMj3/XSH7KAjWdvuWyvCdLd83sibYC/dLyA76Maa0nC1ErqvViGlZuL3PXS/vYHsY+Djw+NPpuuwMyEN2AgxqXtEKTFSja66n59C9nHw6e3t7bPpSuxMIjyXuquXR6eb7rfyGVTIbpgvT4+Z7W9fTddjZxLRnE9I9+t7EbK/niFLkmG+cdnfvj+brsjOJDRl/yndYx7JH59ddT+5vROuv97dQnaz/PjMZX/8YboiHfAoZX2PUneHUu/wfbpO5+vd3XTfyAG+WcOOSfMM80XI/nlKsq9WFqWppXS3YiH/gewREe2g+/nFjZT9EiG7aZ6fuOxvT6Yr0hVCaUAcprtFgn46ZobQ/cOVdP3mFM9bG+cHD9ofn76Yrkh3Qv3hjl4i9951V92Or69XmIzAPD898Jb9YYKyZ6xjJXts77kL2kiHHWzV/UR2xdxc4Op0BPzgsr9M595SFZf4SZKQ/Z/QHlb3Db86vcfV6Sj4NLGu9gEgbHRZ/vxfIP/usIOturNnUNHtOA6+8GvU79PqjylwUuL0sZtYu8rtNXa/PuW9j6Y+H6Dx8fvk7itVYJkIgtA+OLNS5IseTUafut+KuP3U7KcEOC+i9/GT6Xrsj0q8kXqHDoX0shhGXOr2qPtG3lZCKGOcL0/fxV3U6V6jZkRrksp+mXB9UCPPHovy2R561J0NGbi7R1e7eZ5ly/7RdEUOJ1Nedkb6B40hyK5YY6dP3a9Z96PpTwes8tuoD6br0ReWHcYHZxFb8/uy/enOYpkL05/Mwvny7dPTg7iL+nXCUXsV1/ODg5PmRUl2GZD2qvvG9AezbD695UxugEwbUnV2yXrorohMa9AN6D5WXnLbp9v9qGPlqsfksGtVgRtD93nw5enrAx8e8/Lw9OOb6dr0ghurbhnbVI4ZxpZL1Y3Bai0b1bBPcyhYI4551RltHZHQ3Rw/qSDGdEV6hN9V9Q++x3Qo0H18fGUdj09PUx0e04glA3fDykP3kfHx6WVSGTV2p+iWSXoZLsZxtvVpetU5FJKf0180bgndjfD8eWZdjxUy5eNeJ6vZqntcHxtPf9m4JXQ3wk/ztp3Dn1U9iu6RUyVsD2bwHPbx4YHMj2fT1RgONYagL92Z0R023xK7Y+zvsfn4Y9aPKxUjxFJTMxpA95Hw7WFuIwbK5ON/A99g7zt0HwfP+ZCBGQz0bcBRzXpvfTJ7Ad3HwVfh+svXST/D0Q7Tvadm3bKJ6FUMu5870N04bIQMH+f749uMRg1UcA9It1HCTkv9imG3Mwi6m+aLimJmNKZ9MNg49wqdUjRBd9N8k7bPasxAI5bns5kmfW//mCblD/45YgeOwy9/u/gO3U3DHuP4/vRjvnGMJNKSRJI9x7t7RdYNiROIWXB2BLqb5vs8R8hUieS0qiIaSffzPaVx9Y1up1TxP8NdVcNkur+YrsMRSFgmVO4qH0SwXwrgJrV96u++gxbdbzFm5li8zCjNQDuO3qKzln6v+J3Setcj6fIIX4vul9D9SHya741UHUKpFoa4e85n0PQ2v8svRbvulTQz5xenp7Xw5vo0X3h+KkEM1IFnNoPe47PpagxPJSdM2iUC0d9Wuy51OnXNNOse/YVf//ovln5uRMrIm1Lu6xMxsYdYePGqZrQ53mc4db6Ie6nzHRRWkJTb4D0nmrRF+rCCyDu8Z0Z1GSWF8B9eX69uL27KOSPvXs9ON2whS613+nqJ1r0T30Tqx7eHZ9M1OQL9tO5Z5MKe8Pbk6HXCH4/qcru2Qfd1dsL8pf/8X/5yTIN8Tzev99m/Jzd67+Tt6xlv16/4ukv05HRCTjzz9jL/20sMUro43Td2X0WkelM16DQ4oa67FVA/ymL3S7ZrOSw5a9x5s54ZXmx4J90/5yvvcGm7O88/ZG6Nh3lkkXmffnpm2I7CQJM97njDqq57yk68ex6Deyq32enrFf//RO+vyf++e/3AXiE39o58+yomJ3j7Os/Bvo0kWUMsRg8c0O8ucDxCksQnZN35nKnpbnPFT8UlZyK79S9VEHOnJUrNdWdrsxPh5Pb09AIZst/h+Uk27I9fZz9uQEfeVY3jQ+6qHkxN95CH/lJ3R15R3KnA/FIL3vP7rmfZws3rDab72AWZauDx6dl0TY6MHnb3MYnwXtR0j/ntAKn7Kgj4wlJDrriSfY4Xr1moc8vmGd6cXsL37Yjxj99n+hDHdtiISPZUxuEzNO1NTXfxjLjSPRFPjDfqvsk0v16ds+n5rrI33PHYPQv6Ec9sYzYZfSdJTfeUXzMr3emW1p0PrGFz2tzpC2/QvG/lZV65H7vBE7+Ya9sbdCf8nqzUfS2voBtj99Xq/P7u9fK0vPAet1W3spABkA1EKu1G197DHqnp7vCbskL3KJbjERp7ZnLu9DtMp9B9K2xI2CIjdzvY995Qj9T73fn44Uuue6ju/Kp+9yyqqc8Yf8LC9c1mpTa9N3Qo0+D5cZnNuy1yoWbwBzwM5d+o6x4FNHVZD4uV0ED243+Qg2VKd1WV2NlVKuuMlC38DQYTbIfNpFdf+uVTQ4brj0/5wi9PkomOOYjYrSUZw1g+rT+VdBwaxsxYKaV/5de//qs0014tExegJ/Ki9JaPA9uIpv6am37/esNPiFPMPPwOPzU9hv2D32d9Kd1lfRZDyMTCfGKyiT4K4pU628OOCQR6o3EAsLimiLX6fXh9vd98uJNOX4r4/PL17PTi9EyMHjvjL7JfhQ9GjmNCPP7mj/8aG9en/Z5np8D3H59eyiPfP789Pn1jC9nd1yc2wcGEW/dE9vEJosNGEexPy+Mdf/1P/uRvlBaI8e53InKXup9cavdRr8WLM9j+Hn/zTyn9W2np3uILH/P+/KI/1/Tj7ZG369/5uoeJJ+aoDADec7z7wTTrfn5TuzvKnmaqqbzRR8mwR5sg+7tkgesf/+YrfzBBTS6aNe7P7P/M8GK7z9L9L3zl57dpj52s6b7fePdDadb9EpNmD4VH478tJtWzUtW+P8k7T89vmtT5359Zx6U8ISYLobH+MjA0bKZRdzbN5B2uOIfACqjzRT6Nnf0t+gIeVBDzWcucl+vO1mYnwvOPp6dPkx1EaZVyZpD9x7sfRqPubBgMRr4MgseatYe3t5dn9WLFLJeB+YMWvOf9N4/Zwm9vL4/Tzv5OCt/Z2EhDYyIbdc9imTtjn8u8SViDrpJtRPIXvtSQK77LPsdPbJDNj+wEefr29DBh3z3W1+c5jsceR0rk06bHnsSjTXeMBBgGPsT0+UUmykvFgNNG3b9lmn9cfXni8wk/vX1+Zgu/TnUqbYc2cuz+Geh+XMSIaubw84o9XMAXNurOWnTG58/6wpeJNu/QfZH4fLTIRzFOzJJdkY2xO0tD8/nt4am88OtEb6vW53xEMLMAbNHhLEYDEHnF1tgzk/NZv8P0NFHdRwJ0Py5RwJ8FZunDvrlqCJ7qd181TUT2zML1b6o//mkROccGA7ofmTUf7M263v9OrLrmfpKDZUp3VZXYT+yq9lG18C8TH0xgGOh+bEJKfWf19b/+N22YlLgAfZYXpT/4OLBvoqn/yE3/KjrqM/eXkD91OKD70VnLx3r+tLjN+NPb29dvP32WTj+I+Pzh7fHp09OjGD32yF88LPRJqN6A7scnsv3k7/73//EbbdCXGO/+WUTuUvfnB+0+6kfx4hG2H0Sb7ngCb2De3kpjHNnTTDWVv+mjZNijTZD9QNp0R/aMgcFEqiZo1B2574ZnETOpjg7obohFp1cyBnQ3xNc3vZMdHAfobojm/BtgWNp035iu2DT4+K3Gp6ca3x9q8G5F07VfHgvU/cu+ij6+9YzpT2J5TET3BkV/1BX9Wlf0pW9Fe+Sz6U91eQyo+3Nd0Z/qij7VFf1s2sN+eKwf2Xf9wD89m/7yl0eL7v/z9wpHl6ToW/3IHuqH/6l+Ii9oUrEp06z7/zJtXf+KPtUVnXaiIrAHzbr/dnBFP++k6E91RZ9Nf2JgwnTR/aWu6FcoCiZEq+7TfOAdgG1Ad7AgoDtYEE26X7++QXcwR5p030B3ME+gO1gQ0B0sCOgOFkSr7niQEsyPVt0xoATMD+gOFgR0BwsCuoMF0aj7/4buYKQ4fkxTUkxTSZIuE9406v5/oDsYJ6Gc1CnPnpxQ2uHt0B1MCD+fxMyWS6A7mCtrSoPM88gLKJ/SbQXdwXzJGncxV58byBmYoTuYLcX8Pp6aZ74n3Z9NHxoAVSiftpAT0yBi//eku+kjA6BGHrHzabh58w7dwVzROiCZ59aqD90voDsYJam6QM2wKE1Xfeh+Ct3BKCHZtWqkv+hF9/8L3cEYiQJKY+LJIQSZ6amdHq77/4PuYJS4fApm0QW5ilJxg7XD+6E7mBJWWOjO4xnoDuZM5NhO8cLzE+gOQCPQHSyINt0fTFcMgP6B7mDKOP1cqkJ3MAW26l48DFLw92pbQXcwFaA7WBCR4zgdNm8MZv4MuoNZ0qj7b6E7mCXQHSwI6A4WBHQHE8OyScIJSZerVE6b7t9NHxQATdhpqV8xtDq9u0n3K8wzCcZJlNQ60u0u72/S/RK6g3HCmnbfc0ST7jgk7eg7dAfTwaM0LUcvTiDzzewGdAfTIaVx1W1XT8bxLtAdTIcmtX3q776DRt0xzyQYJVoWsRxCO8xnAN3BdNCeys7x8zSpOwDdwXRI69elTqeuGegOpoNNaVwKZ9jEBgf3zEB3ME7YAxtx6DkC4rMsS+sO72/TfXZzxEcOaKfbrXiD3yKp3lQNutjeqvvsJu+IKdiC6a9nZ5ww0Kodkw6RzGpButMgAW0E09E9w/EISRKfkHXnH6Xl6N5lttml0Snx3JSB7mDhuv996L4wFq37P4DuCwO6m65Y30D3LUB30xXrG+i+hUXrPstJs6H7FqC76Yr1DXTfwuJ1/2K6Yn0D3beweN1N16t3oPsWoPvcgO5bgO5zA7pvAbrPDei+hUXrPss54qH7Fhat+yznmYTuW4DucwO6bwG6zw3ovgXoPjeg+xag+9yA7ltYuu7/0HS9ege6b2Hpuv++6Xr1zpC6s7lsi/wPpHiw3/IIsd7bSC2J9yq5dljJHgcK3efG0LoXiQrj3GSbJ4ewt2+U76PTNBT5u2qHZe2xI+g+N4bWPVAv3Dxti0MD2/ECam3bSJHs07g36b7yu2SRk4VD95kxsO5+HqiQ7G9hT8jz1RKZtbZlo3wXHZLy629LGpaRrrtZtO5/Bt27wbLQ5oFKnP0t7Em43ZruTRtJfJo3yeUcdo5IAcpz/qll7EUkdyoPy3UcV62OO/9QLFn3zW+hezcykyMVqLg0daTJHp9XIpHtdstGAiuvHuE54RKXvyOJUr5ZFPKrgMDWNuHp4qTuDk8JqJLjEtp1vlHoPjcG1n2lAhVCPWVyFFA78mkabdtIYKsAhFCakjCggctdTmnA6p1kgRAhsejaCdmLLBZKVkp3m71JrV6t1p2jGeg+N1p0v9504Lpl30xdFajE1MpNXmcNctZCb9+I48sGWSbnzxr1hL8Q+W2zC1tXbOXzpY5Ytpa6Z6cV/wEJZarziKYdPxzoPjeadb997cSmed9MXRmoZGHKKjfZjbXZVdo24sQydA/lvFoWEzyfmMJJxF7W7CB8uUt+Icx19+SxRbHcvnOGU+g+N5p1P7+67MDVefO+ubq+vDD1cpOzwCTmoYzLLixbNpK1ky8C1XeT1jZZyVm3ZEu/shxX6p6onnZ1VZx0Dd6Xrvs/Ml2v3hk6dpeBShamKE2z2MLJohKfueu2bSRwVfhBZSc9N1fvZbQcjyQsXndL54AjToCQcBL5BujeBnTvAa5uRLOAhHsrTHb45aYbUBLJ1w0b5TuQtcsXsoa80H2d8o6ZhC9s0D0Hum8HuveAUNDPYgoWpsiXMrLILlcT3qQ3bpTvIG/d5YUtyd6T6872QRyLL2jUXU1WJPveoXsb0L0HhIJ2FrewMEW+TGQgzQaDOW0b5bWj6n8paqIHM4ns0GELIhXvWMSWuqdVu6F7Gy26/2PT9eqd4XWPAipaafEyVJ0ysegfbNxIofpS1Jy4EfNeC3GEvrwLJpa3rYjolUxYSfJmbSqvWWPacdTMonWf5TyTw+ueaSdUVO144IqlVPe7vJFC9bvbeQ97rEX0soMxuw5ImOZ8v+weltxEdVh6aopR2nUUAXSfG0fQPQuxeaAhX6Y0IGuSte12wJrf5o0knhohllAa2iTl7Xmue2Y4cRwSBDR2ony/4hxK+PrsTXaYd9N3mTZdljrwpz8WoHsPKHUDccUpX1qp6CyxmOJ2y0YSS95eWkW+GB2zXmm6RwlfSKyAnQbyVaqNmSH6kJrsVae5RlfQHbr3wZoQ4u62aZqH265HiF2NvR1CPIv/x34Z3Np+Lf1NcbDqCHSfGyN/VtXe62GmRlyMd2+lRfdPpuvVOyPXfRX3Vr8QTzO10qL77CbvGL3u686D1Fuwujfu0N10vXpn7Lqv/J4qGHYd/buC7tD96ERO5xikEf3Jv11Zsu6n0H1pQPe5Ad23sGTd/wl0XxrQfW5A9y1A97kB3bcA3efG3HW3Dum2h+5z4+i6OweUWH1vKTtw08MbbNgY2XmPtSTBS9d9dnPEH1N3MY7rXd2LXNjvvbecHbhJ95AGydZBN2roJN99LUnw0nU3Xa3+OaLu6mG9ZJfNdnlvOTtwk+7Je2N+5R5lmdUkwZPS3bJJwglJ5wAOug9QVM+6V7IDN+v+zjdf1r2aJHhCutsp1Qm73UOG7v2gZ+gtK1vK3csy9ZY3k1usGt8ryLMDW3zDXG0t669aVi5Mo6x7NUnwZHSXj7bodBo4Dd37QM/QK74Q9WB1OXevyNRb2mwV8UeR4jXL21t+r0RlBxa7il2ptpb1VzzMRMqFkVLuGpluTJZZTRI8Gd1Z0+57cliQ47CnHDv53qD7P4XuXdEz9LJkX2niSmVLuXvdTE/CviJtM7ZFyhP6ZgaW3ytR2YFTsWEQc1X1rL92EmRvs8uFNeiel1lNEjwV3b2s/uXoxQlol+H9Dbr/akm6f/zWgY8t+y5l6C0FJOU1MuFpaTNbNE9uIF42BDMySwGRp4zYsJL1l7f45cIadC+CmUqS4KnontK46nZ20B3mPVm47j/eOtFyO6KUobekbHmN7D/hCZHUZrFsZ71W3WXWmPKGlay/XPdyYVt1ryQJnoruTWr76qn2XVi47l++P3Tg+zu3I0hN9/KaRE1tsMo3s1RSsKhVd5GywC1vWMn6W+qZITvoXu7KmY7u9etw0iVMXbjuvZFn6F1VldXWrMWFlqqRyCWj+kjSFt1dlaijtGEl66+yVytsnrrXbx37XbLqQPc+0DL0rsrKltc4vG8k4NMqrcqpk6SAdd3V9EvlDStZf8WbS4XNUfe0fl3qdOqaadb9n5k+rv4ZUnc9Q++qpGxlDbslGMYiiV61dW/XvdK6S91LWX/5snJhSvdoRrrbxXxrgsg7uGfmn7+9/YHp4+qfIXXXM/SuSspW1gjWWpju5Cmu34/d9Q3Tase5Uy1M6e7MSPcVy7EWh+pMJz6bg7BLyjTo3se+9Qy9JWVLayxlrLjOFOsC+Vtst+oeqGR7+oaVrL+yxderoXQnjbqXkwRPRndxT04n6JQgELr3QClDb0nZ8hrZVx4FvH9cbBbKhL7x+/3u+oaVrL9c93Jha7GG9dOv6rrTyqgzU19LZ5ww0GSPSbf0DdC9B8oZejOrSfafI7NTa2tYpl5vTeRZITazsuCTeNmyQDb2+XsVMjtw5rnYMJXDAPSsv1z3cmHZjlPb8YJU113svpYkeEK6s8p7hCSJT8i6c46RBt3/BXTvSDlDL8/oLse9VNb4si+FN0liMz4bJRvnksjGvmHMjLiP4oqxgDbJ77IWg3H4myuF2TJRsK57mI+ZKcUA09L9ABp0/wPo3plyhl5be3Kjkrs3a5g8NYxRbbbmm8iLR7v+1EeeHVhsqLDqqYLLhbENqpGt3H0lSTB0nxujf1a1fch6j9mBJe50x7sfBnQfC1ue0OgvO7AknPLTTIcA3cfCFt17yw4sqSUJnq7uDqXtdY+cKmGj7v/S9FH0z5R17y07sKSWJHimuse0zi+rG2W6/8r0UfTP6HW3SXu3Wl/ZgSW1JMEz1d1Lqvwr+vPqRr96e/vXpo+if0avu0mmq3vU8mxuC03Py/+b3zN9EAMA3bcwXd07ckiuq0mxlOPcC+g+N5ZynHsB3efGUo5zLyal+yFZxKA7mJTuh2URg+5gQrofmkUMuoMJ6X5oFjHoDqaj+8FZxKA7mI7uB2cRg+5gOrofnEUMuoMp6X5gFjHoDqak+4FZxBya1gYF/9ufmeHfDblz+u/DNv5DaAZT5f7H2ofznyai+8FZxBwKgEq3OnYOziK2CmtjghP6h79jgl/QPzJS7h8ZK/cXRsr9Q1r/yjvEA0Y5NItYE4bCXGf7zKCDQYyV2+8jebsylUC9iUOziDUB3Y9ULnTvzmFZxJqA7kcqF7rvxQFZxJqA7kcqF7qPAeh+pHKh+xiA7kcqF7qPAeh+pHKh+xiA7kcqF7qPAeh+pHKh+xiA7kcqF7qPAeh+pHKh+xiA7kcqF7qPAeh+pHKh+xiA7kcqF7qPAeh+pHKh+xiA7kcqF7qPAeh+pHKh+xgwpLtrSDuvS6KSHiHUPXwnewDdyziGHly0zZQb2b3OBLMzVt/TR+5arpkfFQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAvdkopTb1OawYtNyJsDfUPnu6+6/FyCB0oq1x7uRGJ2fEOk95ry8fMSo1DQ0njzBD5cn75NNp5zbDluvms9/5RyxU4dBjdt5S7Vgc8QJLMHT7mwFD2PiNkjVlAHC870ZOd1wxarpV9DbHnrMPsmwiPebycKB5I9/Zy2QkWrtfZBrT/37OtH3PiOXaSFbucrJHZZx2z8z7KfvLsHdcMW26oLGfNT+9fxHtHxRvD3o92W7nZCRbwXMButsnxis0/ZnuY5mychEopK/u923HNoOVG8gta8S+i93DmnaPyssZwEN3by82O0qtsc4xiAxrIjzk7E8zkQDZAkLcoWbtm7bZm0HIdLYQdoLnbflTZDwpJBtG9vdyUBqr0JOn7Z7S92KJNJ8uJZpwiPvbKP3fta4Ytt2js2FfSt3nvHFWaNYGD6N5erjXIFcr7h1u09tkvgJmJFY6PV8jllHsG2tcMW65DiGqFov6jqO1HRWhgDaN7e7lrOuDsIVsON1WSR0H+8zJ7tB8yq3zJ0r5m2HI1vP5Ps63lrnkDOIju73zOLkmScIBZRLYcbqZ/yny30iHPt5Ghx22tuq8G1b1176xnpu9rhm3lZs0cuzIeWveGzzmUHeC990NuO1w7+3jThN2DWozt7Ltt+TySQXXfYe9eMMAXsa3cRHQJDaJ7e7mZ6plycZKwuz59XyJt/ZiJvM0ULqZfZry6O/EA3/7WclVLeGTd2W2ewJEVCHo2b8vhRtm6ICF+9jmnixlG4Ld+Hv6gur+zd4tJEA/QPdZerqsuFAbR3d+qu+wYCXu/VtnyMaeqWfeKGx2zZ5yxO/uZDQaZZbW13ChWvUDHj91VX2H/9/Pai9Vu4ZFBBuuMEu3zcModwO1rhi1X/MxSMkyD01ou66hIOGwsSZL03BO99XPOY7beb+i2F+sXne0D9PeOlXVxZtf7g1vWDFsu/5kdLJpsLdehZXoOpNqP19PK6v2Hpb1Yvah0qCHPo8Mq/aY5O60Ztlz91/2Ix+smikFa9/bjdbT+p95v+LQXq+seL0b37FC1kUI7rhm03IF/Wt8/qmHGzLSXG+Qxtdv/kLjWYv1itPEgQwBHClGNSx7bRY7jNK8ZtFxV7AADdHYqN2cY3dvLDXPxkv4PvfXr1Yb9+su5VOUjJtgPd3ELUz3OU18zaLmqWD+/ZmT0/j20lpszjO7t5VrZGqYke+6o91a2/evNWvuELbHC/rv7R8yaPSRH/OKmTv491NYMWq4qNildMfb/4EFbuTnD6L6lXJt1uyb8dlP/IxNbv17+7J4YRDBAseNFPimZP7FYfA/VNYOWq4qlA+veVm7OQLpvKdeWT40mQ/RHtX69lmpY+r4sHzmRHSa+F3VaM2y5po7XVLlsTUIGsq69WJf4iT9UsQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAJaFm5QpLyJrbVN9s9IKACaCQ8tUF8WF1+UNY9d01QHoSuZ2UGndi0Xc61Btqm3JlgfwHUyNzO2kfZEbZl4T+ULf0gnq7wNg7GzXfbWyM98t8WdpSxbxRKYrD0A33tN9RfJwprxlTKljuvIAdONd3aNANePlLRPoDibHu7qvsvBd9M5AdzB13tfdVher5Uaf0sB03QHoyPu65y9Li8OixwaAqVC+zUTkIl13q9A9dQSExFp/PABT4X3dV4XuOhhFAKZH+a6qLRfpukfNumMQAZgenWJ3Fcw46yQ7S3CXCUyN93VfN/bM+JR6pusOQEfe151QymOcsu4upb7pugPQkfd1j9WgmfJiDBED0+Nd3e38FXQHU+c93d0gHywA3cHUeUd3Oyhi9KruGEQApkaz7jHhJJnsNFUdjlXdqem6A9CRZt31G61593ptRCR6IsHE2K57Qqxiea1/kuLGKgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAwR/4/ND4VGRdwz2gAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjAtMDMtMTJUMTA6NTI6MzYtMDU6MDBLubKEAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIwLTAzLTEyVDEwOjUyOjM2LTA1OjAwOuQKOAAAACB0RVh0cGRmOkhpUmVzQm91bmRpbmdCb3gAMzYweDM2MCswKzBdOSdMAAAAFHRFWHRwZGY6VmVyc2lvbgBQREYtMS40IBxHOngAAAAASUVORK5CYII="
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>

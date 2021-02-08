@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Multivariate Bayesian variable selection regression</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+<style type="text/css">
+  div.input_prompt {display: none;}
+  div.output_html {
+     font-family: "PT Mono", monospace;
+     font-size: 10.0pt;
+     color: #353535;
+     padding-bottom: 25px;
+ }
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'] ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+</head>
+
+<body>
+<style type = "text/css">
+@font-face {
+ font-family: 'Droid Sans';
+ font-weight: normal;
+ font-style: normal;
+ src: local('Droid Sans'), url('fonts/droid-sans.ttf') format('truetype');
+}
+@font-face {
+ font-family: 'Fira Code';
+ font-weight: normal;
+ font-style: normal;
+ src: local('Fira Code'), url('fonts/firacode.otf') format('opentype');
+}
+@font-face {
+ font-family: 'PT Mono';
+ font-weight: normal;
+ font-style: normal;
+ src: local('PT Mono'), url('fonts/ptmono.ttf') format('truetype');
+}
+
+body {
+  font-family: "Droid Sans";
+  font-size: 160%;
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 20px;
+ }
+
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: hidden;
+}
+
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="./index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="./analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="./prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="./writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+    
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="mvSuSiE">mvSuSiE<a class="anchor-link" href="#mvSuSiE">&#182;</a></h1><p><em>Multivariate Bayesian variable selection via Adaptive Shrinkage, with applications to eQTL fine-mapping</em></p>
+<hr>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Background">Background<a class="anchor-link" href="#Background">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="figures/mnm.png" alt=""></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This project is mainly aimed at <a href="Modular_MNMASH.html#Motivation">fine-mapping for eQTL discovery in multiple tissues</a>. From methodology point of view it introduces an Empirical Bayes approach, ie, <a href="https://doi.org/10.1093/biostatistics/kxw041">adaptive shrinkage</a> for solving multivariate, multiple regression problem; hence the project code name <code>m&amp;m ash</code>.</p>
+<p>We started building the m&amp;m model in summer 2016. It is essentially a multivariate version of the variational algorithm that does <a href="https://github.com/stephenslab/mvash">univariate regression with adaptive shrinkage method</a> (credit to <a href="http://github.com/NKweiwang">Wei</a> and <a href="https://pcarbo.github.io/">Peter</a>). We have developed a version assuming <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/identity_cov">identity covariance</a> and a version assuming <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/lr_diag_cov">diagonal + low rank covariance</a> (credit to <a href="http://home.uchicago.edu/~dcgerard/home.html">David</a>), along with <a href="https://github.com/gaow/mnmashr">an implementation</a>. We then realized several limitations to it, from modeling and computational espects, that made us reconsider the design after some attempts to alleviate these issues (<a href="Start_Simple.html">limiting to a simpler problem</a> and <a href="https://github.com/gaow/mvarbvs/tree/master/writeup/lr_diag_cov/dirichlet_ml">combine genome-wide information efficiently</a>).</p>
+<p>In early 2017 we decide to take a <a href="Modular_MNMASH.html#Step-one:-deconvoluted-effect-size-estimation">modular approach</a> to the problem. Essentially it involves combing in a smart way the univariate <code>mr-ash</code> (multiple regression with adaptive shrinkage, under development) for model selection and <a href="http://dx.doi.org/10.1101/096552"><code>mash</code></a> for multivariate analysis. With the release of <a href="http://stephenslab.github.io/gtex-eqtls/writeup/GTEx7_Analysis_Plan.html">GTEx V7</a> data (<a href="http://stephenslab.github.io/gtex-eqtls/analysis/20170518_Imputation.html">imputation</a>, <a href="http://stephenslab.github.io/gtex-eqtls/analysis/20170515_RNASeq_Analysis.html">annotation + formatting</a> and a number of other <a href="http://stephenslab.github.io/gtex-eqtls/analysis.html">bioinformatics steps</a>) our new method can be applied and demonstrated.</p>
+<p>During our exploration of the modular approach we realized that the variational algorithm behind <code>mr-ash</code> has various issues, among which the most obvious are sensitivity to initialization and producing produces false positives. It is a large scale variable selection model good for prediction, but not fine-mapping. Again we got stuck.</p>
+<p>Finally in late 2017 Matthew has came up with <a href="https://stephens999.github.io/misc/newVB.html">a new variational algorithm</a>, inspired by <a href="https://arxiv.org/abs/1802.06931">FLASH</a>, that natually result in fine-mapping results by design, with similar intuition as "conditional regression" (a simple ad hoc approach to do preliminary fine-mapping in the early days). <a href="https://stephens999.github.io/misc/newVB.ss.html">A connection with single effect analysis</a> was later made: turns out updating each effect, conditional on others, is a normal-means problem we are familiar with -- in the M&amp;M setting the <code>MASH</code> updates. We thus call the fine-mapping model SuSiE, for Sum of Single Effects.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Univeriate-analysis-(variable-selection-and-fine-mapping)">Univeriate analysis (variable selection and fine-mapping)<a class="anchor-link" href="#Univeriate-analysis-(variable-selection-and-fine-mapping)">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="figures/m-green.jpg" alt=""></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The first module is to perform multiple regression with adaptive shrinkage for variable selection and fine-mapping</p>
+<h3 id="mr-ash-model"><code>mr-ash</code> model<a class="anchor-link" href="#mr-ash-model">&#182;</a></h3><p>This is being developed and implemented in the <a href="https://github.com/pcarbo/varbvs"><code>varbvs</code></a> package. We have created <a href="analysis/20170624_Simulation_Procedures.html">simulation data</a> based on GTEx. Here are some results:</p>
+<ul>
+<li><a href="analysis/20170630_ Simulation_Study.html">Simulation study results</a> -- we've observed that <code>mr-ash</code> tend to over-shrink signals.</li>
+<li>Real-data analysis <a href="http://stephenslab.github.io/gtex-eqtls/analysis/20170814_MR_ASH_V7.html">code</a> and <a href="prototype/20170628_MR_ASH_Toy_Example.html">result</a> -- sensitive to initialization and false positives.</li>
+</ul>
+<h3 id="SSE-(SuSiE)-model"><code>SSE</code> (SuSiE) model<a class="anchor-link" href="#SSE-(SuSiE)-model">&#182;</a></h3><p>The SSE model has been implemented in <a href="https://github.com/stephenslab/susieR"><code>susieR</code></a>. To understand property of susie we designed <a href="details/20180515_SuSiE_Benchmark.html">simulation study with various settings focusing on flavors of susie</a>. We then benchmark it with other fine-mapping methods as a reassurance -- our claim is that susie and all other methods identify the same sets of potentially causal variates because they all fit the same model; but susie does it at low computational cost and naturally results in interpretable confidences sets.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Multivariate-analysis">Multivariate analysis<a class="anchor-link" href="#Multivariate-analysis">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><img src="figures/m-yellow.png" alt=""></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For the multivariate part, we've continued to make improvements to <a href="https://github.com/stephenslab/mashr"><code>mashr</code></a> (credit to <a href="http://stephenslab.uchicago.edu/">Matthew</a>) that makes it <a href="../analysis/20170615_MASHR_Benchmark.html">potentially suitable</a> for the scale of the GTEx project that now has &gt; 50 tissues and possibly multiple eQTL's per gene for ~20K genes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Project-meetings">Project meetings<a class="anchor-link" href="#Project-meetings">&#182;</a></h2><p><a href="writeup/Meetings.html">Here</a> is minutes for project meetings.</p>
+
+</div>
+</div>
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+</div>
+
+<script>
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+</html>

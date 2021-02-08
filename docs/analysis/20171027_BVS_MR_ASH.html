@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Analyzing-a-toy-example-with-varbvs-and-mr-ash">Analyzing a toy example with <code>varbvs</code> and <code>mr-ash</code><a class="anchor-link" href="#Analyzing-a-toy-example-with-varbvs-and-mr-ash">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>In this example we analyze a data set where there is potentially multiple SNPs associated with gene expression. We use both <code>bvs</code> and <code>mr-ash</code> methods, initializing both of them with results from <code>lasso</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Utility-functions">Utility functions<a class="anchor-link" href="#Utility-functions">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">autoselect.mixsd</span> <span class="o">=</span> <span class="nf">function</span><span class="p">(</span><span class="n">betahat</span><span class="p">,</span><span class="n">sebetahat</span><span class="p">,</span><span class="n">mult</span> <span class="o">=</span> <span class="nf">sqrt</span><span class="p">(</span><span class="m">2</span><span class="p">)){</span>
+        <span class="c1"># To avoid exact measure causing (usually by mistake)</span>
+        <span class="n">sebetahat</span> <span class="o">=</span> <span class="n">sebetahat[sebetahat</span><span class="o">!=</span><span class="m">0</span><span class="n">]</span> 
+        <span class="c1"># so that the minimum is small compared with measurement precision</span>
+        <span class="n">sigmaamin</span> <span class="o">=</span> <span class="nf">min</span><span class="p">(</span><span class="n">sebetahat</span><span class="p">)</span><span class="o">/</span><span class="m">10</span> 
+        <span class="nf">if </span><span class="p">(</span><span class="nf">all</span><span class="p">(</span><span class="n">betahat^2</span> <span class="o">&lt;=</span> <span class="n">sebetahat^2</span><span class="p">))</span> <span class="p">{</span>
+            <span class="c1"># to deal with the occassional odd case where this could happen; 8 is arbitrary</span>
+            <span class="n">sigmaamax</span> <span class="o">=</span> <span class="m">8</span><span class="o">*</span><span class="n">sigmaamin</span> 
+        <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+            <span class="c1"># this computes a rough largest value you&#39;d want to use, </span>
+            <span class="c1"># based on idea that sigmaamax^2 + sebetahat^2 should be at least betahat^2   </span>
+            <span class="n">sigmaamax</span> <span class="o">=</span> <span class="m">2</span><span class="o">*</span><span class="nf">sqrt</span><span class="p">(</span><span class="nf">max</span><span class="p">(</span><span class="n">betahat^2</span><span class="o">-</span><span class="n">sebetahat^2</span><span class="p">))</span> 
+        <span class="p">}</span>
+        <span class="nf">if</span><span class="p">(</span><span class="n">mult</span><span class="o">==</span><span class="m">0</span><span class="p">){</span>
+            <span class="nf">return</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">sigmaamax</span><span class="o">/</span><span class="m">2</span><span class="p">))</span>
+        <span class="p">}</span> <span class="n">else</span> <span class="p">{</span>
+            <span class="n">npoint</span> <span class="o">=</span> <span class="nf">ceiling</span><span class="p">(</span><span class="nf">log2</span><span class="p">(</span><span class="n">sigmaamax</span><span class="o">/</span><span class="n">sigmaamin</span><span class="p">)</span><span class="o">/</span><span class="nf">log2</span><span class="p">(</span><span class="n">mult</span><span class="p">))</span>
+            <span class="nf">return</span><span class="p">(</span><span class="n">mult</span><span class="nf">^</span><span class="p">((</span><span class="o">-</span><span class="n">npoint</span><span class="p">)</span><span class="o">:</span><span class="m">0</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigmaamax</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="n">univariate_regression</span> <span class="o">=</span> <span class="nf">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">Z</span> <span class="o">=</span> <span class="kc">NULL</span><span class="p">){</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="nf">dim</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="n">[2]</span>
+        <span class="nf">if </span><span class="p">(</span><span class="o">!</span><span class="nf">is.null</span><span class="p">(</span><span class="n">Z</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="nf">lm</span><span class="p">(</span><span class="n">y</span><span class="o">~</span><span class="n">Z</span><span class="p">)</span><span class="o">$</span><span class="n">residuals</span>
+        <span class="p">}</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">nrow</span> <span class="o">=</span> <span class="n">P</span><span class="p">,</span><span class="n">ncol</span> <span class="o">=</span> <span class="m">2</span><span class="p">)</span>
+        <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">P</span><span class="p">){</span>
+          <span class="n">g</span> <span class="o">=</span> <span class="nf">summary</span><span class="p">(</span><span class="nf">lm</span><span class="p">(</span><span class="n">y</span> <span class="o">~</span> <span class="n">X[</span><span class="p">,</span><span class="n">i]</span><span class="p">))</span>
+          <span class="n">output[i</span><span class="p">,</span><span class="n">]</span> <span class="o">=</span> <span class="n">g</span><span class="o">$</span><span class="n">coefficients[2</span><span class="p">,</span><span class="m">1</span><span class="o">:</span><span class="m">2</span><span class="n">]</span>
+        <span class="p">}</span>
+        <span class="nf">return</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">betahat</span> <span class="o">=</span> <span class="n">output[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">,</span> <span class="n">sebetahat</span> <span class="o">=</span> <span class="n">output[</span><span class="p">,</span><span class="m">2</span><span class="n">]</span><span class="p">,</span> 
+                    <span class="n">residuals</span> <span class="o">=</span> <span class="n">y</span><span class="p">))</span>
+    <span class="p">}</span>
+<span class="n">lasso_reorder</span> <span class="o">=</span> <span class="nf">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1"># perform lasso regression and reorder regressors by &quot;importance&quot;</span>
+        <span class="n">fit.glmnet</span> <span class="o">&lt;-</span> <span class="n">glmnet</span><span class="o">::</span><span class="nf">glmnet</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">intercept</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+        <span class="n">beta_path</span> <span class="o">=</span> <span class="nf">coef</span><span class="p">(</span><span class="n">fit.glmnet</span><span class="p">)</span><span class="n">[</span><span class="m">-1</span><span class="p">,</span><span class="n">]</span>
+        <span class="n">K</span> <span class="o">=</span> <span class="nf">dim</span><span class="p">(</span><span class="n">beta_path</span><span class="p">)</span><span class="n">[2]</span>
+        <span class="n">path_order</span> <span class="o">=</span> <span class="nf">c</span><span class="p">()</span>
+        <span class="nf">for </span><span class="p">(</span><span class="n">k</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="n">K</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">crt_path</span> <span class="o">=</span> <span class="nf">which</span><span class="p">(</span><span class="n">beta_path[</span><span class="p">,</span><span class="n">k]</span> <span class="o">!=</span> <span class="m">0</span><span class="p">)</span>
+            <span class="nf">if </span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">crt_path</span><span class="p">)</span> <span class="o">!=</span> <span class="m">0</span> <span class="o">&amp;</span> <span class="nf">length</span><span class="p">(</span><span class="n">path_order</span><span class="p">)</span> <span class="o">==</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">path_order</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">path_order</span><span class="p">,</span> <span class="n">crt_path</span><span class="p">)</span>
+            <span class="p">}</span> <span class="n">else</span> <span class="nf">if</span><span class="p">(</span><span class="nf">length</span><span class="p">(</span><span class="n">crt_path</span><span class="p">)</span> <span class="o">!=</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">path_order</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">path_order</span><span class="p">,</span> <span class="n">crt_path[</span><span class="o">-</span><span class="nf">which</span><span class="p">(</span><span class="n">crt_path</span> <span class="o">%in%</span> <span class="n">path_order</span><span class="p">)</span><span class="n">]</span> <span class="p">)</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">path_order</span> <span class="o">=</span> <span class="nf">unname</span><span class="p">(</span><span class="n">path_order</span><span class="p">)</span>
+        <span class="n">index_order</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="n">path_order</span><span class="p">,</span> <span class="nf">seq</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="nf">dim</span><span class="p">(</span><span class="n">beta_path</span><span class="p">)</span><span class="n">[1]</span><span class="p">)</span><span class="n">[</span><span class="o">-</span><span class="n">path_order]</span><span class="p">)</span>
+        <span class="nf">return</span><span class="p">(</span><span class="n">index_order</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="c1"># compute fitted values from varbvsmix </span>
+<span class="n">fitfv</span> <span class="o">=</span> <span class="nf">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Z</span><span class="p">,</span><span class="n">fit</span><span class="p">){</span>
+  <span class="n">bhat</span> <span class="o">=</span> <span class="nf">rowSums</span><span class="p">(</span><span class="n">fit</span><span class="o">$</span><span class="n">alpha</span><span class="o">*</span><span class="n">fit</span><span class="o">$</span><span class="n">mu</span><span class="p">)</span>
+  <span class="nf">return</span><span class="p">(</span><span class="n">X</span> <span class="o">%*%</span> <span class="n">bhat</span> <span class="o">+</span> <span class="n">fit</span><span class="o">$</span><span class="n">mu.cov[1]</span> <span class="o">+</span> <span class="n">Z</span> <span class="o">%*%</span> <span class="n">fit</span><span class="o">$</span><span class="n">mu.cov[</span><span class="m">-1</span><span class="n">]</span><span class="p">)</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Core-analysis">Core analysis<a class="anchor-link" href="#Core-analysis">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">input_file</span> <span class="o">=</span> <span class="s">&quot;../data/Thyroid.FMO2.1Mb.RDS&quot;</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">X[</span><span class="p">,</span><span class="nf">which</span><span class="p">(</span><span class="nf">colSums</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">!=</span><span class="m">0</span><span class="p">)</span><span class="n">]</span>
+<span class="nf">storage.mode</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="s">&quot;double&quot;</span>
+<span class="n">y</span> <span class="o">=</span> <span class="nf">as.vector</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="nf">as.matrix</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">Z</span><span class="p">)</span>
+<span class="c1"># univariate results</span>
+<span class="n">initial</span> <span class="o">=</span> <span class="nf">univariate_regression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span> <span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+<span class="n">mixsd</span> <span class="o">=</span> <span class="nf">autoselect.mixsd</span><span class="p">(</span><span class="n">initial</span><span class="o">$</span><span class="n">betahat</span><span class="p">,</span> <span class="n">initial</span><span class="o">$</span><span class="n">sebetahat</span><span class="p">)</span>
+<span class="n">mu_zero</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="nf">length</span><span class="p">(</span><span class="n">mixsd</span><span class="p">)</span><span class="m">+1</span><span class="p">,</span> <span class="n">nrow</span> <span class="o">=</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="n">alpha_zero</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">ncol</span> <span class="o">=</span> <span class="nf">length</span><span class="p">(</span><span class="n">mixsd</span><span class="p">)</span><span class="m">+1</span><span class="p">,</span><span class="n">nrow</span> <span class="o">=</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+<span class="n">alpha_zero[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span> <span class="o">=</span> <span class="m">1</span> <span class="o">-</span> <span class="nf">length</span><span class="p">(</span><span class="n">mixsd</span><span class="p">)</span> <span class="o">/</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">index_order</span> <span class="o">=</span> <span class="nf">lasso_reorder</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">initial</span><span class="o">$</span><span class="n">residuals</span><span class="p">)</span>
+<span class="c1"># bvsmix with lasso init vs random init</span>
+<span class="n">fit11</span> <span class="o">=</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvsmix</span><span class="p">(</span><span class="n">X[</span><span class="p">,</span> <span class="n">index_order]</span><span class="p">,</span> 
+                         <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sa</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">mixsd^2</span><span class="p">),</span>
+                         <span class="n">mu</span> <span class="o">=</span> <span class="n">mu_zero</span><span class="p">,</span>
+                         <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha_zero</span><span class="p">,</span>
+                         <span class="n">verbose</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<span class="n">fit12</span> <span class="o">=</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvsmix</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> 
+                         <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sa</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">mixsd^2</span><span class="p">),</span>
+                         <span class="n">verbose</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<span class="c1"># bvsmix with lasso init vs random init</span>
+<span class="n">fit21</span> <span class="o">=</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvs</span><span class="p">(</span><span class="n">X[</span><span class="p">,</span> <span class="n">index_order]</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">mu</span> <span class="o">=</span> <span class="n">mu_zero</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha_zero</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<span class="n">fit22</span> <span class="o">=</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvs</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Check-top-hits-with-lasso-init">Check top hits with lasso init<a class="anchor-link" href="#Check-top-hits-with-lasso-init">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">mix.top</span> <span class="o">=</span> <span class="nf">names</span><span class="p">(</span><span class="nf">sort</span><span class="p">(</span><span class="n">fit11</span><span class="o">$</span><span class="n">lfsr</span><span class="p">)</span><span class="n">[1</span><span class="o">:</span><span class="m">5</span><span class="n">]</span><span class="p">)</span>
+<span class="nf">cbind</span><span class="p">(</span><span class="m">1</span> <span class="o">-</span> <span class="n">fit11</span><span class="o">$</span><span class="n">lfsr[mix.top]</span><span class="p">,</span> <span class="n">fit21</span><span class="o">$</span><span class="n">alpha[</span><span class="p">,</span><span class="m">1</span><span class="n">][mix.top]</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<tbody>
+	<tr><th scope=row>chr1_171172098_C_T_b38</th><td>1.0000000   </td><td>1.000000e+00</td></tr>
+	<tr><th scope=row>chr1_171122735_A_G_b38</th><td>1.0000000   </td><td>5.495719e-03</td></tr>
+	<tr><th scope=row>chr1_171190872_G_A_b38</th><td>0.4840977   </td><td>1.914625e-05</td></tr>
+	<tr><th scope=row>chr1_171219393_T_A_b38</th><td>0.4827524   </td><td>2.446432e-05</td></tr>
+	<tr><th scope=row>chr1_171178705_A_G_b38</th><td>0.4825416   </td><td>2.025857e-05</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">bvs.top</span> <span class="o">=</span> <span class="nf">names</span><span class="p">(</span><span class="nf">sort</span><span class="p">(</span><span class="n">fit21</span><span class="o">$</span><span class="n">alpha[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">,</span> <span class="n">decreasing</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span><span class="n">[1</span><span class="o">:</span><span class="m">5</span><span class="n">]</span><span class="p">)</span>
+<span class="nf">cbind</span><span class="p">(</span><span class="m">1</span> <span class="o">-</span> <span class="n">fit11</span><span class="o">$</span><span class="n">lfsr[bvs.top]</span><span class="p">,</span> <span class="n">fit21</span><span class="o">$</span><span class="n">alpha[</span><span class="p">,</span><span class="m">1</span><span class="n">][bvs.top]</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<tbody>
+	<tr><th scope=row>chr1_171172098_C_T_b38</th><td>1.0000000 </td><td>0.99999999</td></tr>
+	<tr><th scope=row>chr1_171133158_A_G_b38</th><td>0.4573966 </td><td>0.99999951</td></tr>
+	<tr><th scope=row>chr1_171199984_T_C_b38</th><td>0.4605322 </td><td>0.99843195</td></tr>
+	<tr><th scope=row>chr1_171252314_G_C_b38</th><td>0.4608848 </td><td>0.03125060</td></tr>
+	<tr><th scope=row>chr1_171150061_G_C_b38</th><td>0.4147678 </td><td>0.01523159</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Credible-sets">Credible sets<a class="anchor-link" href="#Credible-sets">&#182;</a></h2><p>Check if  <code>chr1_171122735_A_G_b38</code> is in credible set of <code>varbvs</code> result</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">get.credible.set</span> <span class="o">&lt;-</span> <span class="nf">function </span><span class="p">(</span><span class="n">bf</span><span class="p">,</span> <span class="n">pr</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">pp</span>      <span class="o">&lt;-</span> <span class="n">bf</span><span class="o">/</span><span class="nf">sum</span><span class="p">(</span><span class="n">bf</span><span class="p">)</span>
+  <span class="n">markers</span> <span class="o">&lt;-</span> <span class="nf">order</span><span class="p">(</span><span class="n">bf</span><span class="p">,</span><span class="n">decreasing</span> <span class="o">=</span> <span class="kc">TRUE</span><span class="p">)</span>
+  <span class="n">n</span>       <span class="o">&lt;-</span> <span class="nf">min</span><span class="p">(</span><span class="nf">which</span><span class="p">(</span><span class="nf">cumsum</span><span class="p">(</span><span class="n">pp[markers]</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">credint.prob</span><span class="p">))</span>
+  <span class="nf">return</span><span class="p">(</span><span class="n">markers[1</span><span class="o">:</span><span class="n">n]</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">top.markers</span> <span class="o">&lt;-</span> <span class="nf">summary</span><span class="p">(</span><span class="n">fit21</span><span class="p">,</span><span class="n">nv</span> <span class="o">=</span> <span class="m">20</span><span class="p">)</span><span class="o">$</span><span class="n">top.vars</span>
+<span class="n">top.markers</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">top.markers</span><span class="p">,</span><span class="n">prob</span> <span class="o">&gt;</span> <span class="m">0.95</span><span class="p">)</span><span class="o">$</span><span class="n">variable</span>
+<span class="n">m</span>           <span class="o">&lt;-</span> <span class="nf">length</span><span class="p">(</span><span class="n">top.markers</span><span class="p">)</span>
+<span class="n">R</span> <span class="o">&lt;-</span> <span class="nf">cor</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">credint.prob</span> <span class="o">&lt;-</span> <span class="m">0.95</span>
+<span class="n">ld.threshold</span> <span class="o">&lt;-</span> <span class="m">0.2</span>
+<span class="n">cr</span>           <span class="o">&lt;-</span> <span class="nf">vector</span><span class="p">(</span><span class="s">&quot;list&quot;</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
+<span class="n">plots</span>        <span class="o">&lt;-</span> <span class="nf">vector</span><span class="p">(</span><span class="s">&quot;list&quot;</span><span class="p">,</span><span class="n">m</span><span class="p">)</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>    <span class="o">&lt;-</span> <span class="n">top.markers</span>
+<span class="nf">names</span><span class="p">(</span><span class="n">plots</span><span class="p">)</span> <span class="o">&lt;-</span> <span class="n">top.markers</span>
+<span class="nf">for </span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="n">top.markers</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">idx</span>        <span class="o">&lt;-</span> <span class="nf">which</span><span class="p">(</span><span class="nf">colnames</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span>
+  <span class="n">vars</span>       <span class="o">&lt;-</span> <span class="nf">which</span><span class="p">(</span><span class="n">R[</span><span class="p">,</span><span class="n">i]^2</span> <span class="o">&gt;=</span> <span class="n">ld.threshold</span><span class="p">)</span>
+  <span class="n">out</span>        <span class="o">&lt;-</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvsproxybf</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Z</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">fit21</span><span class="p">,</span><span class="n">idx</span><span class="p">,</span><span class="n">vars</span><span class="p">)</span>
+  <span class="n">cr[[i]]</span>    <span class="o">&lt;-</span> <span class="n">vars</span><span class="nf">[get.credible.set</span><span class="p">(</span><span class="n">out</span><span class="o">$</span><span class="n">BF[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">,</span><span class="n">credint.prob</span><span class="p">)</span><span class="n">]</span>
+  <span class="n">j</span>          <span class="o">&lt;-</span> <span class="nf">names</span><span class="p">(</span><span class="nf">which.max</span><span class="p">(</span><span class="n">out</span><span class="o">$</span><span class="n">BF[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">))</span>
+<span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="nf">print</span><span class="p">(</span><span class="n">cr</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>$chr1_171172098_C_T_b38
+ chr1_171169344_G_A_b38  chr1_171168633_C_A_b38 chr1_171185504_AG_A_b38 
+                   3824                    3821                    3903 
+ chr1_171184438_A_G_b38  chr1_171172098_C_T_b38  chr1_171179725_T_A_b38 
+                   3899                    3841                    3877 
+ chr1_171176942_T_C_b38  chr1_171165549_G_C_b38 
+                   3864                    3800 
+
+$chr1_171133158_A_G_b38
+ chr1_171115021_G_A_b38  chr1_171134102_T_C_b38  chr1_171133158_A_G_b38 
+                   3576                    3650                    3646 
+ chr1_171133705_G_A_b38  chr1_171132358_C_A_b38  chr1_171139697_C_T_b38 
+                   3649                    3643                    3680 
+ chr1_171114034_C_T_b38  chr1_171136655_G_A_b38  chr1_171135001_G_A_b38 
+                   3568                    3664                    3655 
+ chr1_171134913_G_A_b38  chr1_171127868_C_G_b38  chr1_171128489_C_A_b38 
+                   3654                    3626                    3631 
+chr1_171128484_A_AG_b38  chr1_171128486_A_G_b38 chr1_171116174_A_AT_b38 
+                   3629                    3630                    3582 
+ chr1_171135804_C_T_b38 
+                   3659 
+
+$chr1_171199984_T_C_b38
+   chr1_171190872_G_A_b38    chr1_171164750_C_A_b38    chr1_171178705_A_G_b38 
+                     3938                      3798                      3871 
+   chr1_171198564_G_A_b38    chr1_171193299_C_T_b38 chr1_171198249_T_TACA_b38 
+                     3998                      3963                      3994 
+   chr1_171199984_T_C_b38   chr1_171196663_TG_T_b38    chr1_171193596_T_A_b38 
+                     4012                      3987                      3967 
+   chr1_171191559_T_C_b38   chr1_171190729_AT_A_b38    chr1_171189360_T_C_b38 
+                     3946                      3937                      3930 
+chr1_171193412_T_TGAC_b38    chr1_171192026_C_A_b38    chr1_171191344_A_T_b38 
+                     3965                      3953                      3945 
+   chr1_171190982_C_T_b38    chr1_171193444_T_C_b38    chr1_171174538_G_C_b38 
+                     3940                      3966                      3852 
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>No, it is not ...</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Narrow-X-to-100-SNPs">Narrow X to 100 SNPs<a class="anchor-link" href="#Narrow-X-to-100-SNPs">&#182;</a></h2><p>Next I'll try to come up with a smaller set of SNPs, say 100, that includes top hits from both methods along with random SNPs being the rest. Will see if there is still difference in behavior.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">X2</span> <span class="o">=</span> <span class="n">X[</span><span class="p">,</span><span class="nf">unique</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="n">mix.top[1</span><span class="o">:</span><span class="m">2</span><span class="n">]</span><span class="p">,</span> <span class="n">bvs.top[1</span><span class="o">:</span><span class="m">3</span><span class="n">]</span><span class="p">,</span> <span class="nf">sample</span><span class="p">(</span><span class="nf">colnames</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="m">100</span><span class="p">)))</span><span class="n">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="nf">dim</span><span class="p">(</span><span class="n">X2</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<ol class=list-inline>
+	<li>574</li>
+	<li>104</li>
+</ol>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">initial</span> <span class="o">=</span> <span class="nf">univariate_regression</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span> <span class="n">y</span> <span class="p">,</span><span class="n">Z</span><span class="p">)</span>
+<span class="n">mixsd</span> <span class="o">=</span> <span class="nf">autoselect.mixsd</span><span class="p">(</span><span class="n">initial</span><span class="o">$</span><span class="n">betahat</span><span class="p">,</span> <span class="n">initial</span><span class="o">$</span><span class="n">sebetahat</span><span class="p">)</span>
+<span class="n">mu_zero</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">0</span><span class="p">,</span> <span class="n">ncol</span> <span class="o">=</span> <span class="nf">length</span><span class="p">(</span><span class="n">mixsd</span><span class="p">)</span><span class="m">+1</span><span class="p">,</span> <span class="n">nrow</span> <span class="o">=</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">X2</span><span class="p">))</span>
+<span class="n">alpha_zero</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">1</span><span class="o">/</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X2</span><span class="p">),</span> <span class="n">ncol</span> <span class="o">=</span> <span class="nf">length</span><span class="p">(</span><span class="n">mixsd</span><span class="p">)</span><span class="m">+1</span><span class="p">,</span><span class="n">nrow</span> <span class="o">=</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">X2</span><span class="p">))</span>
+<span class="n">alpha_zero[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span> <span class="o">=</span> <span class="m">1</span> <span class="o">-</span> <span class="nf">length</span><span class="p">(</span><span class="n">mixsd</span><span class="p">)</span> <span class="o">/</span> <span class="nf">ncol</span><span class="p">(</span><span class="n">X2</span><span class="p">)</span>
+<span class="n">index_order</span> <span class="o">=</span> <span class="nf">lasso_reorder</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span> <span class="n">initial</span><span class="o">$</span><span class="n">residuals</span><span class="p">)</span>
+<span class="c1"># bvsmix with lasso init vs random init</span>
+<span class="n">fit31</span> <span class="o">=</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvsmix</span><span class="p">(</span><span class="n">X2[</span><span class="p">,</span> <span class="n">index_order]</span><span class="p">,</span> 
+                         <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sa</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">mixsd^2</span><span class="p">),</span>
+                         <span class="n">mu</span> <span class="o">=</span> <span class="n">mu_zero</span><span class="p">,</span>
+                         <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha_zero</span><span class="p">,</span>
+                         <span class="n">verbose</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<span class="n">fit32</span> <span class="o">=</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvsmix</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span> 
+                         <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sa</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">mixsd^2</span><span class="p">),</span>
+                         <span class="n">verbose</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<span class="c1"># bvsmix with lasso init vs random init</span>
+<span class="n">fit41</span> <span class="o">=</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvs</span><span class="p">(</span><span class="n">X2[</span><span class="p">,</span> <span class="n">index_order]</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+<span class="n">fit42</span> <span class="o">=</span> <span class="n">varbvs</span><span class="o">::</span><span class="nf">varbvs</span><span class="p">(</span><span class="n">X2</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="bp">F</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">mix.top2</span> <span class="o">=</span> <span class="nf">names</span><span class="p">(</span><span class="nf">sort</span><span class="p">(</span><span class="n">fit31</span><span class="o">$</span><span class="n">lfsr</span><span class="p">)</span><span class="n">[1</span><span class="o">:</span><span class="m">5</span><span class="n">]</span><span class="p">)</span>
+<span class="nf">cbind</span><span class="p">(</span><span class="m">1</span> <span class="o">-</span> <span class="n">fit31</span><span class="o">$</span><span class="n">lfsr[mix.top2]</span><span class="p">,</span> <span class="n">fit41</span><span class="o">$</span><span class="n">alpha[</span><span class="p">,</span><span class="m">1</span><span class="n">][mix.top2]</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<tbody>
+	<tr><th scope=row>chr1_171172098_C_T_b38</th><td>1.0000000 </td><td>1.00000000</td></tr>
+	<tr><th scope=row>chr1_171199984_T_C_b38</th><td>0.9999999 </td><td>0.99999997</td></tr>
+	<tr><th scope=row>chr1_171122735_A_G_b38</th><td>0.9999943 </td><td>1.00000000</td></tr>
+	<tr><th scope=row>chr1_171133158_A_G_b38</th><td>0.9951271 </td><td>0.03176375</td></tr>
+	<tr><th scope=row>chr1_171397048_C_T_b38</th><td>0.7077927 </td><td>0.07585271</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">bvs.top2</span> <span class="o">=</span> <span class="nf">names</span><span class="p">(</span><span class="nf">sort</span><span class="p">(</span><span class="n">fit41</span><span class="o">$</span><span class="n">alpha[</span><span class="p">,</span><span class="m">1</span><span class="n">]</span><span class="p">,</span> <span class="n">decreasing</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span><span class="n">[1</span><span class="o">:</span><span class="m">5</span><span class="n">]</span><span class="p">)</span>
+<span class="nf">cbind</span><span class="p">(</span><span class="m">1</span> <span class="o">-</span> <span class="n">fit31</span><span class="o">$</span><span class="n">lfsr[bvs.top2]</span><span class="p">,</span> <span class="n">fit41</span><span class="o">$</span><span class="n">alpha[</span><span class="p">,</span><span class="m">1</span><span class="n">][bvs.top2]</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<tbody>
+	<tr><th scope=row>chr1_171172098_C_T_b38</th><td>1.0000000 </td><td>1.00000000</td></tr>
+	<tr><th scope=row>chr1_171122735_A_G_b38</th><td>0.9999943 </td><td>1.00000000</td></tr>
+	<tr><th scope=row>chr1_171199984_T_C_b38</th><td>0.9999999 </td><td>0.99999997</td></tr>
+	<tr><th scope=row>chr1_171397048_C_T_b38</th><td>0.7077927 </td><td>0.07585271</td></tr>
+	<tr><th scope=row>chr1_171133158_A_G_b38</th><td>0.9951271 </td><td>0.03176375</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Compare-~7.5K-vs-~100-SNPs">Compare ~7.5K vs ~100 SNPs<a class="anchor-link" href="#Compare-~7.5K-vs-~100-SNPs">&#182;</a></h3><h4 id="varbvs">varbvs<a class="anchor-link" href="#varbvs">&#182;</a></h4><p>With 7.5K SNPs it identifies:</p>
+
+<pre><code>chr1_171172098_C_T_b38
+chr1_171133158_A_G_b38
+chr1_171199984_T_C_b38</code></pre>
+<p>and it missed one from <code>varbvsmix</code>:</p>
+
+<pre><code>chr1_171122735_A_G_b38</code></pre>
+<p>With 100 SNPs it now picks up the one previously missed according to <code>varbvsmix</code>:</p>
+
+<pre><code>chr1_171172098_C_T_b38  
+chr1_171199984_T_C_b38  
+chr1_171122735_A_G_b38</code></pre>
+<p>But dropped</p>
+
+<pre><code>chr1_171133158_A_G_b38</code></pre>
+<h4 id="varbvsmix">varbvsmix<a class="anchor-link" href="#varbvsmix">&#182;</a></h4><p>With 7.5K SNPs it identifies</p>
+
+<pre><code>chr1_171172098_C_T_b38
+chr1_171122735_A_G_b38</code></pre>
+<p>which overlaps with <code>varbvs</code> on only <code>chr1_171172098_C_T_b38</code>.</p>
+<p>With 100 SNPs it now picks up 4 SNPs</p>
+
+<pre><code>chr1_171172098_C_T_b38  
+chr1_171199984_T_C_b38  
+chr1_171122735_A_G_b38
+chr1_171133158_A_G_b38</code></pre>
+<p><strong>Which is in fact the union of hits identified by both <code>varbvsmix</code> and <code>varbvs</code> when input is 7.5K SNPs</strong></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h4 id="The-top-4">The top 4<a class="anchor-link" href="#The-top-4">&#182;</a></h4>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">R</span><span class="nf">[c</span><span class="p">(</span><span class="s">&#39;chr1_171172098_C_T_b38&#39;</span><span class="p">,</span> <span class="s">&#39;chr1_171199984_T_C_b38&#39;</span><span class="p">,</span> <span class="s">&#39;chr1_171122735_A_G_b38&#39;</span><span class="p">,</span> <span class="s">&#39;chr1_171133158_A_G_b38&#39;</span><span class="p">),</span><span class="nf">c</span><span class="p">(</span><span class="s">&#39;chr1_171172098_C_T_b38&#39;</span><span class="p">,</span> <span class="s">&#39;chr1_171199984_T_C_b38&#39;</span><span class="p">,</span> <span class="s">&#39;chr1_171122735_A_G_b38&#39;</span><span class="p">,</span> <span class="s">&#39;chr1_171133158_A_G_b38&#39;</span><span class="p">)</span><span class="n">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>chr1_171172098_C_T_b38</th><th scope=col>chr1_171199984_T_C_b38</th><th scope=col>chr1_171122735_A_G_b38</th><th scope=col>chr1_171133158_A_G_b38</th></tr></thead>
+<tbody>
+	<tr><th scope=row>chr1_171172098_C_T_b38</th><td> 1.00000000</td><td>-0.10612586</td><td>0.08283952 </td><td>-0.16129847</td></tr>
+	<tr><th scope=row>chr1_171199984_T_C_b38</th><td>-0.10612586</td><td> 1.00000000</td><td>0.16520398 </td><td>-0.04275903</td></tr>
+	<tr><th scope=row>chr1_171122735_A_G_b38</th><td> 0.08283952</td><td> 0.16520398</td><td>1.00000000 </td><td> 0.51658953</td></tr>
+	<tr><th scope=row>chr1_171133158_A_G_b38</th><td>-0.16129847</td><td>-0.04275903</td><td>0.51658953 </td><td> 1.00000000</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="c1"># This is the top 4 markers identified with random varbvs init</span>
+<span class="n">markers3</span> <span class="o">&lt;-</span> <span class="nf">c</span><span class="p">(</span><span class="s">&quot;chr1_171168633_C_A_b38&quot;</span><span class="p">,</span>
+              <span class="s">&quot;chr1_171147265_C_A_b38&quot;</span><span class="p">,</span>
+              <span class="s">&quot;chr1_171164750_C_A_b38&quot;</span><span class="p">,</span>
+              <span class="s">&quot;chr1_171178589_C_T_b38&quot;</span><span class="p">)</span>
+<span class="n">R[markers3</span><span class="p">,</span> <span class="n">markers3]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>chr1_171168633_C_A_b38</th><th scope=col>chr1_171147265_C_A_b38</th><th scope=col>chr1_171164750_C_A_b38</th><th scope=col>chr1_171178589_C_T_b38</th></tr></thead>
+<tbody>
+	<tr><th scope=row>chr1_171168633_C_A_b38</th><td> 1.00000000</td><td>0.08365715 </td><td>-0.1100207 </td><td>-0.09399136</td></tr>
+	<tr><th scope=row>chr1_171147265_C_A_b38</th><td> 0.08365715</td><td>1.00000000 </td><td> 0.1357039 </td><td> 0.25503481</td></tr>
+	<tr><th scope=row>chr1_171164750_C_A_b38</th><td>-0.11002067</td><td>0.13570387 </td><td> 1.0000000 </td><td>-0.11299131</td></tr>
+	<tr><th scope=row>chr1_171178589_C_T_b38</th><td>-0.09399136</td><td>0.25503481 </td><td>-0.1129913 </td><td> 1.00000000</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>

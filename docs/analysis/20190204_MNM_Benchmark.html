@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="M&amp;M-ASH-benchmark-V">M&amp;M ASH benchmark V<a class="anchor-link" href="#M&amp;M-ASH-benchmark-V">&#182;</a></h1><p>This is a continuation of Part V where I set total PVE is set to 0.15 and assume 2 causal variables per region. But here, the two SNPs have the same effects sampled from the multivariate distribution. Also I use $R = 5$ conditions and run it on $J=1000$ and 150 genes.</p>
+<p>The most important difference from previous simulations is that here I mix-match simulated data under different prior assumptions to analyzing them with different priors. I expect to observe that:</p>
+<ol>
+<li>The "oracle" prior is always better than using other priors, for all scenarios.</li>
+<li>Mixture prior generally performs well in all scenarios -- it is robust to simulation assumptions.</li>
+</ol>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2><p>...</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>The benchmark was executd on UChicago midway</p>
+
+<pre><code>./finemap.dsc --host mnm_R5.yml --R 5</code></pre>
+<p>This executes the <code>default</code> pipeline in <code>finemap.dsc</code> file, as of today (2019.02.04).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mnm</span><span class="o">-</span><span class="n">twas</span><span class="o">/</span><span class="n">dsc</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/scratch/midway2/gaow/GIT/github/mnm-twas/dsc</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="n">Sys</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+<span class="n">library</span><span class="p">(</span><span class="s1">&#39;dscrutils&#39;</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">dscquery</span><span class="p">(</span><span class="s1">&#39;finemap_output&#39;</span><span class="p">,</span> <span class="s2">&quot;sharing_pattern mnm.eff_mode susie_scores.total susie_scores.valid susie_scores.size susie_scores.purity susie_scores.top susie_scores.n_causal susie_scores.overlap&quot;</span><span class="p">,</span> <span class="n">omit</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">T</span><span class="p">)</span>
+<span class="n">end_time</span> <span class="o">&lt;-</span> <span class="n">Sys</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Loading dsc-query output from CSV file.
+Reading DSC outputs:
+ - susie_scores.total: extracted atomic values
+ - susie_scores.valid: extracted atomic values
+ - susie_scores.size: extracted atomic values
+ - susie_scores.purity: extracted atomic values
+ - susie_scores.top: extracted atomic values
+ - susie_scores.n_causal: extracted atomic values
+ - susie_scores.overlap: extracted atomic values
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_text output_subarea ">
+<pre>Time difference of 2.014167 mins</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">head</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>DSC</th><th scope=col>sharing_pattern</th><th scope=col>mnm</th><th scope=col>mnm.eff_mode</th><th scope=col>susie_scores.total</th><th scope=col>susie_scores.valid</th><th scope=col>susie_scores.size</th><th scope=col>susie_scores.purity</th><th scope=col>susie_scores.top</th><th scope=col>susie_scores.n_causal</th><th scope=col>susie_scores.overlap</th></tr></thead>
+<tbody>
+	<tr><td>1           </td><td>identity    </td><td>mnm_identity</td><td>identity    </td><td>2           </td><td>2           </td><td> 3.5        </td><td>1.0000000   </td><td>1           </td><td>2           </td><td>0           </td></tr>
+	<tr><td>1           </td><td>identity    </td><td>mnm_identity</td><td>identity    </td><td>1           </td><td>1           </td><td> 1.0        </td><td>1.0000000   </td><td>1           </td><td>1           </td><td>0           </td></tr>
+	<tr><td>1           </td><td>identity    </td><td>mnm_identity</td><td>identity    </td><td>1           </td><td>1           </td><td> 9.0        </td><td>0.9886828   </td><td>0           </td><td>1           </td><td>0           </td></tr>
+	<tr><td>1           </td><td>identity    </td><td>mnm_identity</td><td>identity    </td><td>1           </td><td>1           </td><td>10.0        </td><td>1.0000000   </td><td>0           </td><td>1           </td><td>0           </td></tr>
+	<tr><td>1           </td><td>identity    </td><td>mnm_identity</td><td>identity    </td><td>1           </td><td>1           </td><td>13.0        </td><td>0.9875783   </td><td>0           </td><td>1           </td><td>0           </td></tr>
+	<tr><td>1           </td><td>identity    </td><td>mnm_identity</td><td>identity    </td><td>1           </td><td>1           </td><td> 4.0        </td><td>0.9960325   </td><td>0           </td><td>1           </td><td>0           </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">out</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">)]</span>
+<span class="n">colnames</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;pattern&#39;</span><span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">,</span> <span class="s1">&#39;total&#39;</span><span class="p">,</span> <span class="s1">&#39;valid&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">,</span> <span class="s1">&#39;purity&#39;</span><span class="p">,</span> <span class="s1">&#39;top_hit&#39;</span><span class="p">,</span> <span class="s1">&#39;total_true&#39;</span><span class="p">,</span> <span class="s1">&#39;overlap&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Purity-of-CS">Purity of CS<a class="anchor-link" href="#Purity-of-CS">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">aggregate</span><span class="p">(</span><span class="n">purity</span><span class="o">~</span><span class="n">pattern</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pattern</th><th scope=col>method</th><th scope=col>purity</th></tr></thead>
+<tbody>
+	<tr><td>high_het </td><td>high_het </td><td>0.9916862</td></tr>
+	<tr><td>identity </td><td>high_het </td><td>0.9917146</td></tr>
+	<tr><td>low_het  </td><td>high_het </td><td>0.9884244</td></tr>
+	<tr><td>mid_het  </td><td>high_het </td><td>0.9923806</td></tr>
+	<tr><td>mixture01</td><td>high_het </td><td>0.9757964</td></tr>
+	<tr><td>shared   </td><td>high_het </td><td>0.9904957</td></tr>
+	<tr><td>singleton</td><td>high_het </td><td>0.9241387</td></tr>
+	<tr><td>high_het </td><td>identity </td><td>0.9913949</td></tr>
+	<tr><td>identity </td><td>identity </td><td>0.9917000</td></tr>
+	<tr><td>low_het  </td><td>identity </td><td>0.9886923</td></tr>
+	<tr><td>mid_het  </td><td>identity </td><td>0.9919891</td></tr>
+	<tr><td>mixture01</td><td>identity </td><td>0.9769534</td></tr>
+	<tr><td>shared   </td><td>identity </td><td>0.9904997</td></tr>
+	<tr><td>singleton</td><td>identity </td><td>0.9229322</td></tr>
+	<tr><td>high_het </td><td>low_het  </td><td>0.9917899</td></tr>
+	<tr><td>identity </td><td>low_het  </td><td>0.9921787</td></tr>
+	<tr><td>low_het  </td><td>low_het  </td><td>0.9918518</td></tr>
+	<tr><td>mid_het  </td><td>low_het  </td><td>0.9924335</td></tr>
+	<tr><td>mixture01</td><td>low_het  </td><td>0.9739553</td></tr>
+	<tr><td>shared   </td><td>low_het  </td><td>0.9902886</td></tr>
+	<tr><td>singleton</td><td>low_het  </td><td>0.9205336</td></tr>
+	<tr><td>high_het </td><td>mid_het  </td><td>0.9916245</td></tr>
+	<tr><td>identity </td><td>mid_het  </td><td>0.9924849</td></tr>
+	<tr><td>low_het  </td><td>mid_het  </td><td>0.9897733</td></tr>
+	<tr><td>mid_het  </td><td>mid_het  </td><td>0.9923608</td></tr>
+	<tr><td>mixture01</td><td>mid_het  </td><td>0.9741854</td></tr>
+	<tr><td>shared   </td><td>mid_het  </td><td>0.9903303</td></tr>
+	<tr><td>singleton</td><td>mid_het  </td><td>0.9208219</td></tr>
+	<tr><td>high_het </td><td>mixture_1</td><td>0.9861684</td></tr>
+	<tr><td>identity </td><td>mixture_1</td><td>0.9922034</td></tr>
+	<tr><td>low_het  </td><td>mixture_1</td><td>0.9912703</td></tr>
+	<tr><td>mid_het  </td><td>mixture_1</td><td>0.9920922</td></tr>
+	<tr><td>mixture01</td><td>mixture_1</td><td>0.9803773</td></tr>
+	<tr><td>shared   </td><td>mixture_1</td><td>0.9911939</td></tr>
+	<tr><td>singleton</td><td>mixture_1</td><td>0.9369633</td></tr>
+	<tr><td>high_het </td><td>shared   </td><td>0.9152451</td></tr>
+	<tr><td>identity </td><td>shared   </td><td>0.9340737</td></tr>
+	<tr><td>low_het  </td><td>shared   </td><td>0.9732253</td></tr>
+	<tr><td>mid_het  </td><td>shared   </td><td>0.9395782</td></tr>
+	<tr><td>mixture01</td><td>shared   </td><td>0.8718224</td></tr>
+	<tr><td>shared   </td><td>shared   </td><td>0.9912402</td></tr>
+	<tr><td>singleton</td><td>shared   </td><td>0.6337326</td></tr>
+	<tr><td>high_het </td><td>singleton</td><td>0.9268676</td></tr>
+	<tr><td>identity </td><td>singleton</td><td>0.9294301</td></tr>
+	<tr><td>low_het  </td><td>singleton</td><td>0.9348478</td></tr>
+	<tr><td>mid_het  </td><td>singleton</td><td>0.9363354</td></tr>
+	<tr><td>mixture01</td><td>singleton</td><td>0.9361214</td></tr>
+	<tr><td>shared   </td><td>singleton</td><td>0.9310871</td></tr>
+	<tr><td>singleton</td><td>singleton</td><td>0.9360988</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Size-of-CS">Size of CS<a class="anchor-link" href="#Size-of-CS">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">aggregate</span><span class="p">(</span><span class="n">size</span><span class="o">~</span><span class="n">pattern</span><span class="o">+</span><span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pattern</th><th scope=col>method</th><th scope=col>size</th></tr></thead>
+<tbody>
+	<tr><td>high_het </td><td>high_het </td><td>2.25     </td></tr>
+	<tr><td>identity </td><td>high_het </td><td>3.00     </td></tr>
+	<tr><td>low_het  </td><td>high_het </td><td>2.00     </td></tr>
+	<tr><td>mid_het  </td><td>high_het </td><td>3.00     </td></tr>
+	<tr><td>mixture01</td><td>high_het </td><td>4.00     </td></tr>
+	<tr><td>shared   </td><td>high_het </td><td>2.50     </td></tr>
+	<tr><td>singleton</td><td>high_het </td><td>6.25     </td></tr>
+	<tr><td>high_het </td><td>identity </td><td>2.25     </td></tr>
+	<tr><td>identity </td><td>identity </td><td>3.00     </td></tr>
+	<tr><td>low_het  </td><td>identity </td><td>2.00     </td></tr>
+	<tr><td>mid_het  </td><td>identity </td><td>3.00     </td></tr>
+	<tr><td>mixture01</td><td>identity </td><td>4.00     </td></tr>
+	<tr><td>shared   </td><td>identity </td><td>2.50     </td></tr>
+	<tr><td>singleton</td><td>identity </td><td>6.75     </td></tr>
+	<tr><td>high_het </td><td>low_het  </td><td>2.50     </td></tr>
+	<tr><td>identity </td><td>low_het  </td><td>3.00     </td></tr>
+	<tr><td>low_het  </td><td>low_het  </td><td>2.00     </td></tr>
+	<tr><td>mid_het  </td><td>low_het  </td><td>3.00     </td></tr>
+	<tr><td>mixture01</td><td>low_het  </td><td>4.00     </td></tr>
+	<tr><td>shared   </td><td>low_het  </td><td>2.50     </td></tr>
+	<tr><td>singleton</td><td>low_het  </td><td>6.00     </td></tr>
+	<tr><td>high_het </td><td>mid_het  </td><td>2.25     </td></tr>
+	<tr><td>identity </td><td>mid_het  </td><td>3.00     </td></tr>
+	<tr><td>low_het  </td><td>mid_het  </td><td>2.00     </td></tr>
+	<tr><td>mid_het  </td><td>mid_het  </td><td>3.00     </td></tr>
+	<tr><td>mixture01</td><td>mid_het  </td><td>4.00     </td></tr>
+	<tr><td>shared   </td><td>mid_het  </td><td>2.50     </td></tr>
+	<tr><td>singleton</td><td>mid_het  </td><td>6.25     </td></tr>
+	<tr><td>high_het </td><td>mixture_1</td><td>2.25     </td></tr>
+	<tr><td>identity </td><td>mixture_1</td><td>3.00     </td></tr>
+	<tr><td>low_het  </td><td>mixture_1</td><td>2.00     </td></tr>
+	<tr><td>mid_het  </td><td>mixture_1</td><td>3.00     </td></tr>
+	<tr><td>mixture01</td><td>mixture_1</td><td>4.00     </td></tr>
+	<tr><td>shared   </td><td>mixture_1</td><td>2.00     </td></tr>
+	<tr><td>singleton</td><td>mixture_1</td><td>8.00     </td></tr>
+	<tr><td>high_het </td><td>shared   </td><td>4.00     </td></tr>
+	<tr><td>identity </td><td>shared   </td><td>5.00     </td></tr>
+	<tr><td>low_het  </td><td>shared   </td><td>3.00     </td></tr>
+	<tr><td>mid_het  </td><td>shared   </td><td>4.00     </td></tr>
+	<tr><td>mixture01</td><td>shared   </td><td>3.75     </td></tr>
+	<tr><td>shared   </td><td>shared   </td><td>2.50     </td></tr>
+	<tr><td>singleton</td><td>shared   </td><td>2.25     </td></tr>
+	<tr><td>high_het </td><td>singleton</td><td>8.00     </td></tr>
+	<tr><td>identity </td><td>singleton</td><td>9.00     </td></tr>
+	<tr><td>low_het  </td><td>singleton</td><td>6.50     </td></tr>
+	<tr><td>mid_het  </td><td>singleton</td><td>9.00     </td></tr>
+	<tr><td>mixture01</td><td>singleton</td><td>8.00     </td></tr>
+	<tr><td>shared   </td><td>singleton</td><td>8.25     </td></tr>
+	<tr><td>singleton</td><td>singleton</td><td>8.00     </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Power">Power<a class="anchor-link" href="#Power">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">valid</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">valid</span> <span class="o">~</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">total_true</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">total_true</span> <span class="o">~</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">overlap</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">overlap</span> <span class="o">~</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">total_true</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">))</span>
+<span class="n">power</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="n">overlap</span><span class="p">,</span>  <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">))</span>
+<span class="n">power</span><span class="err">$</span><span class="n">power</span> <span class="o">=</span> <span class="n">power</span><span class="err">$</span><span class="n">valid</span><span class="o">/</span><span class="n">power</span><span class="err">$</span><span class="n">total_true</span>
+<span class="n">power</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pattern</th><th scope=col>method</th><th scope=col>valid</th><th scope=col>total_true</th><th scope=col>overlap</th><th scope=col>power</th></tr></thead>
+<tbody>
+	<tr><td>high_het    </td><td>high_het    </td><td>238         </td><td>250         </td><td>  7.04000000</td><td>0.9520000   </td></tr>
+	<tr><td>high_het    </td><td>identity    </td><td>240         </td><td>250         </td><td>  6.88000000</td><td>0.9600000   </td></tr>
+	<tr><td>high_het    </td><td>low_het     </td><td>241         </td><td>250         </td><td>  3.12666667</td><td>0.9640000   </td></tr>
+	<tr><td>high_het    </td><td>mid_het     </td><td>241         </td><td>250         </td><td>  2.65333333</td><td>0.9640000   </td></tr>
+	<tr><td>high_het    </td><td>mixture_1   </td><td>235         </td><td>250         </td><td>  0.00000000</td><td>0.9400000   </td></tr>
+	<tr><td>high_het    </td><td>shared      </td><td>264         </td><td>250         </td><td> 60.69333333</td><td>1.0560000   </td></tr>
+	<tr><td>high_het    </td><td>singleton   </td><td>683         </td><td>250         </td><td>209.06000000</td><td>2.7320000   </td></tr>
+	<tr><td>identity    </td><td>high_het    </td><td>254         </td><td>266         </td><td>  0.19333333</td><td>0.9548872   </td></tr>
+	<tr><td>identity    </td><td>identity    </td><td>255         </td><td>266         </td><td>  0.19333333</td><td>0.9586466   </td></tr>
+	<tr><td>identity    </td><td>low_het     </td><td>255         </td><td>266         </td><td>  0.36666667</td><td>0.9586466   </td></tr>
+	<tr><td>identity    </td><td>mid_het     </td><td>254         </td><td>266         </td><td>  0.20000000</td><td>0.9548872   </td></tr>
+	<tr><td>identity    </td><td>mixture_1   </td><td>249         </td><td>266         </td><td>  0.00000000</td><td>0.9360902   </td></tr>
+	<tr><td>identity    </td><td>shared      </td><td>276         </td><td>266         </td><td> 67.72000000</td><td>1.0375940   </td></tr>
+	<tr><td>identity    </td><td>singleton   </td><td>750         </td><td>266         </td><td>224.22000000</td><td>2.8195489   </td></tr>
+	<tr><td>low_het     </td><td>high_het    </td><td>230         </td><td>255         </td><td>  0.00000000</td><td>0.9019608   </td></tr>
+	<tr><td>low_het     </td><td>identity    </td><td>230         </td><td>255         </td><td>  0.00000000</td><td>0.9019608   </td></tr>
+	<tr><td>low_het     </td><td>low_het     </td><td>230         </td><td>255         </td><td>  0.00000000</td><td>0.9019608   </td></tr>
+	<tr><td>low_het     </td><td>mid_het     </td><td>230         </td><td>255         </td><td>  0.00000000</td><td>0.9019608   </td></tr>
+	<tr><td>low_het     </td><td>mixture_1   </td><td>228         </td><td>255         </td><td>  0.00000000</td><td>0.8941176   </td></tr>
+	<tr><td>low_het     </td><td>shared      </td><td>243         </td><td>255         </td><td>  3.94666667</td><td>0.9529412   </td></tr>
+	<tr><td>low_het     </td><td>singleton   </td><td>660         </td><td>255         </td><td>129.87333333</td><td>2.5882353   </td></tr>
+	<tr><td>mid_het     </td><td>high_het    </td><td>239         </td><td>251         </td><td>  0.00000000</td><td>0.9521912   </td></tr>
+	<tr><td>mid_het     </td><td>identity    </td><td>239         </td><td>251         </td><td>  0.00000000</td><td>0.9521912   </td></tr>
+	<tr><td>mid_het     </td><td>low_het     </td><td>242         </td><td>251         </td><td>  0.06000000</td><td>0.9641434   </td></tr>
+	<tr><td>mid_het     </td><td>mid_het     </td><td>241         </td><td>251         </td><td>  0.00000000</td><td>0.9601594   </td></tr>
+	<tr><td>mid_het     </td><td>mixture_1   </td><td>234         </td><td>251         </td><td>  0.00000000</td><td>0.9322709   </td></tr>
+	<tr><td>mid_het     </td><td>shared      </td><td>264         </td><td>251         </td><td>  4.24000000</td><td>1.0517928   </td></tr>
+	<tr><td>mid_het     </td><td>singleton   </td><td>718         </td><td>251         </td><td>186.18666667</td><td>2.8605578   </td></tr>
+	<tr><td>mixture01   </td><td>high_het    </td><td>231         </td><td>254         </td><td>  0.02666667</td><td>0.9094488   </td></tr>
+	<tr><td>mixture01   </td><td>identity    </td><td>231         </td><td>254         </td><td>  0.02666667</td><td>0.9094488   </td></tr>
+	<tr><td>mixture01   </td><td>low_het     </td><td>224         </td><td>254         </td><td>  0.36666667</td><td>0.8818898   </td></tr>
+	<tr><td>mixture01   </td><td>mid_het     </td><td>229         </td><td>254         </td><td>  0.00000000</td><td>0.9015748   </td></tr>
+	<tr><td>mixture01   </td><td>mixture_1   </td><td>226         </td><td>254         </td><td>  0.00000000</td><td>0.8897638   </td></tr>
+	<tr><td>mixture01   </td><td>shared      </td><td>205         </td><td>254         </td><td>  4.13333333</td><td>0.8070866   </td></tr>
+	<tr><td>mixture01   </td><td>singleton   </td><td>565         </td><td>254         </td><td>127.50666667</td><td>2.2244094   </td></tr>
+	<tr><td>shared      </td><td>high_het    </td><td>245         </td><td>263         </td><td>  0.00000000</td><td>0.9315589   </td></tr>
+	<tr><td>shared      </td><td>identity    </td><td>244         </td><td>263         </td><td>  0.00000000</td><td>0.9277567   </td></tr>
+	<tr><td>shared      </td><td>low_het     </td><td>245         </td><td>263         </td><td>  0.00000000</td><td>0.9315589   </td></tr>
+	<tr><td>shared      </td><td>mid_het     </td><td>245         </td><td>263         </td><td>  0.00000000</td><td>0.9315589   </td></tr>
+	<tr><td>shared      </td><td>mixture_1   </td><td>245         </td><td>263         </td><td>  0.00000000</td><td>0.9315589   </td></tr>
+	<tr><td>shared      </td><td>shared      </td><td>243         </td><td>263         </td><td>  0.00000000</td><td>0.9239544   </td></tr>
+	<tr><td>shared      </td><td>singleton   </td><td>700         </td><td>263         </td><td>181.52000000</td><td>2.6615970   </td></tr>
+	<tr><td>singleton   </td><td>high_het    </td><td>185         </td><td>241         </td><td>  0.00000000</td><td>0.7676349   </td></tr>
+	<tr><td>singleton   </td><td>identity    </td><td>190         </td><td>241         </td><td>  0.00000000</td><td>0.7883817   </td></tr>
+	<tr><td>singleton   </td><td>low_het     </td><td>185         </td><td>241         </td><td>  0.00000000</td><td>0.7676349   </td></tr>
+	<tr><td>singleton   </td><td>mid_het     </td><td>184         </td><td>241         </td><td>  0.00000000</td><td>0.7634855   </td></tr>
+	<tr><td>singleton   </td><td>mixture_1   </td><td>190         </td><td>241         </td><td>  0.00000000</td><td>0.7883817   </td></tr>
+	<tr><td>singleton   </td><td>shared      </td><td>108         </td><td>241         </td><td>  0.00000000</td><td>0.4481328   </td></tr>
+	<tr><td>singleton   </td><td>singleton   </td><td>196         </td><td>241         </td><td>  0.00000000</td><td>0.8132780   </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="FDR">FDR<a class="anchor-link" href="#FDR">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">valid</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">valid</span> <span class="o">~</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">total</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">total</span> <span class="o">~</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">fdr</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">))</span>
+<span class="n">fdr</span><span class="err">$</span><span class="n">fdr</span> <span class="o">=</span> <span class="p">(</span><span class="n">fdr</span><span class="err">$</span><span class="n">total</span> <span class="o">-</span> <span class="n">fdr</span><span class="err">$</span><span class="n">valid</span><span class="p">)</span><span class="o">/</span><span class="n">fdr</span><span class="err">$</span><span class="n">total</span>
+<span class="n">fdr</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pattern</th><th scope=col>method</th><th scope=col>valid</th><th scope=col>total</th><th scope=col>fdr</th></tr></thead>
+<tbody>
+	<tr><td>high_het  </td><td>high_het  </td><td>238       </td><td>259       </td><td>0.08108108</td></tr>
+	<tr><td>high_het  </td><td>identity  </td><td>240       </td><td>260       </td><td>0.07692308</td></tr>
+	<tr><td>high_het  </td><td>low_het   </td><td>241       </td><td>257       </td><td>0.06225681</td></tr>
+	<tr><td>high_het  </td><td>mid_het   </td><td>241       </td><td>259       </td><td>0.06949807</td></tr>
+	<tr><td>high_het  </td><td>mixture_1 </td><td>235       </td><td>245       </td><td>0.04081633</td></tr>
+	<tr><td>high_het  </td><td>shared    </td><td>264       </td><td>267       </td><td>0.01123596</td></tr>
+	<tr><td>high_het  </td><td>singleton </td><td>683       </td><td>726       </td><td>0.05922865</td></tr>
+	<tr><td>identity  </td><td>high_het  </td><td>254       </td><td>271       </td><td>0.06273063</td></tr>
+	<tr><td>identity  </td><td>identity  </td><td>255       </td><td>272       </td><td>0.06250000</td></tr>
+	<tr><td>identity  </td><td>low_het   </td><td>255       </td><td>269       </td><td>0.05204461</td></tr>
+	<tr><td>identity  </td><td>mid_het   </td><td>254       </td><td>269       </td><td>0.05576208</td></tr>
+	<tr><td>identity  </td><td>mixture_1 </td><td>249       </td><td>267       </td><td>0.06741573</td></tr>
+	<tr><td>identity  </td><td>shared    </td><td>276       </td><td>292       </td><td>0.05479452</td></tr>
+	<tr><td>identity  </td><td>singleton </td><td>750       </td><td>806       </td><td>0.06947891</td></tr>
+	<tr><td>low_het   </td><td>high_het  </td><td>230       </td><td>254       </td><td>0.09448819</td></tr>
+	<tr><td>low_het   </td><td>identity  </td><td>230       </td><td>254       </td><td>0.09448819</td></tr>
+	<tr><td>low_het   </td><td>low_het   </td><td>230       </td><td>251       </td><td>0.08366534</td></tr>
+	<tr><td>low_het   </td><td>mid_het   </td><td>230       </td><td>253       </td><td>0.09090909</td></tr>
+	<tr><td>low_het   </td><td>mixture_1 </td><td>228       </td><td>246       </td><td>0.07317073</td></tr>
+	<tr><td>low_het   </td><td>shared    </td><td>243       </td><td>260       </td><td>0.06538462</td></tr>
+	<tr><td>low_het   </td><td>singleton </td><td>660       </td><td>711       </td><td>0.07172996</td></tr>
+	<tr><td>mid_het   </td><td>high_het  </td><td>239       </td><td>257       </td><td>0.07003891</td></tr>
+	<tr><td>mid_het   </td><td>identity  </td><td>239       </td><td>256       </td><td>0.06640625</td></tr>
+	<tr><td>mid_het   </td><td>low_het   </td><td>242       </td><td>257       </td><td>0.05836576</td></tr>
+	<tr><td>mid_het   </td><td>mid_het   </td><td>241       </td><td>256       </td><td>0.05859375</td></tr>
+	<tr><td>mid_het   </td><td>mixture_1 </td><td>234       </td><td>251       </td><td>0.06772908</td></tr>
+	<tr><td>mid_het   </td><td>shared    </td><td>264       </td><td>277       </td><td>0.04693141</td></tr>
+	<tr><td>mid_het   </td><td>singleton </td><td>718       </td><td>775       </td><td>0.07354839</td></tr>
+	<tr><td>mixture01 </td><td>high_het  </td><td>231       </td><td>252       </td><td>0.08333333</td></tr>
+	<tr><td>mixture01 </td><td>identity  </td><td>231       </td><td>252       </td><td>0.08333333</td></tr>
+	<tr><td>mixture01 </td><td>low_het   </td><td>224       </td><td>245       </td><td>0.08571429</td></tr>
+	<tr><td>mixture01 </td><td>mid_het   </td><td>229       </td><td>250       </td><td>0.08400000</td></tr>
+	<tr><td>mixture01 </td><td>mixture_1 </td><td>226       </td><td>241       </td><td>0.06224066</td></tr>
+	<tr><td>mixture01 </td><td>shared    </td><td>205       </td><td>217       </td><td>0.05529954</td></tr>
+	<tr><td>mixture01 </td><td>singleton </td><td>565       </td><td>604       </td><td>0.06456954</td></tr>
+	<tr><td>shared    </td><td>high_het  </td><td>245       </td><td>269       </td><td>0.08921933</td></tr>
+	<tr><td>shared    </td><td>identity  </td><td>244       </td><td>269       </td><td>0.09293680</td></tr>
+	<tr><td>shared    </td><td>low_het   </td><td>245       </td><td>267       </td><td>0.08239700</td></tr>
+	<tr><td>shared    </td><td>mid_het   </td><td>245       </td><td>268       </td><td>0.08582090</td></tr>
+	<tr><td>shared    </td><td>mixture_1 </td><td>245       </td><td>261       </td><td>0.06130268</td></tr>
+	<tr><td>shared    </td><td>shared    </td><td>243       </td><td>267       </td><td>0.08988764</td></tr>
+	<tr><td>shared    </td><td>singleton </td><td>700       </td><td>763       </td><td>0.08256881</td></tr>
+	<tr><td>singleton </td><td>high_het  </td><td>185       </td><td>211       </td><td>0.12322275</td></tr>
+	<tr><td>singleton </td><td>identity  </td><td>190       </td><td>214       </td><td>0.11214953</td></tr>
+	<tr><td>singleton </td><td>low_het   </td><td>185       </td><td>206       </td><td>0.10194175</td></tr>
+	<tr><td>singleton </td><td>mid_het   </td><td>184       </td><td>210       </td><td>0.12380952</td></tr>
+	<tr><td>singleton </td><td>mixture_1 </td><td>190       </td><td>201       </td><td>0.05472637</td></tr>
+	<tr><td>singleton </td><td>shared    </td><td>108       </td><td>116       </td><td>0.06896552</td></tr>
+	<tr><td>singleton </td><td>singleton </td><td>196       </td><td>205       </td><td>0.04390244</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Top-hit-rate-(how-often-the-strongest-SNP-is-causal)">Top-hit rate (how often the strongest SNP is causal)<a class="anchor-link" href="#Top-hit-rate-(how-often-the-strongest-SNP-is-causal)">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">top_hit</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">top_hit</span> <span class="o">~</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">total_true</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">total_true</span> <span class="o">~</span> <span class="n">pattern</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+<span class="n">top_rate</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">top_hit</span><span class="p">,</span> <span class="n">total_true</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;pattern&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">))</span>
+<span class="n">top_rate</span><span class="err">$</span><span class="n">top_rate</span> <span class="o">=</span> <span class="n">top_rate</span><span class="err">$</span><span class="n">top_hit</span><span class="o">/</span><span class="n">top_rate</span><span class="err">$</span><span class="n">total_true</span>
+<span class="n">top_rate</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th scope=col>pattern</th><th scope=col>method</th><th scope=col>top_hit</th><th scope=col>total_true</th><th scope=col>top_rate</th></tr></thead>
+<tbody>
+	<tr><td>high_het  </td><td>high_het  </td><td>174       </td><td>300       </td><td>0.58000000</td></tr>
+	<tr><td>high_het  </td><td>identity  </td><td>174       </td><td>300       </td><td>0.58000000</td></tr>
+	<tr><td>high_het  </td><td>low_het   </td><td>171       </td><td>300       </td><td>0.57000000</td></tr>
+	<tr><td>high_het  </td><td>mid_het   </td><td>172       </td><td>300       </td><td>0.57333333</td></tr>
+	<tr><td>high_het  </td><td>mixture_1 </td><td>164       </td><td>300       </td><td>0.54666667</td></tr>
+	<tr><td>high_het  </td><td>shared    </td><td> 99       </td><td>300       </td><td>0.33000000</td></tr>
+	<tr><td>high_het  </td><td>singleton </td><td>404       </td><td>300       </td><td>1.34666667</td></tr>
+	<tr><td>identity  </td><td>high_het  </td><td>174       </td><td>300       </td><td>0.58000000</td></tr>
+	<tr><td>identity  </td><td>identity  </td><td>174       </td><td>300       </td><td>0.58000000</td></tr>
+	<tr><td>identity  </td><td>low_het   </td><td>174       </td><td>300       </td><td>0.58000000</td></tr>
+	<tr><td>identity  </td><td>mid_het   </td><td>174       </td><td>300       </td><td>0.58000000</td></tr>
+	<tr><td>identity  </td><td>mixture_1 </td><td>167       </td><td>300       </td><td>0.55666667</td></tr>
+	<tr><td>identity  </td><td>shared    </td><td> 71       </td><td>300       </td><td>0.23666667</td></tr>
+	<tr><td>identity  </td><td>singleton </td><td>359       </td><td>300       </td><td>1.19666667</td></tr>
+	<tr><td>low_het   </td><td>high_het  </td><td>167       </td><td>300       </td><td>0.55666667</td></tr>
+	<tr><td>low_het   </td><td>identity  </td><td>166       </td><td>300       </td><td>0.55333333</td></tr>
+	<tr><td>low_het   </td><td>low_het   </td><td>167       </td><td>300       </td><td>0.55666667</td></tr>
+	<tr><td>low_het   </td><td>mid_het   </td><td>167       </td><td>300       </td><td>0.55666667</td></tr>
+	<tr><td>low_het   </td><td>mixture_1 </td><td>155       </td><td>300       </td><td>0.51666667</td></tr>
+	<tr><td>low_het   </td><td>shared    </td><td>109       </td><td>300       </td><td>0.36333333</td></tr>
+	<tr><td>low_het   </td><td>singleton </td><td>380       </td><td>300       </td><td>1.26666667</td></tr>
+	<tr><td>mid_het   </td><td>high_het  </td><td>167       </td><td>300       </td><td>0.55666667</td></tr>
+	<tr><td>mid_het   </td><td>identity  </td><td>167       </td><td>300       </td><td>0.55666667</td></tr>
+	<tr><td>mid_het   </td><td>low_het   </td><td>169       </td><td>300       </td><td>0.56333333</td></tr>
+	<tr><td>mid_het   </td><td>mid_het   </td><td>167       </td><td>300       </td><td>0.55666667</td></tr>
+	<tr><td>mid_het   </td><td>mixture_1 </td><td>158       </td><td>300       </td><td>0.52666667</td></tr>
+	<tr><td>mid_het   </td><td>shared    </td><td> 97       </td><td>300       </td><td>0.32333333</td></tr>
+	<tr><td>mid_het   </td><td>singleton </td><td>456       </td><td>300       </td><td>1.52000000</td></tr>
+	<tr><td>mixture01 </td><td>high_het  </td><td>144       </td><td>300       </td><td>0.48000000</td></tr>
+	<tr><td>mixture01 </td><td>identity  </td><td>144       </td><td>300       </td><td>0.48000000</td></tr>
+	<tr><td>mixture01 </td><td>low_het   </td><td>145       </td><td>300       </td><td>0.48333333</td></tr>
+	<tr><td>mixture01 </td><td>mid_het   </td><td>143       </td><td>300       </td><td>0.47666667</td></tr>
+	<tr><td>mixture01 </td><td>mixture_1 </td><td>144       </td><td>300       </td><td>0.48000000</td></tr>
+	<tr><td>mixture01 </td><td>shared    </td><td>107       </td><td>300       </td><td>0.35666667</td></tr>
+	<tr><td>mixture01 </td><td>singleton </td><td>342       </td><td>300       </td><td>1.14000000</td></tr>
+	<tr><td>shared    </td><td>high_het  </td><td>158       </td><td>300       </td><td>0.52666667</td></tr>
+	<tr><td>shared    </td><td>identity  </td><td>158       </td><td>300       </td><td>0.52666667</td></tr>
+	<tr><td>shared    </td><td>low_het   </td><td>159       </td><td>300       </td><td>0.53000000</td></tr>
+	<tr><td>shared    </td><td>mid_het   </td><td>158       </td><td>300       </td><td>0.52666667</td></tr>
+	<tr><td>shared    </td><td>mixture_1 </td><td>159       </td><td>300       </td><td>0.53000000</td></tr>
+	<tr><td>shared    </td><td>shared    </td><td>158       </td><td>300       </td><td>0.52666667</td></tr>
+	<tr><td>shared    </td><td>singleton </td><td>382       </td><td>300       </td><td>1.27333333</td></tr>
+	<tr><td>singleton </td><td>high_het  </td><td> 94       </td><td>300       </td><td>0.31333333</td></tr>
+	<tr><td>singleton </td><td>identity  </td><td> 93       </td><td>300       </td><td>0.31000000</td></tr>
+	<tr><td>singleton </td><td>low_het   </td><td> 93       </td><td>300       </td><td>0.31000000</td></tr>
+	<tr><td>singleton </td><td>mid_het   </td><td> 93       </td><td>300       </td><td>0.31000000</td></tr>
+	<tr><td>singleton </td><td>mixture_1 </td><td> 85       </td><td>300       </td><td>0.28333333</td></tr>
+	<tr><td>singleton </td><td>shared    </td><td>  8       </td><td>300       </td><td>0.02666667</td></tr>
+	<tr><td>singleton </td><td>singleton </td><td> 87       </td><td>300       </td><td>0.29000000</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>

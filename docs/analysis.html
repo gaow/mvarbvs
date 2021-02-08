@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Multivariate Bayesian variable selection regression</title>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<link href="site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<link rel="stylesheet"
+      href="site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+<style type="text/css">
+  div.input_prompt {display: none;}
+  div.output_html {
+     font-family: "PT Mono", monospace;
+     font-size: 10.0pt;
+     color: #353535;
+     padding-bottom: 25px;
+ }
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'] ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+
+</head>
+
+<body>
+<style type = "text/css">
+@font-face {
+ font-family: 'Droid Sans';
+ font-weight: normal;
+ font-style: normal;
+ src: local('Droid Sans'), url('fonts/droid-sans.ttf') format('truetype');
+}
+@font-face {
+ font-family: 'Fira Code';
+ font-weight: normal;
+ font-style: normal;
+ src: local('Fira Code'), url('fonts/firacode.otf') format('opentype');
+}
+@font-face {
+ font-family: 'PT Mono';
+ font-weight: normal;
+ font-style: normal;
+ src: local('PT Mono'), url('fonts/ptmono.ttf') format('truetype');
+}
+
+body {
+  font-family: "Droid Sans";
+  font-size: 160%;
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 20px;
+ }
+
+a.anchor-link:link {
+  text-decoration: none;
+  padding: 0px 20px;
+  visibility: hidden;
+}
+
+h1:hover .anchor-link,
+h2:hover .anchor-link,
+h3:hover .anchor-link,
+h4:hover .anchor-link,
+h5:hover .anchor-link,
+h6:hover .anchor-link {
+  visibility: hidden;
+}
+
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="./index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="./analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="./prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="./writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+    
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Analysis">Analysis<a class="anchor-link" href="#Analysis">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Notebooks">Notebooks<a class="anchor-link" href="#Notebooks">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2020/12">2020/12<a class="anchor-link" href="#2020/12">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20201221_ukb_Prepare_ED_prior.html"><strong>Multivariate EBNM based prior for M&amp;M</strong></a><br>
+&nbsp; &nbsp;Here for the simulation benchmark we prepare mixture prior based on a mulrivariate Emperical Bayes Normal Mean model (previously we use Extreme Deconvolution for the task).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2020/09">2020/09<a class="anchor-link" href="#2020/09">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200906_mvSuSiE_GTEx.html"><strong>Multivariate fine-mapping with missing data examples</strong></a><br>
+&nbsp; &nbsp;This notebook applies mvSuSiE on some GTEx genes using two approaches to handle missing data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2020/06">2020/06<a class="anchor-link" href="#2020/06">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200601_ED_based_MNM_Summary.html"><strong>Summarizing EB based mvSuSiE</strong></a><br>
+&nbsp; &nbsp;I have used several other notebooks for simulating and learning priors via EB approach. This notebook puts togather what we have.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2020/05">2020/05<a class="anchor-link" href="#2020/05">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200530_mthess_Benchmark.html"><strong>20200530 mthess Benchmark</strong></a><br>
+&nbsp; &nbsp;Benchmark with <code>mthess</code> and <code>atlas</code> on a small scale simulation</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200520_MNM_Benchmark.html"><strong>20200520 MNM Benchmark</strong></a><br>
+&nbsp; &nbsp;Benchmark using non-trivial mixture simulations</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200502_Prepare_ED_prior.html"><strong>Multivariate EBNM based prior for M&amp;M</strong></a><br>
+&nbsp; &nbsp;Here for the simulation benchmark we prepare mixture prior based on a mulrivariate Emperical Bayes Normal Mean model (previously we use Extreme Deconvolution for the task).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2020/04">2020/04<a class="anchor-link" href="#2020/04">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200430_MNM_Benchmark_CS.html"><strong>M&amp;M benchmark XIII</strong></a><br>
+&nbsp; &nbsp;This is benchmark using a non-trivial simulation scheme, and analyzing it using our current implementation of EM updates to prior scalar. See <a href="20200427_MNM_Benchmark.html">this notebook</a> for details how it is executed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200427_MNM_Benchmark.html"><strong>20200427 MNM Benchmark</strong></a><br>
+&nbsp; &nbsp;Benchmark using non-trivial mixture simulations</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200402_create_prior_mixture.html"><strong>Create prior mixture for simulation studies</strong></a><br>
+&nbsp; &nbsp;This notebook contains scripts to create mixture prior for use with simulations in DSC.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2020/02">2020/02<a class="anchor-link" href="#2020/02">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200227_ATLAS_Comparison.html"><strong>Comparing M&amp;M with atlas-qtl</strong></a><br>
+&nbsp; &nbsp;See <a href="20200110_atlasqtl_demo.html">here</a> for some background information. Since <code>atlas-qtl</code> does not give credible sets we compare here the marginal PIP in terms of calibration and precision-recall curves.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2020/01">2020/01<a class="anchor-link" href="#2020/01">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20200110_atlasqtl_demo.html"><strong>Comparing atlasqtl with M&amp;M</strong></a><br>
+&nbsp; &nbsp;In addition to <a href="https://www.ncbi.nlm.nih.gov/pubmed/26504141">MTHESS</a> when we first conceived the project in 2016, two other papers from the same group of authors have been published with software implementation <a href="https://github.com/hruffieux/locus">locus</a> (<a href="https://academic.oup.com/biostatistics/article/18/4/618/3072965">paper</a>) and building on top of it, an efficient approach called <a href="https://github.com/hruffieux/atlasqtl">atlasqtl</a> (<a href="https://arxiv.org/pdf/1811.03334.pdf">paper</a>). <code>atlasqtl</code> approach is designed specifically for detecting pleiotropic patterns (which the authors refer to as "hotspots"). Here we challenge ourselves with a simulated example from <code>altlasqtl</code> documentation.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/12">2019/12<a class="anchor-link" href="#2019/12">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20191209_MNM_Benchmark.html"><strong>M&amp;M benchmark XII</strong></a><br>
+&nbsp; &nbsp;This benchmark is an improvments over the <a href="https://gaow.github.io/mvarbvs/analysis/20191116_MNM_Benchmark.html">previous one</a> with mostly the same setup but hopefully previously observed issues are fixed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20191207_Diagnosis.html"><strong>Investigating MASH logBF computation under EE model</strong></a><br>
+&nbsp; &nbsp;This is a continuation of a <a href="https://gaow.github.io/mvarbvs/analysis/20191204_Diagnosis.html">previous investigation</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20191204_Diagnosis.html"><strong>Diagnosis of possible issues with EE model</strong></a><br>
+&nbsp; &nbsp;From <a href="https://gaow.github.io/mvarbvs/analysis/20191116_MNM_Benchmark.html">this benchmark</a> I see some runs with EE model has inflated FDR with no missing data. Here are some digging into it.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/11">2019/11<a class="anchor-link" href="#2019/11">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20191128_Diagnosis.html"><strong>Diagnosis of problems revealed in benchmarks</strong></a><br>
+&nbsp; &nbsp;This notebook performs some diagnosis for problems identified from <a href="https://gaow.github.io/mvarbvs/analysis/20191116_MNM_Benchmark.html">this benchmark</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20191116_MNM_Benchmark.html"><strong>M&amp;M benchmark XI</strong></a><br>
+&nbsp; &nbsp;This benchmark is an improvments over the <a href="https://gaow.github.io/mvarbvs/analysis/20191108_MNM_Benchmark.html">previous one</a>, in the following espects.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20191108_MNM_Benchmark.html"><strong>M&amp;M benchmark VIII</strong></a><br>
+&nbsp; &nbsp;This benchmark uses the latest GTEx V8 genotype data and evaluated the pipeline in the presence of missing data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/10">2019/10<a class="anchor-link" href="#2019/10">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20191029_GTEx_V8_preprocessing.html"><strong>Individual-level genotype-expression data preprocessing for association analysis</strong></a><br>
+&nbsp; &nbsp;This pipeline aims to extract individual-level genotype-expression data in preparation for cis-eQTL fine-mapping. It was written by Jiarun Chen (Tsinghua U.) advised by Gao Wang.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/07">2019/07<a class="anchor-link" href="#2019/07">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190701_EE_Problem.html"><strong>20190701 EE Problem</strong></a><br>
+&nbsp; &nbsp;Continued exploration of potential problem with EE model</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/06">2019/06<a class="anchor-link" href="#2019/06">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_two_snps_dispute_missing_data.html"><strong>Linkage vs pleiotropy: the Two-SNP example with missing data</strong></a><br>
+&nbsp; &nbsp;This is continuation of notebook <code>two_snps_dispute.ipynb</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_two_snps_dispute.html"><strong>Linkage vs pleiotropy: the Two-SNP example</strong></a><br>
+&nbsp; &nbsp;Here I pick up a particular data-set and make a specific simulation case of linkage vs pleiotropy.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_remove_all_neg_lbf.html"><strong>Filtering single effects by single effect logBF</strong></a><br>
+&nbsp; &nbsp;Implemented as option <code>simple</code> to "estimate" prior variance, I simply set the effect zero if all logBF are smaller than zero. It helps removing false discoveries as shown in this notebook.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_prior_matrices_scale.html"><strong>Scaling the prior matrices from empirical Bayes multivariate analysis</strong></a><br>
+&nbsp; &nbsp;Matrices provided from fitting empirical Bayes normal means problem (EBNM) using exchangable standard effects model ($\beta/s | s \sim g(\cdot)$) must be scaled by residual variance and sample size in msSuSiE analysis, when the variables matrix $X$ is standardized.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_precomputed_quantities_mash.html"><strong>Pre-computing various second-moment related quantities</strong></a><br>
+&nbsp; &nbsp;This saves computation for M&amp;M by precomputing and re-using quantitaties shared between iterations. It mostly saves $O(R^3)$ computations. This vignette shows results agree with the original version. Cannot use unit test due to numerical discrepency between <code>chol</code> of amardillo and R -- this has been shown problematic for some computations. I'll have to improve <code>mashr</code> for it.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_output_visualization.html"><strong>Visualization of M&amp;M output</strong></a><br>
+&nbsp; &nbsp;A prototype to plot various M&amp;M output information.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_openmp_prototype.html"><strong>OpenMP benchmark for Rcpp based codes</strong></a><br>
+&nbsp; &nbsp;Here I test if OpenMP helps with some of the computations.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_multivariate_regression.html"><strong>Improving calculation of multivariate multiple regression</strong></a><br>
+&nbsp; &nbsp;A prototype for multivariate multiple regression computation assuming fixed residual covariance matrix.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_multivariate_est_prior.html"><strong>Multivariate regression simple prior with estimated scalar</strong></a><br>
+&nbsp; &nbsp;Here I use multivariate prior (not mash mixture) for <code>msusie</code> call, but allow for the scalar of prior to be estimated. That is, I have implemeted <code>estimate_prior_variance</code> for <a href="https://github.com/gaow/mmbr/blob/1c9b14283aa9615436447738932618c81388bd41/R/bayesian_multivariate_regression.R#L7">this class</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_mmbr_univariate_algorithm_agreement.html"><strong>Single effect model sanity check</strong></a><br>
+&nbsp; &nbsp;Check for agreement of different regression methods in VEM updates.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_mmbr_mwe.html"><strong>A non-trivial toy example for multivariate regression with <code>mmbr</code></strong></a><br>
+&nbsp; &nbsp;Here I show with a toy simulation of 600 samples, 3000 variables phenotypes and 50 conditions of interest, just to see how the method works in terms of computational speed,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_missing_data_precomputed.html"><strong>Analysis with precomputed quantatities + missing data in Y</strong></a><br>
+&nbsp; &nbsp;Here we analyze <a href="http://shiny.stephenslab.uchicago.edu/gaow/GTExV7/Multi_Tissues.ENSG00000145214.RDS">an example of GTEx V7 cis-gene data-set</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_mash_regression_univariate_degenerated.html"><strong>Running "degenerated" MASH computation</strong></a><br>
+&nbsp; &nbsp;This is prototype to a unit test to verify implementation of mash computation is correct, by comparing it to univariate case when $Y$ has one column and prior covariance matrices is fixed.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_mash_compare_simple_multivariate.html"><strong>Comparing MASH analysis with simple multivariate analysis</strong></a><br>
+&nbsp; &nbsp;Previously we showed that even though univariate analysis with degenerated MASH model gives identical results to SuSiE as expected (with non-decreasing ELBO), in multivariate calculations the ELBO is not always non-decreasing. To investigate the issue we will 1) further simplify the problem and 2) isolate the problem to posterior calculation versus ELBO calculations and check which part is problematic. The best way to achieve both is to implement a simple Bayesian multivariate regression model with prior $b \sim MVN(0, U)$ where $U$ is known, instead of using MASH prior for $b$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_marginal_stats_compare.html"><strong>Comparing marginal statistics with Linear regression</strong></a><br>
+&nbsp; &nbsp;For prototyping <code>get_sumstats()</code> function in data object.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_lfsr_for_CS.html"><strong>Investigating behavior of lfsr for condition specific CS</strong></a><br>
+&nbsp; &nbsp;Here I investigate behavior of lfsr of CS per condition, using singleton simulation setting.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_em_optim_est_prior.html"><strong>EM estimate vs direct optimization issue</strong></a><br>
+&nbsp; &nbsp;Here I compare EM with <code>optim</code> in a larger simulated data-set involving 50 conditions. Example below is when <code>EM</code> and <code>optim</code> results are different and <code>optim</code> result seems better.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_em_optim_difference.html"><strong>A smaller example of prior variance scalar estimate</strong></a><br>
+&nbsp; &nbsp;This is continuation of <a href="em_optim_est_prior.html">previous notebook</a> but using smaller example and more explicit code to show the problem. The data can be <a href="https://github.com/stephenslab/mmbr/blob/master/inst/prototypes/em_optim_difference.rds">downloaded here</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_em_inv_prior_est.html"><strong>EM update for prior variance when prior cannot be directly inverted</strong></a><br>
+&nbsp; &nbsp;The <a href="elbo_prior_est.html">EM approach previously shown</a> for estimating prior variance scalar has a problem: its current form does not work when input prior matrices has non-invertable component. I used generalized inverse in the code but it does not work.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_elbo_prior_est.html"><strong>Decreasing ELBO issue</strong></a><br>
+&nbsp; &nbsp;Possibly caused by comparing and setting prior variances to zero when estimating them with EM.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_elbo_implementation.html"><strong>ELBO implementation and comparisons</strong></a><br>
+&nbsp; &nbsp;I have implemented ELBO for M&amp;M model based on write up in <a href="https://www.overleaf.com/project/5bd111aaa3ec8118d7b1cfa8">this document</a>. See Section 8 for derivation details; also Section B for an independent re-derivation from Yuxin Zou in checking my work.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_Multivariate_Computation_Compared_Univariate.html"><strong>Comparing multivariate MASH analysis using diagonal priors with univariate computations</strong></a><br>
+&nbsp; &nbsp;This is to verify that the mmbr implementation is correct for the truthly multivariate computations. Previously I have only compared it for the degenerated case where the prior matrix is 1 by 1.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_EE_model_problem.html"><strong>20190627 EE model problem</strong></a><br>
+&nbsp; &nbsp;Problem with EE model</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190627_EE_model_no_problem.html"><strong>20190627 EE model no problem</strong></a><br>
+&nbsp; &nbsp;No problem with EE model</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190620_benchmark_evaluation_poly.html"><strong>20190620 benchmark evaluation poly</strong></a><br>
+&nbsp; &nbsp;Pipelines to evaluate fine-mapping benchmarks</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190605_MNM_Workflow.html"><strong>M&amp;M on GTEx data pipeline</strong></a><br>
+&nbsp; &nbsp;Pipelines to run M&amp;M analysis. Each gene is already saved on RDS format, see <code>analysis/20180515_Extract_Benchmark_Data.ipynb</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190605_Format_MASH_Weights.html"><strong>Format MASH weights for M&amp;M</strong></a><br>
+&nbsp; &nbsp;Previously I've analyzed GTEx V8 data with MASH. Here I'll format it for use with V7 data that we have extracted genotypes for.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/04">2019/04<a class="anchor-link" href="#2019/04">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190422_Genotype_LD_Survey.html"><strong>A summary of genotype sample LD in GTEx data</strong></a><br>
+&nbsp; &nbsp;This is partially in response to the reviewer response for SuSiE paper.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/03">2019/03<a class="anchor-link" href="#2019/03">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190315_Mismatch_Identity_Analysis.html"><strong>Further investigation of mismatched analysis with identity prior</strong></a><br>
+&nbsp; &nbsp;I observe <a href="https://gaow.github.io/mvarbvs/analysis/20190218_MNM_Benchmark.html#FDR-for-per-signal-per-condition-estimates">unexpected FDR inflation</a> for analyzing singleton simulations using identity priors. Here I take a closer look at the problem.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190314_Result_Summary.html"><strong>Simulation results summary</strong></a><br>
+&nbsp; &nbsp;Summary of some results from simulation studies for a group meeting demonstration.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190301_Numerical_Comparison_Plots.html"><strong>Numerical comparison plots</strong></a><br>
+&nbsp; &nbsp;Figure to summarize numerical comparison results. See <a href="https://gaow.github.io/mvarbvs/analysis/20190218_MNM_Benchmark.html">this notebook</a> for its input data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/02">2019/02<a class="anchor-link" href="#2019/02">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190227_MTHESS_Comparison.html"><strong>Comparing M&amp;M with MT-HESS</strong></a><br>
+&nbsp; &nbsp;MT-HESS does not give credible sets. Herein we compare the marginal PIP in terms of calibration and precision-recall curves.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190226_R2HESS.html"><strong>Analysis with R2HESS</strong></a><br>
+&nbsp; &nbsp;For comparison here I prototype multivariate fine-mapping with one of the few other software out there, <code>R2HESS</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190218_MNM_Benchmark.html"><strong>M&amp;M ASH benchmark VI</strong></a><br>
+&nbsp; &nbsp;This is a continuation of Part V where I set total PVE is set to 0.1 and assume 1 or 2 causal variables per region. I added in evaluation of lfsr per condition.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190217_MNM_Benchmark.html"><strong>M&amp;M ASH benchmark V</strong></a><br>
+&nbsp; &nbsp;This is a continuation of Part V where I set total PVE is set to 0.15 and assume 2 causal variables per region. But here, the two SNPs have the same effects sampled from the multivariate distribution. Also I use $R = 5$ conditions and run it on $J=1000$ and 150 genes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190204_MNM_Benchmark.html"><strong>M&amp;M ASH benchmark V</strong></a><br>
+&nbsp; &nbsp;This is a continuation of Part V where I set total PVE is set to 0.15 and assume 2 causal variables per region. But here, the two SNPs have the same effects sampled from the multivariate distribution. Also I use $R = 5$ conditions and run it on $J=1000$ and 150 genes.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2019/01">2019/01<a class="anchor-link" href="#2019/01">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190124_MNM_Benchmark.html"><strong>M&amp;M ASH benchmark Part IV</strong></a><br>
+&nbsp; &nbsp;This is a continuation of Part III where instead of looking at 1 causal SNP of PVE = 0.05 I look at a range of causal SNPs per gene with 50% having 1 causal, 30% two causal and 20% three causal. The total PVE is set to 0.15.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190123_MNM_Benchmark.html"><strong>M&amp;M ASH benchmark Part III</strong></a><br>
+&nbsp; &nbsp;This is a continuation of Part II where instead of looking at 1 causal SNP of PVE = 0.05 I look at 2 causal SNPs with total PVE set to 0.15.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190122_MNM_Benchmark.html"><strong>M&amp;M ASH benchmark Part II</strong></a><br>
+&nbsp; &nbsp;This is a continuation of Part I where I use only $R=2$ conditions, 1 causal SNP of PVE = 0.05, with simple singleton, identity and fully shared patterns. The goal is to ensure all computations are correct.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20190115_MNM_Benchmark.html"><strong>M&amp;M ASH benchmark Part I</strong></a><br>
+&nbsp; &nbsp;Moving on to multivariate analysis we start with some performance benchmarks.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2018/10">2018/10<a class="anchor-link" href="#2018/10">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20181009_Null_Weight.html"><strong>Re-evaluating the use of null weight in real data examples</strong></a><br>
+&nbsp; &nbsp;Here with <code>susieR</code> version 0.4 I examine an example identified from simulations where SuSiE seems to have made mistakes. The data-set can be <a href="http://shiny.stephenslab.uchicago.edu/gaow/susie_data/liter_data_4_summarize_ld_1_lm_less_3.rds">downloaded here</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20181009_Estimate_Prior.html"><strong>SuSiE paper results based on estimated prior</strong></a><br>
+&nbsp; &nbsp;This notebook displays another version of <a href="https://stephenslab.github.io/susie-paper/manuscript_results/numerical_results.html">this page</a> -- in the SuSiE paper analysis we focused on fixed scaled prior variance (PVE = 0.1). Here we show the results of using estimated prior variance.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2018/09">2018/09<a class="anchor-link" href="#2018/09">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180918_Use_Penalty.html"><strong>Adding null component to SuSiE</strong></a><br>
+&nbsp; &nbsp;Here we evaluate the possible benefit adding a null component to SuSiE. The hope is that the CS will be easier to prune (without using purity) and that the pruned CS can achieve smaller FDR.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180912_Case_Examples_Li2016.html"><strong>Investigating sQTL analysis results of interest: a deeper look</strong></a><br>
+&nbsp; &nbsp;From <a href="20180902_Case_Examples_Li2016.html">this notebook</a> we've got some examples, particularly for the 4 QTL case where the smallest p-value has small PIP, and it seems to be driven by adjunct signal clusters. We want to see if SuSiE's results makes more sense, specifically if it falls in splice sites.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180911_BF_Exploration_MS.html"><strong>20180911 BF Exploration MS</strong></a><br>
+&nbsp; &nbsp;knitr::opts_chunk$set(echo = TRUE)</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180902_Case_Examples_Li2016.html"><strong>Investigating sQTL analysis results of interest: an overview</strong></a><br>
+&nbsp; &nbsp;We've got 5 introns having 3 QTLs, 3 having 4 QTLs and 2 having 5 QTLs. This notebook shows SuSiE plots for these cases as an overview and a search for interesting patterns to look into.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2018/08">2018/08<a class="anchor-link" href="#2018/08">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180829_LD_Heatmap.html"><strong>20180829 LD Heatmap</strong></a><br>
+&nbsp; &nbsp;Make LD heatmap for demonstration data-sets</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2018/07">2018/07<a class="anchor-link" href="#2018/07">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180712_Enrichment_Workflow.html"><strong>20180712 Enrichment Workflow</strong></a><br>
+&nbsp; &nbsp;Enrichment analysis workflow for molecular QTL results</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180711_A_Hard_Case.html"><strong>20180711 A Hard Case</strong></a><br>
+&nbsp; &nbsp;A hard case fine-mapping example</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180709_SplicingQTL_Detailed.html"><strong>A detailed look at some of the SuSiE fits</strong></a><br>
+&nbsp; &nbsp;In comparison with CAVIAR follow-ups; workflow implemented in <a href="20180704_MolecularQTL_Workflow.html">this notebook</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180704_MolecularQTL_Workflow.html"><strong>20180704 MolecularQTL Workflow</strong></a><br>
+&nbsp; &nbsp;Molecular QTL workflow</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2018/06">2018/06<a class="anchor-link" href="#2018/06">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180630_Runtime.html"><strong>20180630 Runtime</strong></a><br>
+&nbsp; &nbsp;Comparing computational efficiency of methods</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180620_Purity_Plot_Lite.html"><strong>20180620 Purity Plot Lite</strong></a><br>
+&nbsp; &nbsp;SuSiE Purity Plot</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180615_Power_DAP.html"><strong>20180615 Power DAP</strong></a><br>
+&nbsp; &nbsp;Workflow to extract info for power comparison with DAP for a hard case</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180606_ROC.html"><strong>ROC comparisons</strong></a><br>
+&nbsp; &nbsp;Or rather, precision-recall curve.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180606_Identify_Interesting_Dataset.html"><strong>20180606 Identify Interesting Dataset</strong></a><br>
+&nbsp; &nbsp;Identify and extract interesting data-set for vignettes</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180606_Coverage_Check.html"><strong>20180606 Coverage Check</strong></a><br>
+&nbsp; &nbsp;Check susie coverage</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180605_PIP_Calibrated.html"><strong>20180605 PIP Calibrated</strong></a><br>
+&nbsp; &nbsp;Calibration of SNP level PIP</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180602_DAP_Outlier_Exam.html"><strong>Looking into some DAP-G outliers</strong></a><br>
+&nbsp; &nbsp;Here I look into cases where DAP reports PIP = 1 for SNPs that are not causal in simulation. Data used, along with DAP input temp files, can be downloaded <a href="http://shiny.stephenslab.uchicago.edu/gaow/dap_issues_20180602">here</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180601_One_Causal_CAVIAR_Exam.html"><strong>Looking into the 3 CAVIAR outliers</strong></a><br>
+&nbsp; &nbsp;Here we want to understand the examples that CAVIAR <code>-c 1</code> and susie <code>L 1</code> do not agree for <code>n = 1</code> causal variable.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2018/05">2018/05<a class="anchor-link" href="#2018/05">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180531_PIP_L1_Comparison.html"><strong>20180531 PIP L1 Comparison</strong></a><br>
+&nbsp; &nbsp;Compare PIP of L1 susie, DAP and CAVIAR</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180528_Power_Comparison.html"><strong>Power comparison susie vs DAP</strong></a><br>
+&nbsp; &nbsp;Here we compare power of susie and DAP under different number of simulation signals for fixed PVE.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180527_PIP_Workflow.html"><strong>20180527 PIP Workflow</strong></a><br>
+&nbsp; &nbsp;Workflow to extract PIP and set information for different methods</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180527_PIP_Comparison.html"><strong>20180527 PIP Comparison</strong></a><br>
+&nbsp; &nbsp;Direct comparison of PIP for SuSiE, DAP, CAVIAR and FINEMAP</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180525_CS_Outliers.html"><strong>CS outlier scenarios</strong></a><br>
+&nbsp; &nbsp;This notebook explores scenarios when CS tend not contain causal signals (false positives).</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180522_Purity_Summary.html"><strong>Purity result summary</strong></a><br>
+&nbsp; &nbsp;Result of this notebook has been <a href="http://shiny.stephenslab.uchicago.edu/gaow/purity_html_20180516/">uploaded here</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180516_Purity_Plot.html"><strong>20180516 Purity Plot</strong></a><br>
+&nbsp; &nbsp;SusieR benchmark plot</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180515_SusieR_Benchmark.html"><strong>SusieR benchmark</strong></a><br>
+&nbsp; &nbsp;A first (comprehensive) set of simulations to learn properties of the new fine-mapping method.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180515_Extract_Benchmark_Data.html"><strong>20180515 Extract Benchmark Data</strong></a><br>
+&nbsp; &nbsp;Extract per gene dataset</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180508_ELBO.html"><strong>20180508 ELBO</strong></a><br>
+&nbsp; &nbsp;M&amp;M ELBO</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2018/04">2018/04<a class="anchor-link" href="#2018/04">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180424_DSC_FMO2.html"><strong>Fine mapping on FMO2 data in GTEx</strong></a><br>
+&nbsp; &nbsp;This is an update and combined version of <a href="20180415_MNMASH_FMO2.html">m&amp;m</a> and <a href="20180416_SingleCondition_FMO2.html">susie</a> on multi-tissue fine mapping.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180416_SingleCondition_FMO2.html"><strong>Univariate analysis on FMO2 data in GTEx</strong></a><br>
+&nbsp; &nbsp;To compare with <a href="20180415_MNMASH_FMO2.html">m&amp;m results</a> I analyze the same data-set using <a href="https://github.com/pcarbo/varbvs/blob/master/varbvs-R/R/varbvsnorm.R">varbvs (<code>varbvsnorm</code>)</a> and <a href="https://github.com/stephenslab/susieR">susieR</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20180415_MNMASH_FMO2.html"><strong>M&amp;M analysis on FMO2 data in GTEx</strong></a><br>
+&nbsp; &nbsp;This vignette shows multi-tissue fine mapping using the "Sum of Single Effects" (SuSIE) approach.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2017/12">2017/12<a class="anchor-link" href="#2017/12">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171212_Median_TPM_GTEx_V8.html"><strong>20171212 Median TPM GTEx V8</strong></a><br>
+&nbsp; &nbsp;Processing GTEx V8 expression data for various summary statistics</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171210_Simulation_Multivariate.html"><strong>Simulation of multiple phenotypes given genotypes and covariance</strong></a><br>
+&nbsp; &nbsp;Here we simulate effect size from mixture gaussian.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2017/11">2017/11<a class="anchor-link" href="#2017/11">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171130_MNM_Toys.html"><strong>Toy M&amp;M analysis on Thyroid and Lung</strong></a><br>
+&nbsp; &nbsp;This analysis uses some early prototypes of M&amp;M.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171103_MNMASH_Data.html"><strong>Prepare toy example data-set for M&amp;M ASH model</strong></a><br>
+&nbsp; &nbsp;Here I take a gene from 2 tissues, with covariates.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2017/10">2017/10<a class="anchor-link" href="#2017/10">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171030_Single_Tissue_MR_ASH_Summary.html"><strong>Summary of single tissue analysis results</strong></a><br>
+&nbsp; &nbsp;From &gt; 25K RDS files</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171030_BIMBAM_Plots.html"><strong>20171030 BIMBAM Plots</strong></a><br>
+&nbsp; &nbsp;BIMBAM plots using Matthew's code 2007</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171030_BIMBAM.html"><strong>BIMBAM analysis with selected set of FMO2 SNPs for Thyroid</strong></a><br>
+&nbsp; &nbsp;We pick a few hundred SNPs that harbors eQTLs (3 or 4 eQTLs) and analyze with BIMBAM. Here we focus on regions between 171.12Mb to 171.20Mb on chr1, based on <a href="20171027_BVS_MR_ASH.html">what we've previously learned</a>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171027_BVS_MR_ASH.html"><strong>20171027 BVS MR ASH</strong></a><br>
+&nbsp; &nbsp;Analyzing a toy example with <code>varbvs</code> and <code>mr-ash</code></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171023_Imputation.html"><strong>GTEx V8 genotype data imputation</strong></a><br>
+&nbsp; &nbsp;Revised from old notebook <code>20170518_Imputation.ipynb</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171017_Extract_Full_Tissue_Data.html"><strong>Extract per-gene per tissue data</strong></a><br>
+&nbsp; &nbsp;For fine mapping demos.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171010_eQTLSummary_HDF5.html"><strong>QTL data preprocessing for Yuxin Zou</strong></a><br>
+&nbsp; &nbsp;This is not GTEx related. This workflow converts data from an immune response eQTL study in primary human monocytes to mash format.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171006_MASH_Results_V6.html"><strong>MASH results on V6 data</strong></a><br>
+&nbsp; &nbsp;Basically same setup as V6 paper.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171005_MASH_Results_V8.html"><strong>MASH results on V8 data</strong></a><br>
+&nbsp; &nbsp;Instead of setting $\hat{V} = cor(Z_{null})$ we set $\hat{V} = I$</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171004_MASH_Results_V6_XX.html"><strong>MASH results on V6 data</strong></a><br>
+&nbsp; &nbsp;With $X^TX$ in prior and instead of setting $\hat{V} = cor(Z_{null})$ we set $\hat{V} = I$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171004_MASH_Results_V6.html"><strong>MASH results on V6 data</strong></a><br>
+&nbsp; &nbsp;Without $X^TX$ in prior and instead of setting $\hat{V} = cor(Z_{null})$ we set $\hat{V} = I$.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171004_MASH_Results.html"><strong>MASH results on V8 data</strong></a><br>
+&nbsp; &nbsp;Basically same parameter setting as MASH paper.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171003_MASH_Results.html"><strong>MASH results on V8 data</strong></a><br>
+&nbsp; &nbsp;Without $X^TX$ in prior.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171002_MR_ASH_V8.html"><strong>MR ASH on single tissue data</strong></a><br>
+&nbsp; &nbsp;cis-eQTL analysis using <code>mr-ash</code>, for GTEx V8.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20171002_MASH_V8.html"><strong>MASH analysis for GTEx V8 data</strong></a><br>
+&nbsp; &nbsp;This is the new <code>mashr</code> version of analysis.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2017/09">2017/09<a class="anchor-link" href="#2017/09">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170929_Genotype.html"><strong>GTEx V8 genotypes</strong></a><br>
+&nbsp; &nbsp;Save V8 genotype data to HDF5 for association analysis.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170929_Expression_Covariate.html"><strong>GTEx V8 expression and covariate data</strong></a><br>
+&nbsp; &nbsp;Save V8 expression and covariates to HDF5 format, for use with association analysis.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170926_eQTLSummary_HDF5.html"><strong>Converting tissue specific eQTL summary statistics to HDF5</strong></a><br>
+&nbsp; &nbsp;Here I convert GTEx summary statistics to HDF5 format, making it easier to query and share the results.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2017/08">2017/08<a class="anchor-link" href="#2017/08">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170830_Compare_MASH_No_LD.html"><strong>Compare MASH results before and after without SNPs in LD</strong></a><br>
+&nbsp; &nbsp;We performed MASH on both original list of SNPs and SNPs filtered by LD &gt; 0.2. Here we compare the results.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170829_MASH_Paper.html"><strong>MASH analysis for Urbut 2017</strong></a><br>
+&nbsp; &nbsp;Reproducing (using old <code>mashr</code> codes) the Urbut 2017 paper in response to reviewer requests.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170829_MASH_Input_Preparation.html"><strong>Preparing input data for MASH analysis</strong></a><br>
+&nbsp; &nbsp;This include input max Z score from univariate analysis and training data, for both before and after LD pruning.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170828_Compute_LD.html"><strong>Compute pairwise LD for selected SNPs</strong></a><br>
+&nbsp; &nbsp;Though it is straightfoward enough to do it in R / Python, I use PLINK to compute the LD matrix.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170824_MR_ASH_Lung.html"><strong>MR-ASH analysis on Lung</strong></a><br>
+&nbsp; &nbsp;cis-eQTL analysis on GTEx V7 Lung data via <code>mr-ash</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170814_MR_ASH_V7.html"><strong>MR ASH on GTEx genes</strong></a><br>
+&nbsp; &nbsp;cis-eQTL analysis using <code>mr-ash</code>.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2017/06">2017/06<a class="anchor-link" href="#2017/06">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170630_Simulation_Study.html"><strong>20170630 Simulation Study</strong></a><br>
+&nbsp; &nbsp;mr-ash simulation ash paper scenarios</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170627_Subset_Genes.html"><strong>Extract dataset for given genes</strong></a><br>
+&nbsp; &nbsp;A procedure useful to create toy data from data bundle for methods development and closer look at real data of interest.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170624_Simulation_Procedures.html"><strong>Simulation of quantitative phenotype given genotypes</strong></a><br>
+&nbsp; &nbsp;Here we simulate effect size from mixture gaussian distribution and match strong effects with "heavily LD convoluted" SNPs.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170605_Prepare_Covariates.html"><strong>Association mapping covariates</strong></a><br>
+&nbsp; &nbsp;Merge covariates info from multiple sources and find orthonormal basis for covariate matrix.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2017/05">2017/05<a class="anchor-link" href="#2017/05">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170530_CisSNP.html"><strong>Extract cis-SNP</strong></a><br>
+&nbsp; &nbsp;We annotate genotype data by gene positions and extract cis-SNP. Data are extracted from <code>PLINK</code> files and saved to HDF5 format.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170523_Genotype_Formatting_PCA.html"><strong>Imputation data post-processing and PCA analysis</strong></a><br>
+&nbsp; &nbsp;Process VCF files from Michigan imputation server by removing imputed sites and fix variant IDs. We also perform MDS analysis to obtain covariates for association analysis.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170518_Imputation.html"><strong>GTEx V7 genotype data imputation</strong></a><br>
+&nbsp; &nbsp;The official release currently does not impute missing data. We use Michigan Imputation Server for the task.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170515_RNASeq_Analysis.html"><strong>RNA-Seq data preprocessing</strong></a><br>
+&nbsp; &nbsp;This workflow includes data normalization and PEER factor analysis.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="2017/04">2017/04<a class="anchor-link" href="#2017/04">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/20170424_dbGaP_Download.html"><strong>Download data from dbGaP</strong></a><br>
+&nbsp; &nbsp;A brief documentation to how dbGaP website is accessed &amp; how to download data.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Pipelines">Pipelines<a class="anchor-link" href="#Pipelines">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p><a href="analysis/get_mmbr_prototypes.pipeline.html">get mmbr prototypes</a></p>
+
+</div>
+</div>
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+<!-- To enable disqus, uncomment the section below and provide your disqus_shortname -->
+
+</div>
+
+<script>
+// add bootstrap table styles to pandoc tables
+$(document).ready(function () {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+</html>

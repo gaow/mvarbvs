@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Workflow-to-extract-info-for-power-comparison-with-DAP-for-a-hard-case">Workflow to extract info for power comparison with DAP for a hard case<a class="anchor-link" href="#Workflow-to-extract-info-for-power-comparison-with-DAP-for-a-hard-case">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">revisions</span> <span class="o">-</span><span class="n">s</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>Previously I've ran this specific DSC using:</p>
+
+<pre><code>dsc susie.dsc --target hard_case -o hard_case</code></pre>
+<p>So here I query from that result for DAP power. Again the settings:</p>
+<ul>
+<li>PVE 0.3</li>
+<li>10 causal</li>
+<li>~8K SNPs (all cis-SNPs of potential interest)</li>
+</ul>
+<p>susie parameters:</p>
+<ul>
+<li>prior 0.1, which is an unfavorable overestimate</li>
+<li>L = 10</li>
+</ul>
+<p>DAP parameters are default.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/github/mvarbvs/dsc&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">date</span> <span class="o">=</span> <span class="s1">&#39;1008&#39;</span>
+<span class="c1"># set to 0 to use estimated prior, or another number to use specified prior</span>
+<span class="c1"># as configured in the DSC</span>
+<span class="kn">parameter:</span> <span class="n">susie_prior</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="c1"># null weight options to evaluate</span>
+<span class="kn">parameter:</span> <span class="n">null_weight</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">]</span>
+<span class="n">dirname</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;{cwd:a}/hard_case/&#39;</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">fmtP</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="The-workflow">The workflow<a class="anchor-link" href="#The-workflow">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">power_1</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/Power_comparison_{date}.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">dap_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">br</span><span class="p">},</span>
+                        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;full_data.dataset full_data lm_less03 lm_less03.pve lm_less03.n_signal fit_dap&quot;</span><span class="p">)</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">br</span><span class="p">},</span>
+                        <span class="n">target</span> <span class="o">=</span> <span class="s2">&quot;full_data.dataset full_data lm_less03 lm_less03.pve lm_less03.n_signal fit_susie10.prior_var fit_susie10.null_weight fit_susie10&quot;</span><span class="p">)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">dap</span><span class="o">=</span><span class="n">dap_out</span><span class="p">,</span> <span class="n">susie</span><span class="o">=</span><span class="n">susie_out</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">power_2</span><span class="p">]</span>
+<span class="c1"># Power analysis</span>
+<span class="c1"># to match with DAP -ld_control 0.25</span>
+<span class="c1"># to match with susie 95% mappable CS, we set dap cutoff to 0.95 also</span>
+<span class="n">dap_cluster_cutoff</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;cluster_prob&#39;</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;cluster_avg_r2&#39;</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">)]</span>
+<span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dap_cluster_cutoff&#39;</span><span class="p">,</span> <span class="s1">&#39;null_weight&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_prior&#39;</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">concurrent</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{dirname}/Power_comparison_{date}_{_dap_cluster_cutoff[0]}_prior_{fmtP(_susie_prior)}_null_{fmtP(_null_weight)}.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">stdout</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{_output:n}.log&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">dap_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">dap</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">susie</span>
+    <span class="c1"># favorite susie flavor</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">susie_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">fit_susie10</span><span class="o">.</span><span class="n">prior_var</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_susie_prior</span><span class="p">}</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">fit_susie10</span><span class="o">.</span><span class="n">null_weight</span> <span class="o">==</span> <span class="err">$</span><span class="p">{</span><span class="n">_null_weight</span><span class="p">}),</span> <span class="p">]</span>
+    <span class="n">susie_out</span> <span class="o">=</span> <span class="n">subset</span><span class="p">(</span><span class="n">susie_out</span><span class="p">,</span> <span class="n">select</span> <span class="o">=-</span><span class="n">c</span><span class="p">(</span><span class="n">lm_less03</span><span class="o">.</span><span class="n">pve</span><span class="p">,</span> <span class="n">fit_susie10</span><span class="o">.</span><span class="n">prior_var</span><span class="p">,</span> <span class="n">fit_susie10</span><span class="o">.</span><span class="n">null_weight</span><span class="p">))</span>
+    <span class="n">data_sets</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">full_data</span><span class="o">.</span><span class="n">dataset</span><span class="p">)</span>
+    <span class="n">n_signals</span> <span class="o">=</span> <span class="n">unique</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less03</span><span class="o">.</span><span class="n">n_signal</span><span class="p">)</span>
+    <span class="n">n_r</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">n_experiments</span> <span class="o">=</span> <span class="n">n_r</span> <span class="o">*</span> <span class="n">length</span><span class="p">(</span><span class="n">data_sets</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">NULL</span>
+    <span class="n">overlap_cs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">s</span> <span class="ow">in</span> <span class="n">n_signals</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">susie_signals</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dap_signals</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">susie_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dap_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1"># I cannot find a good median tracker so do it stupid way: save all and take median later</span>
+        <span class="n">susie_sizes</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+        <span class="n">dap_sizes</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+        <span class="c1"># do the same for mean ...</span>
+        <span class="n">susie_avg_ld</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+        <span class="n">dap_avg_ld</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+        <span class="n">susie_tdc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dap_tdc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">susie_dc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dap_dc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">susie_tc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dap_tc</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">overlap_cs</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">s</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">NULL</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">d</span> <span class="ow">in</span> <span class="n">data_sets</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">out_files</span> <span class="o">=</span> <span class="n">susie_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less03</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">full_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">),</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;lm_less03.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+            <span class="n">truth</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">read_dsc</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">out_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span><span class="err">$</span><span class="n">data</span><span class="err">$</span><span class="n">true_coef</span>
+            <span class="n">dap_files</span> <span class="o">=</span> <span class="n">dap_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dap_out</span><span class="err">$</span><span class="n">lm_less03</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">dap_out</span><span class="err">$</span><span class="n">full_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_dap.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+            <span class="n">dap</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">read_dsc</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">dap_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span><span class="err">$</span><span class="n">posterior</span>
+            <span class="n">susie_files</span> <span class="o">=</span> <span class="n">susie_out</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">susie_out</span><span class="err">$</span><span class="n">lm_less03</span><span class="o">.</span><span class="n">n_signal</span> <span class="o">==</span> <span class="n">s</span> <span class="o">&amp;</span> <span class="n">susie_out</span><span class="err">$</span><span class="n">full_data</span><span class="o">.</span><span class="n">dataset</span> <span class="o">==</span> <span class="n">d</span><span class="p">),</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;fit_susie10.output.file&quot;</span><span class="p">),</span><span class="n">drop</span><span class="o">=</span><span class="n">FALSE</span><span class="p">]</span>
+            <span class="n">susie</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">read_dsc</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">dirname</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="n">susie_files</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]))</span><span class="err">$</span><span class="n">posterior</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">r</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">n_r</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">signals</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">truth</span><span class="p">[,</span><span class="n">r</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="c1"># SuSiE in CS</span>
+                <span class="n">susie_cs</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="k">if</span> <span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">susie</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span> <span class="p">{</span>
+                  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">susie</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">cs</span><span class="p">))</span> <span class="p">{</span>
+                      <span class="n">susie_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">strsplit</span><span class="p">(</span><span class="n">susie</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">cs</span><span class="err">$</span><span class="n">variable</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;,&quot;</span><span class="p">)))</span>
+                      <span class="k">if</span> <span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">signals</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">susie_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]))</span> <span class="p">{</span>
+                          <span class="n">susie_size</span> <span class="o">=</span> <span class="n">susie_size</span> <span class="o">+</span> <span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span>
+                          <span class="n">susie_sizes</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">susie_sizes</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]))</span>
+                          <span class="n">susie_avg_ld</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">susie_avg_ld</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">susie</span><span class="p">[[</span><span class="n">r</span><span class="p">]]</span><span class="err">$</span><span class="n">cs</span><span class="err">$</span><span class="n">cs_avg_r2</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                          <span class="n">susie_tdc</span> <span class="o">=</span> <span class="n">susie_tdc</span> <span class="o">+</span> <span class="mi">1</span>
+                          <span class="n">susie_dc</span> <span class="o">=</span> <span class="n">susie_dc</span> <span class="o">+</span> <span class="mi">1</span>
+                      <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="n">susie_signals</span> <span class="o">=</span> <span class="n">susie_signals</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">signals</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">unique</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)))</span>
+                <span class="p">}</span>
+                <span class="c1"># check susie CS overlapping status</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">))</span> <span class="p">{</span>
+                  <span class="k">for</span> <span class="p">(</span><span class="n">j</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+                      <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">)</span> <span class="nb">next</span>
+                      <span class="n">status</span> <span class="o">=</span> <span class="n">intersect</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">susie_cs</span><span class="p">[[</span><span class="n">j</span><span class="p">]])</span>
+                      <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">status</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                          <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">overlap_cs</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">s</span><span class="p">)]]))</span> <span class="n">overlap_cs</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">s</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">[[</span><span class="n">j</span><span class="p">]]),</span> <span class="n">length</span><span class="p">(</span><span class="n">status</span><span class="p">))</span>
+                          <span class="k">else</span> <span class="n">overlap_cs</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">s</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">overlap_cs</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">s</span><span class="p">)]],</span> <span class="n">c</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">[[</span><span class="n">j</span><span class="p">]]),</span> <span class="n">length</span><span class="p">(</span><span class="n">status</span><span class="p">)))</span>
+                      <span class="p">}</span>
+                    <span class="p">}</span>
+                  <span class="p">}</span>
+                <span class="p">}</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s1">&#39;==============&#39;</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="s1">&#39;==============&#39;</span><span class="p">))</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span>
+                <span class="n">susie_tc</span> <span class="o">=</span> <span class="n">susie_tc</span> <span class="o">+</span> <span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span>
+                <span class="c1"># DAP in cluster</span>
+                <span class="n">dap_cluster_raw</span> <span class="o">=</span> <span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="err">$$</span><span class="p">{</span><span class="n">_dap_cluster_cutoff</span><span class="p">[</span><span class="mi">0</span><span class="p">]}</span> <span class="o">&gt;</span> <span class="err">$</span><span class="p">{</span><span class="n">_dap_cluster_cutoff</span><span class="p">[</span><span class="mi">1</span><span class="p">]}),</span> <span class="p">]</span>
+                <span class="n">dap_cluster_ld</span> <span class="o">=</span> <span class="n">dap_cluster_raw</span><span class="err">$</span><span class="n">cluster_avg_r2</span>
+                <span class="n">dap_cluster_raw</span> <span class="o">=</span> <span class="n">dap_cluster_raw</span><span class="err">$</span><span class="n">snp</span>
+                <span class="n">dap_cluster</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">dap_cluster_raw</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+                    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dap_cluster_raw</span><span class="p">))</span> <span class="p">{</span>
+                      <span class="n">dap_cluster</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">strsplit</span><span class="p">(</span><span class="n">dap_cluster_raw</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="s2">&quot;,&quot;</span><span class="p">)))</span>
+                      <span class="k">if</span> <span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">signals</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">dap_cluster</span><span class="p">[[</span><span class="n">i</span><span class="p">]]))</span> <span class="p">{</span>
+                          <span class="n">dap_size</span> <span class="o">=</span> <span class="n">dap_size</span> <span class="o">+</span> <span class="n">length</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">[[</span><span class="n">i</span><span class="p">]])</span>
+                          <span class="n">dap_sizes</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">dap_sizes</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">[[</span><span class="n">i</span><span class="p">]]))</span>
+                          <span class="n">dap_avg_ld</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">dap_avg_ld</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">dap_cluster_ld</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+                          <span class="n">dap_tdc</span> <span class="o">=</span> <span class="n">dap_tdc</span> <span class="o">+</span> <span class="mi">1</span>
+                          <span class="n">dap_dc</span> <span class="o">=</span> <span class="n">dap_dc</span> <span class="o">+</span> <span class="mi">1</span>
+                      <span class="p">}</span>
+                    <span class="p">}</span>
+                    <span class="n">dap_signals</span> <span class="o">=</span> <span class="n">dap_signals</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">signals</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">unique</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)))</span>
+                <span class="p">}</span>
+                <span class="k">print</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)</span>
+                <span class="n">dap_tc</span> <span class="o">=</span> <span class="n">dap_tc</span> <span class="o">+</span> <span class="n">length</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)</span>
+                <span class="c1">## BEGIN debug</span>
+                <span class="c1">## susie made more true discovery than DAP</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">susie_dc</span> <span class="o">&gt;</span> <span class="n">dap_dc</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="k">print</span><span class="p">(</span><span class="s1">&#39;DAP miss&#39;</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">dap_files</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="c1">## DAP made false discovery, susie did not</span>
+                <span class="c1">## under n = 1</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">dap_cluster</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">dap_dc</span> <span class="o">&amp;&amp;</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="k">print</span><span class="p">(</span><span class="s1">&#39;DAP false discovery&#39;</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">dap</span><span class="p">[[</span><span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">1</span><span class="p">)]]</span><span class="err">$</span><span class="nb">set</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">dap_files</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="c1">## SuSiE made false discovery</span>
+                <span class="c1">## under n = 3</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">susie_dc</span> <span class="o">&amp;&amp;</span> <span class="n">s</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="p">{</span>
+                  <span class="k">print</span><span class="p">(</span><span class="s1">&#39;SuSiE false discovery in data ...&#39;</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">susie_cs</span><span class="p">))</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">susie_dc</span><span class="p">)</span>
+                  <span class="k">print</span><span class="p">(</span><span class="n">susie_files</span><span class="p">)</span>
+                <span class="p">}</span>  
+                <span class="c1">## END debug</span>
+                <span class="n">susie_dc</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">dap_dc</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="n">rates</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">s</span><span class="o">*</span><span class="n">n_experiments</span><span class="p">,</span> <span class="n">susie_tc</span><span class="p">,</span> <span class="n">dap_tc</span><span class="p">,</span> <span class="n">susie_signals</span><span class="o">/</span><span class="n">s</span><span class="o">/</span><span class="n">n_experiments</span><span class="p">,</span> <span class="n">dap_signals</span><span class="o">/</span><span class="n">s</span><span class="o">/</span><span class="n">n_experiments</span><span class="p">,</span> <span class="n">susie_tdc</span><span class="o">/</span><span class="n">susie_tc</span><span class="p">,</span> <span class="n">dap_tdc</span><span class="o">/</span><span class="n">dap_tc</span><span class="p">,</span> <span class="n">susie_size</span> <span class="o">/</span> <span class="n">susie_tdc</span><span class="p">,</span> <span class="n">dap_size</span> <span class="o">/</span> <span class="n">dap_tdc</span><span class="p">,</span> <span class="n">median</span><span class="p">(</span><span class="n">susie_sizes</span><span class="p">),</span> <span class="n">median</span><span class="p">(</span><span class="n">dap_sizes</span><span class="p">),</span> <span class="n">mean</span><span class="p">(</span><span class="n">susie_avg_ld</span><span class="p">,</span><span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">),</span> <span class="n">mean</span><span class="p">(</span><span class="n">dap_avg_ld</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">result</span><span class="p">))</span> <span class="p">{</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">rates</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="n">result</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">rates</span><span class="p">)</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">headers</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;n_signal&#39;</span><span class="p">,</span> <span class="s1">&#39;expected_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_power&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_power&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_coverage&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_coverage&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_avg_size&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_avg_size&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_median_size&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_median_size&#39;</span><span class="p">,</span> <span class="s1">&#39;susie_avg_ld&#39;</span><span class="p">,</span> <span class="s1">&#39;dap_avg_ld&#39;</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">length</span><span class="p">(</span><span class="n">n_signals</span><span class="p">),</span> <span class="n">length</span><span class="p">(</span><span class="n">headers</span><span class="p">))</span>
+    <span class="n">colnames</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="n">headers</span>
+    <span class="n">rownames</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">character</span><span class="p">(</span><span class="n">result</span><span class="p">[,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">overlap_cs</span><span class="p">,</span> <span class="s2">&quot;${_output:n}.overlap_status.rds&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Power-comparison,-susie-VS-DAP,-for-~8K-region">Power comparison, susie VS DAP, for ~8K region<a class="anchor-link" href="#Power-comparison,-susie-VS-DAP,-for-~8K-region">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">~/</span><span class="n">GIT</span><span class="o">/</span><span class="n">github</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/project/mstephens/SuSiE/mvarbvs/dsc</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;hard_case/DAP_comparison_0801_cluster_prob_estvar_true.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>n_signal</th><th scope=col>expected_discoveries</th><th scope=col>susie_discoveries</th><th scope=col>dap_discoveries</th><th scope=col>susie_power</th><th scope=col>dap_power</th><th scope=col>susie_coverage</th><th scope=col>dap_coverage</th><th scope=col>susie_avg_size</th><th scope=col>dap_avg_size</th><th scope=col>susie_median_size</th><th scope=col>dap_median_size</th><th scope=col>susie_avg_ld</th><th scope=col>dap_avg_ld</th></tr></thead>
+<tbody>
+	<tr><th scope=row>10</th><td>10       </td><td>3000     </td><td>945      </td><td>848      </td><td>0.2796667</td><td>0.2406667</td><td>0.8740741</td><td>0.8419811</td><td>23.75908 </td><td>12.77871 </td><td>7        </td><td>10       </td><td>0.9390865</td><td>0.8983109</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;hard_case/DAP_comparison_0801_cluster_prob_estvar_false.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>n_signal</th><th scope=col>expected_discoveries</th><th scope=col>susie_discoveries</th><th scope=col>dap_discoveries</th><th scope=col>susie_power</th><th scope=col>dap_power</th><th scope=col>susie_coverage</th><th scope=col>dap_coverage</th><th scope=col>susie_avg_size</th><th scope=col>dap_avg_size</th><th scope=col>susie_median_size</th><th scope=col>dap_median_size</th><th scope=col>susie_avg_ld</th><th scope=col>dap_avg_ld</th></tr></thead>
+<tbody>
+	<tr><th scope=row>10</th><td>10       </td><td>3000     </td><td>779      </td><td>848      </td><td>0.2466667</td><td>0.2406667</td><td>0.9268293</td><td>0.8419811</td><td>27.34903 </td><td>12.77871 </td><td>9.5      </td><td>10       </td><td>0.9319639</td><td>0.8983109</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>
