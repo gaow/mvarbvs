@@ -2,7 +2,7 @@
 # output is the number of effect variables for current data-set
 get_n_signal = function(option) {
     p = c(1,0,0,0,0,0,0,0,0,0)
-    if (option == -1) p = c(0.3,0.3,0.2,0.1,0.1,0,0,0,0,0))
+    if (option == -1) p = c(0.3,0.3,0.2,0.1,0.1,0,0,0,0,0)
     if (option == -2) p = c(0.25,0.2,0.15,0.15,0.1,0.05,0.05,0.02,0.02,0.01)
     one_hot = rmultinom(1, 1, prob=p)[,1]
     return (which(one_hot == 1))

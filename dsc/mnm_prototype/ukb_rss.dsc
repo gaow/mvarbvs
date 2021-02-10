@@ -7,6 +7,7 @@
 %include modules/mnm_suff
 %include modules/susie_suff
 %include modules/susie_rss
+%include modules/paintor
 %include modules/score
 
 DSC:
@@ -18,7 +19,9 @@ DSC:
     susie: susie_suff, susie_rss
   run:
     default: data_ukb * simulate * ((mnm_suff_oracle, mnm_rss) * mvsusie_scores, susie * susie_scores)
+    small_compare: data_ukb * artificial_mixture_small * ((mnm_suff_oracle, mnm_rss_oracle, mnm_rss_naive) * mvsusie_scores, PAINTOR)
     simulate_only: data_ukb * simulate 
+    eigen: data_ukb * eigen_ld
   exec_path: code
   output: output/ukb_rss
   global:
@@ -33,3 +36,7 @@ DSC:
     # number of causal as a global variable, <0 is to use default
     C: -1
     pve: 0.0005
+    
+    # Settings for small_compare
+    # prior_file: ../data/prior_simulation.rds
+    # C: 2

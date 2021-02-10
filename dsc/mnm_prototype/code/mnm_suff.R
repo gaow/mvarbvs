@@ -1,6 +1,10 @@
 library(data.table)
 prior = meta$prior[[eff_mode]]
 
+if(eff_mode %in% c('oracle', 'naive', 'identity', 'shared')){
+  prior$xUlist = lapply(1:length(prior$xUlist), function(i) prior$xUlist[[i]]*suffstats$N)
+}
+
 suffstats$XtY = as.matrix(suffstats$XtY)
 suffstats$YtY = as.matrix(suffstats$YtY)
 
