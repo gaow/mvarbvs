@@ -37,8 +37,11 @@ artificial_mixture_missing(artificial_mixture):
 
 artificial_mixture_small(simulate_y_base):
     eff_mode: "artificial_mixture_6"
-    residual_mode: "var_Y"
+    residual_mode: "identity"
     missing_Y: FALSE
+    save_summary_stats: TRUE
+    plink: TRUE
+    prefix: file(Plink)
 
 artificial_mixture_small_missing(artificial_mixture):
     save_summary_stats: TRUE

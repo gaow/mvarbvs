@@ -53,3 +53,7 @@ data_ukb: data_ukb.R
   $ldeigen: ldeigen.file
   $var_Y: varY
 
+eigen_ld: eigen.R
+  ld: $ld
+  $eigen: ldeigen
+  
