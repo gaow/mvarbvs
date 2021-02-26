@@ -1,6 +1,6 @@
 #!/usr/bin/env dsc
 
-%include modules/data
+%include modules/data_ukb
 %include modules/simulate_fixed_mix
 %include modules/mnm
 %include modules/mnm_rss
