@@ -27,7 +27,7 @@ DSC:
   global:
     data_file: ../data/gtex-v8-manifest.txt
     prior_file: ../data/prior_simulation.rds
-    nullz_file: ../data/null_z_cor.rds
+    nullz_file: ../data/nullz_cor_simulation.rds
     # number of dataset to evaluate
     n_dataset: 500
     # number of causal as a global variable, <0 is to use some of the default options available, see get_n_signal() in regression_simulator.R

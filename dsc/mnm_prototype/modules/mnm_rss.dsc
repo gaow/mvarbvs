@@ -9,7 +9,7 @@ mnm_rss_base: misc.R + mnm_rss.R
   L: 10
   resid_method: 'oracle', 'identity', 'nullz', 'corY'
   n_thread: 4
-  nullz_file: ${nullz_file} 
+  nullz_file: "${nullz_file}" 
   $result: result
   
 mnm_rss_oracle(mnm_rss_base):
