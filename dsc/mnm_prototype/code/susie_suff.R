@@ -26,4 +26,3 @@ library(data.table);
 
 XtX = readRDS(ld) * suffstats$N
 res = susie_suff_multiple(XtX, as.matrix(suffstats$XtY), as.matrix(suffstats$YtY), suffstats$N, L)
-

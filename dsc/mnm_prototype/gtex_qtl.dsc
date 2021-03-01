@@ -19,8 +19,8 @@ DSC:
     mnm_missing: mnm_oracle, mnm_rss_oracle, mnm_rss_naive
     mnm_rss: mnm_rss_oracle, mnm_rss_naive, mnm_rss_ed, mnm_rss_identity, mnm_rss_shared
   run:
-    default: small_data * simulate * (mnm * susie_scores, atlasqtl) #, mthess)
-    missingdata: tiny_data * artificial_mixture_missing * mnm_missing * susie_scores
+    default: small_data * simulate * (mnm * mvsusie_scores, atlasqtl) #, mthess)
+    missing_data: small_data * simulate_missing * mnm * mvsusie_scores
     rss: small_data * simulate_missing * mnm_rss * susie_scores
     simulate_only: full_data * simulate_identity # using command argument --n_dataset 20000 this should simulate 20000 data-sets and generate univariate summary stats, for learning about mixture prior using EB
     mthess: small_data * artificial_mixture_small * (mnm_oracle, mnm_naive, mnm_identity, mnm_shared, mthess, atlasqtl)

@@ -90,5 +90,3 @@ ukb_bloodcells_mixture(simulate_y_base):
     plink: TRUE
     prefix: file(Plink)
     save_suff_stat: TRUE
-
-
