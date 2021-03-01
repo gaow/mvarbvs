@@ -12,8 +12,13 @@ if(resid_method == 'identity'){
   resid_Z = cov2cor(as.matrix(suffstats$YtY) / (suffstats$N-1))
 }
 
-LD = readRDS(ld)
-ldeigen = readRDS(ldeigen)
+# LD and ldeigen info can be provided either as R data objects or R RDS files
+if (is.character(ld)) {
+  LD = readRDS(ld)
+} else {
+  LD = ld
+}
+if (is.character(ldeigen)) ldeigen = readRDS(ldeigen)
 
 if(prior == 'oracle'){
   for (i in 1:length(priorU$xUlist)) {

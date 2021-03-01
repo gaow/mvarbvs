@@ -6,5 +6,3 @@ susie_rss: susie_rss.R
   estimate_residual_variance: TRUE, FALSE
   $fitted: res$fitted
   $posterior: res$posterior
-  
-

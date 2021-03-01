@@ -32,21 +32,24 @@ artificial_mixture(simulate_y_base):
     missing_Y: FALSE
 
 artificial_mixture_missing(artificial_mixture):
-    save_summary_stats: TRUE
-    missing_Y: FALSE, TRUE
+    missing_Y: TRUE
+    # to provide input to RSS functions
+    $ld: cor(X)
+    $ldeigen: NULL
 
 artificial_mixture_small(simulate_y_base):
     eff_mode: "artificial_mixture_6"
     residual_mode: "identity"
     missing_Y: FALSE
-    save_summary_stats: TRUE
     plink: TRUE
     prefix: file(Plink)
 
 artificial_mixture_small_missing(artificial_mixture):
-    save_summary_stats: TRUE
     eff_mode: "artificial_mixture_6"
     missing_Y: TRUE, FALSE
+    # to provide input to RSS functions
+    $ld: cor(X)
+    $ldeigen: NULL
 
 gtex_mixture(simulate_y_base):
     eff_mode: "gtex_mixture"
@@ -54,8 +57,10 @@ gtex_mixture(simulate_y_base):
     missing_Y: FALSE
 
 gtex_mixture_missing(gtex_mixture):
-    save_summary_stats: TRUE
-    missing_Y: TRUE, FALSE
+    missing_Y: TRUE
+    # to provide input to RSS functions
+    $ld: cor(X)
+    $ldeigen: NULL
 
 # These are for simulating some data
 # to estimate empirical prior covariances
@@ -64,20 +69,17 @@ artificial_mixture_identity(simulate_y_base):
     eff_mode: "artificial_mixture_50"
     residual_mode: "identity"
     missing_Y: FALSE
-    save_summary_stats: TRUE
 
 gtex_mixture_identity(simulate_y_base):
     eff_mode: "gtex_mixture"
     residual_mode: "identity"
     missing_Y: FALSE
-    save_summary_stats: TRUE
 
 # These are for simulating data with ukb genotypes
 artificial_mixture_ukb(simulate_y_base):
     eff_mode: "artificial_mixture_20"
     residual_mode: "identity"
     missing_Y: FALSE
-    save_summary_stats: TRUE
     plink: TRUE
     prefix: file(Plink)
     save_suff_stat: TRUE
@@ -86,7 +88,6 @@ ukb_bloodcells_mixture(simulate_y_base):
     eff_mode: "bloodcells_mixture"
     residual_mode: "var_Y"
     missing_Y: FALSE
-    save_summary_stats: TRUE
     plink: TRUE
     prefix: file(Plink)
     save_suff_stat: TRUE

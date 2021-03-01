@@ -31,6 +31,7 @@ DSC:
     ld_dir: '/project2/mstephens/yuxin/ukb-bloodcells/LD/'
     ldeigen_dir: '/project2/mstephens/yuxin/ukb-bloodcells/LDeigen/'
     varY_file: '/project2/mstephens/yuxin/ukb-bloodcells/BloodCells.cov.rds'
+    nullz_file: '/project0/mstephens/yuxin/ukb-bloodcells/nullz_cor.rds'
     # number of dataset to evaluate
     n_dataset: 600
     # number of causal as a global variable, <0 is to use default
