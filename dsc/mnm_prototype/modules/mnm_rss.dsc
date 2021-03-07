@@ -9,7 +9,7 @@ mnm_rss_base: misc.R + mnm_rss.R
   L: 10
   resid_method: 'oracle', 'identity', 'nullz', 'corY'
   n_thread: 4
-  nullz_file: '/project2/mstephens/yuxin/ukb-bloodcells/nullz_cor.rds'
+  nullz_file: "${nullz_file}" 
   $result: result
   
 mnm_rss_oracle(mnm_rss_base):
@@ -32,3 +32,18 @@ mnm_rss_identity(mnm_rss_base):
   prior: 'identity'
   resid_method: 'oracle'
 
+mnm_rss_shared_corZ(mnm_rss_base):
+  prior: 'shared'
+  resid_method: 'nullz'
+
+mnm_rss_naive_corZ(mnm_rss_base):
+  prior: 'naive'
+  resid_method: 'nullz'
+
+mnm_rss_ed_corZ(mnm_rss_base):
+  prior: 'ED'
+  resid_method: 'nullz'
+
+mnm_rss_identity_corZ(mnm_rss_base):
+  prior: 'identity'
+  resid_method: 'nullz'

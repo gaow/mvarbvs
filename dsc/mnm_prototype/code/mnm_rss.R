@@ -12,8 +12,13 @@ if(resid_method == 'identity'){
   resid_Z = cov2cor(as.matrix(suffstats$YtY) / (suffstats$N-1))
 }
 
-LD = readRDS(ld)
-ldeigen = readRDS(ldeigen)
+# LD and ldeigen info can be provided either as R data objects or R RDS files
+if (is.character(ld)) {
+  LD = readRDS(ld)
+} else {
+  LD = ld
+}
+if (is.character(ldeigen)) ldeigen = readRDS(ldeigen)
 
 if(prior == 'oracle'){
   for (i in 1:length(priorU$xUlist)) {
@@ -29,7 +34,7 @@ if(prior == 'oracle'){
 m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=priorU$xUlist, weights=priorU$pi), 
                                  null_weight=priorU$null_weight, max_mixture_len=-1)
 result = mmbr::msusie_rss(Z, LD, eigenR = ldeigen, L=L, prior_variance=m_init, residual_variance=resid_Z, 
-                          compute_objective=TRUE, estimate_residual_variance=F, 
+                          compute_objective=T, estimate_residual_variance=F, 
                           estimate_prior_variance=T, estimate_prior_method='EM', 
                           precompute_covariances=T, n_thread=n_thread, max_iter=1000)
 result$cs_corr = susieR:::get_cs_correlation(result, Xcorr=LD)

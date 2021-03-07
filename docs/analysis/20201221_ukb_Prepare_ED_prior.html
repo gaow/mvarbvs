@@ -607,6 +607,48 @@ sos run analysis/20201221_ukb_Prepare_ED_prior.ipynb edmash --model ukb_bloodcel
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-r"><pre><span></span><span class="n">[update_prior]</span>
+<span class="n">R</span><span class="o">:</span>
+    <span class="n">priors</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;~/GitHub/mvarbvs/dsc/ukb-bloodcells/ukb_prior_simulation.rds&#39;</span><span class="p">)</span> 
+    <span class="n">files</span> <span class="o">=</span> <span class="nf">read.table</span><span class="p">(</span><span class="s">&#39;~/GitHub/mvarbvs/dsc/mnm_prototype/output/ukb_rss/artificial_mixture_ukb_sim.txt&#39;</span><span class="p">,</span> <span class="n">stringsAsFactors</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span><span class="o">$</span><span class="n">V1</span>
+    <span class="nf">print</span><span class="p">(</span><span class="s">&#39;artificial_mixture_ukb&#39;</span><span class="p">)</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">files</span><span class="p">)){</span>
+      <span class="nf">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+      <span class="n">dat</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="s">&#39;~/GitHub/mvarbvs/dsc/mnm_prototype/output/ukb_rss/artificial_mixture_ukb/&#39;</span><span class="p">,</span> <span class="n">files[i]</span><span class="p">))</span>
+      <span class="n">dat</span><span class="o">$</span><span class="n">meta</span><span class="o">$</span><span class="n">prior</span><span class="o">$</span><span class="n">ED</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">xUlist</span> <span class="o">=</span> <span class="n">priors[[dat</span><span class="o">$</span><span class="n">meta</span><span class="o">$</span><span class="n">eff_mode]]</span><span class="o">$</span><span class="n">ED</span><span class="o">$</span><span class="n">U</span><span class="p">,</span> <span class="kc">pi</span> <span class="o">=</span> <span class="n">priors[[dat</span><span class="o">$</span><span class="n">meta</span><span class="o">$</span><span class="n">eff_mode]]</span><span class="o">$</span><span class="n">ED</span><span class="o">$</span><span class="n">w</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+      <span class="nf">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="nf">paste0</span><span class="p">(</span><span class="s">&#39;~/GitHub/mvarbvs/dsc/mnm_prototype/output/ukb_rss/artificial_mixture_ukb/&#39;</span><span class="p">,</span> <span class="n">files[i]</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="nf">print</span><span class="p">(</span><span class="s">&#39;ukb_bloodcells_mixture&#39;</span><span class="p">)</span>
+    <span class="n">priors</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="s">&#39;~/GitHub/mvarbvs/dsc/ukb-bloodcells/ukb_prior_simulation.rds&#39;</span><span class="p">)</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="nf">read.table</span><span class="p">(</span><span class="s">&#39;~/GitHub/mvarbvs/dsc/mnm_prototype/output/ukb_rss/ukb_bloodcells_mixture_sim.txt&#39;</span><span class="p">,</span> <span class="n">stringsAsFactors</span> <span class="o">=</span> <span class="kc">FALSE</span><span class="p">)</span><span class="o">$</span><span class="n">V1</span>
+    <span class="nf">for</span><span class="p">(</span><span class="n">i</span> <span class="n">in</span> <span class="m">1</span><span class="o">:</span><span class="nf">length</span><span class="p">(</span><span class="n">files</span><span class="p">)){</span>
+      <span class="nf">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+      <span class="n">dat</span> <span class="o">=</span> <span class="nf">readRDS</span><span class="p">(</span><span class="nf">paste0</span><span class="p">(</span><span class="s">&#39;~/GitHub/mvarbvs/dsc/mnm_prototype/output/ukb_rss/ukb_bloodcells_mixture/&#39;</span><span class="p">,</span> <span class="n">files[i]</span><span class="p">))</span>
+      <span class="n">dat</span><span class="o">$</span><span class="n">meta</span><span class="o">$</span><span class="n">prior</span><span class="o">$</span><span class="n">ED</span> <span class="o">=</span> <span class="nf">list</span><span class="p">(</span><span class="n">xUlist</span> <span class="o">=</span> <span class="n">priors[[dat</span><span class="o">$</span><span class="n">meta</span><span class="o">$</span><span class="n">eff_mode]]</span><span class="o">$</span><span class="n">ED</span><span class="o">$</span><span class="n">U</span><span class="p">,</span> <span class="kc">pi</span> <span class="o">=</span> <span class="n">priors[[dat</span><span class="o">$</span><span class="n">meta</span><span class="o">$</span><span class="n">eff_mode]]</span><span class="o">$</span><span class="n">ED</span><span class="o">$</span><span class="n">w</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+      <span class="nf">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="nf">paste0</span><span class="p">(</span><span class="s">&#39;~/GitHub/mvarbvs/dsc/mnm_prototype/output/ukb_rss/ukb_bloodcells_mixture/&#39;</span><span class="p">,</span> <span class="n">files[i]</span><span class="p">))</span>
+    <span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+
+<pre><code>sos run analysis/20201221_ukb_Prepare_ED_prior.ipynb update_prior</code></pre>
+
+</div>
+</div>
+</div>
 <hr>
 Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
 

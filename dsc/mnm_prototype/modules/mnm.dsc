@@ -39,7 +39,7 @@ mnm_mixture01(mnm_base):
 
 mnm_oracle(mnm_base):
   eff_mode: 'oracle'
-  resid_method: 'oracle'
+  resid_method: 'oracle', 'flash'
 
 mnm_identity(mnm_base):
   eff_mode: 'identity'
