@@ -243,7 +243,7 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="mvSuSiE-benchmark-updated">mvSuSiE benchmark updated<a class="anchor-link" href="#mvSuSiE-benchmark-updated">&#182;</a></h2><p>During the past few months we have implemented a few fixes with input from Yuxin who performed mvSuSiE analysis in GWAS context and ironed out some corner cases. Also progress from <code>udr</code> package offers us better estimate for mixture prior. We now rerun all the benchmark previously developed and look at updated results.</p>
+<h2 id="The-updated-mvSuSiE-benchmark">The updated mvSuSiE benchmark<a class="anchor-link" href="#The-updated-mvSuSiE-benchmark">&#182;</a></h2><p>During the past few months we have implemented a few fixes with input from Yuxin who performed mvSuSiE analysis in GWAS context and ironed out some corner cases. Also progress from <code>udr</code> package offers us better estimate for mixture prior. We now rerun all the benchmark previously developed and look at updated results.</p>
 
 </div>
 </div>
@@ -253,19 +253,37 @@ body {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Benchmark-execution">Benchmark execution<a class="anchor-link" href="#Benchmark-execution">&#182;</a></h2><p>Under the <code>dsc/mnm_prototype</code> directory,</p>
 
-<pre><code>sos run 20210224_MNM_Benchmark simulation_only
-sos run 20210224_MNM_Benchmark extract_sumstats
-sos run 20210224_MNM_Benchmark mixture_model
-sos run 20210224_MNM_Benchmark mvSuSiE
-sos run 20210224_MNM_Benchmark mthess</code></pre>
+<pre><code>sos run 20210224_MNM_Benchmark simulation_only --data-dir mnm_sumstats
+sos run 20210224_MNM_Benchmark extract_sumstats --data-dir mnm_sumstats
+sos run 20210224_MNM_Benchmark mixture_model --data-dir mnm_sumstats
+sos run 20210224_MNM_Benchmark mvSuSiE --data-dir mnm_20210310
+sos run 20210224_MNM_Benchmark mvSuSiE_missing --data-dir mnm_missing_20210310
+sos run 20210224_MNM_Benchmark mthess --data-dir mthess_20210310</code></pre>
 
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">cwd</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;~/GIT/mvarbvs/dsc/mnm_prototype&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">data_dir</span> <span class="o">=</span> <span class="n">path</span>
+<span class="k">def</span> <span class="nf">fmtP</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;p&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Workflow-implementations">Workflow implementations<a class="anchor-link" href="#Workflow-implementations">&#182;</a></h2>
+<h3 id="Data-simulation">Data simulation<a class="anchor-link" href="#Data-simulation">&#182;</a></h3>
 </div>
 </div>
 </div>
@@ -288,13 +306,20 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 <span class="c1">#SBATCH --mail-type=BEGIN,END,FAIL</span>
 
 <span class="n">module</span> <span class="n">load</span> <span class="n">R</span>
-<span class="o">./</span><span class="n">gtex_qtl</span><span class="o">.</span><span class="n">dsc</span> <span class="o">--</span><span class="n">host</span> <span class="n">dsc_mnm</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">target</span> <span class="n">simulate_only</span> <span class="o">--</span><span class="n">n_dataset</span> <span class="mi">25000</span> <span class="o">-</span><span class="n">o</span> <span class="n">mnm_sumstats</span> <span class="o">-</span><span class="n">s</span> <span class="n">existing</span> <span class="o">-</span><span class="n">e</span> <span class="n">ignore</span> <span class="o">&amp;&gt;</span> <span class="n">mnm_sumstats</span><span class="o">.</span><span class="n">log</span>
+<span class="o">./</span><span class="n">gtex_qtl</span><span class="o">.</span><span class="n">dsc</span> <span class="o">--</span><span class="n">host</span> <span class="n">dsc_mnm</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">target</span> <span class="n">simulate_only</span> <span class="o">--</span><span class="n">n_dataset</span> <span class="mi">25000</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">-</span><span class="n">s</span> <span class="n">existing</span> <span class="o">-</span><span class="n">e</span> <span class="n">ignore</span> <span class="o">&amp;&gt;</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span><span class="o">.</span><span class="n">log</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Extract-summary-statistics-for-mixture-model">Extract summary statistics for mixture model<a class="anchor-link" href="#Extract-summary-statistics-for-mixture-model">&#182;</a></h3>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -309,12 +334,12 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 <span class="k">def</span> <span class="nf">get_cmd</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">f</span><span class="s1">&#39;&#39;&#39;</span>
 <span class="s1">    cd {m} &amp;&amp; ls *.rds | sed &#39;s/\.rds//g&#39; &gt; analysis_units.txt &amp;&amp; cd -</span>
-<span class="s1">    sos run mixture_prior.ipynb extract_effects </span><span class="se">\</span>
+<span class="s1">    sos run mixture_prior.ipynb extract_effects --cwd {data_dir} </span><span class="se">\</span>
 <span class="s1">        --analysis-units {m}/analysis_units.txt </span><span class="se">\</span>
 <span class="s1">        --datadir {m} --name {m:b} </span><span class="se">\</span>
 <span class="s1">        -c ../../midway2.yml -q midway2 -s build &amp;&gt; extract_sumstats_{m:b}.log</span>
 <span class="s1">    &#39;&#39;&#39;</span>
-<span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_cmd</span><span class="p">(</span><span class="n">path</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;mnm_sumstats/artificial_mixture_identity&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_sumstats/gtex_mixture_identity&quot;</span><span class="p">]]</span>
+<span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_cmd</span><span class="p">(</span><span class="n">path</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{data_dir}/artificial_mixture_identity&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{data_dir}/gtex_mixture_identity&quot;</span><span class="p">]]</span>
 <span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="s1">&#39;cmds&#39;</span>
 <span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span> <span class="s1">&#39;qsub&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="c1">#!/bin/bash</span>
@@ -337,6 +362,13 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Mixture-model-fitting">Mixture model fitting<a class="anchor-link" href="#Mixture-model-fitting">&#182;</a></h3>
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
@@ -345,15 +377,15 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 <div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mixture_model_2</span><span class="p">]</span>
 <span class="k">def</span> <span class="nf">get_cmd</span><span class="p">(</span><span class="n">m</span><span class="p">):</span>
     <span class="n">c1</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">    sos run mixture_prior.ipynb ud --name {m} </span><span class="se">\</span>
+<span class="s1">    sos run mixture_prior.ipynb ud --name {m} --cwd {data_dir} </span><span class="se">\</span>
 <span class="s1">        -c ../../midway2.yml -q midway2 -s build &amp;&gt; ed_{m}.log</span>
 <span class="s1">    &#39;&#39;&#39;</span>
     <span class="n">c2</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">    sos run mixture_prior.ipynb ud --ud-method teem --name {m} </span><span class="se">\</span>
+<span class="s1">    sos run mixture_prior.ipynb ud --ud-method teem --name {m} --cwd {data_dir} </span><span class="se">\</span>
 <span class="s1">        -c ../../midway2.yml -q midway2 -s build &amp;&gt; teem_{m}.log</span>
 <span class="s1">    &#39;&#39;&#39;</span>
     <span class="n">c3</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;&#39;&#39;</span>
-<span class="s1">    sos run mixture_prior.ipynb ed --name {m} </span><span class="se">\</span>
+<span class="s1">    sos run mixture_prior.ipynb ed --name {m} --cwd {data_dir} </span><span class="se">\</span>
 <span class="s1">        -c ../../midway2.yml -q midway2 -s build &amp;&gt; bovy_{m}.log</span>
 <span class="s1">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">c3</span><span class="p">]</span>
@@ -383,6 +415,28 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Mixture-model-results-visualization">Mixture model results visualization<a class="anchor-link" href="#Mixture-model-results-visualization">&#182;</a></h3>
+<pre><code>sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data ../../data/prior_simulation.rds --name artificial_mixture_50 --cwd mnm_sumstats
+sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data ../../data/prior_simulation.rds --name gtex_mixture --cwd mnm_sumstats # --to-cor
+sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data mnm_sumstats/artificial_mixture_identity.ed_bovy.rds --name "" --cwd mnm_sumstats # --to-cor
+sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data mnm_sumstats/gtex_mixture_identity.ed_bovy.rds --name "" --cwd mnm_sumstats # --to-cor
+sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data mnm_sumstats/artificial_mixture_identity.teem.rds --name "" --cwd mnm_sumstats # --to-cor
+sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data mnm_sumstats/gtex_mixture_identity.teem.rds --name "" --cwd mnm_sumstats #  --to-cor
+sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data mnm_sumstats/artificial_mixture_identity.ed.rds --name "" --cwd mnm_sumstats # --to-cor</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Get-prior-input-files-for-benchmark">Get prior input files for benchmark<a class="anchor-link" href="#Get-prior-input-files-for-benchmark">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
 <p>I then made prior data files from these results:</p>
 
 </div>
@@ -390,7 +444,7 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">priors</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;../../data/prior_simulation.rds&#39;</span><span class="p">)</span>
@@ -403,7 +457,7 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">priors</span><span class="err">$</span><span class="n">gtex_mixture</span><span class="err">$</span><span class="n">ED</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;../../dsc/mnm_prototype/output/gtex_mixture_identity.ed_bovy.rds&#39;</span><span class="p">)</span>
@@ -421,7 +475,7 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">saveRDS</span><span class="p">(</span><span class="n">priors</span><span class="p">,</span> <span class="s1">&#39;../../data/prior_simulation.rds&#39;</span><span class="p">)</span>
@@ -432,6 +486,38 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>And save the residual null z correlation estimations,</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">nullz</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+<span class="n">nullz</span><span class="err">$</span><span class="n">gtex_mixture</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;../../dsc/mnm_prototype/output/gtex_mixture_identity.rds&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">null</span><span class="o">.</span><span class="n">cor</span>
+<span class="n">nullz</span><span class="err">$</span><span class="n">artificial_mixture_50</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;../../dsc/mnm_prototype/output/artificial_mixture_identity.rds&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">null</span><span class="o">.</span><span class="n">cor</span>
+<span class="n">saveRDS</span><span class="p">(</span><span class="n">nullz</span><span class="p">,</span> <span class="s1">&#39;../../data/nullz_cor_simulation.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Run-mvSuSiE-benchmark">Run mvSuSiE benchmark<a class="anchor-link" href="#Run-mvSuSiE-benchmark">&#182;</a></h3><p>Comparison with <code>atlasqtl</code> is also included in this run</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
@@ -441,8 +527,9 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 <span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span> <span class="s1">&#39;qsub&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="c1">#!/bin/bash</span>
   
-<span class="c1">#SBATCH --time=36:00:00</span>
-<span class="c1">#SBATCH --partition=broadwl</span>
+<span class="c1">#SBATCH --time=72:00:00</span>
+<span class="c1">#SBATCH --partition=mstephens</span>
+<span class="c1">#SBATCH --account=pi-mstephens</span>
 <span class="c1">#SBATCH --nodes=1</span>
 <span class="c1">#SBATCH --ntasks-per-node=1</span>
 <span class="c1">#SBATCH --cpus-per-task=8</span>
@@ -451,13 +538,56 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 <span class="c1">#SBATCH --mail-type=BEGIN,END,FAIL</span>
 
 <span class="n">module</span> <span class="n">load</span> <span class="n">R</span>
-<span class="o">./</span><span class="n">gtex_qtl</span><span class="o">.</span><span class="n">dsc</span> <span class="o">--</span><span class="n">host</span> <span class="n">dsc_mnm</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">o</span> <span class="n">mnm_20210228</span> <span class="o">-</span><span class="n">s</span> <span class="n">existing</span> <span class="o">-</span><span class="n">e</span> <span class="n">ignore</span> <span class="o">&amp;&gt;</span> <span class="n">mnm_20210228</span><span class="o">.</span><span class="n">log</span>
+<span class="c1"># Skip error with -e ignore because atlas analysis can go wrong that i cannot control</span>
+<span class="o">./</span><span class="n">gtex_qtl</span><span class="o">.</span><span class="n">dsc</span> <span class="o">--</span><span class="n">host</span> <span class="n">dsc_mnm</span><span class="o">.</span><span class="n">yml</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">-</span><span class="n">s</span> <span class="n">existing</span> <span class="o">-</span><span class="n">e</span> <span class="n">ignore</span> <span class="o">&amp;&gt;</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span><span class="o">.</span><span class="n">log</span>
 </pre></div>
 
     </div>
 </div>
 </div>
 
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Run-mvSuSiE-benchmark-with-missing-data">Run mvSuSiE benchmark with missing data<a class="anchor-link" href="#Run-mvSuSiE-benchmark-with-missing-data">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mvSuSiE_missing</span><span class="p">]</span>
+<span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span> <span class="s1">&#39;qsub&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="c1">#!/bin/bash</span>
+  
+<span class="c1">#SBATCH --time=72:00:00</span>
+<span class="c1">#SBATCH --partition=mstephens</span>
+<span class="c1">#SBATCH --account=pi-mstephens</span>
+<span class="c1">#SBATCH --nodes=1</span>
+<span class="c1">#SBATCH --ntasks-per-node=1</span>
+<span class="c1">#SBATCH --cpus-per-task=8</span>
+<span class="c1">#SBATCH --mem-per-cpu=2000</span>
+<span class="c1">#SBATCH --job-name={step_name}</span>
+<span class="c1">#SBATCH --mail-type=BEGIN,END,FAIL</span>
+
+<span class="n">module</span> <span class="n">load</span> <span class="n">R</span>
+<span class="o">./</span><span class="n">gtex_qtl</span><span class="o">.</span><span class="n">dsc</span> <span class="o">--</span><span class="n">host</span> <span class="n">dsc_mnm</span><span class="o">.</span><span class="n">yml</span>  <span class="o">--</span><span class="n">target</span> <span class="n">missing_data</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">-</span><span class="n">s</span> <span class="n">existing</span> <span class="o">&amp;&gt;</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span><span class="o">.</span><span class="n">log</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Run-mthess-benchmark">Run mthess benchmark<a class="anchor-link" href="#Run-mthess-benchmark">&#182;</a></h3>
+</div>
+</div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
@@ -468,8 +598,9 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 <span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span> <span class="s1">&#39;qsub&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="c1">#!/bin/bash</span>
   
-<span class="c1">#SBATCH --time=36:00:00</span>
-<span class="c1">#SBATCH --partition=broadwl</span>
+<span class="c1">#SBATCH --time=72:00:00</span>
+<span class="c1">#SBATCH --partition=mstephens</span>
+<span class="c1">#SBATCH --account=pi-mstephens</span>
 <span class="c1">#SBATCH --nodes=1</span>
 <span class="c1">#SBATCH --ntasks-per-node=1</span>
 <span class="c1">#SBATCH --cpus-per-task=8</span>
@@ -478,7 +609,798 @@ sos run 20210224_MNM_Benchmark mthess</code></pre>
 <span class="c1">#SBATCH --mail-type=BEGIN,END,FAIL</span>
 
 <span class="n">module</span> <span class="n">load</span> <span class="n">R</span>
-<span class="o">./</span><span class="n">gtex_qtl</span><span class="o">.</span><span class="n">dsc</span> <span class="o">--</span><span class="n">host</span> <span class="n">dsc_mnm</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">target</span> <span class="n">mthess</span> <span class="o">-</span><span class="n">o</span> <span class="n">mthess_20210228</span> <span class="o">-</span><span class="n">s</span> <span class="n">existing</span> <span class="o">-</span><span class="n">e</span> <span class="n">ignore</span> <span class="o">--</span><span class="n">n_dataset</span> <span class="mi">200</span> <span class="o">&amp;&gt;</span> <span class="n">mthess_20210228</span><span class="o">.</span><span class="n">log</span>
+<span class="o">./</span><span class="n">gtex_qtl</span><span class="o">.</span><span class="n">dsc</span> <span class="o">--</span><span class="n">host</span> <span class="n">dsc_mnm</span><span class="o">.</span><span class="n">yml</span> <span class="o">--</span><span class="n">target</span> <span class="n">mthess</span> <span class="o">-</span><span class="n">o</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">-</span><span class="n">s</span> <span class="n">existing</span> <span class="o">-</span><span class="n">e</span> <span class="n">ignore</span> <span class="o">--</span><span class="n">n_dataset</span> <span class="mi">200</span> <span class="o">&amp;&gt;</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span><span class="o">.</span><span class="n">log</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Benchmark-results:-PIP">Benchmark results: PIP<a class="anchor-link" href="#Benchmark-results:-PIP">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For full data simulation,</p>
+
+<pre><code>ALL_METHODS="mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed atlasqtl"
+PLOT_METHODS="mnm_oracle+flash mnm_oracle+oracle mnm_ed+flash mnm_ed+oracle mnm_naive+flash mnm_identity+flash mnm_shared+flash atlasqtl"
+# condition specific PIP
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + pip_calibration" -s build \
+    --data-dir mnm_20210228 \
+    --methods $ALL_METHODS
+# can take 6hrs to get the data for curves, from all methods
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + curves" -s build \
+    --data-dir mnm_20210228 \
+    --methods $ALL_METHODS \
+    --plot-methods $PLOT_METHODS
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + curves" -s build \
+    --data-dir mnm_20210228 \
+    --methods $ALL_METHODS  \
+    --plot-methods $PLOT_METHODS \
+    --table roc --xlim 0.006
+# global PIP
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + pip_calibration" -s build \
+    --data-dir mnm_20210228 \
+    --methods $ALL_METHODS
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
+    --plot-methods $PLOT_METHODS \
+    --data-dir mnm_20210228 \
+    --methods $ALL_METHODS
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
+    --data-dir mnm_20210228 \
+    --methods $ALL_METHODS \
+    --plot-methods $PLOT_METHODS \
+    --table roc --xlim 0.006 -s build</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>For missing data simulation,</p>
+
+<pre><code>ALL_METHODS="mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed mnm_rss_oracle mnm_rss_naive_corZ mnm_rss_ed_corZ mnm_rss_identity_corZ mnm_rss_shared_corZ"
+PLOT_METHODS="mnm_oracle+flash mnm_oracle+oracle mnm_ed+flash mnm_ed+oracle mnm_naive+flash mnm_identity+flash mnm_shared+flash"
+PLOT_RSS="mnm_rss_oracle+flash mnm_rss_oracle+oracle mnm_rss_ed_corZ+flash mnm_rss_ed_corZ+oracle mnm_rss_naive_corZ+flash mnm_rss_identity_corZ+flash mnm_rss_shared_corZ+flash"
+# condition specific PIP
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + pip_calibration" -s build \
+    --data-dir mnm_missing_20210228 --simulate simulate_missing --simulate-method artificial_mixture_missing gtex_mixture_missing \
+    --methods $ALL_METHODS
+# can take 6hrs to get the data for curves, from all methods
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + curves" -s build \
+    --data-dir mnm_missing_20210228 --simulate simulate_missing --simulate-method artificial_mixture_missing gtex_mixture_missing \
+    --methods $ALL_METHODS  \
+    --plot-methods $PLOT_METHODS
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + curves" -s build \
+    --data-dir mnm_missing_20210228 --simulate simulate_missing --simulate-method artificial_mixture_missing gtex_mixture_missing \
+    --methods $ALL_METHODS   \
+    --plot-methods $PLOT_METHODS \
+    --table roc --xlim 0.006
+# global PIP
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + pip_calibration" -s build \
+    --data-dir mnm_missing_20210228 --simulate simulate_missing --simulate-method artificial_mixture_missing gtex_mixture_missing \
+    --methods $ALL_METHODS
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
+    --plot-methods $PLOT_METHODS \
+    --data-dir mnm_missing_20210228 --simulate simulate_missing --simulate-method artificial_mixture_missing gtex_mixture_missing \
+    --methods $ALL_METHODS
+sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
+    --data-dir mnm_missing_20210228 --simulate simulate_missing --simulate-method artificial_mixture_missing gtex_mixture_missing \
+    --methods $ALL_METHODS  \
+    --plot-methods $PLOT_METHODS \
+    --table roc --xlim 0.006 -s build</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Get-meta-data-information">Get meta-data information<a class="anchor-link" href="#Get-meta-data-information">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">get_pip_meta</span> <span class="p">(</span><span class="n">meta</span> <span class="n">info</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mnm_oracle&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_naive&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_identity&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_shared&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_ed&quot;</span><span class="p">,</span> <span class="s2">&quot;atlasqtl&quot;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">simulate</span> <span class="o">=</span> <span class="s1">&#39;simulate&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}/{data_dir:b}.pip_meta.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">data_dir</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">target</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;small_data.dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;${simulate}&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;method.resid_method&quot;</span><span class="p">),</span> <span class="n">module</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">files</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;${simulate}&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">),</span> <span class="n">group</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;method: ${&#39; &#39;.join(methods)}&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm:&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_missing:&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss:&quot;</span><span class="p">),</span> <span class="n">ignore</span><span class="o">.</span><span class="n">missing</span><span class="o">.</span><span class="n">file</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
+    <span class="c1"># remove bad files</span>
+    <span class="c1"># mostly from atlasqtl</span>
+    <span class="n">bad_files</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">f</span> <span class="ow">in</span> <span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="err">!</span><span class="nb">file</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;${data_dir}/&quot;</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span><span class="s1">&#39;.rds&#39;</span><span class="p">)))</span> <span class="n">bad_files</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">bad_files</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">bad_files</span><span class="p">)),]</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">method_rename</span> <span class="o">=</span> <span class="n">NA</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">method_rename</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))],</span> <span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))],</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="p">)</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">method_rename</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span>
+    <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">)[</span><span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;${simulate}&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s1">&#39;simulate&#39;</span>
+    <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">)[</span><span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">==</span> <span class="s1">&#39;${simulate}.output.file&#39;</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="s1">&#39;simulate.output.file&#39;</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Get-condition-specific-PIP">Get condition specific PIP<a class="anchor-link" href="#Get-condition-specific-PIP">&#182;</a></h3><p>For mvSuSiE we use per condition <code>1-lfsr</code> as condition specific PIP.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Extract condition specific PIP</span>
+<span class="p">[</span><span class="n">get_pip_r</span> <span class="p">(</span><span class="n">condition</span> <span class="n">specific</span> <span class="n">PIP</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">simulate_method</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;artificial_mixture&#39;</span><span class="p">,</span> <span class="s1">&#39;gtex_mixture&#39;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">subset</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="s1">&#39;simulate_method&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}/{data_dir:b}.{_simulate_method}{(&quot;.&quot; + str(subset)) if subset&gt;0 else &quot;&quot;}.pip_condition.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}&#39;</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="c1"># apply some filters</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">simulate</span> <span class="o">==</span> <span class="s2">&quot;${_simulate_method}&quot;</span><span class="p">),]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">subset</span><span class="p">}</span><span class="o">&lt;</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="err">$</span><span class="p">{</span><span class="n">subset</span><span class="p">}</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span>
+      <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">sample</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">))[</span><span class="mi">1</span><span class="p">:</span><span class="err">$</span><span class="p">{</span><span class="n">subset</span><span class="p">}],]</span>
+    <span class="p">}</span>
+    <span class="c1"># now collect matrices for each method, of two columns: pip and true_coef</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">true_coef</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">simulate</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="c1"># make it a vector</span>
+      <span class="n">true_coef</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">true_coef</span><span class="p">)</span>
+      <span class="n">method</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method_rename</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;atlasqtl&quot;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="n">pip</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">result</span><span class="err">$</span><span class="n">gam_vb_completed</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="c1"># approximate per condition PIP using condition specific 1 - lfsr</span>
+          <span class="n">pip</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">result</span><span class="err">$</span><span class="n">lfsr</span>          
+      <span class="p">}</span>
+      <span class="c1"># PIP is matrix of P (SNPs) by R (conditions); now make it a vector</span>
+      <span class="n">pip</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">pip</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="err">!</span><span class="p">(</span><span class="n">method</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">names</span><span class="p">(</span><span class="n">res</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pip</span> <span class="o">=</span> <span class="n">pip</span><span class="p">,</span> <span class="n">truth</span> <span class="o">=</span> <span class="n">true_coef</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">pip</span><span class="p">,</span> <span class="n">pip</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">truth</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">truth</span><span class="p">,</span> <span class="n">true_coef</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">%%</span><span class="mi">100</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+          <span class="k">print</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">method</span><span class="p">,</span> <span class="n">tail</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">pip</span><span class="p">)))</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">unique</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">method_rename</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]])</span>
+    <span class="p">}</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Get-global-PIP">Get global PIP<a class="anchor-link" href="#Get-global-PIP">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Extract global PIP</span>
+<span class="p">[</span><span class="n">get_pip</span> <span class="p">(</span><span class="k">global</span> <span class="n">PIP</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">simulate_method</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;artificial_mixture&#39;</span><span class="p">,</span> <span class="s1">&#39;gtex_mixture&#39;</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">subset</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+<span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="s1">&#39;simulate_method&#39;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}/{data_dir:b}.{_simulate_method}{(&quot;.&quot; + str(subset)) if subset&gt;0 else &quot;&quot;}.pip_global.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}&#39;</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="c1"># apply some filters</span>
+    <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">simulate</span> <span class="o">==</span> <span class="s2">&quot;${_simulate_method}&quot;</span><span class="p">),]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">subset</span><span class="p">}</span><span class="o">&lt;</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="err">$</span><span class="p">{</span><span class="n">subset</span><span class="p">}</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">999</span><span class="p">)</span>
+      <span class="n">meta</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">sample</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">))[</span><span class="mi">1</span><span class="p">:</span><span class="err">$</span><span class="p">{</span><span class="n">subset</span><span class="p">}],]</span>
+    <span class="p">}</span>
+    <span class="c1"># now collect matrices for each method, of two columns: pip and true_coef</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">meta</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">method</span> <span class="o">=</span> <span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method_rename</span>
+      <span class="n">true_coef</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">integer</span><span class="p">(</span><span class="n">rowSums</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">simulate</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">meta</span><span class="err">$</span><span class="n">true_coef</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;atlasqtl&quot;</span><span class="p">)</span> <span class="p">{</span>
+          <span class="c1"># use max pip cross condition for atlasqtl global PIP</span>
+          <span class="n">pip</span> <span class="o">=</span> <span class="nb">apply</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">result</span><span class="err">$</span><span class="n">gam_vb_completed</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="n">pip</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="n">i</span><span class="p">,]</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;.rds&#39;</span><span class="p">))</span><span class="err">$</span><span class="n">result</span><span class="err">$</span><span class="n">pip</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="err">!</span><span class="p">(</span><span class="n">method</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">names</span><span class="p">(</span><span class="n">res</span><span class="p">)))</span> <span class="p">{</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pip</span> <span class="o">=</span> <span class="n">pip</span><span class="p">,</span> <span class="n">truth</span> <span class="o">=</span> <span class="n">true_coef</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">pip</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">pip</span><span class="p">,</span> <span class="n">pip</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">truth</span> <span class="o">=</span> <span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$</span><span class="n">truth</span><span class="p">,</span> <span class="n">true_coef</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">i</span><span class="o">%%</span><span class="mi">100</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span> <span class="k">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">unique</span><span class="p">(</span><span class="n">meta</span><span class="err">$</span><span class="n">method_rename</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]))</span> <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">res</span><span class="p">[[</span><span class="n">method</span><span class="p">]])</span>
+    <span class="p">}</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Compile-PIP-calibration-data">Compile PIP calibration data<a class="anchor-link" href="#Compile-PIP-calibration-data">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Calibration data</span>
+<span class="p">[</span><span class="n">pip_calibration_1</span> <span class="p">(</span><span class="n">PIP</span> <span class="n">calibration</span> <span class="n">data</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">bin_size</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.calibration.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+  <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+  <span class="n">bins</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">})</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">}</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">},</span> <span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">})</span><span class="o">/</span><span class="err">$</span><span class="p">{</span><span class="n">bin_size</span><span class="p">})</span>
+  <span class="n">pip_cali</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">(</span><span class="n">NA</span><span class="p">,</span> <span class="n">nrow</span><span class="p">(</span><span class="n">bins</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">nrow</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">data_in_bin</span> <span class="o">=</span> <span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">which</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">bins</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]),]</span>
+      <span class="k">if</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">data_in_bin</span><span class="p">)))</span> <span class="p">{</span>
+          <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">data_in_bin</span><span class="p">[,</span><span class="mi">1</span><span class="p">])</span>
+          <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">i</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">data_in_bin</span><span class="p">[,</span><span class="mi">2</span><span class="p">])</span>
+          <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">i</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">nrow</span><span class="p">(</span><span class="n">data_in_bin</span><span class="p">)</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][</span><span class="n">i</span><span class="p">,]</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> 
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+      <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span> <span class="o">=</span> <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">)]</span> <span class="o">/</span> <span class="n">pip_cali</span><span class="p">[[</span><span class="n">method</span><span class="p">]][,</span><span class="mi">3</span><span class="p">]</span>
+  <span class="p">}</span>
+  <span class="n">saveRDS</span><span class="p">(</span><span class="n">pip_cali</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Plot-PIP-calibration">Plot PIP calibration<a class="anchor-link" href="#Plot-PIP-calibration">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Calibration plot</span>
+<span class="p">[</span><span class="n">pip_calibration_2</span> <span class="p">(</span><span class="n">PIP</span> <span class="n">calibration</span> <span class="n">plot</span><span class="p">)]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;cowplot&#39;</span><span class="p">),</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;convert&#39;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.png&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">cowplot</span><span class="p">)</span>
+    <span class="n">rename</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s1">&#39;mnm_oracle+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Oracle prior and residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_oracle+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Oracle prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_naive+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior oracle residual&#39;</span><span class="p">,</span> 
+                  <span class="s1">&#39;mnm_naive+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior&#39;</span><span class="p">,</span> 
+                  <span class="s1">&#39;mnm_identity+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Random effects prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_identity+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Random effects prior&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;mnm_shared+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_shared+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior&#39;</span><span class="p">,</span> <span class="n">atlasqtl</span> <span class="o">=</span> <span class="s1">&#39;atlasqtl&#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;mnm_rss_naive_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS default prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_ed_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS EB prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+oracle&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and residual&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;mnm_rss_oracle+identity&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and diag residual&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_shared_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS fixed effect prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;mnm_rss_oracle+corY&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and unit-specific residual&quot;</span><span class="p">)</span>
+    <span class="n">dot_plot</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">ggplot</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">mean_pip</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">observed_freq</span><span class="p">))</span> <span class="o">+</span> 
+          <span class="n">geom_errorbar</span><span class="p">(</span><span class="n">aes</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="n">observed_freq</span><span class="o">-</span><span class="n">se</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="n">observed_freq</span><span class="o">+</span><span class="n">se</span><span class="p">),</span> <span class="n">colour</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">size</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">width</span><span class="o">=.</span><span class="mo">01</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">geom_point</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="mi">21</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="s2">&quot;#002b36&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="c1"># 21 is filled circle</span>
+          <span class="n">xlab</span><span class="p">(</span><span class="s2">&quot;Mean PIP&quot;</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">ylab</span><span class="p">(</span><span class="s2">&quot;Observed frequency&quot;</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">coord_cartesian</span><span class="p">(</span><span class="n">ylim</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">xlim</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="o">+</span>
+          <span class="n">geom_abline</span><span class="p">(</span><span class="n">slope</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">intercept</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">colour</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span> <span class="o">+</span>
+          <span class="n">ggtitle</span><span class="p">(</span><span class="n">rename</span><span class="p">[[</span><span class="kp">name</span><span class="p">]])</span> <span class="o">+</span>
+          <span class="n">expand_limits</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span>                        <span class="c1"># Expand y range</span>
+          <span class="n">theme_cowplot</span><span class="p">()</span>
+    <span class="p">}</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kp">name</span> <span class="ow">in</span> <span class="n">sort</span><span class="p">(</span><span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">)))</span> <span class="p">{</span>
+      <span class="n">idx</span> <span class="o">=</span> <span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span>
+      <span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]][,</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]][,</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]][,</span><span class="mi">2</span><span class="p">])</span> <span class="o">/</span> <span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]][,</span><span class="mi">3</span><span class="p">])</span> <span class="o">*</span> <span class="mi">2</span>
+      <span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]]</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]])</span>
+      <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]])</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;mean_pip&quot;</span><span class="p">,</span> <span class="s2">&quot;observed_freq&quot;</span><span class="p">,</span> <span class="s2">&quot;se&quot;</span><span class="p">)</span>
+      <span class="n">pdf</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="s1">&#39;_&#39;</span> <span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+      <span class="k">print</span><span class="p">(</span><span class="n">dot_plot</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="kp">name</span><span class="p">]]))</span>
+      <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+      <span class="n">system</span><span class="p">(</span><span class="n">paste0</span><span class="p">(</span><span class="s2">&quot;convert -density 120 &quot;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="s1">&#39;_&#39;</span> <span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;.pdf&#39;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="s1">&#39;_&#39;</span> <span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="s1">&#39;.png&#39;</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">files</span> <span class="o">=</span> <span class="n">paste0</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nr</span><span class="p">},</span> <span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">idx</span><span class="p">),</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+    <span class="n">cmd</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="s1">&#39;convert +append&#39;</span><span class="p">,</span> <span class="n">paste</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">collapse</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">system</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+    <span class="n">system</span><span class="p">(</span><span class="n">paste</span><span class="p">(</span><span class="s1">&#39;rm -f&#39;</span><span class="p">,</span> <span class="n">paste</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">collapse</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">)))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Get-data-for-ROC-and-PR-curves">Get data for ROC and PR curves<a class="anchor-link" href="#Get-data-for-ROC-and-PR-curves">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Data for ROC</span>
+<span class="p">[</span><span class="n">curves_1</span> <span class="p">(</span><span class="n">Get</span> <span class="n">data</span> <span class="k">for</span> <span class="n">curves</span><span class="p">)]</span>
+<span class="n">pip_cutoff</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.curves.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
+    <span class="n">curves_data</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">cutoff</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">pip_cutoff</span><span class="p">},</span> <span class="mf">0.999</span><span class="p">),</span> <span class="n">connect_org</span> <span class="o">=</span> <span class="n">T</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="n">ttv</span> <span class="o">=</span> <span class="n">seq</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">grid</span><span class="p">)</span><span class="o">/</span><span class="n">grid</span>
+        <span class="n">ttv</span> <span class="o">=</span> <span class="n">ttv</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="n">ttv</span><span class="o">&gt;=</span><span class="n">cutoff</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&amp;</span> <span class="n">ttv</span><span class="o">&lt;=</span><span class="n">cutoff</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span>
+        <span class="n">rst1</span> <span class="o">=</span> <span class="n">t</span><span class="p">(</span><span class="n">sapply</span><span class="p">(</span><span class="n">ttv</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">c</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">d1</span><span class="p">[,</span><span class="mi">2</span><span class="p">][</span><span class="n">d1</span><span class="p">[,</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">]),</span> <span class="n">length</span><span class="p">(</span><span class="n">d1</span><span class="p">[,</span><span class="mi">2</span><span class="p">][</span><span class="n">d1</span><span class="p">[,</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">]),</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d1</span><span class="p">[,</span><span class="mi">2</span><span class="p">][</span><span class="n">d1</span><span class="p">[,</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;=</span><span class="n">x</span><span class="p">]</span><span class="o">==</span><span class="mi">0</span><span class="p">))))</span>
+        <span class="n">rst1</span> <span class="o">=</span> <span class="n">cbind</span><span class="p">(</span><span class="n">rst1</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">d1</span><span class="p">[,</span><span class="mi">2</span><span class="p">]),</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">d1</span><span class="p">[,</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="n">rst1</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">rst1</span><span class="p">)</span>
+        <span class="n">colnames</span><span class="p">(</span><span class="n">rst1</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;true_positive&#39;</span><span class="p">,</span> <span class="s1">&#39;total_positive&#39;</span><span class="p">,</span> <span class="s1">&#39;false_positive&#39;</span><span class="p">,</span> <span class="s1">&#39;total_signal&#39;</span><span class="p">,</span> <span class="s1">&#39;total_null&#39;</span><span class="p">)</span>
+        <span class="n">rst2</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">cbind</span><span class="p">(</span><span class="n">rst1</span><span class="err">$</span><span class="n">true_positive</span> <span class="o">/</span> <span class="n">rst1</span><span class="err">$</span><span class="n">total_positive</span><span class="p">,</span> <span class="n">rst1</span><span class="err">$</span><span class="n">true_positive</span> <span class="o">/</span> <span class="n">rst1</span><span class="err">$</span><span class="n">total_signal</span><span class="p">,</span>  <span class="n">ttv</span><span class="p">))</span>
+        <span class="n">rst3</span> <span class="o">=</span> <span class="k">as</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">cbind</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">rst1</span><span class="err">$</span><span class="n">false_positive</span> <span class="o">/</span> <span class="n">rst1</span><span class="err">$</span><span class="n">total_null</span><span class="p">,</span> <span class="n">rst1</span><span class="err">$</span><span class="n">true_positive</span> <span class="o">/</span> <span class="n">rst1</span><span class="err">$</span><span class="n">total_signal</span><span class="p">,</span>  <span class="n">ttv</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">connect_org</span><span class="p">)</span> <span class="p">{</span>
+            <span class="c1"># make a stair to origin</span>
+            <span class="n">rst2</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">rst2</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mf">0.995</span><span class="p">,</span> <span class="n">rst2</span><span class="p">[</span><span class="n">nrow</span><span class="p">(</span><span class="n">rst2</span><span class="p">),</span><span class="mi">1</span><span class="p">]),</span> <span class="nb">max</span><span class="p">(</span><span class="n">rst2</span><span class="p">[</span><span class="n">nrow</span><span class="p">(</span><span class="n">rst2</span><span class="p">),</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">rst2</span><span class="p">[</span><span class="n">nrow</span><span class="p">(</span><span class="n">rst2</span><span class="p">),</span><span class="mi">3</span><span class="p">]))</span>
+            <span class="n">rst2</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">rst2</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+            <span class="n">rst3</span> <span class="o">=</span> <span class="n">rbind</span><span class="p">(</span><span class="n">rst3</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="p">}</span>
+        <span class="n">colnames</span><span class="p">(</span><span class="n">rst2</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;Precision&#39;</span><span class="p">,</span> <span class="s1">&#39;Recall&#39;</span><span class="p">,</span> <span class="s1">&#39;Threshold&#39;</span><span class="p">)</span>
+        <span class="n">colnames</span><span class="p">(</span><span class="n">rst3</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;TN&#39;</span><span class="p">,</span> <span class="s1">&#39;TP&#39;</span><span class="p">,</span> <span class="s1">&#39;Threshold&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">counts</span> <span class="o">=</span> <span class="n">rst1</span><span class="p">,</span> <span class="n">pr</span> <span class="o">=</span> <span class="n">rst2</span><span class="p">,</span> <span class="n">roc</span> <span class="o">=</span> <span class="n">rst3</span><span class="p">))</span>
+    <span class="p">}</span>
+  
+    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;Compiling data for ROC/PR curves ...&quot;</span><span class="p">)</span>
+    <span class="n">curves</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">print</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+      <span class="n">curves</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span> <span class="o">=</span> <span class="n">curves_data</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]])</span>
+    <span class="p">}</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">curves</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Plot-ROC-and-PR-curves">Plot ROC and PR curves<a class="anchor-link" href="#Plot-ROC-and-PR-curves">&#182;</a></h3>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Plot for ROC</span>
+<span class="p">[</span><span class="n">curves_2</span> <span class="p">(</span><span class="n">Plot</span> <span class="n">curves</span><span class="p">)]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;scam&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">chunks</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="kn">parameter:</span> <span class="n">smooth</span> <span class="o">=</span> <span class="s1">&#39;FALSE&#39;</span>
+<span class="kn">parameter:</span> <span class="n">xlim</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="kn">parameter:</span> <span class="n">ylim</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="c1"># Only plot for certain methods</span>
+<span class="kn">parameter:</span> <span class="n">plot_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mnm_oracle+flash&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_naive+flash&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+flash&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_identity+flash&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_shared+flash&#39;</span><span class="p">]</span>
+<span class="c1"># &quot;pr&quot; or &quot;roc&quot; </span>
+<span class="kn">parameter:</span> <span class="n">table</span> <span class="o">=</span> <span class="s2">&quot;pr&quot;</span> <span class="c1"># or, `roc`</span>
+<span class="k">if</span> <span class="n">table</span> <span class="o">==</span> <span class="s2">&quot;pr&quot;</span><span class="p">:</span>
+    <span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;Precision-FDR curve&quot;</span>
+    <span class="n">ylab</span> <span class="o">=</span> <span class="s2">&quot;power&quot;</span>
+    <span class="n">xlab</span> <span class="o">=</span> <span class="s2">&quot;FDR&quot;</span>
+<span class="kn">else:</span>
+    <span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;ROC curve&quot;</span>
+    <span class="n">ylab</span> <span class="o">=</span> <span class="s2">&quot;True Positive&quot;</span>
+    <span class="n">xlab</span> <span class="o">=</span> <span class="s2">&quot;False Positive&quot;</span>
+<span class="n">opt</span> <span class="o">=</span> <span class="n">f</span><span class="s2">&quot;lwd = 2, xlim = c(0,{xlim}), ylim = c(0,{ylim})&quot;</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.{table}.pdf&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
+    <span class="n">colors</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;#A60628&#39;</span><span class="p">,</span> <span class="s1">&#39;#7A68A6&#39;</span><span class="p">,</span> <span class="s1">&#39;#348ABD&#39;</span><span class="p">,</span> <span class="s1">&#39;#467821&#39;</span><span class="p">,</span> <span class="s1">&#39;#FF0000&#39;</span><span class="p">,</span> <span class="s1">&#39;#188487&#39;</span><span class="p">,</span> <span class="s1">&#39;#E2A233&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;#A9A9A9&#39;</span><span class="p">,</span> <span class="s1">&#39;#000000&#39;</span><span class="p">,</span> <span class="s1">&#39;#FF00FF&#39;</span><span class="p">,</span> <span class="s1">&#39;#FFD700&#39;</span><span class="p">,</span> <span class="s1">&#39;#ADFF2F&#39;</span><span class="p">,</span> <span class="s1">&#39;#00FFFF&#39;</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">library</span><span class="p">(</span><span class="n">scam</span><span class="p">)</span>
+    <span class="n">create_chunks</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">splitted</span> <span class="o">=</span> <span class="n">suppressWarnings</span><span class="p">(</span><span class="n">split</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">))</span>
+      <span class="k">return</span><span class="p">(</span><span class="n">c</span><span class="p">(</span><span class="n">splitted</span><span class="p">[[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">splitted</span><span class="p">[[</span><span class="n">length</span><span class="p">(</span><span class="n">splitted</span><span class="p">)]][</span><span class="n">length</span><span class="p">(</span><span class="n">splitted</span><span class="p">[[</span><span class="n">length</span><span class="p">(</span><span class="n">splitted</span><span class="p">)]])]))</span>
+    <span class="p">}</span>
+    <span class="n">make_smooth</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">subset</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">chunks</span><span class="p">},</span> <span class="n">smooth</span> <span class="o">=</span> <span class="err">$</span><span class="p">{</span><span class="n">smooth</span><span class="p">})</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">smooth</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">if</span> <span class="p">(</span><span class="n">subset</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">subset</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+              <span class="n">x</span> <span class="o">=</span> <span class="n">create_chunks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+              <span class="n">y</span> <span class="o">=</span> <span class="n">create_chunks</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">subset</span><span class="p">)</span>
+          <span class="p">}</span>
+          <span class="n">dat</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">frame</span><span class="p">(</span><span class="n">cbind</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+          <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">)</span>
+          <span class="n">y</span><span class="o">=</span><span class="n">predict</span><span class="p">(</span><span class="n">scam</span><span class="p">(</span><span class="n">y</span> <span class="o">~</span> <span class="n">s</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bs</span> <span class="o">=</span> <span class="s2">&quot;mpi&quot;</span><span class="p">),</span> <span class="n">data</span> <span class="o">=</span> <span class="n">dat</span><span class="p">))</span>
+      <span class="p">}</span>
+      <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">add_text</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">thresholds</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">delta</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.06</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">thresholds</span> <span class="o">==</span> <span class="n">threshold</span><span class="p">)</span>
+        <span class="n">text</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">-</span> <span class="n">delta</span><span class="p">,</span> <span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">threshold</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">color</span><span class="p">,</span> <span class="n">cex</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+        <span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    <span class="p">}</span>
+    <span class="n">rename</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s1">&#39;mnm_oracle+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Oracle prior and residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_oracle+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Oracle prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_naive+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior oracle residual&#39;</span><span class="p">,</span> 
+                  <span class="s1">&#39;mnm_naive+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior&#39;</span><span class="p">,</span> 
+                  <span class="s1">&#39;mnm_identity+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Random effects prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_identity+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Random effects prior&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;mnm_shared+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_shared+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior&#39;</span><span class="p">,</span> <span class="n">atlasqtl</span> <span class="o">=</span> <span class="s1">&#39;atlasqtl&#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;mnm_rss_naive_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS default prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_ed_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS EB prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+oracle&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and residual&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;mnm_rss_oracle+identity&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and diag residual&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_shared_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS fixed effect prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;mnm_rss_oracle+corY&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and unit-specific residual&quot;</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
+    <span class="n">pdf</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">width</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">pointsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">method</span> <span class="ow">in</span> <span class="n">names</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">method</span> <span class="o">%</span><span class="ow">in</span><span class="o">%</span> <span class="n">c</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">paths</span><span class="p">(</span><span class="n">plot_methods</span><span class="p">):</span><span class="n">r</span><span class="p">,}))</span> <span class="p">{</span>
+            <span class="n">yy</span> <span class="o">=</span> <span class="n">make_smooth</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$$</span><span class="p">{</span><span class="n">table</span><span class="p">}[,</span><span class="mi">1</span><span class="p">],</span> <span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$$</span><span class="p">{</span><span class="n">table</span><span class="p">}[,</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+                <span class="n">plot</span><span class="p">(</span><span class="n">yy</span><span class="err">$</span><span class="n">x</span><span class="p">,</span> <span class="n">yy</span><span class="err">$</span><span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="s2">&quot;l&quot;</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s2">&quot;${ylab}&quot;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span><span class="s2">&quot;${xlab}&quot;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s2">&quot;${main}&quot;</span><span class="p">,</span> <span class="n">bty</span><span class="o">=</span><span class="s1">&#39;l&#39;</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">opt</span><span class="p">})</span>
+            <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+                <span class="n">lines</span><span class="p">(</span><span class="n">yy</span><span class="err">$</span><span class="n">x</span><span class="p">,</span> <span class="n">yy</span><span class="err">$</span><span class="n">y</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="err">$</span><span class="p">{</span><span class="n">opt</span><span class="p">})</span>
+            <span class="p">}</span>
+            <span class="c1">#add_text(dat[[method]]$${table}[,3], yy$x, yy$y, 0.9, colors[i])</span>
+            <span class="n">add_text</span><span class="p">(</span><span class="n">dat</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span><span class="err">$$</span><span class="p">{</span><span class="n">table</span><span class="p">}[,</span><span class="mi">3</span><span class="p">],</span> <span class="n">yy</span><span class="err">$</span><span class="n">x</span><span class="p">,</span> <span class="n">yy</span><span class="err">$</span><span class="n">y</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="n">colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">rename</span><span class="p">[[</span><span class="n">method</span><span class="p">]]</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="n">legend</span><span class="p">(</span><span class="s2">&quot;bottomright&quot;</span><span class="p">,</span> <span class="n">legend</span><span class="o">=</span><span class="n">labels</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="p">],</span> <span class="n">lty</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">cex</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Benchmark-results:-CS">Benchmark results: CS<a class="anchor-link" href="#Benchmark-results:-CS">&#182;</a></h2><p>For full data simulation,</p>
+
+<pre><code>sos run 20210224_MNM_Benchmark get_cs_summary -s build \
+    --data-dir mnm_20210228 \
+    --methods mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">get_cs_summary_1</span> <span class="p">(</span><span class="n">meta</span> <span class="n">info</span><span class="p">)]</span>
+<span class="kn">parameter:</span> <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;mnm_oracle&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_naive&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_identity&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_shared&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_ed&quot;</span><span class="p">]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}/{data_dir:b}.cs_meta.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">data_dir</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">targets</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;simulate&#39;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;method.resid_method&quot;</span><span class="p">,</span> 
+                                                      <span class="s1">&#39;score&#39;</span><span class="p">,</span> <span class="s1">&#39;score.total&#39;</span><span class="p">,</span> <span class="s1">&#39;score.valid&#39;</span><span class="p">,</span> <span class="s1">&#39;score.size&#39;</span><span class="p">,</span> 
+                                                      <span class="s1">&#39;score.purity&#39;</span><span class="p">,</span> <span class="s1">&#39;score.top&#39;</span><span class="p">,</span> <span class="s1">&#39;score.n_causal&#39;</span><span class="p">,</span> 
+                                                      <span class="s1">&#39;score.included_causal&#39;</span><span class="p">,</span> <span class="s1">&#39;score.overlap_var&#39;</span><span class="p">,</span> <span class="s1">&#39;score.overlap_cs&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;score.false_pos_cond_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;score.total_cond_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;score.size_cond_cs&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;score.purity_cond_cs&#39;</span><span class="p">,</span> <span class="s1">&#39;score.avg_diff_eff_size_percentile&#39;</span><span class="p">,</span> <span class="s1">&#39;score.cs_correlation&#39;</span><span class="p">,</span>
+                                                      <span class="s1">&#39;score.false_neg_cond_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;score.true_cond_discoveries&#39;</span><span class="p">,</span> <span class="s1">&#39;score.converged&#39;</span><span class="p">),</span>
+                                                       <span class="n">module</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">files</span> <span class="o">=</span> <span class="s2">&quot;score&quot;</span><span class="p">,</span> <span class="n">group</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;method: ${&#39; &#39;.join(methods)}&quot;</span><span class="p">,</span> <span class="s2">&quot;score: mvsusie_scores&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm:&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_missing:&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss:&quot;</span><span class="p">),</span> <span class="n">ignore</span><span class="o">.</span><span class="n">missing</span><span class="o">.</span><span class="n">file</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gaow</span><span class="o">/</span><span class="n">GIT</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">mnm_prototype</span><span class="o">/</span><span class="n">mnm_20210228</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/project2/mstephens/gaow/mvarbvs/dsc/mnm_prototype/mnm_20210228</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">get_cs_summary_2</span> <span class="p">(</span><span class="n">summarize</span> <span class="n">info</span> <span class="n">to</span> <span class="n">a</span> <span class="n">table</span><span class="p">)]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.cs_summary_raw.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">tibble</span><span class="p">::</span><span class="n">as_tibble</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
+    <span class="c1"># str(head(dat,1))</span>
+    <span class="c1"># score.size: average (median)</span>
+    <span class="c1"># score.purity: average (median)</span>
+    <span class="c1"># score.total_cond_discoveries: sum</span>
+    <span class="c1"># score.false_pos_cond_discoveries: sum</span>
+    <span class="c1"># score.false_neg_cond_discoveries: sum</span>
+    <span class="c1"># score.true_cond_discoveries: sum</span>
+    <span class="c1"># score.size_cond_cs: unlist then average</span>
+    <span class="c1"># score.purity_cond_cs: unlist then average</span>
+    <span class="c1"># Reformat data</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">rep</span><span class="p">(</span><span class="n">NA</span><span class="p">,</span> <span class="n">nrow</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
+    <span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))],</span> <span class="n">paste</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))],</span> <span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="p">),</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="p">)</span>
+    <span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">total_cond_discoveries</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">total_cond_discoveries</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">total_cond_discoveries</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_pos_cond_discoveries</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_pos_cond_discoveries</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_pos_cond_discoveries</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_neg_cond_discoveries</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_neg_cond_discoveries</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_neg_cond_discoveries</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">true_cond_discoveries</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">true_cond_discoveries</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">true_cond_discoveries</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size_cond_cs</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size_cond_cs</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size_cond_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity_cond_cs</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity_cond_cs</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity_cond_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span> 
+    <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;score.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">get_cs_summary_3</span> <span class="p">(</span><span class="n">summarize</span> <span class="k">for</span> <span class="n">plot</span> <span class="n">data</span><span class="p">)]</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}.cs_summary.rds&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="c1">###</span>
+    <span class="c1"># Global metric</span>
+    <span class="c1">###</span>
+    <span class="c1"># Global size</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">size</span><span class="o">~</span><span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">size</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">size</span><span class="err">$</span><span class="n">size</span><span class="p">),]</span>
+    <span class="c1"># Global purity</span>
+    <span class="n">purity</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">purity</span><span class="o">~</span><span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+    <span class="n">purity</span> <span class="o">=</span> <span class="n">purity</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">purity</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="p">),]</span>
+    <span class="c1"># Global power</span>
+    <span class="n">total_true_included</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">included_causal</span> <span class="o">~</span> <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">total_true</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">n_causal</span> <span class="o">~</span>  <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">cs_overlap</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">overlap_cs</span> <span class="o">~</span>  <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">snp_overlap</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">overlap_var</span> <span class="o">~</span>  <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">total_true_included</span><span class="p">,</span> <span class="n">total_true</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;simulate&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="n">cs_overlap</span><span class="p">,</span>  <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;simulate&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">power</span><span class="p">,</span> <span class="n">snp_overlap</span><span class="p">,</span>  <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;simulate&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>  
+    <span class="n">power</span><span class="err">$</span><span class="n">power</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">power</span><span class="err">$</span><span class="n">included_causal</span><span class="o">/</span><span class="n">power</span><span class="err">$</span><span class="n">n_causal</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">power</span><span class="err">$</span><span class="n">overlap_cs</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">power</span><span class="err">$</span><span class="n">overlap_cs</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">power</span><span class="err">$</span><span class="n">overlap_var</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">power</span><span class="err">$</span><span class="n">overlap_var</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">power</span> <span class="o">=</span> <span class="n">power</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">power</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">power</span><span class="err">$</span><span class="n">power</span><span class="p">),]</span>
+    <span class="c1"># Global FDR</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">valid</span> <span class="o">~</span> <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">total</span> <span class="o">~</span> <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">fdr</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">valid</span><span class="p">,</span> <span class="n">total</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;simulate&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>
+    <span class="n">fdr</span><span class="err">$</span><span class="n">fdr</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">fdr</span><span class="err">$</span><span class="n">total</span> <span class="o">-</span> <span class="n">fdr</span><span class="err">$</span><span class="n">valid</span><span class="p">)</span><span class="o">/</span><span class="n">fdr</span><span class="err">$</span><span class="n">total</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">fdr</span> <span class="o">=</span> <span class="n">fdr</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">fdr</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">fdr</span><span class="err">$</span><span class="n">fdr</span><span class="p">),]</span>
+    <span class="c1"># Percentage of CS with top SNP being causal SNP</span>
+    <span class="c1"># Not very exciting; will not show</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">top</span><span class="o">~</span><span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">valid</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">valid</span><span class="o">~</span><span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">top_rate</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">top</span><span class="p">,</span> <span class="n">valid</span><span class="p">,</span>  <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;simulate&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>
+    <span class="n">top_rate</span><span class="err">$</span><span class="n">top_prop</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">top_rate</span><span class="err">$</span><span class="n">top</span><span class="o">/</span><span class="n">top_rate</span><span class="err">$</span><span class="n">valid</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">top_rate</span> <span class="o">=</span> <span class="n">top_rate</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">top_rate</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">top_rate</span><span class="err">$</span><span class="n">top_prop</span><span class="p">),]</span>
+    <span class="c1"># convergence</span>
+    <span class="n">converged</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">converged</span><span class="o">~</span><span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+    <span class="n">converged</span> <span class="o">=</span> <span class="n">converged</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">converged</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">converged</span><span class="err">$</span><span class="n">converged</span><span class="p">),]</span>
+    <span class="c1"># CS correlation, defined as the maximum pair-wise correlation for all combinations of variables between two CSs</span>
+    <span class="n">cs_correlation</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">cs_correlation</span><span class="o">~</span><span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">mean</span><span class="p">)</span>
+    <span class="n">cs_correlation</span> <span class="o">=</span> <span class="n">cs_correlation</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">cs_correlation</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">cs_correlation</span><span class="err">$</span><span class="n">cs_correlation</span><span class="p">),]</span>    
+    <span class="c1">###</span>
+    <span class="c1"># Condition specific metric: condition specific CS are CS that are significant in a condition by lfsr &lt; some cutoff</span>
+    <span class="c1">###</span>
+    <span class="c1"># size</span>
+    <span class="n">size_cond_cs</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">size_cond_cs</span><span class="o">~</span><span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+    <span class="n">size_cond_cs</span> <span class="o">=</span> <span class="n">size_cond_cs</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">size_cond_cs</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">size_cond_cs</span><span class="err">$</span><span class="n">size_cond_cs</span><span class="p">),]</span>
+    <span class="c1"># purity</span>
+    <span class="n">purity_cond_cs</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">purity_cond_cs</span><span class="o">~</span><span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+    <span class="n">purity_cond_cs</span> <span class="o">=</span> <span class="n">purity_cond_cs</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">purity_cond_cs</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">purity_cond_cs</span><span class="err">$</span><span class="n">purity_cond_cs</span><span class="p">),]</span>
+    <span class="c1"># power and FDR</span>
+    <span class="n">TP</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">true_cond_discoveries</span> <span class="o">~</span> <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">FP</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">false_pos_cond_discoveries</span> <span class="o">~</span>  <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">FN</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">false_neg_cond_discoveries</span> <span class="o">~</span>  <span class="n">simulate</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="n">power_cond</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;simulate&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>
+    <span class="n">power_cond</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">power_cond</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;simulate&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>
+    <span class="n">power_cond</span><span class="err">$</span><span class="n">power_cond_cs</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">power_cond</span><span class="err">$</span><span class="n">true_cond_discoveries</span> <span class="o">/</span> <span class="p">(</span><span class="n">power_cond</span><span class="err">$</span><span class="n">true_cond_discoveries</span> <span class="o">+</span> <span class="n">power_cond</span><span class="err">$</span><span class="n">false_neg_cond_discoveries</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">power_cond</span><span class="err">$</span><span class="n">fdr_cond_cs</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">power_cond</span><span class="err">$</span><span class="n">false_pos_cond_discoveries</span> <span class="o">/</span> <span class="p">(</span><span class="n">power_cond</span><span class="err">$</span><span class="n">false_pos_cond_discoveries</span> <span class="o">+</span> <span class="n">power_cond</span><span class="err">$</span><span class="n">true_cond_discoveries</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">power_cond</span> <span class="o">=</span> <span class="n">power_cond</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">fdr</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">power_cond</span><span class="err">$</span><span class="n">power_cond_cs</span><span class="p">),]</span>
+    <span class="c1">###</span>
+    <span class="c1"># Consolidate into tables</span>
+    <span class="c1">###</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;simulate&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">)</span>
+    <span class="n">out_all</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">merge</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> 
+      <span class="n">purity</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">b</span><span class="p">),</span> 
+      <span class="n">power</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">b</span><span class="p">),</span> 
+      <span class="n">fdr</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">b</span><span class="p">),</span>
+      <span class="n">cs_correlation</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">b</span><span class="p">),</span>
+      <span class="n">size_cond_cs</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">b</span><span class="p">),</span>
+      <span class="n">purity_cond_cs</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">b</span><span class="p">),</span>
+      <span class="n">power_cond</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">b</span><span class="p">),</span>
+      <span class="n">converged</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">out_all</span><span class="p">[,</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;simulate&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;total&quot;</span><span class="p">,</span> <span class="s2">&quot;overlap_cs&quot;</span><span class="p">,</span> <span class="s2">&quot;size&quot;</span><span class="p">,</span> <span class="s2">&quot;purity&quot;</span><span class="p">,</span> <span class="s2">&quot;power&quot;</span><span class="p">,</span> <span class="s2">&quot;fdr&quot;</span><span class="p">,</span> <span class="s2">&quot;cs_correlation&quot;</span><span class="p">,</span> <span class="s2">&quot;size_cond_cs&quot;</span><span class="p">,</span> <span class="s2">&quot;purity_cond_cs&quot;</span><span class="p">,</span> <span class="s2">&quot;power_cond_cs&quot;</span><span class="p">,</span> <span class="s2">&quot;fdr_cond_cs&quot;</span><span class="p">,</span> <span class="s2">&quot;converged&quot;</span><span class="p">)]</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">out</span><span class="err">$</span><span class="n">simulate</span><span class="p">,</span> <span class="n">out</span><span class="err">$</span><span class="n">power</span><span class="p">),]</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">table_verbose</span><span class="o">=</span><span class="n">out_all</span><span class="p">),</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[133]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">cd</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">gaow</span><span class="o">/</span><span class="n">GIT</span><span class="o">/</span><span class="n">mvarbvs</span><span class="o">/</span><span class="n">dsc</span><span class="o">/</span><span class="n">mnm_prototype</span><span class="o">/</span><span class="n">mnm_20210228</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>/project2/mstephens/gaow/mvarbvs/dsc/mnm_prototype/mnm_20210228</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[134]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">readRDS</span><span class="p">(</span><span class="s2">&quot;mnm_20210228.cs_summary.rds&quot;</span><span class="p">)</span><span class="err">$</span><span class="n">table</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+<div class="output_html rendered_html output_subarea ">
+<table>
+<thead><tr><th></th><th scope=col>simulate</th><th scope=col>method</th><th scope=col>total</th><th scope=col>overlap_cs</th><th scope=col>size</th><th scope=col>purity</th><th scope=col>power</th><th scope=col>fdr</th><th scope=col>cs_correlation</th><th scope=col>size_cond_cs</th><th scope=col>purity_cond_cs</th><th scope=col>power_cond_cs</th><th scope=col>fdr_cond_cs</th><th scope=col>converged</th></tr></thead>
+<tbody>
+	<tr><th scope=row>8</th><td>artificial_mixture          </td><td>mnm_shared+flash_residual   </td><td> 462                        </td><td>  0                         </td><td>6.0                         </td><td>0.9907006                   </td><td>0.286                       </td><td>0.026                       </td><td>0.2120066                   </td><td>6.00                        </td><td>0.9907006                   </td><td>1.000                       </td><td>0.038                       </td><td>1                           </td></tr>
+	<tr><th scope=row>9</th><td>artificial_mixture          </td><td>mnm_shared+oracle_residual  </td><td> 575                        </td><td>  0                         </td><td>4.0                         </td><td>0.9974405                   </td><td>0.353                       </td><td>0.031                       </td><td>0.2069874                   </td><td>4.00                        </td><td>0.9974405                   </td><td>1.000                       </td><td>0.051                       </td><td>1                           </td></tr>
+	<tr><th scope=row>3</th><td>artificial_mixture          </td><td>mnm_identity+flash_residual </td><td> 933                        </td><td>  0                         </td><td>4.0                         </td><td>0.9951953                   </td><td>0.559                       </td><td>0.038                       </td><td>0.1990369                   </td><td>3.00                        </td><td>1.0000000                   </td><td>0.590                       </td><td>0.050                       </td><td>1                           </td></tr>
+	<tr><th scope=row>4</th><td>artificial_mixture          </td><td>mnm_identity+oracle_residual</td><td> 990                        </td><td>  0                         </td><td>3.5                         </td><td>1.0000000                   </td><td>0.585                       </td><td>0.047                       </td><td>0.2117467                   </td><td>2.00                        </td><td>1.0000000                   </td><td>0.584                       </td><td>0.057                       </td><td>1                           </td></tr>
+	<tr><th scope=row>5</th><td>artificial_mixture          </td><td>mnm_naive+flash_residual    </td><td>1087                        </td><td> 89                         </td><td>5.0                         </td><td>0.9941561                   </td><td>0.610                       </td><td>0.029                       </td><td>0.4177623                   </td><td>3.75                        </td><td>0.9998759                   </td><td>0.564                       </td><td>0.021                       </td><td>1                           </td></tr>
+	<tr><th scope=row>6</th><td>artificial_mixture          </td><td>mnm_naive+oracle_residual   </td><td>1134                        </td><td>100                         </td><td>4.0                         </td><td>0.9993318                   </td><td>0.622                       </td><td>0.040                       </td><td>0.4458090                   </td><td>3.00                        </td><td>1.0000000                   </td><td>0.553                       </td><td>0.027                       </td><td>1                           </td></tr>
+	<tr><th scope=row>1</th><td>artificial_mixture          </td><td>mnm_ed+flash_residual       </td><td>1094                        </td><td> 40                         </td><td>4.5                         </td><td>0.9947245                   </td><td>0.642                       </td><td>0.030                       </td><td>0.3346916                   </td><td>4.00                        </td><td>0.9967634                   </td><td>0.750                       </td><td>0.366                       </td><td>1                           </td></tr>
+	<tr><th scope=row>2</th><td>artificial_mixture          </td><td>mnm_ed+oracle_residual      </td><td>1110                        </td><td> 41                         </td><td>3.5                         </td><td>0.9999051                   </td><td>0.642                       </td><td>0.036                       </td><td>0.3380949                   </td><td>3.00                        </td><td>1.0000000                   </td><td>0.766                       </td><td>0.366                       </td><td>1                           </td></tr>
+	<tr><th scope=row>7</th><td>artificial_mixture          </td><td>mnm_oracle+oracle_residual  </td><td>1089                        </td><td>  6                         </td><td>4.0                         </td><td>0.9987990                   </td><td>0.655                       </td><td>0.024                       </td><td>0.2745498                   </td><td>2.00                        </td><td>1.0000000                   </td><td>0.615                       </td><td>0.020                       </td><td>1                           </td></tr>
+	<tr><th scope=row>17</th><td>gtex_mixture                </td><td>mnm_shared+flash_residual   </td><td> 858                        </td><td>  0                         </td><td>6.0                         </td><td>0.9852281                   </td><td>0.516                       </td><td>0.042                       </td><td>0.1910963                   </td><td>6.00                        </td><td>0.9852281                   </td><td>1.000                       </td><td>0.042                       </td><td>1                           </td></tr>
+	<tr><th scope=row>18</th><td>gtex_mixture                </td><td>mnm_shared+oracle_residual  </td><td>1046                        </td><td>  1                         </td><td>4.0                         </td><td>0.9956031                   </td><td>0.607                       </td><td>0.066                       </td><td>0.2594616                   </td><td>4.00                        </td><td>0.9956031                   </td><td>1.000                       </td><td>0.066                       </td><td>1                           </td></tr>
+	<tr><th scope=row>12</th><td>gtex_mixture                </td><td>mnm_identity+flash_residual </td><td>1138                        </td><td>  0                         </td><td>4.0                         </td><td>0.9947002                   </td><td>0.683                       </td><td>0.038                       </td><td>0.2204122                   </td><td>3.00                        </td><td>1.0000000                   </td><td>0.560                       </td><td>0.021                       </td><td>1                           </td></tr>
+	<tr><th scope=row>14</th><td>gtex_mixture                </td><td>mnm_naive+flash_residual    </td><td>1262                        </td><td>125                         </td><td>4.5                         </td><td>0.9937231                   </td><td>0.698                       </td><td>0.036                       </td><td>0.4427658                   </td><td>3.00                        </td><td>0.9973976                   </td><td>0.651                       </td><td>0.024                       </td><td>1                           </td></tr>
+	<tr><th scope=row>13</th><td>gtex_mixture                </td><td>mnm_identity+oracle_residual</td><td>1227                        </td><td>  0                         </td><td>3.0                         </td><td>0.9979030                   </td><td>0.721                       </td><td>0.054                       </td><td>0.2504265                   </td><td>2.00                        </td><td>1.0000000                   </td><td>0.586                       </td><td>0.038                       </td><td>1                           </td></tr>
+	<tr><th scope=row>15</th><td>gtex_mixture                </td><td>mnm_naive+oracle_residual   </td><td>1381                        </td><td>173                         </td><td>3.5                         </td><td>0.9975275                   </td><td>0.739                       </td><td>0.047                       </td><td>0.4796445                   </td><td>2.00                        </td><td>1.0000000                   </td><td>0.647                       </td><td>0.044                       </td><td>1                           </td></tr>
+	<tr><th scope=row>10</th><td>gtex_mixture                </td><td>mnm_ed+flash_residual       </td><td>1326                        </td><td> 40                         </td><td>4.0                         </td><td>0.9930005                   </td><td>0.776                       </td><td>0.032                       </td><td>0.3690561                   </td><td>3.00                        </td><td>0.9964978                   </td><td>0.759                       </td><td>0.024                       </td><td>1                           </td></tr>
+	<tr><th scope=row>16</th><td>gtex_mixture                </td><td>mnm_oracle+oracle_residual  </td><td>1314                        </td><td>  1                         </td><td>3.0                         </td><td>0.9994162                   </td><td>0.786                       </td><td>0.036                       </td><td>0.2892020                   </td><td>2.00                        </td><td>1.0000000                   </td><td>0.801                       </td><td>0.034                       </td><td>1                           </td></tr>
+	<tr><th scope=row>11</th><td>gtex_mixture                </td><td>mnm_ed+oracle_residual      </td><td>1401                        </td><td> 54                         </td><td>3.0                         </td><td>0.9973211                   </td><td>0.793                       </td><td>0.051                       </td><td>0.4219645                   </td><td>2.00                        </td><td>1.0000000                   </td><td>0.767                       </td><td>0.043                       </td><td>1                           </td></tr>
+</tbody>
+</table>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span>
 </pre></div>
 
     </div>
