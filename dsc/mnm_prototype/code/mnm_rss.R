@@ -41,6 +41,6 @@ m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=priorU$xUlist, we
 result = mmbr::msusie_rss(Z, LD, eigenR = ldeigen, L=L, prior_variance=m_init, residual_variance=resid_Z, 
                           compute_objective=T, estimate_residual_variance=F, 
                           estimate_prior_variance=T, estimate_prior_method='EM', 
-                          precompute_covariances=T, n_thread=n_thread, max_iter=1000)
+                          precompute_covariances=T, n_thread=n_thread, max_iter=maxiter)
 result$cs_corr = susieR:::get_cs_correlation(result, Xcorr=LD)
 

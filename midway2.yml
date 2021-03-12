@@ -35,4 +35,10 @@ hosts:
     status_cmd: squeue --job {job_id}
     submit_cmd: sbatch {job_file}
     submit_cmd_output: Submitted batch job {job_id}
+  stephenslab: 
+    based_on: hosts.midway2
+    partition: "SBATCH --partition=mstephens" 
+    account: "SBATCH --account=pi-mstephens"
+    max_running_jobs: 15
+    max_walltime: '96:00:00'
 localhost: localhost

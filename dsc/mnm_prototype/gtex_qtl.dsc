@@ -6,6 +6,7 @@
 %include modules/simulate_fixed_mix
 %include modules/mnm
 %include modules/mnm_rss
+%include modules/susie
 %include modules/score
 %include modules/mthess
 %include modules/atlasqtl
@@ -15,10 +16,10 @@ DSC:
     simulate: artificial_mixture, gtex_mixture
     simulate_missing: artificial_mixture_missing, gtex_mixture_missing
     simulate_identity: artificial_mixture_identity, gtex_mixture_identity
-    mnm: mnm_oracle, mnm_naive, mnm_ed, mnm_identity, mnm_shared
+    mnm: mnm_oracle, mnm_naive, mnm_ed, mnm_ed_max10, mnm_identity, mnm_shared
     mnm_rss: mnm_rss_oracle, mnm_rss_naive_corZ, mnm_rss_ed_corZ, mnm_rss_identity_corZ, mnm_rss_shared_corZ
   run:
-    default: small_data * simulate * (mnm * mvsusie_scores, atlasqtl) #, mthess)
+    default: small_data * simulate * (mnm * mvsusie_scores, susie * susie_scores, mnm_rss_ed_corZ * mvsusie_scores, atlasqtl) #, mthess)
     missing_data: small_data * simulate_missing * (mnm, mnm_rss) * mvsusie_scores
     simulate_only: full_data * simulate_identity # using command argument --n_dataset 20000 this should simulate 20000 data-sets and generate univariate summary stats, for learning about mixture prior using EB
     mthess: small_data * artificial_mixture_small * (mnm_oracle, mnm_naive, mnm_identity, mnm_shared, mthess, atlasqtl)

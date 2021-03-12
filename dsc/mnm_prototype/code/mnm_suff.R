@@ -20,5 +20,5 @@ result = mmbr::msusie_suff_stat(XtX, suffstats$XtY, suffstats$YtY, suffstats$N, 
                                 prior_variance=m_init, residual_variance=resid_Y, 
                                 compute_objective=TRUE, estimate_residual_variance=F, 
                                 estimate_prior_variance=T, estimate_prior_method='EM', 
-                                precompute_covariances=T, n_thread=n_thread, max_iter=1000)
+                                precompute_covariances=T, n_thread=n_thread, max_iter=maxiter)
 result$cs_corr = susieR:::get_cs_correlation(result, Xcorr=cov2cor(XtX))

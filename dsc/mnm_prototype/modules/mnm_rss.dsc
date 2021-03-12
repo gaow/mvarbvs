@@ -7,6 +7,7 @@ mnm_rss_base: misc.R + mnm_rss.R
   meta: $meta
   prior: 'oracle','identity', 'shared', 'naive', 'ED'
   L: 10
+  maxiter: 1000
   resid_method: 'oracle', 'identity', 'nullz', 'corY'
   n_thread: 4
   nullz_file: "${nullz_file}" 
