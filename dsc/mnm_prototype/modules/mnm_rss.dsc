@@ -47,3 +47,5 @@ mnm_rss_ed_corZ(mnm_rss_base):
 mnm_rss_identity_corZ(mnm_rss_base):
   prior: 'identity'
   resid_method: 'nullz'
+
+  
