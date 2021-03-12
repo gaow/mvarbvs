@@ -5,4 +5,3 @@ susie: susie.R
   L: 10
   $posterior: posterior
   $fitted: fitted
-

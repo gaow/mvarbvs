@@ -5,6 +5,7 @@ mnm_suff_base: misc.R + mnm_suff.R
   meta: $meta
   eff_mode: 'oracle','identity', 'shared', 'naive', 'ED'
   L: 10
+  maxiter: 1000
   resid_method: 'oracle', 'covY', 'diag'
   n_thread: 4
   $result: result

@@ -5,6 +5,7 @@ mnm_base: misc.R + mnm.R
   meta: $meta
   eff_mode: 'oracle','identity', 'shared', 'naive', 'ED'
   L: 10
+  maxiter: 1000
   resid_method: 'oracle', 'diag', 'flash'
   n_thread: 1
   $result: result
@@ -51,4 +52,9 @@ mnm_naive(mnm_base):
 
 mnm_ed(mnm_base):
   eff_mode: 'ED'
+  resid_method: 'oracle', 'flash'
+
+mnm_ed_max10(mnm_base):
+  eff_mode: 'ED'
+  maxiter: 10
   resid_method: 'oracle', 'flash'

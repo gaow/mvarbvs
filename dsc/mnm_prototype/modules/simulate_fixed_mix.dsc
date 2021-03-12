@@ -25,6 +25,9 @@ simulate_y_base: misc.R + regression_simulator.R + regression.R + \
               original_Y=Y, Y_sd=res$Y_sd, prior=res$prior, eff_mode = eff_mode)
   $sumstats: res$sumstats
   $suffstats: res$suff
+  # to provide input to RSS functions
+  $ld: cor(X)
+  $ldeigen: NULL
 
 artificial_mixture(simulate_y_base):
     eff_mode: "artificial_mixture_50"
@@ -33,9 +36,6 @@ artificial_mixture(simulate_y_base):
 
 artificial_mixture_missing(artificial_mixture):
     missing_Y: TRUE
-    # to provide input to RSS functions
-    $ld: cor(X)
-    $ldeigen: NULL
 
 artificial_mixture_small(simulate_y_base):
     eff_mode: "artificial_mixture_6"
@@ -47,9 +47,6 @@ artificial_mixture_small(simulate_y_base):
 artificial_mixture_small_missing(artificial_mixture):
     eff_mode: "artificial_mixture_6"
     missing_Y: TRUE, FALSE
-    # to provide input to RSS functions
-    $ld: cor(X)
-    $ldeigen: NULL
 
 gtex_mixture(simulate_y_base):
     eff_mode: "gtex_mixture"
@@ -58,9 +55,6 @@ gtex_mixture(simulate_y_base):
 
 gtex_mixture_missing(gtex_mixture):
     missing_Y: TRUE
-    # to provide input to RSS functions
-    $ld: cor(X)
-    $ldeigen: NULL
 
 # These are for simulating some data
 # to estimate empirical prior covariances
