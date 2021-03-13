@@ -30,6 +30,9 @@ artificial_mixture(simulate_y_base):
     eff_mode: "artificial_mixture_50"
     residual_mode: "var_Y"
     missing_Y: FALSE
+    # to provide input to RSS functions
+￼    $ld: cor(X)
+￼    $ldeigen: NULL
 
 artificial_mixture_missing(artificial_mixture):
     missing_Y: TRUE
@@ -49,6 +52,9 @@ gtex_mixture(simulate_y_base):
     eff_mode: "gtex_mixture"
     residual_mode: "var_Y"
     missing_Y: FALSE
+    # to provide input to RSS functions
+￼    $ld: cor(X)
+￼    $ldeigen: NULL
 
 gtex_mixture_missing(gtex_mixture):
     missing_Y: TRUE
