@@ -14,11 +14,11 @@ DSC:
   define:
     simulate: artificial_mixture_ukb, ukb_bloodcells_mixture
     mnm: mnm_oracle, mnm_naive
-    mnm_rss: mnm_rss_oracle, mnm_rss_naive, mnm_rss_ed, mnm_rss_identity, mnm_rss_shared
+    mnm_rss: mnm_rss_oracle, mnm_rss_naive, mnm_rss_ed, mnm_rss_identity, mnm_rss_shared, mnm_rss_shared_corZ, mnm_rss_naive_corZ, mnm_rss_ed_corZ, mnm_rss_identity_corZ
     mnm_suff: mnm_suff_oracle, mnm_suff_naive, mnm_suff_ed, mnm_suff_identity, mnm_suff_shared
-    susie: susie_suff, susie_rss
+    susie_uni: susie_suff, susie_rss
   run:
-    default: data_ukb * simulate * ((mnm_suff_oracle, mnm_rss) * mvsusie_scores, susie * susie_scores)
+    default: data_ukb * simulate * ((mnm_suff_oracle, mnm_suff_ed, mnm_rss) * mvsusie_scores, susie_uni * susie_scores)
     small_compare: data_ukb * artificial_mixture_small * ((mnm_suff_oracle, mnm_rss_oracle, mnm_rss_naive) * mvsusie_scores, PAINTOR)
     simulate_only: data_ukb * simulate 
     eigen: data_ukb * eigen_ld
