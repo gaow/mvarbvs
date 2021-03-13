@@ -31,7 +31,7 @@ if(prior == 'oracle'){
   }
 }
 
-if(prior == 'naive'){
+if(prior %in% c('naive', 'shared', 'identity')){
   s = max(abs(Z))^2
   priorU$xUlist = lapply(priorU$xUlist, function(U) U * s)
 }
