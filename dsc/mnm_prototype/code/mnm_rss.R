@@ -18,7 +18,6 @@ if (is.character(ld)) {
 } else {
   LD = ld
 }
-if (is.character(ldeigen)) ldeigen = readRDS(ldeigen)
 
 if(prior == 'oracle'){
   for (i in 1:length(priorU$xUlist)) {
@@ -38,7 +37,7 @@ if(prior %in% c('naive', 'shared', 'identity')){
 
 m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=priorU$xUlist, weights=priorU$pi), 
                                  null_weight=priorU$null_weight, max_mixture_len=-1)
-result = mmbr::msusie_rss(Z, LD, eigenR = ldeigen, L=L, prior_variance=m_init, residual_variance=resid_Z, 
+result = mmbr::msusie_rss(Z, LD, L=L, prior_variance=m_init, residual_variance=resid_Z, 
                           compute_objective=T, estimate_residual_variance=F, 
                           estimate_prior_variance=T, estimate_prior_method='EM', 
                           precompute_covariances=T, n_thread=n_thread, max_iter=maxiter)
