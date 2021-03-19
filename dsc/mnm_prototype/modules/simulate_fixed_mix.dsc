@@ -32,7 +32,6 @@ artificial_mixture(simulate_y_base):
     missing_Y: FALSE
     # to provide input to RSS functions
     $ld: cor(X)
-    $ldeigen: NULL
 
 artificial_mixture_missing(artificial_mixture):
     missing_Y: TRUE
@@ -54,7 +53,6 @@ gtex_mixture(simulate_y_base):
     missing_Y: FALSE
     # to provide input to RSS functions
     $ld: cor(X)
-    $ldeigen: NULL
 
 gtex_mixture_missing(gtex_mixture):
     missing_Y: TRUE

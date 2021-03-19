@@ -5,5 +5,3 @@ susie_suff: susie_suff.R
   L: 10
   $fitted: res$fitted
   $posterior: res$posterior
-  
-

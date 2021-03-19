@@ -27,7 +27,7 @@ full_data: misc.R + R(data = readRDS(dataset);
   $var_Y: var_Y
   $N: nrow(X)
 
-lite_data(full_data):
+medium_data(full_data):
   tag: "2k"
   subset: 2000
 

@@ -41,7 +41,7 @@ get_residual_correlation = function(residual, R) {
 
 # is_pve_total: the input PVE is the total PVE for all variables
 # If set to FALSE then it is per variable PVE, and total PVE for that effect is number of effect variables * the PVE.
-get_y = function(X, b, residual_corr, pve, is_pve_total=FALSE, max_pve=0.8) {
+get_y = function(X, b, residual_corr, pve, is_pve_total=TRUE, max_pve=0.8) {
     if('scaled:scale' %in% names(attributes(X)) ){
       sb = b/attr(X,"scaled:scale")
       Xsb <- X %*% sb
