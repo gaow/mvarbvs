@@ -49,4 +49,19 @@ mnm_rss_identity_corZ(mnm_rss_base):
   prior: 'identity'
   resid_method: 'nullz'
 
+mnm_rss_shared_corY(mnm_rss_base):
+  prior: 'shared'
+  resid_method: 'corY'
+
+mnm_rss_naive_corY(mnm_rss_base):
+  prior: 'naive'
+  resid_method: 'corY'
+
+mnm_rss_ed_corY(mnm_rss_base):
+  prior: 'ED'
+  resid_method: 'corY'
+
+mnm_rss_identity_corY(mnm_rss_base):
+  prior: 'identity'
+  resid_method: 'corY'
   
