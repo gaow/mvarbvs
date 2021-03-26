@@ -3,7 +3,6 @@ mnm_rss_base: misc.R + mnm_rss.R
   sumstats: $sumstats  
   suffstats: $suffstats
   ld: $ld
-  ldeigen: $ldeigen
   meta: $meta
   prior: 'oracle','identity', 'shared', 'naive', 'ED'
   L: 10

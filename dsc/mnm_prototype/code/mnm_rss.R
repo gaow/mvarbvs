@@ -12,7 +12,7 @@ if(resid_method == 'identity'){
   resid_Z = cov2cor(as.matrix(suffstats$YtY) / (suffstats$N-1))
 }
 
-# LD and ldeigen info can be provided either as R data objects or R RDS files
+# LD info can be provided either as R data objects or R RDS files
 if (is.character(ld)) {
   LD = readRDS(ld)
 } else {
