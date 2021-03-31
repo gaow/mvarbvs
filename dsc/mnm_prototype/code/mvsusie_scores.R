@@ -88,7 +88,7 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
                 condition_cs_status[e,r] = 1
               } else if (cs_significant[e,r] == 1 && !any(cs_condition %in% which(true_coef[,r] != 0))) { # FP
                 condition_cs_status[e,r] = 9
-              } else if (cs_significant[e,r] == 0 && length(which(true_coef[,r] != 0)) > 0) { # FN
+              } else if (cs_significant[e,r] == 0 && any(cs_condition %in% which(true_coef[,r] != 0))) { # FN
                 condition_cs_status[e,r] = -1
               } else { # TN
                 condition_cs_status[e,r] = 0

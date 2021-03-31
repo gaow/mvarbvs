@@ -3,6 +3,5 @@ susie_rss: susie_rss.R
   sumstats: $sumstats  
   ld: $ld
   L: 10
-  estimate_residual_variance: TRUE, FALSE
   $fitted: res$fitted
   $posterior: res$posterior
