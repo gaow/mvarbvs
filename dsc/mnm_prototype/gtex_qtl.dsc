@@ -21,7 +21,7 @@ DSC:
   run:
     default: medium_data * simulate * (mnm * mvsusie_scores, susie * susie_scores, mnm_rss_ed_corZ * mvsusie_scores, atlasqtl) #, mthess)
     missing_data: medium_data * simulate_missing * (mnm, mnm_rss) * mvsusie_scores
-    simulate_only: full_data * simulate # using command argument --n_dataset 20000 this should simulate 20000 data-sets and generate univariate summary stats, for learning about mixture prior using EB
+    simulate_only: full_data * simulate_identity # using command argument --n_dataset 20000 this should simulate 20000 data-sets and generate univariate summary stats, for learning about mixture prior using EB
     mthess: medium_data * artificial_mixture_small * (mnm_oracle, mnm_naive, mnm_identity, mnm_shared, mthess, atlasqtl)
   exec_path: code
   output: finemap_fixed_mixture
