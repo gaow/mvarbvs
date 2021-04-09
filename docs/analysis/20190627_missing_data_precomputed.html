@@ -431,7 +431,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">raw_data</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="n">raw_data</span><span class="err">$</span><span class="n">y_res</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">:::</span><span class="n">DenseData</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">raw_data</span><span class="err">$</span><span class="n">X</span><span class="p">,</span> <span class="n">raw_data</span><span class="err">$</span><span class="n">y_res</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -464,7 +464,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">prior_mats</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">create_cov_canonical</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">raw_data</span><span class="err">$</span><span class="n">y_res</span><span class="p">),</span> <span class="n">singletons</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">prior_mats</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">:::</span><span class="n">create_cov_canonical</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">raw_data</span><span class="err">$</span><span class="n">y_res</span><span class="p">),</span> <span class="n">singletons</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -599,7 +599,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">mash_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">prior_mats</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">mash_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">prior_mats</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -673,7 +673,7 @@ return code: 0</code></pre>
 <div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">mmbr_obj</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashRegression</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">raw_data</span><span class="err">$</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">mash_init</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">mvsusie_obj</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">:::</span><span class="n">MashRegression</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">raw_data</span><span class="err">$</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">mash_init</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -686,7 +686,7 @@ return code: 0</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">mmbr_obj</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">mvsusie_obj</span><span class="err">$</span><span class="n">fit</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -727,7 +727,7 @@ return code: 0</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">raw_data</span><span class="err">$</span><span class="n">X</span><span class="p">,</span><span class="n">raw_data</span><span class="err">$</span><span class="n">y_res</span><span class="p">,</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">raw_data</span><span class="err">$</span><span class="n">X</span><span class="p">,</span><span class="n">raw_data</span><span class="err">$</span><span class="n">y_res</span><span class="p">,</span>
                   <span class="n">L</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
                   <span class="n">compute_objective</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
 </pre></div>
@@ -750,7 +750,7 @@ return code: 0</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s2">&quot;mmbr_res_10.rds&quot;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s2">&quot;mvsusie_res_10.rds&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -770,7 +770,7 @@ return code: 0</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">mmbr_plot</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie_plot</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -783,7 +783,7 @@ return code: 0</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;mmbr_plot_ENSG00000145214.pdf&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;mvsusie_plot_ENSG00000145214.pdf&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">20</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="err">$</span><span class="n">plot</span><span class="p">)</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
@@ -826,7 +826,7 @@ return code: 0</code></pre>
 <div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mmbr_plot_ENSG00000145214</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mvsusie_plot_ENSG00000145214</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
     </div>

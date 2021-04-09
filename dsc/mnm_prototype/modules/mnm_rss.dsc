@@ -1,5 +1,5 @@
 mnm_rss_base: misc.R + mnm_rss.R
-  @CONF: R_libs = (mmbr@stephenslab/mmbr, flashier@willwerscheid/flashier)
+  @CONF: R_libs = (mvsusieR@stephenslab/mvsusieR, flashier@willwerscheid/flashier)
   sumstats: $sumstats  
   suffstats: $suffstats
   ld: $ld

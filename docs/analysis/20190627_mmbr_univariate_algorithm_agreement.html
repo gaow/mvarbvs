@@ -253,9 +253,9 @@ body {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">mmbr</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">mvsusieR</span><span class="p">)</span>
 <span class="nf">set.seed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
-<span class="nf">attach</span><span class="p">(</span><span class="nf">mmbr_sim1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="m">1</span><span class="p">))</span>
+<span class="nf">attach</span><span class="p">(</span><span class="nf">mvsusie_sim1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="m">1</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -287,7 +287,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
 <span class="nf">head</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">XtY</span><span class="p">)</span>
 </pre></div>
 
@@ -383,7 +383,7 @@ Loading required package: ashr
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">prior_var</span> <span class="o">=</span> <span class="m">0.2</span> <span class="o">*</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
 <span class="n">residual_var</span> <span class="o">=</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-<span class="n">m1</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="nf">SingleEffectModel</span><span class="p">(</span><span class="n">mmbr</span><span class="o">:::</span><span class="n">BayesianSimpleRegression</span><span class="p">)</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_var</span><span class="p">,</span> <span class="n">prior_var</span><span class="p">)</span>
+<span class="n">m1</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="nf">SingleEffectModel</span><span class="p">(</span><span class="n">mvsusieR</span><span class="o">:::</span><span class="n">BayesianSimpleRegression</span><span class="p">)</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_var</span><span class="p">,</span> <span class="n">prior_var</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -403,9 +403,9 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">prior_covar</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="m">0.2</span> <span class="o">*</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">prior_covar</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="m">0.2</span> <span class="o">*</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
 <span class="n">residual_covar</span> <span class="o">=</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-<span class="n">m2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="nf">SingleEffectModel</span><span class="p">(</span><span class="n">mmbr</span><span class="o">:::</span><span class="n">MashRegression</span><span class="p">)</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">prior_covar</span><span class="p">)</span>
+<span class="n">m2</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="nf">SingleEffectModel</span><span class="p">(</span><span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashRegression</span><span class="p">)</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">prior_covar</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1566,7 +1566,7 @@ Loading required package: ashr
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">residual_cov</span> <span class="o">=</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-<span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
+<span class="n">m_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
 <span class="n">B</span> <span class="o">=</span> <span class="nf">susie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
 </pre></div>
 

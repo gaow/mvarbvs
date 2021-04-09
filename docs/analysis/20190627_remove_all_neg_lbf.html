@@ -274,8 +274,8 @@ body {
 <div class="prompt input_prompt">In&nbsp;[2]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">create_mash_prior</span><span class="p">(</span><span class="n">mixture_prior</span> <span class="o">=</span> <span class="n">mixture_prior</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="n">null_weight</span><span class="p">,</span> <span class="n">max_mixture_len</span><span class="o">=</span><span class="m">-1</span><span class="p">)</span>
-<span class="n">r1</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">create_mash_prior</span><span class="p">(</span><span class="n">mixture_prior</span> <span class="o">=</span> <span class="n">mixture_prior</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="n">null_weight</span><span class="p">,</span> <span class="n">max_mixture_len</span><span class="o">=</span><span class="m">-1</span><span class="p">)</span>
+<span class="n">r1</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -724,7 +724,7 @@ B11+QNrT67kNAAAAAElFTkSuQmCC"
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">r2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span><span class="o">=</span><span class="s">&#39;simple&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">r2</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span><span class="o">=</span><span class="s">&#39;simple&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1360,7 +1360,7 @@ AACAIgh2AAAAivg/9rYKIns4/uYAAAAASUVORK5CYII="
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&quot;~/GIT/software/mmbr&quot;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&quot;~/GIT/software/mvsusieR&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1377,7 +1377,7 @@ AACAIgh2AAAAivg/9rYKIns4/uYAAAAASUVORK5CYII="
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading mmbr
+<pre>Loading mvsusieR
 </pre>
 </div>
 </div>
@@ -1391,7 +1391,7 @@ AACAIgh2AAAAivg/9rYKIns4/uYAAAAASUVORK5CYII="
 <div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">r3</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">r3</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">resid_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
 </pre></div>
 
     </div>

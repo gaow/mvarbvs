@@ -260,9 +260,9 @@ body {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mmbr&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mvsusieR&#39;</span><span class="p">)</span>
 <span class="nf">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
-<span class="n">dat</span> <span class="o">=</span> <span class="nf">mmbr_sim1</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">50</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="m">50</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="nf">mvsusie_sim1</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">50</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="m">50</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="m">2</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="m">2</span><span class="p">)</span>
 <span class="n">L</span> <span class="o">=</span> <span class="m">10</span>
 </pre></div>
 
@@ -280,7 +280,7 @@ body {
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading mmbr
+<pre>Loading mvsusieR
 
 Loading required package: mashr
 
@@ -312,7 +312,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">fit</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> 
+<div class=" highlight hl-r"><pre><span></span><span class="n">fit</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> 
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> 
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -332,7 +332,7 @@ Loading required package: ashr
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading mmbr
+<pre>Loading mvsusieR
 
 Warning message in m$get_objective(dump = TRUE):
 “Objective is not non-decreasing”
@@ -462,7 +462,7 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="https://github.com/stephenslab/mmbr/blob/9e8701d4442c400909fd343fabb4d01f293f846d/R/bayesian_multivariate_regression.R#L101">A workaround implemented here</a> avoids inverse on input prior when it is not invertable. The disadvantage here is that some quantities have to be recomputed which could otherwise be avoided using original direct inverse implementation.</p>
+<p><a href="https://github.com/stephenslab/mvsusieR/blob/9e8701d4442c400909fd343fabb4d01f293f846d/R/bayesian_multivariate_regression.R#L101">A workaround implemented here</a> avoids inverse on input prior when it is not invertable. The disadvantage here is that some quantities have to be recomputed which could otherwise be avoided using original direct inverse implementation.</p>
 
 </div>
 </div>
@@ -470,7 +470,7 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Verify-the-workaround-agrees-with-direct-method-when-prior-is-invertable">Verify the workaround agrees with direct method when prior is invertable<a class="anchor-link" href="#Verify-the-workaround-agrees-with-direct-method-when-prior-is-invertable">&#182;</a></h3><p>But before using this approach we need to establish that the result is the same as the original implementation when prior is invertable. To achieve this I use a diagonal prior matrix which is invertable. But to trigger the workaround code, I manually mess up <a href="https://github.com/stephenslab/mmbr/blob/9e8701d4442c400909fd343fabb4d01f293f846d/R/bayesian_multivariate_regression.R#L120">this line</a> to take a non-existing function for inverse, so I can run the workaround even when prior is invertable.</p>
+<h3 id="Verify-the-workaround-agrees-with-direct-method-when-prior-is-invertable">Verify the workaround agrees with direct method when prior is invertable<a class="anchor-link" href="#Verify-the-workaround-agrees-with-direct-method-when-prior-is-invertable">&#182;</a></h3><p>But before using this approach we need to establish that the result is the same as the original implementation when prior is invertable. To achieve this I use a diagonal prior matrix which is invertable. But to trigger the workaround code, I manually mess up <a href="https://github.com/stephenslab/mvsusieR/blob/9e8701d4442c400909fd343fabb4d01f293f846d/R/bayesian_multivariate_regression.R#L120">this line</a> to take a non-existing function for inverse, so I can run the workaround even when prior is invertable.</p>
 
 </div>
 </div>
@@ -494,8 +494,8 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="c1"># This is the direct inverse version</span>
-<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mmbr&#39;</span><span class="p">)</span>
-<span class="n">fit1</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> 
+<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mvsusieR&#39;</span><span class="p">)</span>
+<span class="n">fit1</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> 
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> 
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -551,8 +551,8 @@ Warning message in m$get_objective(dump = TRUE):
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="c1"># This is the indirect inverse version</span>
 <span class="c1"># after manually messed up the version for direct inverse</span>
-<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mmbr&#39;</span><span class="p">)</span>
-<span class="n">fit2</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> 
+<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mvsusieR&#39;</span><span class="p">)</span>
+<span class="n">fit2</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> 
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> 
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -615,8 +615,8 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="c1"># This is the direct inverse version</span>
-<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mmbr&#39;</span><span class="p">)</span>
-<span class="n">fit1</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">,</span> 
+<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mvsusieR&#39;</span><span class="p">)</span>
+<span class="n">fit1</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">,</span> 
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> 
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -672,8 +672,8 @@ Warning message in m$get_objective(dump = TRUE):
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="c1"># This is the indirect inverse version</span>
 <span class="c1"># after manually messed up the version for direct inverse</span>
-<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mmbr&#39;</span><span class="p">)</span>
-<span class="n">fit2</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">,</span> 
+<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mvsusieR&#39;</span><span class="p">)</span>
+<span class="n">fit2</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">,</span> 
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> 
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -743,8 +743,8 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">2</span><span class="p">,</span><span class="m">2</span><span class="p">)</span>
-<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mmbr&#39;</span><span class="p">)</span>
-<span class="n">fit3</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> 
+<span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mvsusieR&#39;</span><span class="p">)</span>
+<span class="n">fit3</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span> 
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> 
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -764,7 +764,7 @@ Warning message in m$get_objective(dump = TRUE):
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading mmbr
+<pre>Loading mvsusieR
 
 </pre>
 </div>
@@ -864,7 +864,7 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="prompt input_prompt">In&nbsp;[34]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">fit4</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">fit4</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">V</span><span class="p">,</span>
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> 
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;optim&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -988,7 +988,7 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">)</span>
-<span class="n">fit5</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> 
+<span class="n">fit5</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> 
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">precompute_covariances</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span>
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -1051,7 +1051,7 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="m">2</span><span class="p">)),</span> <span class="m">1</span><span class="p">)</span>
-<span class="n">fit6</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> 
+<span class="n">fit6</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> 
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">precompute_covariances</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span>
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -1113,9 +1113,9 @@ Warning message in m$get_objective(dump = TRUE):
 <div class="prompt input_prompt">In&nbsp;[28]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mmbr&#39;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">devtools</span><span class="o">::</span><span class="nf">load_all</span><span class="p">(</span><span class="s">&#39;~/GIT/software/mvsusieR&#39;</span><span class="p">)</span>
 <span class="n">m_init</span> <span class="o">=</span> <span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="nf">diag</span><span class="p">(</span><span class="m">2</span><span class="p">)),</span> <span class="m">1</span><span class="p">)</span>
-<span class="n">fit7</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span>
+<span class="n">fit7</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span>
               <span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span> <span class="n">precompute_covariances</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span>
               <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span> <span class="o">=</span> <span class="s">&#39;EM&#39;</span><span class="p">,</span>
               <span class="n">track_fit</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
@@ -1135,7 +1135,7 @@ Warning message in m$get_objective(dump = TRUE):
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>Loading mmbr
+<pre>Loading mvsusieR
 
 </pre>
 </div>

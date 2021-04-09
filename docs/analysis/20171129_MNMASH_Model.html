@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=analysisDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=analysisArray;
+            var docs_map=analysisArrayMap;
+            var pos=analysisArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../prototype.html">Prototype</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="M&amp;M-model-VEM-updates">M&amp;M model VEM updates<a class="anchor-link" href="#M&amp;M-model-VEM-updates">&#182;</a></h1>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[1]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">dat</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;/home/gaow/Documents/GTExV8/Thyroid.Lung.FMO2.filled.rds&#39;</span><span class="p">)</span>
+<span class="n">attach</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">get</span> <span class="n">X</span> <span class="n">Y</span> <span class="o">--</span><span class="kn">from</span> <span class="nn">R</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span><span class="o">.</span><span class="n">as_matrix</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>Loading required package: feather
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">from</span> <span class="nn">libgaow.regression_data</span> <span class="kn">import</span> <span class="n">MASH</span>
+<span class="kn">from</span> <span class="nn">libgaow.model_mash</span> <span class="kn">import</span> <span class="n">PriorMASH</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">class</span> <span class="nc">MNMASH</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">S</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">V</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mash</span> <span class="o">=</span> <span class="n">MASH</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span><span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span><span class="n">S</span><span class="o">=</span><span class="n">S</span><span class="p">,</span><span class="n">V</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span> <span class="k">if</span> <span class="n">V</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">V</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span>
+        <span class="c1"># variational parameter for the one-nonzero effect model for each l and j</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha0</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c1"># posterior mean on \beta_lj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu0</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Xr0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">elbo</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_mean_mat</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">set_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">pi</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">niter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">calc_elbo</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">niter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_calc_update</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">calc_elbo</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calc_elbo</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_calc_posterior</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_calc_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Xr0</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">X</span> <span class="err">@</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha0</span><span class="p">[</span><span class="n">l</span><span class="p">,:])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="p">[</span><span class="n">l</span><span class="p">,:,:])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">alpha0</span><span class="p">[</span><span class="n">l</span><span class="p">,:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="p">[</span><span class="n">l</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calc_single_snp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">Xr0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Xr0</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">X</span> <span class="err">@</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha0</span><span class="p">[</span><span class="n">l</span><span class="p">,:])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="p">[</span><span class="n">l</span><span class="p">,:,:])</span>
+
+    <span class="k">def</span> <span class="nf">_calc_single_snp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">reset</span><span class="p">({</span><span class="s1">&#39;Y&#39;</span><span class="p">:</span> <span class="n">R</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">get_summary_stats</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">bf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">l10bf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bf</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">bf</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">mash</span><span class="o">.</span><span class="n">post_mean_mat</span><span class="o">.</span><span class="n">T</span>  
+
+    <span class="k">def</span> <span class="nf">_calc_elbo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">_calc_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">almu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha0</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+            <span class="n">almu</span><span class="p">[</span><span class="n">l</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha0</span><span class="p">[</span><span class="n">l</span><span class="p">,:])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu0</span><span class="p">[</span><span class="n">l</span><span class="p">,:,:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_mean_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">almu</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="k">class</span> <span class="nc">ELBOMNM</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">MNMASH</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">set_prior</span><span class="p">({</span><span class="s1">&#39;identity&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> 
+                 <span class="s1">&#39;single_1&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]]),</span> 
+                 <span class="s1">&#39;single_2&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]),</span> 
+                 <span class="s1">&#39;all_in&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">))},</span> 
+                <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> 
+                <span class="p">[</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.01</span><span class="p">,</span><span class="mf">0.02</span><span class="p">,</span><span class="mf">0.02</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">niter</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">post_mean_mat</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[10]:</div>
+
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ -1.04291072e-21,  -5.58051289e-22],
+       [ -1.77377302e-15,  -1.76887967e-15],
+       [ -1.15121535e-18,  -1.15039931e-18],
+       ..., 
+       [  6.76559354e-21,   2.61296975e-21],
+       [ -1.08939477e-19,  -5.34275355e-20],
+       [  8.73588121e-21,   3.50093772e-21]])</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">post_mean_mat</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))],</span> <span class="n">model</span><span class="o">.</span><span class="n">post_mean_mat</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="kn">import</span> <span class="nn">seaborn</span> <span class="kn">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">x</span><span class="o">+</span><span class="mi">1</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">post_mean_mat</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]))],</span> <span class="n">model</span><span class="o">.</span><span class="n">post_mean_mat</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;viridis&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAYAAAAD8CAYAAAB+UHOxAAAABHNCSVQICAgIfAhkiAAAAAlwSFlz
+AAALEgAACxIB0t1+/AAAEuFJREFUeJzt3X+QH/d91/Hnq2cpVdK0SqOjsU9SpQ5CGZekcfpFSSFT
+0hYj2ZRKhQ6VW0gZymgMuBB+mMqTmXSYMgPFM/THYGpEapoOEJG2rqNJHUQTAmFIQ3SKHduyfa7i
+upXOSawkqJ50NFiS3/xxe/HXlztZuu/effdun4+Z73j3sx/t52392Nft7mf3m6pCktQ/3zDuAiRJ
+42EASFJPGQCS1FMGgCT1lAEgST1lAEhSTxkAktRTrQRAkn1JZpKcTnJ4iT7vTPJwklNJ/mcb40qS
+li+jPgiWZAJ4CrgZOAucAG6rqseH+mwGPgnsq6o/TPInquq5kQaWJI3kuhb2sQc4XVVPAyQ5CuwH
+Hh/q82PA/VX1hwBXe/DfsmVL7dixo4USJakfTp48+aWqmryavm0EwBRwZmj9LPC2BX3+FLAhyf8A
+Xgv8YlX92ivteMeOHUxPT7dQoiT1Q5I/uNq+bQTA1Y7z3cAPAJuA303yqap6amHHJIeAQwDbt29f
+pfIkqX/auAk8C2wbWt/atA07Cxyvqj+uqi8BnwC+a7GdVdWRqhpU1WBy8qrOYiRJy9BGAJwAdiXZ
+mWQjcBA4tqDPh4B3JLkuyauZu0T0RAtjS5KWaeRLQFV1KckdwHFgArivqk4lub3Zfm9VPZHkvwKP
+AC8C76uqx0YdW5K0fCNPA11Jg8GgvAksSVcvycmqGlxNX58ElqSeMgAkqacMAEnqKQNAknpqtR4E
+k6QV88BDs9x9fIZnz1/ghs2buHPvbg7cNDXusjrPAJC0pj3w0Cx33f8oFy5eBmD2/AXuuv9RAEPg
+FXgJSNKadvfxma8d/OdduHiZu4/PjKmitcMAkLSmPXv+wjW16yUGgKQ17YbNm66pXS8xACStaXfu
+3c2mDRMva9u0YYI79+4eU0VrhzeBJa1p8zd6nQV07QwASWvegZumPOAvg5eAJKmnDABJ6ikDQJJ6
+ygCQpJ4yACSppwwASeopA0CSesoAkKSeMgAkqadaCYAk+5LMJDmd5PAi29+Z5I+SPNx83tvGuJKk
+5Rv5VRBJJoB7gJuBs8CJJMeq6vEFXf9XVf3gqONJktrRxhnAHuB0VT1dVS8AR4H9LexXkrSC2giA
+KeDM0PrZpm2hP5vkkSQfSfKdLYwrSRrBar0N9DPA9qr6apJbgQeAXYt1THIIOASwffv2VSpPkvqn
+jTOAWWDb0PrWpu1rqur5qvpqs/wgsCHJlsV2VlVHqmpQVYPJyckWypMkLaaNADgB7EqyM8lG4CBw
+bLhDkjckSbO8pxn3yy2MLUlappEvAVXVpSR3AMeBCeC+qjqV5PZm+73AjwB/J8kl4AJwsKpq1LEl
+ScuXLh+HB4NBTU9Pj7sMSVozkpysqsHV9PVJYEnqKQNAknrKAJCknjIAJKmnDABJ6ikDQJJ6ygCQ
+pJ4yACSppwwASeopA0CSesoAkKSeMgAkqacMAEnqKQNAknrKAJCknjIAJKmnDABJ6ikDQJJ6ygCQ
+pJ4yACSppwwASeopA0CSeqqVAEiyL8lMktNJDl+h359JcinJj7QxriRp+UYOgCQTwD3ALcCNwG1J
+blyi388B/23UMSVJo2vjDGAPcLqqnq6qF4CjwP5F+v0U8JvAcy2MKUkaURsBMAWcGVo/27R9TZIp
+4IeBX25hPElSC1brJvAvAD9dVS++Usckh5JMJ5k+d+7cKpQmSf10XQv7mAW2Da1vbdqGDYCjSQC2
+ALcmuVRVDyzcWVUdAY4ADAaDaqE+SdIi2giAE8CuJDuZO/AfBH5suENV7ZxfTvKrwIcXO/hLklbP
+yAFQVZeS3AEcByaA+6rqVJLbm+33jjqGJKl9bZwBUFUPAg8uaFv0wF9Vf7ONMSVJo/FJYEnqKQNA
+knrKAJCknjIAJKmnDABJ6ikDQJJ6ygCQpJ4yACSppwwASeopA0CSesoAkKSeMgAkqacMAEnqKQNA
+knrKAJCknjIAJKmnDABJ6ikDQJJ6ygCQpJ4yACSppwwASeqpVgIgyb4kM0lOJzm8yPb9SR5J8nCS
+6STvaGNcSdLyXTfqDpJMAPcANwNngRNJjlXV40PdPgYcq6pK8mbgg8AbRx1bkrR8bZwB7AFOV9XT
+VfUCcBTYP9yhqr5aVdWsvgYoJElj1UYATAFnhtbPNm0vk+SHkzwJ/Dbwt1oYV5I0glW7CVxVv1VV
+bwQOAD+7VL8kh5r7BNPnzp1brfIkqXfaCIBZYNvQ+tambVFV9QngO5JsWWL7kaoaVNVgcnKyhfIk
+SYtpIwBOALuS7EyyETgIHBvukORPJkmz/FbgVcCXWxhbkrRMI88CqqpLSe4AjgMTwH1VdSrJ7c32
+e4G/CrwryUXgAvCjQzeFJUljkC4fhweDQU1PT4+7DElaM5KcrKrB1fT1SWBJ6ikDQJJ6ygCQpJ4y
+ACSppwwASeopA0CSesoAkKSeMgAkqacMAEnqKQNAknrKAJCknjIAJKmnDABJ6ikDQJJ6ygCQpJ4y
+ACSppwwASeopA0CSesoAkKSeMgAkqacMAEnqKQNAknqqlQBIsi/JTJLTSQ4vsv3HkzyS5NEkn0zy
+XW2MK0lavpEDIMkEcA9wC3AjcFuSGxd0+33gz1fVm4CfBY6MOq4kaTRtnAHsAU5X1dNV9QJwFNg/
+3KGqPllV/7dZ/RSwtYVxJUkjaCMApoAzQ+tnm7al/CTwkaU2JjmUZDrJ9Llz51ooT5K0mFW9CZzk
++5gLgJ9eqk9VHamqQVUNJicnV684SeqZ61rYxyywbWh9a9P2MkneDLwPuKWqvtzCuJKkEbRxBnAC
+2JVkZ5KNwEHg2HCHJNuB+4G/UVVPtTCmJGlEI58BVNWlJHcAx4EJ4L6qOpXk9mb7vcB7gdcD/zYJ
+wKWqGow6tiRp+VJV465hSYPBoKanp8ddhiStGUlOXu0P2D4JLEk9ZQBIUk8ZAJLUUwaAJPWUASBJ
+PWUASFJPGQCS1FMGgCT1lAEgST1lAEhSTxkAktRTBoAk9ZQBIEk9ZQBIUk8ZAJLUUwaAJPWUASBJ
+PWUASFJPGQCS1FMGgCT1lAEgST3VSgAk2ZdkJsnpJIcX2f7GJL+b5P8l+SdtjClJGs11o+4gyQRw
+D3AzcBY4keRYVT0+1O0rwN8HDow6niSpHW2cAewBTlfV01X1AnAU2D/coaqeq6oTwMUWxpMktaCN
+AJgCzgytn23aJEkd1rmbwEkOJZlOMn3u3LlxlyNJ61YbATALbBta39q0LUtVHamqQVUNJicnRy5O
+krS4NgLgBLAryc4kG4GDwLEW9itJWkEjzwKqqktJ7gCOAxPAfVV1KsntzfZ7k7wBmAa+GXgxybuB
+G6vq+VHHlyQtz8gBAFBVDwIPLmi7d2j5C8xdGpIkdUTnbgJLklaHASBJPWUASFJPGQCS1FMGgCT1
+VCuzgLQ+PfDQLHcfn+HZ8xe4YfMm7ty7mwM3+ZYPab0wALSoBx6a5a77H+XCxcsAzJ6/wF33Pwpg
+CEjrhJeAtKi7j8987eA/78LFy9x9fGZMFUlqmwGgRT17/sI1tUtaewwALeqGzZuuqV3S2mMAaFF3
+7t3Npg0TL2vbtGGCO/fuHlNFktrmTWAtav5Gr7OApPXLANCSDtw05QFfWscMAOka+XyE1gsDQLoG
+Ph+h9cSbwNI1WOr5iH/4Xx7mgYeW/U2o0lgYANI1mF3iOYgC/vGvf9YQ0JpiAEgtufxi+aS01hQD
+QGqRT0prLfEmsDRkfobP7PkLTCRcrmKqmelzNXxSWmuJASA1Fs7wuVwFvDTT5+LlF6/46ye+IT4p
+rTWllUtASfYlmUlyOsnhRbYnyS812x9J8tY2xpXatNgMn3kXLl7m0ot1xV//zd/oz1NaW1J15b/U
+r7iDZAJ4CrgZOAucAG6rqseH+twK/BRwK/A24Ber6m2vtO/BYFDT09PXVM+Ow799Tf0lqcue+Zd/
+6Zr6JzlZVYOr6dvGGcAe4HRVPV1VLwBHgf0L+uwHfq3mfArYnOT6FsZ+GQ/+ktablTyutREAU8CZ
+ofWzTdu19pEkraLOTQNNcijJdJLpc+fOjbscSVq32giAWWDb0PrWpu1a+wBQVUeqalBVg8nJyRbK
+kyQtpo0AOAHsSrIzyUbgIHBsQZ9jwLua2UBvB/6oqj7fwtiSpGUaOQCq6hJwB3AceAL4YFWdSnJ7
+ktubbg8CTwOngX8P/N1Rx13Mtd4tl6SuW8nj2sjTQFfScqaBSl2z8AGzea979QZ+5i9/p6+RVqtW
+exqopCtY6gGzV2+8zoO/xsoAkFbYUi+I88VxGjcDQFphS70gzhfHadwMAGmFfd8bF5/OvOP1BoDG
+ywCQVtjHn1z8gcZPfu4rfoOYxsoAkFbYUtf6C/wGMY2VASCtsCtd6/dGsMbJAJBW2J17d5Mltnkj
+WONkAEgr7MBNU/z427d/XQhs2jDhN4hprAwAaRX88wNv4ud/9C1Mbd5EgKnNm/gXf+VNPgimsTIA
+pFUw/2Xzz56/wA3Nl8x78Ne4+SWm0gpb+C6g+S+ZBwwBjZVnANIKW+xdQBcuXnYKqMbOAJBW2OwS
+Uz2XapdWiwEgrbCJLD4JdKl2abUYANIKu7zEd24s1S6tFgNAWmFTSzzstVS7tFoMAGmF3bl3N5s2
+TLyszYfA1AVOA5VW2PxUT58DUNcYANIqOHDTlAd8dY6XgCSppwwASeqpkQIgybcm+Z0kv9f893VL
+9LsvyXNJHhtlPElSe0Y9AzgMfKyqdgEfa9YX86vAvhHHkiS1aNQA2A+8v1l+P3BgsU5V9QngKyOO
+JUlq0agB8G1V9flm+QvAt424P0nSKnnFaaBJPgq8YZFN7xleqapKMvKz7UkOAYcAtm/fPuruJElL
+eMUAqKq/sNS2JF9Mcn1VfT7J9cBzoxZUVUeAIwCDwcCXpUjSChn1EtAx4Cea5Z8APjTi/iRJqyQ1
+whsJk7we+CCwHfgD4K9V1VeS3AC8r6pubfp9AHgnsAX4IvAzVfUrV7H/c81+l2ML8KVl/trV0PX6
+wBrb0PX6wBrb0KX6vr2qJq+m40gB0GVJpqtqMO46ltL1+sAa29D1+sAa29D1+pbik8CS1FMGgCT1
+1HoOgCPjLuAVdL0+sMY2dL0+sMY2dL2+Ra3bewCSpCtbz2cAkqQrWHcBkGRfkpkkp5Ms9XK6lRr7
+6956eqU3pia5q6lzJsneofbvTvJos+2XkqSl+rYl+XiSx5OcSvIPOljjNyb5dJLPNjX+s67V2Ox7
+IslDST7c0fqeafb9cJLpjta4OclvJHkyyRNJvqcrNSbZ3fzezX+eT/LurtTXmqpaNx9gAvgc8B3A
+RuCzwI2rOP73Am8FHhtq+1fA4Wb5MPBzzfKNTX2vAnY2dU802z4NvB0I8BHglpbqux54a7P8WuCp
+po4u1Rjgm5rlDcD/acbpTI3Nvv8R8J+BD3ftz7nZ9zPAlgVtXavx/cDfbpY3Apu7VmOz/wnm3nX2
+7V2sb6T/t3EX0PIf1PcAx4fW7wLuWuUadvDyAJgBrm+WrwdmFqsNON7Ufz3w5FD7bcC/W6FaPwTc
+3NUagVcDnwHe1qUaga3Mvf78+3kpADpTX7O/Z/j6AOhMjcC3AL9Pcx+yizUO7fMvAv+7q/WN8llv
+l4CmgDND62ebtnFa6o2pS9U61SwvbG9Vkh3ATcz9hN2pGpvLKw8z926p36mqrtX4C8A/BV4cautS
+fQAFfDTJycy9YLFrNe4EzgH/obmU9r4kr+lYjfMOAh9olrtY37KttwDotJr7EWDs066SfBPwm8C7
+q+r54W1dqLGqLlfVW5j7SXtPkj+9YPvYakzyg8BzVXVyqT5d+D0E3tH8Ht4C/L0k3zu8sQM1Xsfc
+5dJfrqqbgD9mwRdKdaBGkmwEfgj49YXbulDfqNZbAMwC24bWtzZt4/TFzL0plbz8jalL1TrbLC9s
+b0WSDcwd/P9TVd3fxRrnVdV54OPMfZtcV2r8c8APJXkGOAp8f5L/2KH6AKiq2ea/zwG/BezpWI1n
+gbPN2R3AbzAXCF2qEeYC9DNV9cVmvWv1jWS9BcAJYFeSnU1yH2TujaXjtNQbU48BB5O8KslOYBfw
+6eb08vkkb29mC7yLlt6y2uzvV4Anqupfd7TGySSbm+VNzN2jeLIrNVbVXVW1tap2MPf3679X1V/v
+Sn0ASV6T5LXzy8xdw36sSzVW1ReAM0l2N00/ADzepRobt/HS5Z/5OrpU32jGfROi7Q9wK3OzWz4H
+vGeVx/4A8HngInM/4fwk8Hrmbhj+HvBR4FuH+r+nqXOGoZkBwIC5f7CfA/4NC26UjVDfO5g7ZX0E
+eLj53NqxGt8MPNTU+Bjw3qa9MzUO7f+dvHQTuDP1MTcL7rPN59T8v4Mu1djs+y3AdPNn/QDwui7V
+CLwG+DLwLUNtnamvjY9PAktST623S0CSpKtkAEhSTxkAktRTBoAk9ZQBIEk9ZQBIUk8ZAJLUUwaA
+JPXU/we5GLTjJKcRJQAAAABJRU5ErkJggg==
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>

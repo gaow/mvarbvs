@@ -243,7 +243,7 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Comparing-multivariate-MASH-analysis-using-diagonal-priors-with-univariate-computations">Comparing multivariate MASH analysis using diagonal priors with univariate computations<a class="anchor-link" href="#Comparing-multivariate-MASH-analysis-using-diagonal-priors-with-univariate-computations">&#182;</a></h1><p>This is to verify that the mmbr implementation is correct for the truthly multivariate computations. Previously I have only compared it for the degenerated case where the prior matrix is 1 by 1.</p>
+<h1 id="Comparing-multivariate-MASH-analysis-using-diagonal-priors-with-univariate-computations">Comparing multivariate MASH analysis using diagonal priors with univariate computations<a class="anchor-link" href="#Comparing-multivariate-MASH-analysis-using-diagonal-priors-with-univariate-computations">&#182;</a></h1><p>This is to verify that the mvsusieR implementation is correct for the truthly multivariate computations. Previously I have only compared it for the degenerated case where the prior matrix is 1 by 1.</p>
 
 </div>
 </div>
@@ -478,7 +478,7 @@ body {
 <div class=" highlight hl-r"><pre><span></span><span class="n">prior_var</span> <span class="o">=</span> <span class="nf">diag</span><span class="p">(</span><span class="m">0.2</span> <span class="o">*</span> <span class="nf">c</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y1</span><span class="p">),</span> <span class="nf">var</span><span class="p">(</span><span class="n">y2</span><span class="p">)))</span>
 <span class="n">residual_var</span> <span class="o">=</span> <span class="nf">diag</span><span class="p">(</span><span class="nf">c</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y1</span><span class="p">),</span> <span class="nf">var</span><span class="p">(</span><span class="n">y2</span><span class="p">)))</span>
 <span class="n">y</span> <span class="o">=</span> <span class="nf">cbind</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="n">y2</span><span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -491,7 +491,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">prior_covar</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">prior_var</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">prior_covar</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">prior_var</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -504,7 +504,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="m">10</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">prior_covar</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">m</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="m">10</span><span class="p">,</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">prior_covar</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -560,7 +560,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">mmbr</span><span class="o">::</span><span class="nf">mmbr_get_cs_lfsr</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie_get_cs_lfsr</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -614,7 +614,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">pip_cond</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="nf">mmbr_get_pip_per_condition</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">prior_covar</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">pip_cond</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="nf">mvsusie_get_pip_per_condition</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">prior_covar</span><span class="p">)</span>
 </pre></div>
 
     </div>
