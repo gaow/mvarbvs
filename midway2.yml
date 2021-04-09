@@ -25,7 +25,6 @@ hosts:
       #SBATCH --output={job_name}.out
       #SBATCH --error={job_name}.err
       cd {cur_dir}
-      module load R
       sos execute {task} -v {verbosity} -s {sig_mode}
     kill_cmd: scancel {job_id}
     max_cores: 40
