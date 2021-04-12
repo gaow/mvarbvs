@@ -3,7 +3,7 @@ mnm_base: misc.R + mnm.R
   X: $X
   Y: $Y
   meta: $meta
-  eff_mode: 'oracle','identity', 'shared', 'naive', 'ED'
+  eff_mode: 'oracle','identity', 'shared', 'naive', 'ED', 'TEEM'
   L: 10
   maxiter: 1000
   resid_method: 'oracle', 'diag', 'flash'
@@ -52,6 +52,10 @@ mnm_naive(mnm_base):
 
 mnm_ed(mnm_base):
   eff_mode: 'ED'
+  resid_method: 'oracle', 'flash'
+  
+mnm_teem(mnm_base):
+  eff_mode: 'TEEM'
   resid_method: 'oracle', 'flash'
 
 mnm_ed_max10(mnm_base):
