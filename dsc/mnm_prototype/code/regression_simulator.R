@@ -78,7 +78,8 @@ get_prior = function(U,prior) {
         identity = list(xUlist = list(identity=diag(nrow(U[[1]]))), pi=1, null_weight=0),
         shared = list(xUlist = list(matrix(1,nrow(U[[1]]),nrow(U[[1]]))), pi=1, null_weight=0),
         naive = list(xUlist = mvsusieR:::create_cov_canonical(nrow(U[[1]]))),
-        ED = list(xUlist = prior$ED$U, pi = prior$ED$w, null_weight=0)))
+        ED = list(xUlist = prior$ED$U, pi = prior$ED$w, null_weight=0),
+        TEEM = list(xUlist = prior$TEEM$U, pi = prior$TEEM$w, null_weight=0)))
 }
 
 # main simulation function where
