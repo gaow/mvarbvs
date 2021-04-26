@@ -27,6 +27,10 @@ mnm_suff_ed(mnm_suff_base):
   eff_mode: 'ED'
   resid_method: 'oracle', 'covY'
 
+mnm_suff_ed_ddcan(mnm_suff_base):
+  eff_mode: 'ED_ddcan'
+  resid_method: 'oracle', 'covY'
+  
 mnm_suff_identity(mnm_suff_base):
   eff_mode: 'identity'
   resid_method: 'oracle', 'covY'

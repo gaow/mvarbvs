@@ -28,6 +28,10 @@ mnm_rss_ed(mnm_rss_base):
   prior: 'ED'
   resid_method: 'oracle'
 
+mnm_rss_ed_ddcan(mnm_rss_base):
+  prior: 'ED_ddcan'
+  resid_method: 'oracle'
+  
 mnm_rss_identity(mnm_rss_base):
   prior: 'identity'
   resid_method: 'oracle'
@@ -42,6 +46,10 @@ mnm_rss_naive_corZ(mnm_rss_base):
 
 mnm_rss_ed_corZ(mnm_rss_base):
   prior: 'ED'
+  resid_method: 'nullz'
+
+mnm_rss_ed_ddcan_corZ(mnm_rss_base):
+  prior: 'ED_ddcan'
   resid_method: 'nullz'
 
 mnm_rss_identity_corZ(mnm_rss_base):
@@ -60,6 +68,10 @@ mnm_rss_ed_corY(mnm_rss_base):
   prior: 'ED'
   resid_method: 'corY'
 
+mnm_rss_ed_ddcan_corY(mnm_rss_base):
+  prior: 'ED_ddcan'
+  resid_method: 'corY'
+  
 mnm_rss_identity_corY(mnm_rss_base):
   prior: 'identity'
   resid_method: 'corY'
