@@ -629,7 +629,7 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Now test the relevant <code>mmbr</code> interface:</p>
+<p>Now test the relevant <code>mvsusieR</code> interface:</p>
 
 </div>
 </div>
@@ -641,7 +641,7 @@ body {
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">simulate_multivariate</span> <span class="o">=</span> <span class="nf">function</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">100</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="m">100</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="m">2</span><span class="p">)</span> <span class="p">{</span>
   <span class="nf">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
-  <span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">mmbr_sim1</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="n">center_scale</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
+  <span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie_sim1</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="n">center_scale</span><span class="o">=</span><span class="kc">TRUE</span><span class="p">)</span>
   <span class="n">res</span><span class="o">$</span><span class="n">L</span> <span class="o">=</span> <span class="m">10</span>
   <span class="nf">return</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 <span class="p">}</span>
@@ -660,11 +660,11 @@ body {
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">prior_var</span> <span class="o">=</span> <span class="n">V[1</span><span class="p">,</span><span class="m">1</span><span class="n">]</span>
 <span class="n">residual_var</span> <span class="o">=</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">BayesianSimpleRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_var</span><span class="p">,</span> <span class="n">prior_var</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">BayesianSimpleRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_var</span><span class="p">,</span> <span class="n">prior_var</span><span class="p">)</span>
 <span class="n">A</span><span class="o">$</span><span class="nf">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">save_summary_stats</span> <span class="o">=</span> <span class="bp">T</span><span class="p">)</span>
 <span class="n">null_weight</span> <span class="o">=</span> <span class="m">0</span>
-<span class="n">mash_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span> <span class="o">-</span> <span class="n">null_weight</span><span class="p">,</span> <span class="n">null_weight</span><span class="p">)</span>
+<span class="n">mash_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="m">1</span> <span class="o">-</span> <span class="n">null_weight</span><span class="p">,</span> <span class="n">null_weight</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -710,7 +710,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">mash_init</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">B</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">mash_init</span><span class="p">)</span>
 </pre></div>
 
     </div>

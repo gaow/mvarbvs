@@ -252,7 +252,7 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="susieR-implementation-in-univariate-case"><code>susieR</code> implementation in univariate case<a class="anchor-link" href="#susieR-implementation-in-univariate-case">&#182;</a></h2><p>Here I simulate one trait and run with <code>susieR::susie</code> as well as <code>mmbr::susie</code> to check if the elbo agree.</p>
+<h2 id="susieR-implementation-in-univariate-case"><code>susieR</code> implementation in univariate case<a class="anchor-link" href="#susieR-implementation-in-univariate-case">&#182;</a></h2><p>Here I simulate one trait and run with <code>susieR::susie</code> as well as <code>mvsusieR::susie</code> to check if the elbo agree.</p>
 
 </div>
 </div>
@@ -262,7 +262,7 @@ body {
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">mmbr</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">mvsusieR</span><span class="p">)</span>
 <span class="nf">set.seed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
 </pre></div>
 
@@ -304,7 +304,7 @@ Loading required package: ashr
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">L</span> <span class="o">=</span> <span class="m">5</span>
-<span class="n">dat</span> <span class="o">=</span> <span class="nf">mmbr_sim1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="nf">mvsusie_sim1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="m">1</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -455,14 +455,14 @@ Loading required package: ashr
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Compare-mmbr's-Bayesian-multivariate-regression-module-with-SuSiE">Compare <code>mmbr</code>'s Bayesian multivariate regression module with SuSiE<a class="anchor-link" href="#Compare-mmbr's-Bayesian-multivariate-regression-module-with-SuSiE">&#182;</a></h2>
+<h2 id="Compare-mvsusieR's-Bayesian-multivariate-regression-module-with-SuSiE">Compare <code>mvsusieR</code>'s Bayesian multivariate regression module with SuSiE<a class="anchor-link" href="#Compare-mvsusieR's-Bayesian-multivariate-regression-module-with-SuSiE">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I have implemented the multiple regression <a href="https://github.com/gaow/mmbr/blob/master/R/bayesian_multiple_regression.R">in this class in <code>mmbr</code> package</a>. On the <code>mmbr</code> interface this is triggered by setting prior <code>V</code> as a scalar and make input <code>Y</code> a one column matrix,</p>
+<p>I have implemented the multiple regression <a href="https://github.com/gaow/mvsusieR/blob/master/R/bayesian_multiple_regression.R">in this class in <code>mvsusieR</code> package</a>. On the <code>mvsusieR</code> interface this is triggered by setting prior <code>V</code> as a scalar and make input <code>Y</code> a one column matrix,</p>
 
 </div>
 </div>
@@ -472,7 +472,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="m">0.2</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="m">0.2</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
 <span class="n">res</span><span class="o">$</span><span class="n">elbo</span>
 </pre></div>
 
@@ -512,7 +512,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="m">0.2</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="m">0.2</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
 <span class="n">res</span><span class="o">$</span><span class="n">elbo</span>
 </pre></div>
 
@@ -552,7 +552,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="m">0.2</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="m">0.2</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">T</span><span class="p">)</span>
 <span class="n">res</span><span class="o">$</span><span class="n">elbo</span>
 </pre></div>
 
@@ -598,14 +598,14 @@ Loading required package: ashr
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Compare-mmbr's-MASH-regression-module-with-SuSiE">Compare <code>mmbr</code>'s MASH regression module with SuSiE<a class="anchor-link" href="#Compare-mmbr's-MASH-regression-module-with-SuSiE">&#182;</a></h2>
+<h2 id="Compare-mvsusieR's-MASH-regression-module-with-SuSiE">Compare <code>mvsusieR</code>'s MASH regression module with SuSiE<a class="anchor-link" href="#Compare-mvsusieR's-MASH-regression-module-with-SuSiE">&#182;</a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here I create a degenerated <a href="https://github.com/gaow/mmbr/blob/master/R/mash_multiple_regression.R">MASH regression module implemented in <code>mmbr</code></a>. "Degenerated" means it has only one phenotype, and the prior is also a trivial one-component 1 by 1 matrix of <code>0.2 * var(Y)</code>. Here we use <code>EE</code> model in MASH (<code>alpha = 0</code>).</p>
+<p>Here I create a degenerated <a href="https://github.com/gaow/mvsusieR/blob/master/R/mash_multiple_regression.R">MASH regression module implemented in <code>mvsusieR</code></a>. "Degenerated" means it has only one phenotype, and the prior is also a trivial one-component 1 by 1 matrix of <code>0.2 * var(Y)</code>. Here we use <code>EE</code> model in MASH (<code>alpha = 0</code>).</p>
 
 </div>
 </div>
@@ -613,7 +613,7 @@ Loading required package: ashr
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>The difference in code between this and previous section in computing ELBO can be found in this function for computing the L-th KL: <a href="https://github.com/gaow/mmbr/blob/7eead885b914efcb44e97acfb26a1b81bec6ab64/R/single_effect_regression.R#L37">compute_expected_loglik_partial()</a> and this function: <a href="https://github.com/gaow/mmbr/blob/7eead885b914efcb44e97acfb26a1b81bec6ab64/R/susie_regression.R#L111">compute_objective()</a> for finalizing the ELBO. The univariate and multivariate cases are distinguished by <code>if ... else</code> statement.</p>
+<p>The difference in code between this and previous section in computing ELBO can be found in this function for computing the L-th KL: <a href="https://github.com/gaow/mvsusieR/blob/7eead885b914efcb44e97acfb26a1b81bec6ab64/R/single_effect_regression.R#L37">compute_expected_loglik_partial()</a> and this function: <a href="https://github.com/gaow/mvsusieR/blob/7eead885b914efcb44e97acfb26a1b81bec6ab64/R/susie_regression.R#L111">compute_objective()</a> for finalizing the ELBO. The univariate and multivariate cases are distinguished by <code>if ... else</code> statement.</p>
 
 </div>
 </div>
@@ -623,7 +623,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="nf">matrix</span><span class="p">(</span><span class="m">0.2</span><span class="o">*</span><span class="nf">var</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">))),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="nf">matrix</span><span class="p">(</span><span class="m">0.2</span><span class="o">*</span><span class="nf">var</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">))),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
 <span class="n">m_init</span><span class="o">$</span><span class="n">mash_prior</span>
 </pre></div>
 
@@ -676,7 +676,7 @@ UseMethod("weights")</code></pre></dd>
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -752,8 +752,8 @@ UseMethod("weights")</code></pre></dd>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
-<span class="n">dat</span> <span class="o">=</span> <span class="nf">mmbr_sim1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="m">5</span><span class="p">)</span>
-<span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="nf">mvsusie_sim1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="m">5</span><span class="p">)</span>
+<span class="n">m_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
 <span class="n">m_init</span><span class="o">$</span><span class="n">mash_prior</span>
 </pre></div>
 
@@ -810,7 +810,7 @@ UseMethod("weights")</code></pre></dd>
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -879,9 +879,9 @@ UseMethod("weights")</code></pre></dd>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">set.seed</span><span class="p">(</span><span class="m">1</span><span class="p">)</span>
-<span class="n">dat</span> <span class="o">=</span> <span class="nf">mmbr_sim1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="m">5</span><span class="p">)</span>
-<span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">::</span><span class="nf">msusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
+<span class="n">dat</span> <span class="o">=</span> <span class="nf">mvsusie_sim1</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="m">5</span><span class="p">)</span>
+<span class="n">m_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">::</span><span class="nf">mvsusie</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">X</span><span class="p">,</span><span class="n">dat</span><span class="o">$</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="bp">T</span><span class="p">,</span><span class="n">estimate_residual_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">,</span><span class="n">estimate_prior_variance</span><span class="o">=</span><span class="bp">F</span><span class="p">)</span>
 <span class="n">res</span><span class="o">$</span><span class="n">elbo</span>
 </pre></div>
 

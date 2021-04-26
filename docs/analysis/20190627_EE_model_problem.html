@@ -250,7 +250,7 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>I discovered while working on the example of <a href="https://github.com/gaow/mmbr/blob/master/inst/prototypes/two_snps_dispute.ipynb">"two SNP dispute"</a> that for Exchangable Effect (EE) model, that is, setting MASH <code>alpha=0</code>, 
+<p>I discovered while working on the example of <a href="https://github.com/gaow/mvsusieR/blob/master/inst/prototypes/two_snps_dispute.ipynb">"two SNP dispute"</a> that for Exchangable Effect (EE) model, that is, setting MASH <code>alpha=0</code>, 
 there seems convergence issues with the algorithm, for the specific simulation below. <strong>I cannot reproduce the problem with <code>alpha=1</code> or with the 2nd block having positive sign of effect size ...</strong></p>
 
 </div>
@@ -497,7 +497,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <span class="n">U2</span><span class="p">[(</span><span class="n">R</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">R</span><span class="p">,(</span><span class="n">R</span><span class="o">/</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">R</span><span class="p">]</span> <span class="o">=</span> <span class="n">sharing</span>
 <span class="n">Ulist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">U1</span><span class="o">=</span><span class="n">U1</span><span class="p">,</span> <span class="n">U2</span><span class="o">=</span><span class="n">U2</span><span class="p">)</span>
 <span class="n">scaling</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">eff_factor</span>
-<span class="n">mash_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">mash_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -527,7 +527,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="n">Sys</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span>
                   <span class="n">L</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">V</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
                   <span class="n">precompute_covariances</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span>
                   <span class="n">compute_objective</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
@@ -670,7 +670,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">mmbr_plot</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie_plot</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -701,7 +701,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;mmbr_plot_toy.pdf&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;mvsusie_plot_toy.pdf&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="err">$</span><span class="n">plot</span><span class="p">)</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
@@ -781,7 +781,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mmbr_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mvsusie_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
     </div>
@@ -799,7 +799,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> mmbr_plot_toy.pdf (5.5 KiB):</div>
+<div class="sos_hint">> mvsusie_plot_toy.pdf (5.5 KiB):</div>
 </div>
 
 </div>
@@ -956,7 +956,7 @@ there seems convergence issues with the algorithm, for the specific simulation b
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="n">Sys</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">susie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span>
                   <span class="n">L</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">V</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
                   <span class="n">s_init</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">coef_value</span> <span class="o">=</span> <span class="n">coef_value</span><span class="p">,</span> <span class="n">coef_index</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">snp1</span><span class="p">,</span> <span class="n">snp2</span><span class="p">)),</span>
                   <span class="n">precompute_covariances</span><span class="o">=</span><span class="n">FALSE</span><span class="p">,</span>

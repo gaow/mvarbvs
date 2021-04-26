@@ -243,7 +243,7 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="A-non-trivial-toy-example-for-multivariate-regression-with-mmbr">A non-trivial toy example for multivariate regression with <code>mmbr</code><a class="anchor-link" href="#A-non-trivial-toy-example-for-multivariate-regression-with-mmbr">&#182;</a></h1><p>Here I show with a toy simulation of 600 samples, 3000 variables phenotypes and 50 conditions of interest, just to see how the method works in terms of computational speed,
+<h1 id="A-non-trivial-toy-example-for-multivariate-regression-with-mvsusieR">A non-trivial toy example for multivariate regression with <code>mvsusieR</code><a class="anchor-link" href="#A-non-trivial-toy-example-for-multivariate-regression-with-mvsusieR">&#182;</a></h1><p>Here I show with a toy simulation of 600 samples, 3000 variables phenotypes and 50 conditions of interest, just to see how the method works in terms of computational speed,
 and roughly how well it works.</p>
 
 </div>
@@ -262,9 +262,9 @@ and roughly how well it works.</p>
 <div class="prompt input_prompt">In&nbsp;[1]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">mmbr</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">library</span><span class="p">(</span><span class="n">mvsusieR</span><span class="p">)</span>
 <span class="nf">set.seed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
-<span class="nf">attach</span><span class="p">(</span><span class="nf">mmbr_sim1</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">600</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="m">3000</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="m">50</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="m">1</span><span class="p">))</span>
+<span class="nf">attach</span><span class="p">(</span><span class="nf">mvsusie_sim1</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="m">600</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="m">3000</span><span class="p">,</span><span class="n">r</span><span class="o">=</span><span class="m">50</span><span class="p">,</span><span class="n">s</span><span class="o">=</span><span class="m">1</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -301,7 +301,7 @@ Loading required package: ashr
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>From the simulation we know that the number of total effect variables is about 50 (exactly 50 if there are no overlaps). Here I let <code>mmbr</code> to discover only 10 of them:</p>
+<p>From the simulation we know that the number of total effect variables is about 50 (exactly 50 if there are no overlaps). Here I let <code>mvsusieR</code> to discover only 10 of them:</p>
 
 </div>
 </div>
@@ -332,7 +332,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">m_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -354,7 +354,7 @@ Loading required package: ashr
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">start_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
-<span class="n">B</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
 <span class="n">end_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
 </pre></div>
 
@@ -911,7 +911,7 @@ sAMAAFAEwQ4AAEAR/w9ihlLJfVj3UwAAAABJRU5ErkJggg=="
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="nf">rm</span><span class="p">(</span><span class="n">list</span><span class="o">=</span><span class="nf">ls</span><span class="p">())</span>
 <span class="nf">set.seed</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
-<span class="nf">attach</span><span class="p">(</span><span class="nf">mmbr_sim1</span><span class="p">(</span><span class="m">600</span><span class="p">,</span><span class="m">3000</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
+<span class="nf">attach</span><span class="p">(</span><span class="nf">mvsusie_sim1</span><span class="p">(</span><span class="m">600</span><span class="p">,</span><span class="m">3000</span><span class="p">,</span><span class="m">4</span><span class="p">,</span><span class="m">2</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -928,7 +928,7 @@ sAMAAFAEwQ4AAEAR/w9ihlLJfVj3UwAAAABJRU5ErkJggg=="
 
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>The following objects are masked from mmbr_sim1(n = 600, p = 3000, r = 50, s = 1):
+<pre>The following objects are masked from mvsusie_sim1(n = 600, p = 3000, r = 50, s = 1):
 
     b, d, n, p, r, V, X, y
 
@@ -954,9 +954,9 @@ sAMAAFAEwQ4AAEAR/w9ihlLJfVj3UwAAAABJRU5ErkJggg=="
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">L</span> <span class="o">=</span> <span class="m">10</span>
-<span class="n">m_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
+<span class="n">m_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="n">V</span><span class="p">),</span> <span class="m">1</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="m">0</span><span class="p">)</span>
 <span class="n">start_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
-<span class="n">B</span> <span class="o">=</span> <span class="nf">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="nf">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span><span class="n">compute_objective</span><span class="o">=</span><span class="kc">FALSE</span><span class="p">)</span>
 <span class="n">end_time</span> <span class="o">&lt;-</span> <span class="nf">Sys.time</span><span class="p">()</span>
 </pre></div>
 

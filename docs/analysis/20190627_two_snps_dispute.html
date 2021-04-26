@@ -634,7 +634,7 @@ chr16:4544669-4544670</code></pre>
 <span class="n">U2</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">sharing</span>
 <span class="n">Ulist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">U1</span><span class="o">=</span><span class="n">U1</span><span class="p">,</span> <span class="n">U2</span><span class="o">=</span><span class="n">U2</span><span class="p">)</span>
 <span class="n">scaling</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">eff_factor</span>
-<span class="n">mash_init</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">mash_init</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">scaling</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -654,7 +654,7 @@ chr16:4544669-4544670</code></pre>
 <div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie</span><span class="p">(</span><span class="n">genotype</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span>
                   <span class="n">L</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">mash_init</span><span class="p">,</span>
                   <span class="n">compute_objective</span><span class="o">=</span><span class="n">FALSE</span><span class="p">)</span>
 </pre></div>
@@ -861,7 +861,7 @@ chr16:4544669-4544670</code></pre>
 <div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">mmbr_plot</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie_plot</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -892,7 +892,7 @@ chr16:4544669-4544670</code></pre>
 <div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;mmbr_plot_toy.pdf&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;mvsusie_plot_toy.pdf&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">4</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="err">$</span><span class="n">plot</span><span class="p">)</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
@@ -972,7 +972,7 @@ chr16:4544669-4544670</code></pre>
 <div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mmbr_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mvsusie_plot_toy</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
     </div>
@@ -990,7 +990,7 @@ chr16:4544669-4544670</code></pre>
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> mmbr_plot_toy.pdf (6.4 KiB):</div>
+<div class="sos_hint">> mvsusie_plot_toy.pdf (6.4 KiB):</div>
 </div>
 
 </div>
@@ -1043,7 +1043,7 @@ chr16:4544669-4544670</code></pre>
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">rownames</span><span class="p">(</span><span class="n">res</span><span class="err">$</span><span class="n">bhat</span><span class="p">)</span> <span class="o">=</span> <span class="n">snps</span>
 <span class="c1"># colnames(res$bhat) = conditions</span>
-<span class="n">p</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">mmbr_plot</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">original_sumstat</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
+<span class="n">p</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie_plot</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">original_sumstat</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1074,7 +1074,7 @@ chr16:4544669-4544670</code></pre>
 <div class="prompt input_prompt">In&nbsp;[29]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;mmbr_plot_toy_original.pdf&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mf">4.5</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">pdf</span><span class="p">(</span><span class="s1">&#39;mvsusie_plot_toy_original.pdf&#39;</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mf">4.5</span><span class="p">)</span>
 <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="err">$</span><span class="n">plot</span><span class="p">)</span>
 <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
 </pre></div>
@@ -1108,7 +1108,7 @@ chr16:4544669-4544670</code></pre>
 <div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mmbr_plot_toy_original</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="o">%</span><span class="n">preview</span> <span class="n">mvsusie_plot_toy_original</span><span class="o">.</span><span class="n">pdf</span> <span class="o">-</span><span class="n">s</span> <span class="n">png</span> <span class="o">--</span><span class="n">dpi</span> <span class="mi">150</span>
 </pre></div>
 
     </div>
@@ -1126,7 +1126,7 @@ chr16:4544669-4544670</code></pre>
 
 
 <div class="output_html rendered_html output_subarea ">
-<div class="sos_hint">> mmbr_plot_toy_original.pdf (8.8 KiB):</div>
+<div class="sos_hint">> mvsusie_plot_toy_original.pdf (8.8 KiB):</div>
 </div>
 
 </div>

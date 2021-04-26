@@ -253,10 +253,10 @@ body {
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Conclusion">Conclusion<a class="anchor-link" href="#Conclusion">&#182;</a></h2><ol>
 <li><code>atlasqtl</code> has no vignettes but has great documentation for function call <code>atlasqtl()</code>, the main function, with an example using simulated data.</li>
-<li><code>atlasqtl</code> is very fast for the scale of the problem with 50 responses; <code>mmbr</code> with naive MASH mixture in this case is a lot slower but still acceptable.</li>
-<li><code>mmbr</code> in this experiment uses naive MASH mixture that has uniform weight on &gt;700 components. It can be made a lot faster (reducing number of components) and better (improving weights) when actual MASH approach is used.</li>
+<li><code>atlasqtl</code> is very fast for the scale of the problem with 50 responses; <code>mvsusieR</code> with naive MASH mixture in this case is a lot slower but still acceptable.</li>
+<li><code>mvsusieR</code> in this experiment uses naive MASH mixture that has uniform weight on &gt;700 components. It can be made a lot faster (reducing number of components) and better (improving weights) when actual MASH approach is used.</li>
 </ol>
-<p>Apart from computing time, on this particular example <code>mmbr</code> should still win: the PIP it reports is cleaner; and additioally it has the potential to give CS which is a feature from SuSiE model. Also we now support summary statistics which is useful for application in large GWAS studies.</p>
+<p>Apart from computing time, on this particular example <code>mvsusieR</code> should still win: the PIP it reports is cleaner; and additioally it has the potential to give CS which is a feature from SuSiE model. Also we now support summary statistics which is useful for application in large GWAS studies.</p>
 
 </div>
 </div>
@@ -639,7 +639,7 @@ Optimal marginal log-likelihood variational lower bound (ELBO) = -37899.66.
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Analysis-with-mmbr">Analysis with <code>mmbr</code><a class="anchor-link" href="#Analysis-with-mmbr">&#182;</a></h1><p>Prior effect size in <code>mmbr</code> is a required input. Here I use a naive MASH mixture prior -- using canonical covariances with scaled learned from data, and uniform weights,</p>
+<h1 id="Analysis-with-mvsusieR">Analysis with <code>mvsusieR</code><a class="anchor-link" href="#Analysis-with-mvsusieR">&#182;</a></h1><p>Prior effect size in <code>mvsusieR</code> is a required input. Here I use a naive MASH mixture prior -- using canonical covariances with scaled learned from data, and uniform weights,</p>
 
 </div>
 </div>
@@ -650,7 +650,7 @@ Optimal marginal log-likelihood variational lower bound (ELBO) = -37899.66.
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="mf">1.0</span>
-<span class="n">mash_prior</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">create_mash_prior</span><span class="p">(</span><span class="n">sample_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">var</span><span class="p">(</span><span class="n">Y</span><span class="p">)),</span> <span class="n">max_mixture_len</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">mash_prior</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">create_mash_prior</span><span class="p">(</span><span class="n">sample_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">var</span><span class="p">(</span><span class="n">Y</span><span class="p">)),</span> <span class="n">max_mixture_len</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -671,7 +671,7 @@ Optimal marginal log-likelihood variational lower bound (ELBO) = -37899.66.
 <div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">res_mmbr</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">mash_prior</span><span class="p">,</span> <span class="n">precompute_covariances</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res_mvsusieR</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">mash_prior</span><span class="p">,</span> <span class="n">precompute_covariances</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -684,7 +684,7 @@ Optimal marginal log-likelihood variational lower bound (ELBO) = -37899.66.
 <div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">res_mmbr</span><span class="err">$</span><span class="kp">walltime</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res_mvsusieR</span><span class="err">$</span><span class="kp">walltime</span>
 </pre></div>
 
     </div>
@@ -814,7 +814,7 @@ Optimal marginal log-likelihood variational lower bound (ELBO) = -37899.66.
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">atlpip</span><span class="p">,</span> <span class="n">res_mmbr</span><span class="err">$</span><span class="n">pip</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">plot</span><span class="p">(</span><span class="n">atlpip</span><span class="p">,</span> <span class="n">res_mvsusieR</span><span class="err">$</span><span class="n">pip</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1290,7 +1290,7 @@ INgBAAAogmAHAACgCIIdAACAIgh2AAAAiiDYAQAAKOL/AawCAF4FzMYYAAAAAElFTkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="p">(</span><span class="n">res_mmbr</span><span class="err">$</span><span class="n">pip</span><span class="o">&gt;</span><span class="mf">0.9</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">which</span><span class="p">(</span><span class="n">res_mvsusieR</span><span class="err">$</span><span class="n">pip</span><span class="o">&gt;</span><span class="mf">0.9</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1391,7 +1391,7 @@ INgBAAAogmAHAACgCIIdAACAIgh2AAAAiiDYAQAAKOL/AawCAF4FzMYYAAAAAElFTkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">mash_prior_shared</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">create_mash_prior</span><span class="p">(</span><span class="n">sample_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">var</span><span class="p">(</span><span class="n">Y</span><span class="p">)),</span> <span class="n">max_mixture_len</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">singletons</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">mash_prior_shared</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">create_mash_prior</span><span class="p">(</span><span class="n">sample_data</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="o">=</span><span class="n">Y</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">var</span><span class="p">(</span><span class="n">Y</span><span class="p">)),</span> <span class="n">max_mixture_len</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">singletons</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1444,7 +1444,7 @@ INgBAAAogmAHAACgCIIdAACAIgh2AAAAiiDYAQAAKOL/AawCAF4FzMYYAAAAAElFTkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">res_mmbr_shared</span> <span class="o">=</span> <span class="n">mmbr</span><span class="p">::</span><span class="n">msusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">mash_prior_shared</span><span class="p">,</span> <span class="n">precompute_covariances</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res_mvsusie_shared</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">Y</span><span class="p">,</span><span class="n">L</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span><span class="n">prior_variance</span><span class="o">=</span><span class="n">mash_prior_shared</span><span class="p">,</span> <span class="n">precompute_covariances</span><span class="o">=</span><span class="n">TRUE</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1457,7 +1457,7 @@ INgBAAAogmAHAACgCIIdAACAIgh2AAAAiiDYAQAAKOL/AawCAF4FzMYYAAAAAElFTkSuQmCC
 <div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">res_mmbr_shared</span><span class="err">$</span><span class="kp">walltime</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">res_mvsusie_shared</span><span class="err">$</span><span class="kp">walltime</span>
 </pre></div>
 
     </div>

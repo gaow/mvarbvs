@@ -14,9 +14,9 @@ if (resid_method == 'covY') {
 
 XtX = readRDS(ld) * (suffstats$N - 1)
 
-m_init = mmbr::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), 
+m_init = mvsusieR::create_mash_prior(mixture_prior = list(matrices=prior$xUlist, weights=prior$pi), 
                                  null_weight=prior$null_weight, max_mixture_len=-1)
-result = mmbr::msusie_suff_stat(XtX, suffstats$XtY, suffstats$YtY, suffstats$N, L=L, 
+result = mvsusieR::mvsusie_suff_stat(XtX, suffstats$XtY, suffstats$YtY, suffstats$N, L=L, 
                                 prior_variance=m_init, residual_variance=resid_Y, 
                                 compute_objective=TRUE, estimate_residual_variance=F, 
                                 estimate_prior_variance=T, estimate_prior_method='EM', 

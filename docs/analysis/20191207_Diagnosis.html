@@ -251,7 +251,7 @@ body {
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Load-package-and-previous-results">Load package and previous results<a class="anchor-link" href="#Load-package-and-previous-results">&#182;</a></h2><p>Previous result can be <a href="https://github.com/gaow/mmbr/files/3935471/issue_9_EE_sumstats.tar.gz">downloaded here</a>. <code>good_lbf</code> in this dataset saves <code>lbf</code> from <code>mmbr:::BayesianMultivariateRegression</code>.</p>
+<h2 id="Load-package-and-previous-results">Load package and previous results<a class="anchor-link" href="#Load-package-and-previous-results">&#182;</a></h2><p>Previous result can be <a href="https://github.com/gaow/mvsusieR/files/3935471/issue_9_EE_sumstats.tar.gz">downloaded here</a>. <code>good_lbf</code> in this dataset saves <code>lbf</code> from <code>mvsusieR:::BayesianMultivariateRegression</code>.</p>
 
 </div>
 </div>
@@ -1197,7 +1197,7 @@ kUCwAwAAABCJ/wcOf5gRh5n97wAAAABJRU5ErkJggg=="
 <div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">bad_lbf</span><span class="p">,</span> <span class="n">lbf</span><span class="p">,</span> <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;EE lbf (mmbr)&quot;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&quot;EE lbf (mashr)&quot;</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="nf">plot</span><span class="p">(</span><span class="n">dat</span><span class="o">$</span><span class="n">bad_lbf</span><span class="p">,</span> <span class="n">lbf</span><span class="p">,</span> <span class="n">xlab</span><span class="o">=</span><span class="s">&quot;EE lbf (mvsusieR)&quot;</span><span class="p">,</span> <span class="n">ylab</span> <span class="o">=</span> <span class="s">&quot;EE lbf (mashr)&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -1678,7 +1678,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>lbf indeed agrees with what <code>mmbr:::MashRegression</code> gives, not consistent with what <code>BayesianMultivariateRegression</code> says.</p>
+<p>lbf indeed agrees with what <code>mvsusieR:::MashRegression</code> gives, not consistent with what <code>BayesianMultivariateRegression</code> says.</p>
 
 </div>
 </div>
@@ -1797,7 +1797,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>It seems the loglik for null was wrong from the beginning. The reason <code>mmbr:::BayesianMultivariateRegression</code> does not have the issue is <a href="https://github.com/gaow/mmbr/blob/44a310e3894f516629ddeb3f877c938f4fbc5733/R/bayesian_multivariate_regression.R#L88">because it avoids numerical issues</a> when it tries to compute lbf, instead of using <code>dmvnorm()</code>.</p>
+<p>It seems the loglik for null was wrong from the beginning. The reason <code>mvsusieR:::BayesianMultivariateRegression</code> does not have the issue is <a href="https://github.com/gaow/mvsusieR/blob/44a310e3894f516629ddeb3f877c938f4fbc5733/R/bayesian_multivariate_regression.R#L88">because it avoids numerical issues</a> when it tries to compute lbf, instead of using <code>dmvnorm()</code>.</p>
 
 </div>
 </div>
@@ -1805,7 +1805,7 @@ AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBICDsAgEgIOwCASAg7AIBI/C+qgUCi
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>And indeed, if I <a href="https://github.com/gaow/mmbr/blob/44a310e3894f516629ddeb3f877c938f4fbc5733/R/bayesian_multivariate_regression.R#L90">uncomment this line</a> using <code>dmvnorm()</code> to compute lbf, then the result agrees with <code>mmbr:::MashRegression</code> and also wrong <a href="https://gaow.github.io/mvarbvs/analysis/20191204_Diagnosis.html">for the example on this page</a>.</p>
+<p>And indeed, if I <a href="https://github.com/gaow/mvsusieR/blob/44a310e3894f516629ddeb3f877c938f4fbc5733/R/bayesian_multivariate_regression.R#L90">uncomment this line</a> using <code>dmvnorm()</code> to compute lbf, then the result agrees with <code>mvsusieR:::MashRegression</code> and also wrong <a href="https://gaow.github.io/mvarbvs/analysis/20191204_Diagnosis.html">for the example on this page</a>.</p>
 
 </div>
 </div>
@@ -2396,7 +2396,7 @@ AKATBDsAAACdINgBAADoBMEOAABAJwh2AAAAOvH/03ErBqwRW/8AAAAASUVORK5CYII="
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Update">Update<a class="anchor-link" href="#Update">&#182;</a></h2><p>Yuxin pointed to me, after she looked at the data, that if I dont set <code>infinity</code> to zero but work instead at log scale I will be getting the same result as in EE model. Therefore I changed the mmbr code from:</p>
+<h2 id="Update">Update<a class="anchor-link" href="#Update">&#182;</a></h2><p>Yuxin pointed to me, after she looked at the data, that if I dont set <code>infinity</code> to zero but work instead at log scale I will be getting the same result as in EE model. Therefore I changed the mvsusieR code from:</p>
 
 <pre><code>good_lbf = log(sapply(1:length(S), function(j) sqrt(det(S[[j]])/det(S[[j]]+U))*exp(0.5*t(dat$bhat[j,])%*%S_inv[[j]]%*%post_cov[[j]]%*%S_inv[[j]]%*%dat$bhat[j,])))</code></pre>
 <p>to</p>

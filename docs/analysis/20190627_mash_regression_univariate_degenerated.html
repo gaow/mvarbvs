@@ -268,7 +268,7 @@ body {
 <span class="n">X</span> <span class="o">=</span> <span class="nf">matrix</span><span class="p">(</span><span class="nf">rnorm</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">p</span><span class="p">),</span><span class="n">nrow</span><span class="o">=</span><span class="n">n</span><span class="p">,</span><span class="n">ncol</span><span class="o">=</span><span class="n">p</span><span class="p">)</span>
 <span class="n">y</span> <span class="o">=</span> <span class="n">X</span> <span class="o">%*%</span> <span class="n">beta</span> <span class="o">+</span> <span class="nf">rnorm</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
 <span class="c1">#&#39; res =susie(X,y,L=10)</span>
-<span class="nf">library</span><span class="p">(</span><span class="n">mmbr</span><span class="p">)</span>
+<span class="nf">library</span><span class="p">(</span><span class="n">mvsusieR</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -309,7 +309,7 @@ Loading required package: ashr
     <div class="input_area">
 <div class=" highlight hl-r"><pre><span></span><span class="n">prior_var</span> <span class="o">=</span> <span class="m">0.2</span> <span class="o">*</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
 <span class="n">residual_var</span> <span class="o">=</span> <span class="nf">as.numeric</span><span class="p">(</span><span class="nf">var</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">DenseData</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -386,7 +386,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m1</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">BayesianSimpleRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_var</span><span class="p">,</span> <span class="n">prior_var</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">m1</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">BayesianSimpleRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_var</span><span class="p">,</span> <span class="n">prior_var</span><span class="p">)</span>
 <span class="n">m1</span><span class="o">$</span><span class="nf">fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">save_summary_stats</span> <span class="o">=</span> <span class="bp">T</span><span class="p">)</span>
 </pre></div>
 
@@ -536,7 +536,7 @@ Loading required package: ashr
 <span class="c1"># This will lead to some shrinkage</span>
 <span class="c1"># null_weight = 1 - 1 / ncol(X)</span>
 <span class="n">null_weight</span> <span class="o">=</span> <span class="m">0</span>
-<span class="n">prior_covar</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="m">0.2</span> <span class="o">*</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span> <span class="m">1</span><span class="p">,</span> <span class="n">prior_weights</span><span class="o">=</span><span class="m">1</span> <span class="o">-</span> <span class="n">null_weight</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="n">null_weight</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
+<span class="n">prior_covar</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashInitializer</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="m">0.2</span> <span class="o">*</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)),</span> <span class="m">1</span><span class="p">,</span> <span class="n">prior_weights</span><span class="o">=</span><span class="m">1</span> <span class="o">-</span> <span class="n">null_weight</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="n">null_weight</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span>
 <span class="n">residual_covar</span> <span class="o">=</span> <span class="nf">cov</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 </pre></div>
 
@@ -648,7 +648,7 @@ Loading required package: ashr
 <div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-r"><pre><span></span><span class="n">m2</span> <span class="o">=</span> <span class="n">mmbr</span><span class="o">:::</span><span class="n">MashRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">prior_covar</span><span class="p">)</span>
+<div class=" highlight hl-r"><pre><span></span><span class="n">m2</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="o">:::</span><span class="n">MashRegression</span><span class="o">$</span><span class="nf">new</span><span class="p">(</span><span class="nf">ncol</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="n">residual_covar</span><span class="p">,</span> <span class="n">prior_covar</span><span class="p">)</span>
 </pre></div>
 
     </div>
