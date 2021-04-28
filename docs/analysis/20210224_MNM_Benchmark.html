@@ -256,9 +256,9 @@ body {
 <pre><code>sos run 20210224_MNM_Benchmark simulation_only --data-dir mnm_sumstats
 sos run 20210224_MNM_Benchmark extract_sumstats --data-dir mnm_sumstats
 sos run 20210224_MNM_Benchmark mixture_model --data-dir mnm_sumstats
-sos run 20210224_MNM_Benchmark mvSuSiE --data-dir mnm_20210318
-sos run 20210224_MNM_Benchmark mvSuSiE_missing --data-dir mnm_missing_20210318
-sos run 20210224_MNM_Benchmark mthess --data-dir mthess_20210318</code></pre>
+sos run 20210224_MNM_Benchmark mvSuSiE --data-dir mnm_20210409
+sos run 20210224_MNM_Benchmark mvSuSiE_missing --data-dir mnm_missing_20210409
+sos run 20210224_MNM_Benchmark mthess --data-dir mthess_20210409</code></pre>
 
 </div>
 </div>
@@ -339,7 +339,7 @@ sos run 20210224_MNM_Benchmark mthess --data-dir mthess_20210318</code></pre>
 <span class="s1">        --datadir {m} --name {m:b} </span><span class="se">\</span>
 <span class="s1">        -c ../../midway2.yml -q midway2 -s build &amp;&gt; extract_sumstats_{m:b}.log</span>
 <span class="s1">    &#39;&#39;&#39;</span>
-<span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_cmd</span><span class="p">(</span><span class="n">path</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{data_dir}/artificial_mixture&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{data_dir}/gtex_mixture&quot;</span><span class="p">]]</span>
+<span class="n">cmds</span> <span class="o">=</span> <span class="p">[</span><span class="n">get_cmd</span><span class="p">(</span><span class="n">path</span><span class="p">(</span><span class="n">m</span><span class="p">))</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="n">f</span><span class="s2">&quot;{data_dir}/artificial_mixture_identity&quot;</span><span class="p">,</span> <span class="n">f</span><span class="s2">&quot;{data_dir}/gtex_mixture_identity&quot;</span><span class="p">]]</span>
 <span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="s1">&#39;cmds&#39;</span>
 <span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span> <span class="s1">&#39;qsub&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="c1">#!/bin/bash</span>
@@ -389,7 +389,7 @@ sos run 20210224_MNM_Benchmark mthess --data-dir mthess_20210318</code></pre>
 <span class="s1">        -c ../../midway2.yml -q midway2 -s build &amp;&gt; bovy_{m}.log</span>
 <span class="s1">    &#39;&#39;&#39;</span>
     <span class="k">return</span> <span class="p">[</span><span class="n">c1</span><span class="p">,</span><span class="n">c2</span><span class="p">,</span><span class="n">c3</span><span class="p">]</span>
-<span class="n">cmds</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">get_cmd</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;artificial_mixture&quot;</span><span class="p">,</span> <span class="s2">&quot;gtex_mixture&quot;</span><span class="p">]],</span> <span class="p">[])</span>
+<span class="n">cmds</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">get_cmd</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;artificial_mixture_identity&quot;</span><span class="p">,</span> <span class="s2">&quot;gtex_mixture_identity&quot;</span><span class="p">]],</span> <span class="p">[])</span>
 <span class="kn">input:</span> <span class="n">for_each</span> <span class="o">=</span> <span class="s1">&#39;cmds&#39;</span>
 <span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span> <span class="s1">&#39;qsub&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
 <span class="c1">#!/bin/bash</span>
@@ -475,12 +475,22 @@ sos run 20210224_MNM_Benchmark mthess --data-dir mthess_20210318</code></pre>
 <div class="prompt input_prompt">In&nbsp;[3]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-sos"><pre><span></span><span class="n">priors</span><span class="err">$</span><span class="n">gtex_mixture</span><span class="err">$</span><span class="n">ED</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/gtex_mixture.ed_bovy.rds&#39;</span><span class="p">)</span>
-<span class="n">priors</span><span class="err">$</span><span class="n">artificial_mixture_50</span><span class="err">$</span><span class="n">ED</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/artificial_mixture.ed_bovy.rds&#39;</span><span class="p">)</span>
-<span class="n">priors</span><span class="err">$</span><span class="n">gtex_mixture</span><span class="err">$</span><span class="n">TEEM</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/gtex_mixture.teem.rds&#39;</span><span class="p">)</span>
-<span class="n">priors</span><span class="err">$</span><span class="n">artificial_mixture_50</span><span class="err">$</span><span class="n">TEEM</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/artificial_mixture.teem.rds&#39;</span><span class="p">)</span>
-<span class="n">priors</span><span class="err">$</span><span class="n">gtex_mixture</span><span class="err">$</span><span class="n">ED_UDR</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/gtex_mixture.ed.rds&#39;</span><span class="p">)</span>
-<span class="n">priors</span><span class="err">$</span><span class="n">artificial_mixture_50</span><span class="err">$</span><span class="n">ED_UDR</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/artificial_mixture.ed.rds&#39;</span><span class="p">)</span>
+<div class=" highlight hl-sos"><pre><span></span><span class="n">priors</span><span class="err">$</span><span class="n">gtex_mixture</span><span class="err">$</span><span class="n">ED</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/gtex_mixture_identity.ed_bovy.rds&#39;</span><span class="p">)</span>
+<span class="n">priors</span><span class="err">$</span><span class="n">artificial_mixture_50</span><span class="err">$</span><span class="n">ED</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/artificial_mixture_identity.ed_bovy.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">priors</span><span class="err">$</span><span class="n">gtex_mixture</span><span class="err">$</span><span class="n">TEEM</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/gtex_mixture_identity.teem.rds&#39;</span><span class="p">)</span>
+<span class="n">priors</span><span class="err">$</span><span class="n">artificial_mixture_50</span><span class="err">$</span><span class="n">TEEM</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/artificial_mixture_identity.teem.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -491,6 +501,20 @@ sos run 20210224_MNM_Benchmark mthess --data-dir mthess_20210318</code></pre>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 <div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">priors</span><span class="err">$</span><span class="n">gtex_mixture</span><span class="err">$</span><span class="n">ED_UDR</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/gtex_mixture_identity.ed.rds&#39;</span><span class="p">)</span>
+<span class="n">priors</span><span class="err">$</span><span class="n">artificial_mixture_50</span><span class="err">$</span><span class="n">ED_UDR</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/artificial_mixture_identity.ed.rds&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">saveRDS</span><span class="p">(</span><span class="n">priors</span><span class="p">,</span> <span class="s1">&#39;data/prior_simulation.rds&#39;</span><span class="p">)</span>
@@ -511,12 +535,12 @@ sos run 20210224_MNM_Benchmark mthess --data-dir mthess_20210318</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-sos"><pre><span></span><span class="n">nullz</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
-<span class="n">nullz</span><span class="err">$</span><span class="n">gtex_mixture</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/gtex_mixture.rds&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">null</span><span class="o">.</span><span class="n">cor</span>
-<span class="n">nullz</span><span class="err">$</span><span class="n">artificial_mixture_50</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/artificial_mixture.rds&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">null</span><span class="o">.</span><span class="n">cor</span>
+<span class="n">nullz</span><span class="err">$</span><span class="n">gtex_mixture</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/gtex_mixture_identity.rds&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">null</span><span class="o">.</span><span class="n">cor</span>
+<span class="n">nullz</span><span class="err">$</span><span class="n">artificial_mixture_50</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="s1">&#39;dsc/mnm_prototype/mnm_sumstats/artificial_mixture_identity.rds&#39;</span><span class="p">)</span><span class="err">$</span><span class="n">null</span><span class="o">.</span><span class="n">cor</span>
 <span class="n">saveRDS</span><span class="p">(</span><span class="n">nullz</span><span class="p">,</span> <span class="s1">&#39;data/nullz_cor_simulation.rds&#39;</span><span class="p">)</span>
 </pre></div>
 
@@ -534,6 +558,7 @@ sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U 
 sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data ../../data/prior_simulation.rds --name artificial_mixture_50\$ED --cwd mnm_sumstats # --to-cor
 sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data ../../data/prior_simulation.rds --name gtex_mixture\$ED --cwd mnm_sumstats # --to-cor
 sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data ../../data/prior_simulation.rds --name artificial_mixture_50\$TEEM --cwd mnm_sumstats # --to-cor
+sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data ../../data/prior_simulation.rds --name gtex_mixture\$TEEM --cwd mnm_sumstats # --to-cor
 sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data ../../data/prior_simulation.rds --name artificial_mixture_50\$ED_UDR --cwd mnm_sumstats # --to-cor
 sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U --model-data ../../data/prior_simulation.rds --name gtex_mixture\$ED_UDR --cwd mnm_sumstats # --to-cor</code></pre>
 
@@ -659,39 +684,122 @@ sos run ~/GIT/bioworkflows/multivariate-fine-mapping/mixture_prior.ipynb plot_U 
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For full data simulation,</p>
 
-<pre><code>ALL_METHODS="mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed mnm_ed_max10 mnm_rss_ed_corZ susie atlasqtl"
-PLOT_METHODS="mnm_oracle+flash mnm_oracle+oracle mnm_ed+flash mnm_ed+oracle mnm_ed_max10+flash mnm_ed_max10+oracle mnm_naive+flash mnm_identity+flash mnm_shared+flash mnm_rss_ed_corZ susie atlasqtl"
-DATA=mnm_20210318
-# condition specific PIP
-sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + pip_calibration" -s build \
-    --data-dir $DATA \
-    --methods $ALL_METHODS
-# can take 6hrs to get the data for curves, from all methods
-sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + curves" -s build \
-    --data-dir $DATA \
-    --methods $ALL_METHODS \
-    --plot-methods $PLOT_METHODS
-sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + curves" -s build \
-    --data-dir $DATA \
-    --methods $ALL_METHODS  \
-    --plot-methods $PLOT_METHODS \
-    --table roc --xlim 0.005
-# global PIP
-sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + pip_calibration" -s build \
-    --data-dir $DATA \
-    --methods $ALL_METHODS
-sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
-    --plot-methods $PLOT_METHODS \
-    --data-dir $DATA \
-    --methods $ALL_METHODS
-sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
-    --data-dir $DATA \
-    --methods $ALL_METHODS \
-    --plot-methods $PLOT_METHODS \
-    --table roc --xlim 0.005 -s build</code></pre>
+<pre><code>sos run 20210224_MNM_Benchmark.ipynb simulation_result --data-dir mnm_20210409
+sos run 20210224_MNM_Benchmark.ipynb missing_simulation_result --data-dir mnm_missing_20210409</code></pre>
 
 </div>
 </div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">simulation_result</span><span class="p">]</span>
+<span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span> <span class="s1">&#39;qsub&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="c1">#!/bin/bash</span>
+
+<span class="c1">#SBATCH --time=72:00:00</span>
+<span class="c1">#SBATCH --partition=mstephens</span>
+<span class="c1">#SBATCH --account=pi-mstephens</span>
+<span class="c1">#SBATCH --nodes=1</span>
+<span class="c1">#SBATCH --ntasks-per-node=1</span>
+<span class="c1">#SBATCH --cpus-per-task=8</span>
+<span class="c1">#SBATCH --mem-per-cpu=8000</span>
+<span class="c1">#SBATCH --job-name={step_name}</span>
+<span class="c1">#SBATCH --mail-type=BEGIN,END,FAIL</span>
+
+    <span class="n">ALL_METHODS</span><span class="o">=</span><span class="s2">&quot;mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed mnm_teem mnm_ed_max10 mnm_rss_ed_corY susie atlasqtl&quot;</span>
+    <span class="n">PLOT_METHODS</span><span class="o">=</span><span class="s2">&quot;mnm_oracle+flash mnm_oracle+oracle mnm_ed+flash mnm_ed+oracle mnm_teem+flash mnm_teem+oracle mnm_ed_max10+flash mnm_ed_max10+oracle mnm_naive+flash mnm_identity+flash mnm_shared+flash mnm_rss_ed_corY susie atlasqtl&quot;</span>
+
+    <span class="c1"># condition specific PIP</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span><span class="o">.</span><span class="n">ipynb</span> <span class="s2">&quot;get_pip_meta + get_pip_r + pip_calibration&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>
+    <span class="c1"># can take 6hrs to get the data for curves, from all methods</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span><span class="o">.</span><span class="n">ipynb</span> <span class="s2">&quot;get_pip_meta + get_pip_r + curves&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span> \
+        <span class="o">--</span><span class="n">plot</span><span class="o">-</span><span class="n">methods</span> <span class="err">$</span><span class="n">PLOT_METHODS</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span><span class="o">.</span><span class="n">ipynb</span> <span class="s2">&quot;get_pip_meta + get_pip_r + curves&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>  \
+        <span class="o">--</span><span class="n">plot</span><span class="o">-</span><span class="n">methods</span> <span class="err">$</span><span class="n">PLOT_METHODS</span> \
+        <span class="o">--</span><span class="n">table</span> <span class="n">roc</span> <span class="o">--</span><span class="n">xlim</span> <span class="mf">0.005</span>
+    <span class="c1"># global PIP</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span><span class="o">.</span><span class="n">ipynb</span> <span class="s2">&quot;get_pip_meta + get_pip + pip_calibration&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span><span class="o">.</span><span class="n">ipynb</span> <span class="s2">&quot;get_pip_meta + get_pip + curves&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">plot</span><span class="o">-</span><span class="n">methods</span> <span class="err">$</span><span class="n">PLOT_METHODS</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span><span class="o">.</span><span class="n">ipynb</span> <span class="s2">&quot;get_pip_meta + get_pip + curves&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span> \
+        <span class="o">--</span><span class="n">plot</span><span class="o">-</span><span class="n">methods</span> <span class="err">$</span><span class="n">PLOT_METHODS</span> \
+        <span class="o">--</span><span class="n">table</span> <span class="n">roc</span> <span class="o">--</span><span class="n">xlim</span> <span class="mf">0.005</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">missing_simulation_result</span><span class="p">]</span>
+<span class="kn">script:</span> <span class="n">interpreter</span><span class="o">=</span> <span class="s1">&#39;qsub&#39;</span><span class="p">,</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+<span class="c1">#!/bin/bash</span>
+  
+<span class="c1">#SBATCH --time=72:00:00</span>
+<span class="c1">#SBATCH --partition=mstephens</span>
+<span class="c1">#SBATCH --account=pi-mstephens</span>
+<span class="c1">#SBATCH --nodes=1</span>
+<span class="c1">#SBATCH --ntasks-per-node=1</span>
+<span class="c1">#SBATCH --cpus-per-task=8</span>
+<span class="c1">#SBATCH --mem-per-cpu=8000</span>
+<span class="c1">#SBATCH --job-name={step_name}</span>
+<span class="c1">#SBATCH --mail-type=BEGIN,END,FAIL</span>
+
+    <span class="n">ALL_METHODS</span><span class="o">=</span><span class="s2">&quot;mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed mnm_teem mnm_ed_max10 mnm_rss_ed_corY&quot;</span>
+    <span class="n">PLOT_METHODS</span><span class="o">=</span><span class="s2">&quot;mnm_oracle+flash mnm_oracle+oracle mnm_ed+flash mnm_ed+oracle mnm_teem+flash mnm_teem+oracle mnm_ed_max10+flash mnm_ed_max10+oracle mnm_naive+flash mnm_identity+flash mnm_shared+flash mnm_rss_ed_corY&quot;</span>
+    <span class="c1"># condition specific PIP</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span> <span class="s2">&quot;get_pip_meta + get_pip_r + pip_calibration&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">--</span><span class="n">simulate</span> <span class="n">simulate_missing</span> <span class="o">--</span><span class="n">simulate</span><span class="o">-</span><span class="n">method</span> <span class="n">artificial_mixture_missing</span> <span class="n">gtex_mixture_missing</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>
+    <span class="c1"># can take 6hrs to get the data for curves, from all methods</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span> <span class="s2">&quot;get_pip_meta + get_pip_r + curves&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">--</span><span class="n">simulate</span> <span class="n">simulate_missing</span> <span class="o">--</span><span class="n">simulate</span><span class="o">-</span><span class="n">method</span> <span class="n">artificial_mixture_missing</span> <span class="n">gtex_mixture_missing</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>  \
+        <span class="o">--</span><span class="n">plot</span><span class="o">-</span><span class="n">methods</span> <span class="err">$</span><span class="n">PLOT_METHODS</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span> <span class="s2">&quot;get_pip_meta + get_pip_r + curves&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">--</span><span class="n">simulate</span> <span class="n">simulate_missing</span> <span class="o">--</span><span class="n">simulate</span><span class="o">-</span><span class="n">method</span> <span class="n">artificial_mixture_missing</span> <span class="n">gtex_mixture_missing</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>   \
+        <span class="o">--</span><span class="n">plot</span><span class="o">-</span><span class="n">methods</span> <span class="err">$</span><span class="n">PLOT_METHODS</span> \
+        <span class="o">--</span><span class="n">table</span> <span class="n">roc</span> <span class="o">--</span><span class="n">xlim</span> <span class="mf">0.005</span>
+    <span class="c1"># global PIP</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span> <span class="s2">&quot;get_pip_meta + get_pip + pip_calibration&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">--</span><span class="n">simulate</span> <span class="n">simulate_missing</span> <span class="o">--</span><span class="n">simulate</span><span class="o">-</span><span class="n">method</span> <span class="n">artificial_mixture_missing</span> <span class="n">gtex_mixture_missing</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span> <span class="s2">&quot;get_pip_meta + get_pip + curves&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">plot</span><span class="o">-</span><span class="n">methods</span> <span class="err">$</span><span class="n">PLOT_METHODS</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">--</span><span class="n">simulate</span> <span class="n">simulate_missing</span> <span class="o">--</span><span class="n">simulate</span><span class="o">-</span><span class="n">method</span> <span class="n">artificial_mixture_missing</span> <span class="n">gtex_mixture_missing</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>
+    <span class="n">sos</span> <span class="n">run</span> <span class="mi">20210224</span><span class="n">_MNM_Benchmark</span> <span class="s2">&quot;get_pip_meta + get_pip + curves&quot;</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span> \
+        <span class="o">--</span><span class="n">data</span><span class="o">-</span><span class="nb">dir</span> <span class="p">{</span><span class="n">data_dir</span><span class="p">}</span> <span class="o">--</span><span class="n">simulate</span> <span class="n">simulate_missing</span> <span class="o">--</span><span class="n">simulate</span><span class="o">-</span><span class="n">method</span> <span class="n">artificial_mixture_missing</span> <span class="n">gtex_mixture_missing</span> \
+        <span class="o">--</span><span class="n">methods</span> <span class="err">$</span><span class="n">ALL_METHODS</span>  \
+        <span class="o">--</span><span class="n">plot</span><span class="o">-</span><span class="n">methods</span> <span class="err">$</span><span class="n">PLOT_METHODS</span> \
+        <span class="o">--</span><span class="n">table</span> <span class="n">roc</span> <span class="o">--</span><span class="n">xlim</span> <span class="mf">0.005</span> <span class="o">-</span><span class="n">s</span> <span class="n">build</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
@@ -701,7 +809,7 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
 <pre><code>ALL_METHODS="mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed mnm_rss_oracle mnm_rss_naive_corZ mnm_rss_ed_corZ mnm_rss_identity_corZ mnm_rss_shared_corZ"
 PLOT_METHODS="mnm_oracle+flash mnm_oracle+oracle mnm_ed+flash mnm_ed+oracle mnm_naive+flash mnm_identity+flash mnm_shared+flash"
 PLOT_RSS="mnm_rss_oracle+flash mnm_rss_oracle+oracle mnm_rss_ed_corZ+flash mnm_rss_ed_corZ+oracle mnm_rss_naive_corZ+flash mnm_rss_identity_corZ+flash mnm_rss_shared_corZ+flash"
-DATA=mnm_missing_20210318
+DATA=mnm_missing_20210409
 # condition specific PIP
 sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip_r + pip_calibration" -s build \
     --data-dir $DATA --simulate simulate_missing --simulate-method artificial_mixture_missing gtex_mixture_missing \
@@ -750,7 +858,7 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
 <span class="kn">parameter:</span> <span class="n">simulate</span> <span class="o">=</span> <span class="s1">&#39;simulate&#39;</span>
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{cwd}/{data_dir}/{data_dir:b}_pip_meta.rds&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="kp">workdir</span> <span class="o">=</span> <span class="n">cwd</span>
-    <span class="n">dat</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">data_dir</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">target</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;medium_data.dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;${simulate}&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;method.resid_method&quot;</span><span class="p">),</span> <span class="n">module</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">files</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;${simulate}&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">),</span> <span class="n">group</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;method: ${&#39; &#39;.join(methods)}&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm:&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_missing:&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss:&quot;</span><span class="p">),</span> <span class="n">ignore</span><span class="o">.</span><span class="n">missing</span><span class="o">.</span><span class="n">file</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">dat</span> <span class="o">=</span> <span class="n">dscrutils</span><span class="p">::</span><span class="n">dscquery</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">data_dir</span><span class="p">:</span><span class="n">r</span><span class="p">},</span> <span class="n">target</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;small_data.dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;${simulate}&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;method.resid_method&quot;</span><span class="p">),</span> <span class="n">module</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">files</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="s2">&quot;${simulate}&quot;</span><span class="p">,</span> <span class="s2">&quot;method&quot;</span><span class="p">),</span> <span class="n">group</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s2">&quot;method: ${&#39; &#39;.join(methods)}&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm:&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_missing:&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss:&quot;</span><span class="p">),</span> <span class="n">ignore</span><span class="o">.</span><span class="n">missing</span><span class="o">.</span><span class="n">file</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
     <span class="k">print</span><span class="p">(</span><span class="n">dim</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
     <span class="c1"># remove bad files</span>
     <span class="c1"># mostly from atlasqtl</span>
@@ -962,11 +1070,11 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
     <span class="n">library</span><span class="p">(</span><span class="n">ggplot2</span><span class="p">)</span>
     <span class="n">library</span><span class="p">(</span><span class="n">cowplot</span><span class="p">)</span>
     <span class="n">rename</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s1">&#39;mnm_oracle+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Oracle prior and residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_oracle+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Oracle prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_naive+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior oracle residual&#39;</span><span class="p">,</span> 
-                  <span class="s1">&#39;mnm_naive+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior&#39;</span><span class="p">,</span> 
-                  <span class="s1">&#39;mnm_ed_max10+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior oracle residual (10 iter)&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed_max10+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior (10 iter)&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;mnm_naive+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;ED prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;ED prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_teem+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;TEEM prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_teem+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;TEEM prior&#39;</span><span class="p">,</span> 
+                  <span class="s1">&#39;mnm_ed_max10+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;ED prior oracle residual (10 iter)&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed_max10+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;ED prior (10 iter)&#39;</span><span class="p">,</span>
                   <span class="s1">&#39;mnm_identity+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Random effects prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_identity+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Random effects prior&#39;</span><span class="p">,</span>
                   <span class="s1">&#39;mnm_shared+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_shared+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior&#39;</span><span class="p">,</span> <span class="n">atlasqtl</span> <span class="o">=</span> <span class="s1">&#39;atlasqtl&#39;</span><span class="p">,</span> <span class="n">susie</span> <span class="o">=</span> <span class="s1">&#39;SuSiE&#39;</span><span class="p">,</span>
-                  <span class="s2">&quot;mnm_rss_naive_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS default prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_ed_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS EB prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+oracle&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and residual&quot;</span><span class="p">,</span>
+                  <span class="s2">&quot;mnm_rss_naive_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS default prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_ed_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS ED prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+oracle&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and residual&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;mnm_rss_oracle+identity&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and diag residual&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_shared_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS fixed effect prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;mnm_rss_oracle+corY&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and unit-specific residual&quot;</span><span class="p">)</span>
     <span class="n">dot_plot</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">dataframe</span><span class="p">)</span> <span class="p">{</span>
@@ -1117,11 +1225,11 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
         <span class="n">points</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">],</span><span class="n">y</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
     <span class="p">}</span>
     <span class="n">rename</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="s1">&#39;mnm_oracle+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Oracle prior and residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_oracle+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Oracle prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_naive+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior oracle residual&#39;</span><span class="p">,</span> 
-                  <span class="s1">&#39;mnm_naive+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior&#39;</span><span class="p">,</span> 
-                  <span class="s1">&#39;mnm_ed_max10+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior oracle residual (10 iter)&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed_max10+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;EB prior (10 iter)&#39;</span><span class="p">,</span>
+                  <span class="s1">&#39;mnm_naive+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Default prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;ED prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;ED prior&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_teem+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;TEEM prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_teem+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;TEEM prior&#39;</span><span class="p">,</span> 
+                  <span class="s1">&#39;mnm_ed_max10+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;ED prior oracle residual (10 iter)&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_ed_max10+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;ED prior (10 iter)&#39;</span><span class="p">,</span>
                   <span class="s1">&#39;mnm_identity+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Random effects prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_identity+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Random effects prior&#39;</span><span class="p">,</span>
-                  <span class="s1">&#39;mnm_shared+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_shared+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior&#39;</span><span class="p">,</span> <span class="n">atlasqtl</span> <span class="o">=</span> <span class="s1">&#39;atlasqtl&#39;</span><span class="p">,</span> <span class="n">susie</span> <span class="o">=</span> <span class="s2">&quot;SuSiE&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;mnm_rss_naive_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS default prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_ed_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS EB prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+oracle&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and residual&quot;</span><span class="p">,</span>
+                  <span class="s1">&#39;mnm_shared+oracle&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior oracle residual&#39;</span><span class="p">,</span> <span class="s1">&#39;mnm_shared+flash&#39;</span> <span class="o">=</span> <span class="s1">&#39;Fixed effect prior&#39;</span><span class="p">,</span> <span class="n">atlasqtl</span> <span class="o">=</span> <span class="s1">&#39;atlasqtl&#39;</span><span class="p">,</span> <span class="n">susie</span> <span class="o">=</span> <span class="s1">&#39;SuSiE&#39;</span><span class="p">,</span>
+                  <span class="s2">&quot;mnm_rss_naive_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS default prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_ed_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS ED prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+oracle&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and residual&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;mnm_rss_oracle+identity&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and diag residual&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_shared_corZ+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS fixed effect prior&quot;</span><span class="p">,</span> <span class="s2">&quot;mnm_rss_oracle+nullz&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior&quot;</span><span class="p">,</span>
                   <span class="s2">&quot;mnm_rss_oracle+corY&quot;</span> <span class="o">=</span> <span class="s2">&quot;RSS oracle prior and unit-specific residual&quot;</span><span class="p">)</span>
     <span class="n">labels</span> <span class="o">=</span> <span class="n">vector</span><span class="p">()</span>
@@ -1156,12 +1264,12 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
 <h2 id="Benchmark-results:-CS">Benchmark results: CS<a class="anchor-link" href="#Benchmark-results:-CS">&#182;</a></h2><p>For full data simulation,</p>
 
 <pre><code>sos run 20210224_MNM_Benchmark get_cs_summary -s build \
-    --data-dir mnm_20210318 \
+    --data-dir mnm_20210409 \
     --methods mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed</code></pre>
 <p>For missing data simulation,</p>
 
 <pre><code>sos run 20210224_MNM_Benchmark get_cs_summary -s build \
-    --data-dir mnm_missing_20210318 --simulate simulate_missing \
+    --data-dir mnm_missing_20210409 --simulate simulate_missing \
     --methods mnm_oracle mnm_naive mnm_identity mnm_shared mnm_ed</code></pre>
 
 </div>
@@ -1218,14 +1326,15 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
     <span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span> <span class="o">=</span> <span class="n">paste</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))],</span> <span class="n">paste</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="err">!</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))],</span> <span class="s2">&quot;residual&quot;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;_&#39;</span><span class="p">),</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;+&#39;</span><span class="p">)</span>
     <span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span> <span class="o">=</span> <span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">method</span><span class="o">.</span><span class="n">resid_method</span><span class="p">))]</span>
     <span class="n">dat</span><span class="err">$</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
-    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
-    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+    <span class="c1"># Will deal with median later</span>
+    <span class="c1">#dat$score.size = sapply(1:length(dat$score.size), function(i) median(dat$score.size[[i]], na.rm=T))</span>
+    <span class="c1">#dat$score.purity = sapply(1:length(dat$score.purity), function(i) median(dat$score.purity[[i]], na.rm=T))</span>
     <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">total_cond_discoveries</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">total_cond_discoveries</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">total_cond_discoveries</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
     <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_pos_cond_discoveries</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_pos_cond_discoveries</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_pos_cond_discoveries</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
     <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_neg_cond_discoveries</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_neg_cond_discoveries</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">false_neg_cond_discoveries</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
     <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">true_cond_discoveries</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">true_cond_discoveries</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="nb">sum</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">true_cond_discoveries</span><span class="p">[[</span><span class="n">i</span><span class="p">]],</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
-    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size_cond_cs</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size_cond_cs</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">size_cond_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
-    <span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity_cond_cs</span> <span class="o">=</span> <span class="n">sapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity_cond_cs</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">dat</span><span class="err">$</span><span class="n">score</span><span class="o">.</span><span class="n">purity_cond_cs</span><span class="p">[[</span><span class="n">i</span><span class="p">]]),</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span> 
+    <span class="c1">#dat$score.size_cond_cs = sapply(1:length(dat$score.size_cond_cs), function(i) median(unlist(dat$score.size_cond_cs[[i]]), na.rm=T))</span>
+    <span class="c1">#dat$score.purity_cond_cs = sapply(1:length(dat$score.purity_cond_cs), function(i) median(unlist(dat$score.purity_cond_cs[[i]]), na.rm=T)) </span>
     <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">)</span> <span class="o">=</span> <span class="n">gsub</span><span class="p">(</span><span class="s2">&quot;score.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">colnames</span><span class="p">(</span><span class="n">dat</span><span class="p">))</span>
     <span class="n">saveRDS</span><span class="p">(</span><span class="n">dat</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
 </pre></div>
@@ -1245,17 +1354,23 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
 <span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:nn}_cs_summary.rds&#39;</span>
 <span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">tibble_median</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">class</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;list&quot;</span><span class="p">)</span> <span class="n">median</span><span class="p">(</span><span class="n">unlist</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+      <span class="k">else</span> <span class="n">median</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+    <span class="p">}</span>
     <span class="c1">###</span>
     <span class="c1"># Global metric</span>
     <span class="c1">###</span>
     <span class="c1"># Global size</span>
-    <span class="n">size</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">size</span><span class="o">~</span><span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">size</span><span class="o">~</span><span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tibble_median</span><span class="p">)</span>
     <span class="n">size</span> <span class="o">=</span> <span class="n">size</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">size</span><span class="err">$$</span><span class="p">{</span><span class="n">simulate</span><span class="p">},</span> <span class="n">size</span><span class="err">$</span><span class="n">size</span><span class="p">),]</span>
     <span class="c1"># Global purity</span>
-    <span class="n">purity</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">purity</span><span class="o">~</span><span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+    <span class="n">purity</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">purity</span><span class="o">~</span><span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tibble_median</span><span class="p">)</span>
     <span class="n">purity</span> <span class="o">=</span> <span class="n">purity</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">purity</span><span class="err">$$</span><span class="p">{</span><span class="n">simulate</span><span class="p">},</span> <span class="n">purity</span><span class="err">$</span><span class="n">purity</span><span class="p">),]</span>
     <span class="c1"># Global power</span>
-    <span class="n">total_true_included</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">included_causal</span> <span class="o">~</span> <span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
+    <span class="c1"># `valid` is the number of CS that contains a signal, </span>
+    <span class="c1"># `included_causal` is the total number of signals captured by CS</span>
+    <span class="n">total_true_included</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">valid</span> <span class="o">~</span> <span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
     <span class="n">total_true</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">n_causal</span> <span class="o">~</span>  <span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
     <span class="n">cs_overlap</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">overlap_cs</span> <span class="o">~</span>  <span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
     <span class="n">snp_overlap</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">overlap_var</span> <span class="o">~</span>  <span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
@@ -1289,10 +1404,10 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
     <span class="c1"># Condition specific metric: condition specific CS are CS that are significant in a condition by lfsr &lt; some cutoff</span>
     <span class="c1">###</span>
     <span class="c1"># size</span>
-    <span class="n">size_cond_cs</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">size_cond_cs</span><span class="o">~</span><span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+    <span class="n">size_cond_cs</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">size_cond_cs</span><span class="o">~</span><span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tibble_median</span><span class="p">)</span>
     <span class="n">size_cond_cs</span> <span class="o">=</span> <span class="n">size_cond_cs</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">size_cond_cs</span><span class="err">$$</span><span class="p">{</span><span class="n">simulate</span><span class="p">},</span> <span class="n">size_cond_cs</span><span class="err">$</span><span class="n">size_cond_cs</span><span class="p">),]</span>
     <span class="c1"># purity</span>
-    <span class="n">purity_cond_cs</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">purity_cond_cs</span><span class="o">~</span><span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">median</span><span class="p">)</span>
+    <span class="n">purity_cond_cs</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">purity_cond_cs</span><span class="o">~</span><span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">tibble_median</span><span class="p">)</span>
     <span class="n">purity_cond_cs</span> <span class="o">=</span> <span class="n">purity_cond_cs</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">purity_cond_cs</span><span class="err">$$</span><span class="p">{</span><span class="n">simulate</span><span class="p">},</span> <span class="n">purity_cond_cs</span><span class="err">$</span><span class="n">purity_cond_cs</span><span class="p">),]</span>
     <span class="c1"># power and FDR</span>
     <span class="n">TP</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">true_cond_discoveries</span> <span class="o">~</span> <span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
@@ -1300,6 +1415,7 @@ sos run 20210224_MNM_Benchmark "get_pip_meta + get_pip + curves" -s build \
     <span class="n">FN</span> <span class="o">=</span> <span class="n">aggregate</span><span class="p">(</span><span class="n">false_neg_cond_discoveries</span> <span class="o">~</span>  <span class="err">$</span><span class="p">{</span><span class="n">simulate</span><span class="p">}</span> <span class="o">+</span> <span class="n">method</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="nb">sum</span><span class="p">)</span>
     <span class="n">power_cond</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">TP</span><span class="p">,</span> <span class="n">FP</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;${simulate}&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>
     <span class="n">power_cond</span> <span class="o">=</span> <span class="n">merge</span><span class="p">(</span><span class="n">power_cond</span><span class="p">,</span> <span class="n">FN</span><span class="p">,</span> <span class="n">by</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span> <span class="s1">&#39;${simulate}&#39;</span> <span class="p">,</span> <span class="s1">&#39;method&#39;</span><span class="p">))</span>
+    <span class="c1"># FIXME: this is not exactly correct because (true_cond_discoveries + false_neg_cond_discoveries) is the total number of CS. There are signals not included in any CS.</span>
     <span class="n">power_cond</span><span class="err">$</span><span class="n">power_cond_cs</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">power_cond</span><span class="err">$</span><span class="n">true_cond_discoveries</span> <span class="o">/</span> <span class="p">(</span><span class="n">power_cond</span><span class="err">$</span><span class="n">true_cond_discoveries</span> <span class="o">+</span> <span class="n">power_cond</span><span class="err">$</span><span class="n">false_neg_cond_discoveries</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">power_cond</span><span class="err">$</span><span class="n">fdr_cond_cs</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">power_cond</span><span class="err">$</span><span class="n">false_pos_cond_discoveries</span> <span class="o">/</span> <span class="p">(</span><span class="n">power_cond</span><span class="err">$</span><span class="n">false_pos_cond_discoveries</span> <span class="o">+</span> <span class="n">power_cond</span><span class="err">$</span><span class="n">true_cond_discoveries</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
     <span class="n">power_cond</span> <span class="o">=</span> <span class="n">power_cond</span><span class="p">[</span><span class="n">order</span><span class="p">(</span><span class="n">fdr</span><span class="err">$$</span><span class="p">{</span><span class="n">simulate</span><span class="p">},</span> <span class="n">power_cond</span><span class="err">$</span><span class="n">power_cond_cs</span><span class="p">),]</span>
