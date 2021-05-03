@@ -95,6 +95,14 @@ artificial_mixture_ukb_small2(simulate_y_base):
     prefix: file(Plink)
     save_suff_stat: TRUE
     
+artificial_mixture_ukb_small2_indep(simulate_y_base):
+    eff_mode: "artificial_mixture_2_indep"
+    residual_mode: "identity"
+    missing_Y: FALSE
+    plink: TRUE
+    prefix: file(Plink)
+    save_suff_stat: TRUE
+    
 ukb_bloodcells_mixture(simulate_y_base):
     eff_mode: "bloodcells_mixture"
     residual_mode: "var_Y"
