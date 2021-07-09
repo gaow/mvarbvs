@@ -226,7 +226,7 @@ body {
 </li>
         
 <li>
-  <a href="../prototype.html">Prototype</a>
+  <a href="../workflow.html">Workflow</a>
 </li>
         
 <li>

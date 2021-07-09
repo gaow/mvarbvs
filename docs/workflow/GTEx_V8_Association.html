@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="ipynb_website:version" content="0.9.7" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<link rel="stylesheet" type="text/css" href="../css/jt.css">
+
+<link rel="stylesheet" type="text/css" href="../css/toc2.css">
+
+<link href="../site_libs/jqueryui-1.11.4/jquery-ui.css">
+<link rel="stylesheet" href="../site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="../site_libs/font-awesome-4.5.0/css/font-awesome.min.css" rel="stylesheet" />
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="../site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+
+<link rel="stylesheet"
+      href="../site_libs/highlightjs/null.min.css"
+      type="text/css" />
+
+<script src="../site_libs/highlightjs/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+<script type="text/javascript">
+if (window.hljs && document.readyState && document.readyState === "complete") {
+   window.setTimeout(function() {
+      hljs.initHighlighting();
+   }, 0);
+}
+</script>
+
+<script src="../js/doc_toc.js"></script>
+<script src="../js/docs.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script>
+    MathJax.Hub.Config({
+        extensions: ["tex2jax.js"],
+        jax: ["input/TeX", "output/HTML-CSS"],
+        tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+        displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+        processEscapes: true
+        },
+        "HTML-CSS": {
+            preferredFont: "TeX",
+            availableFonts: ["TeX"],
+            styles: {
+                scale: 110,
+                ".MathJax_Display": {
+                    "font-size": "110%",
+                }
+            }
+        }
+    });
+</script>
+<script>
+function filterDataFrame(id) {
+    var input = document.getElementById("search_" + id);
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("dataframe_" + id);
+    var tr = table.getElementsByTagName("tr");
+    // Loop through all table rows, and hide those who don't match the search query
+    for (var i = 1; i < tr.length; i++) {
+        for (var j = 0; j < tr[i].cells.length; ++j) {
+            var matched = false;
+            if (tr[i].cells[j].innerHTML.toUpperCase().indexOf(filter) != -1) {
+                tr[i].style.display = "";
+                matched = true
+                break;
+            }
+            if (!matched)
+                tr[i].style.display = "none";
+        }
+    }
+}
+function sortDataFrame(id, n, dtype) {
+    var table = document.getElementById("dataframe_" + id);
+    var tb = table.tBodies[0]; // use `<tbody>` to ignore `<thead>` and `<tfoot>` rows
+    var tr = Array.prototype.slice.call(tb.rows, 0); // put rows into array
+    if (dtype === 'numeric') {
+        var fn = function(a, b) { 
+            return parseFloat(a.cells[n].textContent) <= parseFloat(b.cells[n].textContent) ? -1 : 1;
+        }
+    } else {
+        var fn = function(a, b) {
+            var c = a.cells[n].textContent.trim().localeCompare(b.cells[n].textContent.trim()); 
+            return c > 0 ? 1 : (c < 0 ? -1 : 0) }
+    }
+    var isSorted = function(array, fn) {
+        if (array.length < 2)
+            return 1;
+        var direction = fn(array[0], array[1]); 
+        for (var i = 1; i < array.length - 1; ++i) {
+            var d = fn(array[i], array[i+1]);
+            if (d == 0)
+                continue;
+            else if (direction == 0)
+                direction = d;
+            else if (direction != d)
+                return 0;
+            }
+        return direction;
+    }
+    var sorted = isSorted(tr, fn);
+    if (sorted == 1 || sorted == -1) {
+        // if sorted already, reverse it
+        for(var i = tr.length - 1; i >= 0; --i)
+            tb.appendChild(tr[i]); // append each row in order
+    } else {
+        tr = tr.sort(fn);
+        for(var i = 0; i < tr.length; ++i)
+            tb.appendChild(tr[i]); // append each row in order
+    }
+}
+</script>
+
+<script>
+$( document ).ready(function(){
+            var cfg={'threshold':3,     // depth of toc (number of levels)
+             'number_sections': false,
+             'toc_cell': false,          // useless here
+             'toc_window_display': true, // display the toc window
+             "toc_section_display": "block", // display toc contents in the window
+             'sideBar':true,       // sidebar or floating window
+             'navigate_menu':false       // navigation menu (only in liveNotebook -- do not change)
+            }
+            var st={};                  // some variables used in the script
+            st.rendering_toc_cell = false;
+            st.config_loaded = false;
+            st.extension_initialized=false;
+            st.nbcontainer_marginleft = $('#notebook-container').css('margin-left')
+            st.nbcontainer_marginright = $('#notebook-container').css('margin-right')
+            st.nbcontainer_width = $('#notebook-container').css('width')
+            st.oldTocHeight = undefined
+            st.cell_toc = undefined;
+            st.toc_index=0;
+            // fire the main function with these parameters
+            table_of_contents(cfg, st);
+            var file=workflowDict[$("h1:first").attr("id")];
+            $("#toc-level0 a").css("color","#126dce");
+            $('a[href="#'+$("h1:first").attr("id")+'"]').hide()
+            var docs=workflowArray;
+            var docs_map=workflowArrayMap;
+            var pos=workflowArray.indexOf(file);
+            for (var a=pos;a>=0;a--){
+                  $('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>').insertBefore("#toc-level0 li:eq(0)");
+            }
+            $('a[href="'+file+'.html'+'"]').css("color","#126dce");
+            for (var a=pos+1;a<docs.length;a++){
+                  $(".toc #toc-level0").append('<li><a href="'+docs[a]+'.html"><font color="#073642"><b>'+docs_map[docs[a]].replace(/_/g," ")+'</b></font></a></li>');
+            }
+            // $("#toc-header").hide(); // comment out because it prevents search bar from displaying
+    });
+</script>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+  // mark it active
+  menuAnchor.parent().addClass('active');
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+<div class="container-fluid main-container">
+<!-- tabsets -->
+<script src="../site_libs/navigation-1.1/tabsets.js"></script>
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+
+
+<title>Multivariate Bayesian variable selection regression</title>
+
+<style type = "text/css">
+body {
+  font-family: "Droid Sans";
+  padding-top: 66px;
+  padding-bottom: 40px;
+}
+</style>
+</head>
+
+<body>
+<div tabindex="-1" id="notebook" class="border-box-sizing">
+<div class="container" id="notebook-container">
+
+<!-- code folding -->
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="../index.html">Multivariate Bayesian variable selection regression</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+<li>
+  <a href="../index.html">Overview</a>
+</li>
+        
+<li>
+  <a href="../analysis.html">Analysis</a>
+</li>
+        
+<li>
+  <a href="../workflow.html">Workflow</a>
+</li>
+        
+<li>
+  <a href="../writeup.html">Writeup</a>
+</li>
+        
+      </ul>
+        
+<ul class="nav navbar-nav navbar-right">
+<li>
+   <a href="http://github.com/gaow/mvarbvs"> <span class="fa fa-github"></span> </a>
+</li>
+</ul>
+        
+      </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h1 id="Association-analysis-for-GTEx-V8-data">Association analysis for GTEx V8 data<a class="anchor-link" href="#Association-analysis-for-GTEx-V8-data">&#182;</a></h1><p>We use this pipeline to perform association analysis for GTEx V8 data, including fine-mapping and prediction applications.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Authors">Authors<a class="anchor-link" href="#Authors">&#182;</a></h2><p>Gao (fine-mapping) and Fabio (prediction) at UChicago.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Pipeline-interface">Pipeline interface<a class="anchor-link" href="#Pipeline-interface">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="n">sos</span> <span class="n">run</span> <span class="n">GTEx_V8_Association</span><span class="o">.</span><span class="n">ipynb</span> <span class="o">-</span><span class="n">h</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area">
+
+    <div class="prompt"></div>
+
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>usage: sos run GTEx_V8_Association.ipynb
+               [workflow_name | -t targets] [options] [workflow_options]
+  workflow_name:        Single or combined workflows defined in this script
+  targets:              One or more targets to generate
+  options:              Single-hyphen sos parameters (see &#34;sos run -h&#34; for details)
+  workflow_options:     Double-hyphen workflow-specific parameters
+
+Workflows:
+  mnm
+  fqtl
+
+Global Workflow Options:
+  --output-dir output (as path)
+  --data-dir /project2/compbio/GTEx_eQTL/cis_eqtl_analysis_ready (as path)
+  --gene-id-file  path(f&#34;{data_dir}/multitissue_genes_list.txt&#34;)
+
+  --missing-rate-cutoff 0.05 (as float)
+  --maf-cutoff 0.01 (as float)
+  --mash-model /project2/compbio/GTEx_eQTL/mashr_flashr_workflow_output/FastQTLSumStats.mash.FL_PC3.mash_model_est_v.rds (as path)
+  --prop-test 0.0 (as float)
+                        If test_prop is set &gt; 0 then prediction will also be
+                        performed and evaluated
+
+Sections
+  mnm_0, fqtl_0:
+  mnm_1:
+    Workflow Options:
+      --max-mixtures 20 (as int)
+                        maximum number of mixture components to use
+      --max-effects 10 (as int)
+                        maximum number of single effects to capture
+  fqtl_1:
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>A test command is (on a local computer):</p>
+
+<pre><code>cat /project2/compbio/GTEx_eQTL/cis_eqtl_analysis_ready/multitissue_genes_list.txt | grep -v "#" | head -1 &gt; test.txt
+sos run GTEx_V8_Association.ipynb mnm \
+    --gene-id-file test.txt \
+    --prop-test 0.2 \
+    --output-dir ./output</code></pre>
+<p>To submit jobs, for say, 1000 genes from the list,</p>
+
+<pre><code>cat /project2/compbio/GTEx_eQTL/cis_eqtl_analysis_ready/multitissue_genes_list.txt | grep -v "#" | head -1000 &gt; 1000_genes.txt
+sos run GTEx_V8_Association.ipynb mnm \
+    --gene-id-file 1000_genes.txt \
+    --prop-test 0.2 \
+    --output-dir /project2/compbio/GTEx_eQTL/cis_eqtl_mnm_v8 \
+    -c midway2.yml -q midway2</code></pre>
+<p>To run <code>fqtl</code> pipeline that uses a different job template (configured as a different queue),</p>
+
+<pre><code>cat /project2/compbio/GTEx_eQTL/cis_eqtl_analysis_ready/multitissue_genes_list.txt | grep -v "#" | head -1000 &gt; 1000_genes.txt
+sos run GTEx_V8_Association.ipynb fqtl \
+    --gene-id-file 1000_genes.txt \
+    --prop-test 0.2 \
+    --output-dir /project2/compbio/MnM-TWAS/Output/cis_eqtl_fqtl_v8 \
+    -c midway2.yml -q midway2_rmkl</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="k">global</span><span class="p">]</span>
+<span class="kn">parameter:</span> <span class="n">output_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;./output&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">data_dir</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/project2/compbio/GTEx_eQTL/cis_eqtl_analysis_ready&#39;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">gene_id_file</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{data_dir}/multitissue_genes_list.txt&quot;</span><span class="p">)</span>
+<span class="kn">parameter:</span> <span class="n">missing_rate_cutoff</span> <span class="o">=</span> <span class="mf">0.05</span>
+<span class="kn">parameter:</span> <span class="n">maf_cutoff</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="kn">parameter:</span> <span class="n">mash_model</span> <span class="o">=</span> <span class="n">path</span><span class="p">(</span><span class="s1">&#39;/project2/compbio/GTEx_eQTL/mashr_flashr_workflow_output/FastQTLSumStats.mash.FL_PC3.mash_model_est_v.rds&#39;</span><span class="p">)</span>
+<span class="c1"># If test_prop is set &gt; 0 then prediction will also be performed and evaluated</span>
+<span class="kn">parameter:</span> <span class="n">prop_test</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="c1"># specify seed</span>
+<span class="kn">parameter:</span> <span class="n">seed</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">genes</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">gene_id_file</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">x</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)]</span>
+<span class="n">fail_if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">genes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;No gene to analyze!&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Utilities">Utilities<a class="anchor-link" href="#Utilities">&#182;</a></h2><p>Here are some predefined functions from Fabio to use elsewhere in the workflow. In the spirit of minimal changes made I'm saving this as a utility file for other workflows to use as necessary.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[4]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">mnm_0</span><span class="p">,</span><span class="n">fqtl_0</span><span class="p">]</span>
+<span class="kn">report:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s2">&quot;${ }&quot;</span><span class="p">,</span> <span class="n">output</span> <span class="o">=</span> <span class="s1">&#39;.sos/utils.R&#39;</span>
+
+    <span class="c1">###Function needed for fqtl prediction</span>
+    <span class="n">predict_fqtl</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">newx</span><span class="p">){</span>
+        <span class="k">for</span><span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)){</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">==</span><span class="mi">1</span><span class="p">){</span><span class="n">res</span> <span class="o">&lt;-</span> <span class="n">newx</span> <span class="o">%*%</span> <span class="n">coeffs</span><span class="p">[,</span> <span class="n">i</span><span class="p">]}</span> <span class="k">else</span> <span class="k">if</span><span class="p">(</span><span class="n">i</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">){</span><span class="n">res</span> <span class="o">&lt;-</span> <span class="n">cbind</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">newx</span> <span class="o">%*%</span> <span class="n">coeffs</span><span class="p">[,</span> <span class="n">i</span><span class="p">])}</span>
+        <span class="p">}</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">###Functions to compute MAF and missing genotype rate</span>
+    <span class="n">compute_maf</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">geno</span><span class="p">){</span>
+      <span class="n">f</span> <span class="o">&lt;-</span> <span class="n">mean</span><span class="p">(</span><span class="n">geno</span><span class="p">,</span><span class="n">na</span><span class="o">.</span><span class="n">rm</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+      <span class="k">return</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">f</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="n">compute_missing</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">geno</span><span class="p">){</span>
+      <span class="n">miss</span> <span class="o">&lt;-</span> <span class="nb">sum</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">geno</span><span class="p">))</span><span class="o">/</span><span class="n">length</span><span class="p">(</span><span class="n">geno</span><span class="p">)</span>
+      <span class="k">return</span><span class="p">(</span><span class="n">miss</span><span class="p">)</span>
+    <span class="p">}</span>
+    
+    <span class="n">mean_impute</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">geno</span><span class="p">){</span>
+      <span class="n">f</span> <span class="o">&lt;-</span> <span class="nb">apply</span><span class="p">(</span><span class="n">geno</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">na</span><span class="o">.</span><span class="n">rm</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">))</span>
+      <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="mi">1</span><span class="p">:</span><span class="n">length</span><span class="p">(</span><span class="n">f</span><span class="p">))</span> <span class="n">geno</span><span class="p">[,</span><span class="n">i</span><span class="p">][</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">na</span><span class="p">(</span><span class="n">geno</span><span class="p">[,</span><span class="n">i</span><span class="p">]))]</span> <span class="o">&lt;-</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+      <span class="k">return</span><span class="p">(</span><span class="n">geno</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">is_zero_variance</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span> <span class="k">return</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+      <span class="k">else</span> <span class="k">return</span><span class="p">(</span><span class="n">F</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">###Function to sample test set individuals</span>
+    <span class="n">create_test_set</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">test_prop</span><span class="p">){</span>
+        <span class="n">Ntot</span> <span class="o">&lt;-</span> <span class="n">nrow</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+        <span class="n">test_ind</span> <span class="o">&lt;-</span> <span class="n">sample</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">c</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">Ntot</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="nb">round</span><span class="p">(</span><span class="n">Ntot</span><span class="o">*</span><span class="n">test_prop</span><span class="p">),</span> <span class="n">replace</span><span class="o">=</span><span class="n">F</span><span class="p">)</span>
+
+        <span class="k">return</span><span class="p">(</span><span class="n">test_ind</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">###Function to calculate the covariance matrix of Y via diag</span>
+    <span class="n">compute_cov_diag</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">miss</span><span class="o">=</span><span class="n">NULL</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">miss</span><span class="p">)){</span>
+            <span class="n">covar</span> <span class="o">&lt;-</span> <span class="n">diag</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">covar</span> <span class="o">&lt;-</span> <span class="n">diag</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">-</span><span class="n">miss</span><span class="p">,</span> <span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span><span class="p">(</span><span class="n">covar</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">###Function to calculate the covariance matrix of Y via flash</span>
+    <span class="n">compute_cov_flash</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">miss</span><span class="o">=</span><span class="n">NULL</span><span class="p">){</span>
+        <span class="k">if</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">null</span><span class="p">(</span><span class="n">miss</span><span class="p">)){</span>
+            <span class="n">fl</span> <span class="o">&lt;-</span> <span class="n">flashier</span><span class="p">::</span><span class="n">flash</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">var</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">prior</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">flashier</span><span class="p">::</span><span class="n">prior</span><span class="o">.</span><span class="n">normal</span><span class="p">(),</span> <span class="n">flashier</span><span class="p">::</span><span class="n">prior</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">mix</span><span class="p">()),</span> <span class="n">backfit</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">.</span><span class="n">lvl</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="n">fl</span> <span class="o">&lt;-</span> <span class="n">flashier</span><span class="p">::</span><span class="n">flash</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="o">-</span><span class="n">miss</span><span class="p">,</span> <span class="p">],</span> <span class="n">var</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">prior</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="n">flashier</span><span class="p">::</span><span class="n">prior</span><span class="o">.</span><span class="n">normal</span><span class="p">(),</span> <span class="n">flashier</span><span class="p">::</span><span class="n">prior</span><span class="o">.</span><span class="n">normal</span><span class="o">.</span><span class="n">scale</span><span class="o">.</span><span class="n">mix</span><span class="p">()),</span> <span class="n">backfit</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">,</span> <span class="n">verbose</span><span class="o">.</span><span class="n">lvl</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="p">}</span>  
+    
+        <span class="k">if</span><span class="p">(</span><span class="n">fl</span><span class="err">$</span><span class="n">n</span><span class="o">.</span><span class="n">factors</span><span class="o">==</span><span class="mi">0</span><span class="p">){</span>
+          <span class="n">covar</span> <span class="o">&lt;-</span> <span class="n">diag</span><span class="p">(</span><span class="n">fl</span><span class="err">$</span><span class="n">residuals</span><span class="o">.</span><span class="n">sd</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="n">fsd</span> <span class="o">&lt;-</span> <span class="n">sapply</span><span class="p">(</span><span class="n">fl</span><span class="err">$</span><span class="n">fitted</span><span class="o">.</span><span class="n">g</span><span class="p">[[</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;[[&#39;</span><span class="p">,</span> <span class="s2">&quot;sd&quot;</span><span class="p">)</span>
+          <span class="n">covar</span> <span class="o">&lt;-</span> <span class="n">diag</span><span class="p">(</span><span class="n">fl</span><span class="err">$</span><span class="n">residuals</span><span class="o">.</span><span class="n">sd</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">crossprod</span><span class="p">(</span><span class="n">t</span><span class="p">(</span><span class="n">fl</span><span class="err">$</span><span class="n">flash</span><span class="o">.</span><span class="n">fit</span><span class="err">$</span><span class="n">EF</span><span class="p">[[</span><span class="mi">2</span><span class="p">]])</span> <span class="o">*</span> <span class="n">fsd</span><span class="p">)</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span><span class="p">(</span><span class="n">covar</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">### mashr null correlation code</span>
+    <span class="n">estimate_null_correlation_simple</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">bhat</span><span class="p">,</span> <span class="n">sbhat</span><span class="p">,</span> <span class="n">z_thresh</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">est_cor</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">){</span>
+      <span class="n">z</span> <span class="o">=</span> <span class="n">bhat</span><span class="o">/</span><span class="n">sbhat</span>
+      <span class="n">z</span><span class="p">[</span><span class="n">which</span><span class="p">(</span><span class="ow">is</span><span class="o">.</span><span class="n">nan</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">|</span> <span class="ow">is</span><span class="o">.</span><span class="n">infinite</span><span class="p">(</span><span class="n">z</span><span class="p">))]</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">max_absz</span> <span class="o">=</span> <span class="nb">apply</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">z</span><span class="p">),</span><span class="mi">1</span><span class="p">,</span> <span class="nb">max</span><span class="p">)</span>
+      <span class="n">nullish</span> <span class="o">=</span> <span class="n">which</span><span class="p">(</span><span class="n">max_absz</span> <span class="o">&lt;</span> <span class="n">z_thresh</span><span class="p">)</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">nullish</span><span class="p">)</span><span class="o">&lt;</span><span class="n">ncol</span><span class="p">(</span><span class="n">z</span><span class="p">)){</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;not enough null data to estimate null correlation; return diag instead&quot;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">diag</span><span class="p">(</span><span class="n">ncol</span><span class="p">(</span><span class="n">z</span><span class="p">)))</span>
+      <span class="p">}</span>
+      <span class="n">nullish_z</span> <span class="o">=</span> <span class="n">z</span><span class="p">[</span><span class="n">nullish</span><span class="p">,]</span>
+      <span class="n">Vhat</span> <span class="o">=</span> <span class="n">cov</span><span class="p">(</span><span class="n">nullish_z</span><span class="p">)</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">est_cor</span><span class="p">){</span>
+        <span class="n">Vhat</span> <span class="o">=</span> <span class="n">cov2cor</span><span class="p">(</span><span class="n">Vhat</span><span class="p">)</span>
+      <span class="p">}</span>
+      <span class="k">return</span><span class="p">(</span><span class="n">Vhat</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="c1">###Functions to do prediction</span>
+    <span class="n">fqtl_fit_pred</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">miss</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="mi">1</span><span class="p">){</span>
+        <span class="c1">###Scale X and Y</span>
+        <span class="n">X_scaled</span> <span class="o">&lt;-</span> <span class="n">scale</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">Y_scaled</span> <span class="o">&lt;-</span> <span class="n">scale</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">center</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+
+        <span class="c1">###Fit fqtl</span>
+        <span class="n">opt</span><span class="o">.</span><span class="n">gtex</span> <span class="o">&lt;-</span> <span class="nb">list</span><span class="p">(</span><span class="n">vbiter</span> <span class="o">=</span> <span class="mi">5000</span><span class="p">,</span> <span class="n">gammax</span> <span class="o">=</span> <span class="mf">1e4</span><span class="p">,</span> <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
+                         <span class="n">rate</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">,</span> <span class="n">decay</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1e-2</span><span class="p">,</span>
+                         <span class="n">pi</span><span class="o">.</span><span class="n">ub</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">pi</span><span class="o">.</span><span class="n">lb</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">tau</span> <span class="o">=</span> <span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">do</span><span class="o">.</span><span class="n">hyper</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">,</span>
+                         <span class="n">jitter</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">svd</span><span class="o">.</span><span class="n">init</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">residual</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">,</span>
+                         <span class="k">print</span><span class="o">.</span><span class="n">interv</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">k</span> <span class="o">=</span> <span class="n">K</span><span class="p">,</span> <span class="n">mf</span><span class="o">.</span><span class="n">right</span><span class="o">.</span><span class="n">nn</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">&lt;-</span> <span class="n">fqtl</span><span class="p">::</span><span class="n">fit</span><span class="o">.</span><span class="n">fqtl</span><span class="p">(</span><span class="n">Y_scaled</span><span class="p">[</span><span class="o">-</span><span class="n">miss</span><span class="p">,</span> <span class="p">],</span> <span class="n">X_scaled</span><span class="p">[</span><span class="o">-</span><span class="n">miss</span><span class="p">,</span> <span class="p">],</span> <span class="n">factored</span><span class="o">=</span><span class="n">TRUE</span><span class="p">,</span> <span class="n">nthread</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">options</span> <span class="o">=</span> <span class="n">opt</span><span class="o">.</span><span class="n">gtex</span><span class="p">)</span>
+        <span class="n">tis_effect</span> <span class="o">&lt;-</span> <span class="n">out</span><span class="err">$</span><span class="n">mean</span><span class="o">.</span><span class="n">right</span><span class="err">$</span><span class="n">theta</span>
+        <span class="n">snp_effect</span> <span class="o">&lt;-</span> <span class="n">out</span><span class="err">$</span><span class="n">mean</span><span class="o">.</span><span class="n">left</span><span class="err">$</span><span class="n">theta</span>
+        <span class="n">combined_effect</span> <span class="o">&lt;-</span> <span class="n">tcrossprod</span><span class="p">(</span><span class="n">snp_effect</span><span class="p">,</span> <span class="n">tis_effect</span><span class="p">)</span>
+
+        <span class="c1">###Predict phenotypes in the test set</span>
+        <span class="n">pred_scaled</span> <span class="o">&lt;-</span> <span class="n">predict_fqtl</span><span class="p">(</span><span class="n">combined_effect</span><span class="p">,</span> <span class="n">X_scaled</span><span class="p">[</span><span class="n">miss</span><span class="p">,</span> <span class="p">])</span>
+        <span class="n">pred</span> <span class="o">&lt;-</span> <span class="n">pred_scaled</span> <span class="o">*</span> <span class="n">attr</span><span class="p">(</span><span class="n">Y_scaled</span><span class="p">,</span> <span class="s1">&#39;scaled:scale&#39;</span><span class="p">)[</span><span class="n">col</span><span class="p">(</span><span class="n">pred_scaled</span><span class="p">)]</span> <span class="o">+</span> <span class="n">attr</span><span class="p">(</span><span class="n">Y_scaled</span><span class="p">,</span> <span class="s1">&#39;scaled:center&#39;</span><span class="p">)[</span><span class="n">col</span><span class="p">(</span><span class="n">pred_scaled</span><span class="p">)]</span>
+
+        <span class="k">return</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">fit</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">ymiss</span><span class="o">=</span><span class="n">Y</span><span class="p">[</span><span class="n">miss</span><span class="p">,</span> <span class="p">],</span> <span class="n">ymiss_pred</span><span class="o">=</span><span class="n">pred</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="c1">### Filter X matrix</span>
+    <span class="n">filter_X</span> <span class="o">&lt;-</span> <span class="n">function</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">missing_rate_thresh</span><span class="p">,</span> <span class="n">maf_thresh</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">rm_col</span> <span class="o">&lt;-</span> <span class="n">which</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">compute_missing</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">missing_rate_thresh</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">rm_col</span><span class="p">))</span> <span class="n">X</span> <span class="o">&lt;-</span> <span class="n">X</span><span class="p">[,</span> <span class="o">-</span><span class="n">rm_col</span><span class="p">]</span>
+        <span class="n">rm_col</span> <span class="o">&lt;-</span> <span class="n">which</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">compute_maf</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">maf_thresh</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">rm_col</span><span class="p">))</span> <span class="n">X</span> <span class="o">&lt;-</span> <span class="n">X</span><span class="p">[,</span> <span class="o">-</span><span class="n">rm_col</span><span class="p">]</span>
+        <span class="n">rm_col</span> <span class="o">&lt;-</span> <span class="n">which</span><span class="p">(</span><span class="nb">apply</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">is_zero_variance</span><span class="p">))</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">rm_col</span><span class="p">))</span> <span class="n">X</span> <span class="o">&lt;-</span> <span class="n">X</span><span class="p">[,</span> <span class="o">-</span><span class="n">rm_col</span><span class="p">]</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">mean_impute</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="n">TISSUE_LIST</span> <span class="o">=</span> <span class="n">c</span><span class="p">(</span><span class="s1">&#39;Adipose_Subcutaneous&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Adipose_Visceral_Omentum&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Adrenal_Gland&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Artery_Aorta&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Artery_Coronary&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Artery_Tibial&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Amygdala&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Anterior_cingulate_cortex_BA24&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Caudate_basal_ganglia&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Cerebellar_Hemisphere&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Cerebellum&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Cortex&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Frontal_Cortex_BA9&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Hippocampus&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Hypothalamus&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Nucleus_accumbens_basal_ganglia&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Putamen_basal_ganglia&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Spinal_cord_cervical_c-1&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Brain_Substantia_nigra&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Breast_Mammary_Tissue&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Cells_Cultured_fibroblasts&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Cells_EBV-transformed_lymphocytes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Colon_Sigmoid&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Colon_Transverse&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Esophagus_Gastroesophageal_Junction&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Esophagus_Mucosa&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Esophagus_Muscularis&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Heart_Atrial_Appendage&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Heart_Left_Ventricle&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Kidney_Cortex&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Liver&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Lung&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Minor_Salivary_Gland&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Muscle_Skeletal&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Nerve_Tibial&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Ovary&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Pancreas&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Pituitary&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Prostate&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Skin_Not_Sun_Exposed_Suprapubic&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Skin_Sun_Exposed_Lower_leg&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Small_Intestine_Terminal_Ileum&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Spleen&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Stomach&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Testis&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Thyroid&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Uterus&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Vagina&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;Whole_Blood&#39;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="M&amp;M-analysis">M&amp;M analysis<a class="anchor-link" href="#M&amp;M-analysis">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Fit M&amp;M</span>
+<span class="p">[</span><span class="n">mnm_1</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;mvsusieR&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;flashier&#39;</span><span class="p">),</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;susieR&#39;</span><span class="p">),</span> <span class="n">mash_model</span>
+<span class="c1"># maximum number of mixture components to use</span>
+<span class="kn">parameter:</span> <span class="n">max_mixtures</span> <span class="o">=</span> <span class="mi">20</span>
+<span class="c1"># maximum number of single effects to capture</span>
+<span class="kn">parameter:</span> <span class="n">max_effects</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="c1"># covariance matrix computed by &quot;flash&quot;, &quot;diag&quot; or &quot;znull&quot; method</span>
+<span class="kn">parameter:</span> <span class="n">cov_method</span> <span class="o">=</span> <span class="s1">&#39;flash&#39;</span>
+<span class="kn">input:</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{data_dir}/{gene}.Multi_Tissues.rds&#39;</span> <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">genes</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{output_dir}/{_input:bn}.mnm_{cov_method}.rds&#39;</span>
+<span class="c1"># each job uses 10 nodes, each node 4 cores in parallel each core using 2G memory; and jobs are created in batches of 40.</span>
+<span class="kn">task:</span> <span class="kp">trunk_workers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="kp">trunk_size</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s1">&#39;30m&#39;</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s1">&#39;8G&#39;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">tags</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{step_name}_{_output:bn}&#39;</span>
+
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="nb">input</span> <span class="o">=</span> <span class="s1">&#39;.sos/utils.R&#39;</span>
+    <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">seed</span><span class="p">})</span>
+    <span class="n">attach</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">}))</span>
+    <span class="c1"># setup data</span>
+    <span class="n">X</span> <span class="o">&lt;-</span> <span class="n">filter_X</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">missing_rate_cutoff</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">maf_cutoff</span><span class="p">})</span>
+    <span class="n">prop_test</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">prop_test</span><span class="p">}</span>
+    
+    <span class="c1"># Get original effects results</span>
+    <span class="c1"># to keep for a comparison, not to be used in M&amp;M</span>
+    <span class="n">univariate_res</span> <span class="o">=</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">y_res</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">susieR</span><span class="p">:::</span><span class="n">univariate_regression</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y_res</span><span class="p">[,</span><span class="n">i</span><span class="p">]))</span>
+    <span class="n">bhat</span> <span class="o">=</span> <span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">y_res</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">univariate_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">betahat</span><span class="p">))</span>
+    <span class="n">shat</span> <span class="o">=</span> <span class="n">do</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="n">cbind</span><span class="p">,</span> <span class="n">lapply</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ncol</span><span class="p">(</span><span class="n">y_res</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="n">univariate_res</span><span class="p">[[</span><span class="n">i</span><span class="p">]]</span><span class="err">$</span><span class="n">sebetahat</span><span class="p">))</span>
+    <span class="c1"># Get mash model</span>
+    <span class="n">mash</span> <span class="o">&lt;-</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">mash_model</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+    <span class="c1"># For fine-mapping</span>
+    <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;${cov_method}&quot;</span> <span class="o">==</span> <span class="s1">&#39;znull&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">vhat</span> <span class="o">=</span> <span class="n">estimate_null_correlation_simple</span><span class="p">(</span><span class="n">bhat</span><span class="p">,</span> <span class="n">shat</span><span class="p">)</span>
+      <span class="n">s_y</span> <span class="o">=</span> <span class="nb">apply</span><span class="p">(</span><span class="n">y_res</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="n">sd</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">na</span><span class="o">.</span><span class="n">rm</span><span class="o">=</span><span class="n">T</span><span class="p">))</span>
+      <span class="n">cov_Y</span> <span class="o">=</span> <span class="n">diag</span><span class="p">(</span><span class="n">s_y</span><span class="p">)</span> <span class="o">%*%</span> <span class="n">vhat</span> <span class="o">%*%</span> <span class="n">diag</span><span class="p">(</span><span class="n">s_y</span><span class="p">)</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">cov_Y</span> <span class="o">&lt;-</span> <span class="n">compute_cov_</span><span class="err">$</span><span class="p">{</span><span class="n">cov_method</span><span class="p">}(</span><span class="n">y_res</span><span class="p">)</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">mash</span><span class="err">$</span><span class="n">fitted_g</span><span class="err">$</span><span class="n">usepointmass</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">prior_weights</span> <span class="o">=</span> <span class="n">mash</span><span class="err">$</span><span class="n">fitted_g</span><span class="err">$</span><span class="n">pi</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+      <span class="n">null_weight</span> <span class="o">=</span> <span class="n">mash</span><span class="err">$</span><span class="n">fitted_g</span><span class="err">$</span><span class="n">pi</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">prior_weights</span> <span class="o">=</span> <span class="n">mash</span><span class="err">$</span><span class="n">fitted_g</span><span class="err">$</span><span class="n">pi</span>
+      <span class="n">null_weight</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="p">}</span>
+    <span class="n">include_cond</span> <span class="o">=</span> <span class="n">match</span><span class="p">(</span><span class="n">colnames</span><span class="p">(</span><span class="n">y_res</span><span class="p">),</span> <span class="n">TISSUE_LIST</span><span class="p">)</span>
+    <span class="n">m_init</span> <span class="o">&lt;-</span> <span class="n">mvsusieR</span><span class="p">:::</span><span class="n">MashInitializer</span><span class="err">$</span><span class="n">new</span><span class="p">(</span><span class="n">Ulist</span><span class="o">=</span><span class="n">mash</span><span class="err">$</span><span class="n">fitted_g</span><span class="err">$</span><span class="n">Ulist</span><span class="p">,</span> <span class="n">grid</span><span class="o">=</span><span class="n">mash</span><span class="err">$</span><span class="n">fitted_g</span><span class="err">$</span><span class="n">grid</span><span class="p">,</span> <span class="n">prior_weights</span><span class="o">=</span><span class="n">prior_weights</span><span class="p">,</span> <span class="n">null_weight</span><span class="o">=</span><span class="n">null_weight</span><span class="p">,</span> <span class="n">top_mixtures</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">max_mixtures</span><span class="p">},</span> <span class="n">include_conditions</span><span class="o">=</span><span class="n">include_cond</span><span class="p">)</span>
+    <span class="n">res</span><span class="err">$</span><span class="n">fitted</span> <span class="o">&lt;-</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_res</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">max_effects</span><span class="p">},</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">cov_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+    <span class="n">res</span><span class="err">$</span><span class="n">fitted</span><span class="err">$</span><span class="n">bhat</span> <span class="o">=</span> <span class="n">bhat</span>
+    <span class="n">res</span><span class="err">$</span><span class="n">fitted</span><span class="err">$</span><span class="n">shat</span> <span class="o">=</span> <span class="n">shat</span>
+    <span class="c1"># For prediction</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">prop_test</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">miss</span> <span class="o">&lt;-</span> <span class="n">create_test_set</span><span class="p">(</span><span class="n">y_res</span><span class="p">,</span> <span class="n">prop_test</span><span class="p">)</span>
+        <span class="n">cov_Y</span> <span class="o">&lt;-</span> <span class="n">compute_cov_</span><span class="err">$</span><span class="p">{</span><span class="n">cov_method</span><span class="p">}(</span><span class="n">y_res</span><span class="p">,</span> <span class="n">miss</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">&lt;-</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie</span><span class="p">(</span><span class="n">X</span><span class="p">[</span><span class="o">-</span><span class="n">miss</span><span class="p">,</span> <span class="p">],</span> <span class="n">y_res</span><span class="p">[</span><span class="o">-</span><span class="n">miss</span><span class="p">,</span> <span class="p">],</span> <span class="n">L</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">max_effects</span><span class="p">},</span> <span class="n">prior_variance</span><span class="o">=</span><span class="n">m_init</span><span class="p">,</span> <span class="n">residual_variance</span><span class="o">=</span><span class="n">cov_Y</span><span class="p">,</span> <span class="n">compute_objective</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_residual_variance</span><span class="o">=</span><span class="n">F</span><span class="p">,</span> <span class="n">estimate_prior_variance</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">estimate_prior_method</span><span class="o">=</span><span class="s2">&quot;simple&quot;</span><span class="p">)</span>
+        <span class="n">res</span><span class="err">$</span><span class="n">ymiss_pred</span> <span class="o">&lt;-</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">predict</span><span class="o">.</span><span class="n">mvsusieR</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">X</span><span class="p">[</span><span class="n">miss</span><span class="p">,</span> <span class="p">])</span>
+        <span class="n">res</span><span class="err">$</span><span class="n">ymiss</span> <span class="o">&lt;-</span> <span class="n">y_res</span><span class="p">[</span><span class="n">miss</span><span class="p">,</span> <span class="p">]</span>
+    <span class="p">}</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="c1"># Make some M&amp;M plots</span>
+<span class="p">[</span><span class="n">mnm_2</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">executable</span><span class="p">(</span><span class="s1">&#39;convert&#39;</span><span class="p">)</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{_input:n}.png&#39;</span>
+<span class="c1"># each job uses 10 nodes, each node 4 cores in parallel each core using 2G memory; and jobs are created in batches of 40.</span>
+<span class="kn">task:</span> <span class="kp">trunk_workers</span> <span class="o">=</span> <span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span> <span class="kp">trunk_size</span> <span class="o">=</span> <span class="mi">40</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s1">&#39;5m&#39;</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s1">&#39;2G&#39;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">tags</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{step_name}_{_output:bn}&#39;</span>
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">})</span><span class="err">$</span><span class="n">fitted</span>
+    <span class="n">pdf</span><span class="p">(</span><span class="s2">&quot;${_output:n}.dot.pdf&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">susieR</span><span class="p">::</span><span class="n">susie_plot</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;PIP&#39;</span><span class="p">,</span> <span class="n">main</span> <span class="o">=</span> <span class="s1">&#39;Cross-condition Posterior Inclusion Probability&#39;</span><span class="p">,</span> <span class="n">xlab</span> <span class="o">=</span> <span class="s1">&#39;SNP positions&#39;</span><span class="p">,</span> <span class="n">add_legend</span> <span class="o">=</span> <span class="n">T</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie_plot</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="p">(</span><span class="s2">&quot;${_output:n}.bubble.pdf&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="err">$</span><span class="n">plot</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">mvsusieR</span><span class="p">::</span><span class="n">mvsusie_plot</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">original_sumstat</span><span class="o">=</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">pdf</span><span class="p">(</span><span class="s2">&quot;${_output:nn}.z_scores.pdf&quot;</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="k">print</span><span class="p">(</span><span class="n">p</span><span class="err">$</span><span class="n">plot</span><span class="p">)</span>
+    <span class="n">dev</span><span class="o">.</span><span class="n">off</span><span class="p">()</span>
+
+<span class="kn">bash:</span> <span class="n">expand</span> <span class="o">=</span> <span class="bp">True</span>
+  <span class="n">convert</span> <span class="o">-</span><span class="n">append</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">dot</span><span class="o">.</span><span class="n">pdf</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">n</span><span class="p">}</span><span class="o">.</span><span class="n">bubble</span><span class="o">.</span><span class="n">pdf</span> <span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">nn</span><span class="p">}</span><span class="o">.</span><span class="n">z_scores</span><span class="o">.</span><span class="n">pdf</span> <span class="p">{</span><span class="n">_output</span><span class="p">}</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="fqtl-analysis">fqtl analysis<a class="anchor-link" href="#fqtl-analysis">&#182;</a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-sos"><pre><span></span><span class="p">[</span><span class="n">fqtl_1</span><span class="p">]</span>
+<span class="kn">depends:</span> <span class="n">R_library</span><span class="p">(</span><span class="s1">&#39;fqtl&#39;</span><span class="p">)</span>
+<span class="kn">input:</span> <span class="p">[</span><span class="n">f</span><span class="s1">&#39;{data_dir}/{gene}.Multi_Tissues.rds&#39;</span> <span class="k">for</span> <span class="n">gene</span> <span class="ow">in</span> <span class="n">genes</span><span class="p">],</span> <span class="n">group_by</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="kn">output:</span> <span class="n">f</span><span class="s1">&#39;{output_dir}/{_input:bn}.fqtl.rds&#39;</span>
+<span class="c1"># each job uses 10 nodes, each node 4 cores in parallel each core using 2G memory; and jobs are created in batches of 40.</span>
+<span class="kn">task:</span> <span class="kp">trunk_workers</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="kp">trunk_size</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span> <span class="kp">walltime</span> <span class="o">=</span> <span class="s1">&#39;150m&#39;</span><span class="p">,</span> <span class="kp">mem</span> <span class="o">=</span> <span class="s1">&#39;8G&#39;</span><span class="p">,</span> <span class="kp">cores</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="kp">tags</span> <span class="o">=</span> <span class="n">f</span><span class="s1">&#39;{step_name}_{_output:bn}&#39;</span>
+
+<span class="kn">R:</span> <span class="n">expand</span> <span class="o">=</span> <span class="s1">&#39;${ }&#39;</span><span class="p">,</span> <span class="nb">input</span> <span class="o">=</span> <span class="s1">&#39;.sos/utils.R&#39;</span>
+    <span class="nb">set</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">seed</span><span class="p">})</span>
+    <span class="n">attach</span><span class="p">(</span><span class="n">readRDS</span><span class="p">(</span><span class="err">$</span><span class="p">{</span><span class="n">_input</span><span class="p">:</span><span class="n">r</span><span class="p">}))</span>
+    <span class="c1"># setup data</span>
+    <span class="n">X</span> <span class="o">&lt;-</span> <span class="n">filter_X</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">missing_rate_cutoff</span><span class="p">},</span> <span class="err">$</span><span class="p">{</span><span class="n">maf_cutoff</span><span class="p">})</span>
+    <span class="n">prop_test</span> <span class="o">&lt;-</span> <span class="err">$</span><span class="p">{</span><span class="n">prop_test</span><span class="p">}</span>
+    <span class="c1">#</span>
+    <span class="n">miss</span> <span class="o">&lt;-</span> <span class="n">create_test_set</span><span class="p">(</span><span class="n">y_res</span><span class="p">,</span> <span class="n">prop_test</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">&lt;-</span> <span class="nb">min</span><span class="p">((</span><span class="n">nrow</span><span class="p">(</span><span class="n">y_res</span><span class="p">)</span><span class="o">-</span><span class="n">length</span><span class="p">(</span><span class="n">miss</span><span class="p">)),</span> <span class="n">ncol</span><span class="p">(</span><span class="n">y_res</span><span class="p">))</span>
+    <span class="n">res</span> <span class="o">&lt;-</span> <span class="n">fqtl_fit_pred</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_res</span><span class="p">,</span> <span class="n">miss</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">saveRDS</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="err">$</span><span class="p">{</span><span class="n">_output</span><span class="p">:</span><span class="n">r</span><span class="p">})</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+<hr>
+Copyright &copy 2016-2020 Gao Wang et al at Stephens Lab, University of Chicago
+
+</div>
+</div>
+</body>
+</html>
