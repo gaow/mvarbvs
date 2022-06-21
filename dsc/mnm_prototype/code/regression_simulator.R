@@ -147,6 +147,8 @@ simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, pve, is_pv
       }
     }
     if (save_suff_stats) res$suff = mm_sufficient(X, res$Y) # XtX is not involved
+    res$J = ncol(X)
+    res$N = nrow(X)
     return(res)
 }
 

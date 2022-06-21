@@ -1,10 +1,10 @@
 mnm_rss_base: misc.R + mnm_rss.R
   @CONF: R_libs = (mvsusieR@stephenslab/mvsusieR, flashier@willwerscheid/flashier)
-  sumstats: $sumstats  
+  sumstats: $sumstats
   suffstats: $suffstats
   ld: $ld
   meta: $meta
-  prior: 'oracle','identity', 'shared', 'naive', 'ED'
+  prior: 'oracle','identity', 'shared', 'naive', 'ED', 'EDscale'
   L: 10
   maxiter: 1000
   resid_method: 'oracle', 'identity', 'nullz', 'corY'
@@ -28,8 +28,8 @@ mnm_rss_ed(mnm_rss_base):
   prior: 'ED'
   resid_method: 'oracle'
 
-mnm_rss_ed_ddcan(mnm_rss_base):
-  prior: 'ED_ddcan'
+mnm_rss_edscale(mnm_rss_base):
+  prior: 'EDscale'
   resid_method: 'oracle'
   
 mnm_rss_identity(mnm_rss_base):
@@ -48,8 +48,8 @@ mnm_rss_ed_corZ(mnm_rss_base):
   prior: 'ED'
   resid_method: 'nullz'
 
-mnm_rss_ed_ddcan_corZ(mnm_rss_base):
-  prior: 'ED_ddcan'
+mnm_rss_edscale_corZ(mnm_rss_base):
+  prior: 'EDscale'
   resid_method: 'nullz'
 
 mnm_rss_identity_corZ(mnm_rss_base):
@@ -68,8 +68,8 @@ mnm_rss_ed_corY(mnm_rss_base):
   prior: 'ED'
   resid_method: 'corY'
 
-mnm_rss_ed_ddcan_corY(mnm_rss_base):
-  prior: 'ED_ddcan'
+mnm_rss_edscale_corY(mnm_rss_base):
+  prior: 'EDscale'
   resid_method: 'corY'
   
 mnm_rss_identity_corY(mnm_rss_base):

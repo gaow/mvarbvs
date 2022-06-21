@@ -19,7 +19,8 @@ simulate_y_base: misc.R + regression_simulator.R + regression.R + \
   pve: ${pve}
   is_pve_total: TRUE
   $Y: res$Y
-  $J: ncol(X)
+  $J: res$J
+  $N: res$N
   $R: res$n_traits
   $meta: list(true_coef=res$true_coef, residual_variance=res$residual_variance,
               original_Y=Y, Y_sd=res$Y_sd, prior=res$prior, eff_mode = eff_mode)
