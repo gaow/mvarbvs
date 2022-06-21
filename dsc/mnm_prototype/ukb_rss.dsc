@@ -27,7 +27,7 @@ DSC:
   global:
     data_file: /project2/mstephens/yuxin/ukb-bloodcells/regions1000_5000.txt
     prior_file: /project2/mstephens/yuxin/ukb-bloodcells/analysis_20220619/ukb_prior_simulation_20220619.rds
-    nullz_file: /project2/mstephens/yuxin/ukb-bloodcells/nullz_cor_20220429.rds
+    nullz_file: /project2/mstephens/yuxin/ukb-bloodcells/analysis_20220619/nullz_cor_20220619.rds
     genotype_dir: '/project2/mstephens/yuxin/ukb-bloodcells/genotypes/'
     ld_dir: '/project2/mstephens/yuxin/ukb-bloodcells/LD/'
     varY_file: '/project2/mstephens/yuxin/ukb-bloodcells/analysis_20220619/ukbbloodcells_prepare.Ycor.rds'

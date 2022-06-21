@@ -3,6 +3,12 @@ Z = as.matrix(sumstats$bhat/sumstats$sbhat)
 Z[is.na(Z)] = 0
 if(prior == 'EDscale'){
   priorU = meta$prior[['ED']]
+  priorU$xUlist = lapply(priorU$xUlist, function(x){
+    if(max(diag(x))!=0){
+      x = x/max(diag(x))
+    }
+    return(x)
+  })
 }else{
   priorU = meta$prior[[prior]]
 }
@@ -14,15 +20,6 @@ if(resid_method == 'identity'){
   resid_Z = readRDS(nullz_file)[[meta$eff_mode]]
 }else if(resid_method == 'corY'){
   resid_Z = cov2cor(as.matrix(suffstats$YtY) / (suffstats$N-1))
-}
-
-if (prior == 'EDscale'){
-  priorU$xUlist = lapply(priorU$xUlist, function(x){
-    if(max(diag(x))!=0){
-      x = x/max(diag(x))
-    }
-    return(x)
-  })
 }
 
 # LD info can be provided either as R data objects or R RDS files
