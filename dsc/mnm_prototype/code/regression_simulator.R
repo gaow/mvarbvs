@@ -149,6 +149,7 @@ simulate_main = function(X, Y, missing_Y, scale_Y, prior_file, prior, pve, is_pv
     if (save_suff_stats) res$suff = mm_sufficient(X, res$Y) # XtX is not involved
     res$J = ncol(X)
     res$N = nrow(X)
+    res$aaf = apply(X, 2, function(x) sum(x)/(2*length(x)))
     return(res)
 }
 
