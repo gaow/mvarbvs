@@ -23,7 +23,7 @@ write_paintor_cfg <- function(Z, LD_file, prefix) {
 
 run_paintor <- function(Z, LD_file, args = "", prefix="data"){
   cfg = write_paintor_cfg(Z, LD_file, prefix)
-  cmd = paste0("PAINTOR -input ",cfg$input, ' -in ', cfg$dir, ' -out ', cfg$dir, ' ',
+  cmd = paste0("code/PAINTOR -input ",cfg$input, ' -in ', cfg$dir, ' -out ', cfg$dir, ' ',
                '-Zhead ', paste0(colnames(Z), collapse = ','), ' ', 
                '-LDname ', paste0(rep('ld', ncol(Z)), collapse = ','), ' ',
                '-annotations dummy -Lname ', cfg$logBF, ' -Gname ', cfg$enrichment, ' ',

@@ -155,6 +155,7 @@ mvsusie_scores = function(m, true_coef, lfsr_cutoff = 0.05) {
       overlap_var = overlaps$snp,
       overlap_cs = overlaps$cs,
       n_signal = length(beta_idx),
+      n_condition_signal = colSums(true_coef != 0),
       included_signal = sum(beta_idx %in% unlist(cs)),
       total_cond_discoveries = total_condition_cs,
       false_pos_cond_discoveries = false_positive_condition_cs,

@@ -131,4 +131,16 @@ get_genotype <- function(geno_file){
   return(X)
 }
 
+mtx_to_list = function(m){
+  lapply(seq_len(ncol(m)), function(i){
+    x = m[,i]
+    idx = which(!is.na(x))
+    if(length(idx) == 0){
+      return(NA)
+    }else{
+      return(x[idx])
+    }
+  })
+}
+
 

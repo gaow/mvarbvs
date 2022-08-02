@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --time=36:00:00
-#SBATCH --partition=mstephens
+#SBATCH --partition=broadwl
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
@@ -22,7 +22,13 @@ module load R/4.1.0
 # dsc ukb_rss.dsc --target simulate_small4_only --host dsc_mnm.yml -o output/ukb_rss_small4_20220619 -s existing &> mnm_rss_ukb_small4.log
 
 # Run DSC for smaller number of traits 2
-dsc ukb_rss.dsc --target simulate_small2_only --host dsc_mnm.yml -o output/ukb_rss_small2_20220619 -s existing &> mnm_rss_ukb_small2.log
+# dsc ukb_rss.dsc --target small2_compare --host dsc_mnm.yml -o output/ukb_rss_small2_20220619 -s existing -e ignore &> mnm_rss_ukb_small2.log
+
+# Run DSC for cafeh
+dsc ukb_rss.dsc --target cafeh --host dsc_mnm.yml -o output/ukb_rss_20220619 -s existing &> cafeh_rss_ukb.log
+
+# Run DSC for smaller number of traits 3
+# dsc ukb_rss.dsc --target simulate_small3_only --host dsc_mnm.yml -o output/ukb_rss_small3_20220619 -s existing --truncate &> mnm_rss_ukb_small3.log
 
 # Run DSC on smaller number of traits using MT-HESS
 # dsc ukb_rss.dsc --target full_data --host dsc_mnm.yml -o output/ukb_rss_small --truncate -s existing &> mnm_rss_ukb_small_fulldata.log
