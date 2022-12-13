@@ -43,3 +43,5 @@ p1 <- ggplot(pdat1,aes(x = pos,y = pip)) +
 #
 #  - Add purity values, CS sizes.
 #
+#  - Add gene tracks.
+# 
