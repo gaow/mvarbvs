@@ -30,7 +30,7 @@ plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
 # Colors from colorbrewer2.org.
 #
 mvsusie_plot <-
-  function (fit, pos, chr, poslim, conditions,
+  function (fit, pos, markers, chr, poslim, conditions,
             cs_colors = c("#1f78b4","#33a02c","#e31a1c","#ff7f00",
                           "#6a3d9a","#b15928","#a6cee3","#b2df8a",
                           "#fb9a99","#fdbf6f","#cab2d6","#ffff99")) {
@@ -92,9 +92,9 @@ mvsusie_plot <-
                               lfsr   = rep(0,L),
                               marker = rep("",L),
                               stringsAsFactors = FALSE)
-  pdat_effects <- data.frame(trait = rep(traits,times = L),
-                             cs    = rep(1:L,each = n),
-                             lfsr  = 0,
+  pdat_effects <- data.frame(trait  = rep(traits,times = L),
+                             cs     = rep(1:L,each = n),
+                             lfsr   = 0,
                              stringsAsFactors = FALSE)
   rownames(fit$single_effect_lfsr) <- paste0("L",1:lmax)
   colnames(fit$single_effect_lfsr) <- traits
@@ -105,16 +105,17 @@ mvsusie_plot <-
     rows <- which(pdat_effects$cs == i)
     pdat_sentinel[i,"pos"]    <- pos[j]
     pdat_sentinel[i,"pip"]    <- fit$pip[j]
-    pdat_sentinel[i,"marker"] <- i
+    pdat_sentinel[i,"marker"] <- markers[j]
     pdat_effects[rows,"lfsr"] <- fit$single_effect_lfsr[l,]
   }
   if (!missing(conditions))
     traits <- conditions
   pdat_effects <- transform(pdat_effects,
-                            cs    = factor(cs),
-                            trait = factor(trait,rev(traits)),
-                            lfsr  = cut(lfsr,c(-Inf,1e-15,1e-8,1e-4,0.1,Inf)))
-  
+                            cs     = factor(cs),
+                            trait  = factor(trait,rev(traits)),
+                            lfsr   = cut(lfsr,c(-Inf,1e-15,1e-8,1e-4,0.1,Inf)))
+  levels(pdat_effects$cs) <- pdat_sentinel$marker
+                            
   # Create the PIP plot.
   pip_plot <- ggplot(pdat,aes_string(x = "pos",y = "pip")) +
     geom_point(color = "darkblue",shape = 20,size = 1.25) +
@@ -137,9 +138,10 @@ mvsusie_plot <-
     geom_point(shape = 21,size = 4,stroke = 0.5,color = "white",
                fill = "black") +
     scale_alpha_manual(values = c(1,0.65,0.4,0.2,0.05)) +
-    labs(x = "CS",y = "") +
+    labs(x = "",y = "") +
     theme_cowplot(font_size = 9) +
-    theme(panel.grid = element_line(color = "lightgray",linetype = "dotted",
+    theme(axis.text.x = element_text(angle = 90,vjust = 0.5,hjust = 1),
+          panel.grid = element_line(color = "lightgray",linetype = "dotted",
                                     size = 0.3))
 
   # TO DO: Explain here what this code does.

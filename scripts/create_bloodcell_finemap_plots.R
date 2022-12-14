@@ -31,15 +31,11 @@ dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
 fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
                       "bloodcells_chr21.36094353.36965761.LDoriginal.Ycor.",
                       "mvsusierss.rds"))
-p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,chr = 21,poslim = poslim,
-                   conditions = blood_cell_traits)
+p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,markers = dat$meta$ID,chr = 21,
+                   poslim = poslim,conditions = blood_cell_traits)
 p2 <- plot_gene_tracks(seq_gene,chr = 21,poslim = poslim,genes = "RUNX1")
 #
 # TO DO:
-#
-#   - Add SNP ids to effect plot.
-#
-#   - Reorder the traits (rows) in the effect plot.
 #
 #   - Vary color and size of dots in effect plot according to effects.
 #
