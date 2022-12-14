@@ -30,7 +30,7 @@ plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
 # Colors from colorbrewer2.org.
 #
 mvsusie_plot <-
-  function (fit, pos, chr, poslim, 
+  function (fit, pos, chr, poslim, conditions,
             cs_colors = c("#1f78b4","#33a02c","#e31a1c","#ff7f00",
                           "#6a3d9a","#b15928","#a6cee3","#b2df8a",
                           "#fb9a99","#fdbf6f","#cab2d6","#ffff99")) {
@@ -81,7 +81,9 @@ mvsusie_plot <-
   }
 
   # Create two more data frames containing data about the "sentinel"
-  # SNPs only.
+  # SNPs only: pdat_sentinel contains data about the positions of the
+  # sentinel SNPs; pdat_effets contains data about the trait-wise
+  # effects and lfsrs.
   traits <- fit$condition_names
   n      <- length(traits)
   lmax   <- nrow(fit$alpha)
@@ -106,9 +108,11 @@ mvsusie_plot <-
     pdat_sentinel[i,"marker"] <- i
     pdat_effects[rows,"lfsr"] <- fit$single_effect_lfsr[l,]
   }
+  if (!missing(conditions))
+    traits <- conditions
   pdat_effects <- transform(pdat_effects,
                             cs    = factor(cs),
-                            trait = factor(trait),
+                            trait = factor(trait,rev(traits)),
                             lfsr  = cut(lfsr,c(-Inf,1e-15,1e-8,1e-4,0.1,Inf)))
   
   # Create the PIP plot.

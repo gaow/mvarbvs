@@ -6,6 +6,13 @@ library(cowplot)
 library(mvsusieR)
 source("../code/mvsusie_plots.R")
 
+# The ordering of the blood cell traits in the effect plots.  traits
+blood_cell_traits <-
+  c("RBC_count", "WBC_count", "Haemoglobin", "MCV", "RDW",
+    "Platelet_count", "Plateletcrit", "PDW", "Lymphocyte_perc",
+    "Monocyte_perc", "Neutrophill_perc", "Eosinophill_perc",
+    "Basophill_perc", "Reticulocyte_perc", "MSCV", "HLR_perc")
+
 # Read the seq_gene data.
 # seq_gene <- read_delim("../data/seq_gene.md.gz",delim = "\t",quote = "",
 #                     col_types = cols(chromosome = "c"))
@@ -24,7 +31,8 @@ dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
 fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
                       "bloodcells_chr21.36094353.36965761.LDoriginal.Ycor.",
                       "mvsusierss.rds"))
-p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,chr = 21,poslim = poslim)
+p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,chr = 21,poslim = poslim,
+                   conditions = blood_cell_traits)
 p2 <- plot_gene_tracks(seq_gene,chr = 21,poslim = poslim,genes = "RUNX1")
 #
 # TO DO:
