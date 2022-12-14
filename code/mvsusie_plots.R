@@ -8,7 +8,9 @@ pip_plot <- function (fit, pos, poslim,
                                     "#fb9a99","#fdbf6f","#cab2d6","#ffff99")) {
 
   # Create a data frame containing the data used for plotting.
-  pdat <- data.frame(pip = fit$pip,pos = pos,cs = as.character(NA),
+  pdat <- data.frame(pip = fit$pip,
+                     pos = pos,
+                     cs  = as.character(NA),
                      stringsAsFactors = FALSE)
 
   # Add the CS assignments to the data frame.
@@ -50,12 +52,32 @@ pip_plot <- function (fit, pos, poslim,
         sprintf("%d (%d SNPs, %0.3f purity)",i,cs_size[j],
                 fit$sets$purity[j,"min.abs.corr"])
   }
-  
+
+  # Create a third data frame containing data about the "sentinel"
+  # SNPs only.
+  pdat_sentinel <- data.frame(pos    = rep(0,L),
+                              pip    = rep(0,L),
+                              marker = rep("",L),
+                              stringsAsFactors = FALSE)
+  for (i in 1:L) {
+    l <- css[i]
+    j <- fit$sets$cs[[l]]
+    j <- j[which.max(fit$pip[j])]
+    pdat_sentinel[i,"pos"]    <- pos[j]
+    pdat_sentinel[i,"pip"]    <- fit$pip[j]
+    pdat_sentinel[i,"marker"] <- i
+  }
+
   # Create the PIP plot.
-  return(ggplot(pdat,aes(x = pos,y = pip)) +
+  return(ggplot(pdat,aes_string(x = "pos",y = "pip")) +
          geom_point(color = "darkblue",shape = 20,size = 1.25) +
          geom_point(shape = 1,size = 1.25,stroke = 1.25,data = pdat_cs,
-                    mapping = aes(x = pos,y = pip,color = cs)) +
+                    mapping = aes_string(x = "pos",y = "pip",color = "cs")) +
+         geom_text_repel(data = pdat_sentinel,
+                         mapping = aes_string(x = "pos",y = "pip",
+                                              label = "marker"),
+                         size = 2.2,segment.size = 0.35,max.overlaps = Inf,
+                         min.segment.length = 0) +
          scale_color_manual(values = cs_colors) +
          guides(colour = guide_legend(override.aes=list(shape=20,size=1.5))) +
          labs(x = "chromosome 21 position (Mb)",y = "PIP",color = "CS") +

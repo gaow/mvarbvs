@@ -12,14 +12,14 @@ dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
 fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
                       "bloodcells_chr21.36094353.36965761.LDoriginal.Ycor.",
                       "mvsusierss.rds"))
-p1 <- pip_plot(fit,dat$meta$POS/1e6,poslim = c(36.15,36.55))
+p1 <- pip_plot(fit,
+               pos = dat$meta$POS/1e6,
+               poslim = c(36.15,36.55))
 #
 # TO DO:
 #
 #  - Add ids of top ("sentinel") SNPs, and indicate the CS for these
 #    sentinel SNPs.
-#
-#  - Add purity values, CS sizes.
 #
 #  - Add gene tracks.
 # 
