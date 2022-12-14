@@ -8,10 +8,10 @@ source("../code/mvsusie_plots.R")
 
 # The ordering of the blood cell traits in the effect plots.  traits
 blood_cell_traits <-
-  c("RBC_count", "WBC_count", "Haemoglobin", "MCV", "RDW",
-    "Platelet_count", "Plateletcrit", "PDW", "Lymphocyte_perc",
-    "Monocyte_perc", "Neutrophill_perc", "Eosinophill_perc",
-    "Basophill_perc", "Reticulocyte_perc", "MSCV", "HLR_perc")
+  c("RBC_count","Haemoglobin","MCV","RDW","MSCV","Reticulocyte_perc",
+    "HLR_perc","Platelet_count", "Plateletcrit","PDW","WBC_count",
+    "Lymphocyte_perc","Monocyte_perc","Neutrophill_perc","Eosinophill_perc",
+    "Basophill_perc")
 
 # Read the seq_gene data.
 # seq_gene <- read_delim("../data/seq_gene.md.gz",delim = "\t",quote = "",

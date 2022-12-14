@@ -134,7 +134,8 @@ mvsusie_plot <-
   # Create the effect plot. 
   effect_plot <- ggplot(pdat_effects,
                         aes_string(x = "cs",y = "trait",alpha = "lfsr")) +
-    geom_point(shape = 21,size = 4,color = "white",fill = "black") +
+    geom_point(shape = 21,size = 4,stroke = 0.5,color = "white",
+               fill = "black") +
     scale_alpha_manual(values = c(1,0.65,0.4,0.2,0.05)) +
     labs(x = "CS",y = "") +
     theme_cowplot(font_size = 9) +
