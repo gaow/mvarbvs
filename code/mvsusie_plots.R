@@ -29,10 +29,11 @@ plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
 #
 # Colors from colorbrewer2.org.
 #
-pip_plot <- function (fit, pos, chr, poslim, 
-                      cs_colors = c("#1f78b4","#33a02c","#e31a1c","#ff7f00",
-                                    "#6a3d9a","#b15928","#a6cee3","#b2df8a",
-                                    "#fb9a99","#fdbf6f","#cab2d6","#ffff99")) {
+mvsusie_plot <-
+  function (fit, pos, chr, poslim, 
+            cs_colors = c("#1f78b4","#33a02c","#e31a1c","#ff7f00",
+                          "#6a3d9a","#b15928","#a6cee3","#b2df8a",
+                          "#fb9a99","#fdbf6f","#cab2d6","#ffff99")) {
 
   # Create a data frame containing the data used for plotting.
   pdat <- data.frame(pip = fit$pip,
@@ -60,16 +61,15 @@ pip_plot <- function (fit, pos, chr, poslim,
   pdat_cs <- transform(pdat_cs,cs = factor(cs))
   css     <- levels(pdat_cs$cs)
   
-  # Reorder the CSs by size, then relabel them 1 through L.
+  # Reorder the CSs by position, then relabel them 1 through L.
   L       <- length(css)
-  cs_size <- sapply(fit$sets$cs[css],length)
-  css     <- css[order(cs_size)]
-  cs_size <- cs_size[css]
+  cs_pos  <- sapply(fit$sets$cs[css],function (x) median(pos[x]))
+  css     <- css[order(cs_pos)]
   pdat_cs <- transform(pdat_cs,cs = factor(cs,levels = css))
   levels(pdat_cs$cs) <- 1:L
   
   # Add key CS statistics to the legend (size, purity).
-  # 
+  cs_size <- sapply(fit$sets$cs[css],length)
   for (i in 1:L) {
     j <- css[i]
     if (cs_size[i] == 1)
@@ -80,35 +80,63 @@ pip_plot <- function (fit, pos, chr, poslim,
                 fit$sets$purity[j,"min.abs.corr"])
   }
 
-  # Create a third data frame containing data about the "sentinel"
+  # Create two more data frames containing data about the "sentinel"
   # SNPs only.
+  traits <- fit$condition_names
+  n      <- length(traits)
+  lmax   <- nrow(fit$alpha)
   pdat_sentinel <- data.frame(pos    = rep(0,L),
                               pip    = rep(0,L),
+                              lfsr   = rep(0,L),
                               marker = rep("",L),
                               stringsAsFactors = FALSE)
+  pdat_effects <- data.frame(trait = rep(traits,times = L),
+                             cs    = rep(1:L,each = n),
+                             lfsr  = 0,
+                             stringsAsFactors = FALSE)
+  rownames(fit$single_effect_lfsr) <- paste0("L",1:lmax)
+  colnames(fit$single_effect_lfsr) <- traits
   for (i in 1:L) {
-    l <- css[i]
-    j <- fit$sets$cs[[l]]
-    j <- j[which.max(fit$pip[j])]
+    l    <- css[i]
+    j    <- fit$sets$cs[[l]]
+    j    <- j[which.max(fit$pip[j])]
+    rows <- which(pdat_effects$cs == i)
     pdat_sentinel[i,"pos"]    <- pos[j]
     pdat_sentinel[i,"pip"]    <- fit$pip[j]
     pdat_sentinel[i,"marker"] <- i
+    pdat_effects[rows,"lfsr"] <- fit$single_effect_lfsr[l,]
   }
-
+  pdat_effects <- transform(pdat_effects,
+                            cs    = factor(cs),
+                            trait = factor(trait),
+                            lfsr  = cut(lfsr,c(-Inf,1e-15,1e-8,1e-4,0.1,Inf)))
+  
   # Create the PIP plot.
-  return(ggplot(pdat,aes_string(x = "pos",y = "pip")) +
-         geom_point(color = "darkblue",shape = 20,size = 1.25) +
-         geom_point(shape = 1,size = 1.25,stroke = 1.25,data = pdat_cs,
-                    mapping = aes_string(x = "pos",y = "pip",color = "cs")) +
-         geom_text_repel(data = pdat_sentinel,
-                         mapping = aes_string(x = "pos",y = "pip",
-                                              label = "marker"),
-                         size = 2.2,segment.size = 0.35,max.overlaps = Inf,
-                         min.segment.length = 0) +
-         xlim(poslim[1],poslim[2]) +
-         scale_color_manual(values = cs_colors) +
-         guides(colour = guide_legend(override.aes=list(shape=20,size=1.5))) +
-         labs(x = sprintf("chromosome %d position (Mb)",chr),
-              y = "PIP",color = "CS") +
-         theme_cowplot(font_size = 9))
+  pip_plot <- ggplot(pdat,aes_string(x = "pos",y = "pip")) +
+    geom_point(color = "darkblue",shape = 20,size = 1.25) +
+    geom_point(shape = 1,size = 1.25,stroke = 1.25,data = pdat_cs,
+               mapping = aes_string(x = "pos",y = "pip",color = "cs")) +
+    geom_text_repel(data = pdat_sentinel,
+                    mapping = aes_string(x = "pos",y = "pip",label = "marker"),
+                    size = 2.2,segment.size = 0.35,max.overlaps = Inf,
+                    min.segment.length = 0) +
+    xlim(poslim[1],poslim[2]) +
+    scale_color_manual(values = cs_colors) +
+    guides(colour = guide_legend(override.aes = list(shape = 20,size = 1.5))) +
+    labs(x = sprintf("chromosome %d position (Mb)",chr),
+         y = "PIP",color = "CS") +
+    theme_cowplot(font_size = 9)
+
+  # Create the effect plot. 
+  effect_plot <- ggplot(pdat_effects,
+                        aes_string(x = "cs",y = "trait",alpha = "lfsr")) +
+    geom_point(shape = 21,size = 4,color = "white",fill = "black") +
+    scale_alpha_manual(values = c(1,0.65,0.4,0.2,0.05)) +
+    labs(x = "CS",y = "") +
+    theme_cowplot(font_size = 9) +
+    theme(panel.grid = element_line(color = "lightgray",linetype = "dotted",
+                                    size = 0.3))
+
+  # TO DO: Explain here what this code does.
+  return(list(pip_plot = pip_plot,effect_plot = effect_plot))
 }
