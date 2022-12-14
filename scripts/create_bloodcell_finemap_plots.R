@@ -35,6 +35,8 @@ p2 <- plot_gene_tracks(seq_gene,chr = 21,poslim = poslim,genes = "RUNX1")
 #
 #   - Vary color and size of dots in effect plot according to effects.
 #
+#   - Flip the effect directions when needed.
+#
 print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,
                 nrow = 2,ncol = 2,align = "v",axis = "lr",
