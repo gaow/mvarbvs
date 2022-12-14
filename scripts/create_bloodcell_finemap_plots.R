@@ -1,26 +1,30 @@
 # TO DO: Explain here what this script is for, and how to use it.
+library(readr)
 library(ggplot2)
 library(ggrepel)
 library(cowplot)
 library(mvsusieR)
 source("../code/mvsusie_plots.R")
 
+# Read the seq_gene data.
+# seq_gene <- read_delim("../data/seq_gene.md.gz",delim = "\t",quote = "",
+#                     col_types = cols(chromosome = "c"))
+# class(seq_gene) <- "data.frame"
+# seq_gene <- subset(seq_gene,
+#                   group_label == "GRCh37.p5-Primary Assembly" &
+#                    feature_type == "GENE")
+# seq_gene <- transform(seq_gene,
+#                       chr_start = chr_start/1e6,
+#                       chr_stop = chr_stop/1e6)
+
 # RUNX1 example.
-region <- 
+poslim <- c(36.15,36.55)
 dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
                       "bloodcells_chr21.36094353.36965761.summary_stats.rds"))
 fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
                       "bloodcells_chr21.36094353.36965761.LDoriginal.Ycor.",
                       "mvsusierss.rds"))
-p1 <- pip_plot(fit,
-               pos = dat$meta$POS/1e6,
-               poslim = c(36.15,36.55))
-#
-# TO DO:
-#
-#  - Add ids of top ("sentinel") SNPs, and indicate the CS for these
-#    sentinel SNPs.
-#
-#  - Add gene tracks.
-# 
-print(p1)
+p1 <- pip_plot(fit,pos = dat$meta$POS/1e6,chr = 21,poslim = poslim)
+p2 <- plot_gene_tracks(seq_gene,chr = 21,poslim = poslim,genes = "RUNX1")
+print(plot_grid(p1,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
+                rel_heights = c(2,1)))

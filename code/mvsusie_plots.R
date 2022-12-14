@@ -1,8 +1,35 @@
+# TO DO: Explain here what this function goes, and how to use it.
+plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
+  seq_gene <- subset(seq_gene,
+                     chromosome == chr &
+                     chr_start < poslim[2] &
+                     chr_stop > poslim[1])
+  if (!missing(genes))
+    seq_gene <- subset(seq_gene,is.element(feature_name,genes))
+  n    <- nrow(seq_gene)
+  pdat <- data.frame(x0 = rep(0,n),x1 = rep(0,n),y = 1:n,
+                     gene = seq_gene$feature_name,stringsAsFactors = FALSE)
+  for (i in 1:n) {
+    pdat[i,"x0"] <- seq_gene[i,"chr_start"]
+    pdat[i,"x1"] <- seq_gene[i,"chr_stop"]
+  }
+  p <- ggplot(pdat,aes_string(x = "x0",xend = "x1",y = "y",yend = "y")) +
+    geom_segment(color = "darkblue",size = 0.5) +
+    geom_text(mapping = aes_string(x = "x1",y = "y",label = "gene"),
+              size = 2.25,fontface = "italic",vjust = "center",
+              hjust = "left",nudge_x = 0.005) +
+    xlim(poslim[1],poslim[2]) +
+    scale_y_continuous(breaks = NULL) +
+    labs(x = sprintf("chromosome %d position (Mb)",chr),y = "") +
+    theme_cowplot(font_size = 9)
+  return(list(seq_gene = seq_gene,plot = p))
+}
+
 # TO DO: Explain here what this function does, and how to use it.
 #
 # Colors from colorbrewer2.org.
 #
-pip_plot <- function (fit, pos, poslim,
+pip_plot <- function (fit, pos, chr, poslim, 
                       cs_colors = c("#1f78b4","#33a02c","#e31a1c","#ff7f00",
                                     "#6a3d9a","#b15928","#a6cee3","#b2df8a",
                                     "#fb9a99","#fdbf6f","#cab2d6","#ffff99")) {
@@ -78,8 +105,10 @@ pip_plot <- function (fit, pos, poslim,
                                               label = "marker"),
                          size = 2.2,segment.size = 0.35,max.overlaps = Inf,
                          min.segment.length = 0) +
+         xlim(poslim[1],poslim[2]) +
          scale_color_manual(values = cs_colors) +
          guides(colour = guide_legend(override.aes=list(shape=20,size=1.5))) +
-         labs(x = "chromosome 21 position (Mb)",y = "PIP",color = "CS") +
-         theme_cowplot(font_size = 10))
+         labs(x = sprintf("chromosome %d position (Mb)",chr),
+              y = "PIP",color = "CS") +
+         theme_cowplot(font_size = 9))
 }
