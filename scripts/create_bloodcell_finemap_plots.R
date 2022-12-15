@@ -24,7 +24,28 @@ seq_gene <- transform(seq_gene,
                       chr_start = chr_start/1e6,
                       chr_stop = chr_stop/1e6)
 
+# EXT1/SAMD12 example.
+
 # TNS3 example.
+poslim <- c(47.1,47.7)
+dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
+                      "bloodcells_chr7.47187274.47687274.summary_stats.rds"))
+fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
+                      "bloodcells_chr7.47187274.47687274.LDoriginal.Ycor.",
+                      "mvsusierss.rds"))
+p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,markers = dat$meta$ID,chr = 7,
+                   poslim = poslim,conditions = blood_cell_traits)
+p2 <- plot_gene_tracks(seq_gene,chr = 7,poslim = poslim,genes = "TNS3")
+print(plot_grid(p1$pip_plot,p1$effect_plot,
+                p2$plot,
+                nrow = 2,ncol = 2,align = "v",axis = "lr",
+                rel_heights = c(3,1),rel_widths = c(2,1)))
+ggsave("bloodcells_finemap_tns3_pips.pdf",
+       plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
+                 rel_heights = c(2,1)),
+       height = 2.75,width = 7)
+ggsave("bloodcells_finemap_tsn3_effects.pdf",p1$effect_plot,
+       height = 3.25,width = 2.75)
 
 # RUNX1 example.
 poslim <- c(36.15,36.55)
@@ -34,8 +55,7 @@ fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
                       "bloodcells_chr21.36094353.36965761.LDoriginal.Ycor.",
                       "mvsusierss.rds"))
 p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,markers = dat$meta$ID,chr = 21,
-                   poslim = poslim,conditions = blood_cell_traits,
-                   flip_signs = 1:3)
+                   poslim = poslim,conditions = blood_cell_traits)
 p2 <- plot_gene_tracks(seq_gene,chr = 21,poslim = poslim,genes = "RUNX1")
 print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,

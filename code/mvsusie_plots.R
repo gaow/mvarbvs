@@ -13,6 +13,7 @@ plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
     pdat[i,"x0"] <- seq_gene[i,"chr_start"]
     pdat[i,"x1"] <- seq_gene[i,"chr_stop"]
   }
+  browser()
   p <- ggplot(pdat,aes_string(x = "x0",xend = "x1",y = "y",yend = "y")) +
     geom_segment(color = "darkblue",size = 0.5) +
     geom_text(mapping = aes_string(x = "x1",y = "y",label = "gene"),
@@ -31,7 +32,6 @@ plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
 #
 mvsusie_plot <-
   function (fit, pos, markers, chr, poslim, conditions,
-            flip_signs = c(),
             cs_colors = c("#1f78b4","#33a02c","#e31a1c","#ff7f00",
                           "#6a3d9a","#b15928","#a6cee3","#b2df8a",
                           "#fb9a99","#fdbf6f","#cab2d6","#ffff99")) {
@@ -116,12 +116,9 @@ mvsusie_plot <-
     pdat_sentinel[i,"pip"]         <- fit$pip[j]
     pdat_sentinel[i,"marker"]      <- sprintf("%s (%d)",markers[j],i)
     pdat_effects[rows,"coef_size"] <- abs(b)
+    pdat_effects[rows,"coef_sign"] <- (b > 0)
     pdat_effects[rows,"lfsr"]      <- fit$single_effect_lfsr[l,]
     effects[,i]                    <- b
-    if (is.element(i,flip_signs))
-      pdat_effects[rows,"coef_sign"] <- (b <= 0)
-    else 
-      pdat_effects[rows,"coef_sign"] <- (b > 0)
   }
   if (!missing(conditions))
     traits <- conditions
