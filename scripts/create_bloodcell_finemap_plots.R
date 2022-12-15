@@ -25,6 +25,26 @@ seq_gene <- transform(seq_gene,
                       chr_stop = chr_stop/1e6)
 
 # EXT1/SAMD12 example.
+poslim <- c(118.81,119.675)
+dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
+                      "bloodcells_chr8.118878055.119378055.summary_stats.rds"))
+fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
+                      "bloodcells_chr8.118878055.119378055.LDoriginal.Ycor.",
+                      "mvsusierss.rds"))
+p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,markers = dat$meta$ID,chr = 8,
+                   poslim = poslim,conditions = blood_cell_traits)
+p2 <- plot_gene_tracks(seq_gene,chr = 8,poslim = poslim,
+                       genes = c("EXT1","SAMD12"))
+print(plot_grid(p1$pip_plot,p1$effect_plot,
+                p2$plot,
+                nrow = 2,ncol = 2,align = "v",axis = "lr",
+                rel_heights = c(3,1),rel_widths = c(2,1)))
+ggsave("../plots/bloodcells_finemap_ext1_samd12_pips.pdf",
+       plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
+                 rel_heights = c(2,1)),
+       height = 2.75,width = 7)
+ggsave("../plots/bloodcells_finemap_ext1_samd12_effects.pdf",p1$effect_plot,
+       height = 3.25,width = 2.5)
 
 # TNS3 example.
 poslim <- c(47.1,47.7)
@@ -40,11 +60,11 @@ print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,
                 nrow = 2,ncol = 2,align = "v",axis = "lr",
                 rel_heights = c(3,1),rel_widths = c(2,1)))
-ggsave("bloodcells_finemap_tns3_pips.pdf",
+ggsave("../plots/bloodcells_finemap_tns3_pips.pdf",
        plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
                  rel_heights = c(2,1)),
        height = 2.75,width = 7)
-ggsave("bloodcells_finemap_tsn3_effects.pdf",p1$effect_plot,
+ggsave("../plots/bloodcells_finemap_tsn3_effects.pdf",p1$effect_plot,
        height = 3.25,width = 2.75)
 
 # RUNX1 example.
@@ -61,11 +81,11 @@ print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,
                 nrow = 2,ncol = 2,align = "v",axis = "lr",
                 rel_heights = c(3,1),rel_widths = c(3,2)))
-ggsave("bloodcells_finemap_runx1_pips.pdf",
+ggsave("../plots/bloodcells_finemap_runx1_pips.pdf",
        plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
                  rel_heights = c(2,1)),
        height = 3.25,width = 7)
-ggsave("bloodcells_finemap_runx1_effects.pdf",p1$effect_plot,
+ggsave("../plots/bloodcells_finemap_runx1_effects.pdf",p1$effect_plot,
        height = 3.25,width = 4)
 
 

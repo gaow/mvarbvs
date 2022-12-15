@@ -13,14 +13,13 @@ plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
     pdat[i,"x0"] <- seq_gene[i,"chr_start"]
     pdat[i,"x1"] <- seq_gene[i,"chr_stop"]
   }
-  browser()
   p <- ggplot(pdat,aes_string(x = "x0",xend = "x1",y = "y",yend = "y")) +
     geom_segment(color = "darkblue",size = 0.5) +
     geom_text(mapping = aes_string(x = "x1",y = "y",label = "gene"),
               size = 2.25,fontface = "italic",vjust = "center",
               hjust = "left",nudge_x = 0.005) +
     xlim(poslim[1],poslim[2]) +
-    scale_y_continuous(breaks = NULL) +
+    scale_y_continuous(limits = c(0,n+1),breaks = NULL) +
     labs(x = sprintf("chromosome %d position (Mb)",chr),y = "") +
     theme_cowplot(font_size = 9)
   return(list(seq_gene = seq_gene,plot = p))
