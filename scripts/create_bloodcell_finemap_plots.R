@@ -24,6 +24,8 @@ seq_gene <- transform(seq_gene,
                       chr_start = chr_start/1e6,
                       chr_stop = chr_stop/1e6)
 
+# TNS3 example.
+
 # RUNX1 example.
 poslim <- c(36.15,36.55)
 dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
