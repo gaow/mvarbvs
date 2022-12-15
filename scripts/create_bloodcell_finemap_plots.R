@@ -88,4 +88,27 @@ ggsave("../plots/bloodcells_finemap_runx1_pips.pdf",
 ggsave("../plots/bloodcells_finemap_runx1_effects.pdf",p1$effect_plot,
        height = 3.25,width = 4)
 
-
+# ZFPM1-PIEZO1 example.
+poslim <- c(88.45,89)
+dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
+                      "bloodcells_chr16.88306007.90291983.summary_stats.rds"))
+fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
+                      "bloodcells_chr16.88306007.90291983.LDoriginal.Ycor.",
+                      "mvsusierss.rds"))
+p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,markers = dat$meta$ID,chr = 16,
+                   poslim = poslim,conditions = blood_cell_traits)
+p2 <- plot_gene_tracks(seq_gene,chr = 16,poslim = poslim,
+                       genes = c("ZNF469","ZFPM1","ZC3H18","IL17C","CYBA",
+                                 "MVD","SNAI3","RNF166","CTU2",
+                                 "PIEZO1","CDT1","APRT","GALNS",
+                                 "TRAPPC2L","PABPN1L","CBFA2T3"))
+print(plot_grid(p1$pip_plot,p1$effect_plot,
+                p2$plot,
+                nrow = 2,ncol = 2,align = "v",axis = "lr",
+                rel_heights = c(3,1),rel_widths = c(3,2)))
+ggsave("../plots/bloodcells_finemap_zfpm1_piezo1_pips.pdf",
+       plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
+                 rel_heights = c(2,1)),
+       height = 3.25,width = 7)
+ggsave("../plots/bloodcells_finemap_zfpm1_piezo1_effects.pdf",p1$effect_plot,
+       height = 3.25,width = 4)

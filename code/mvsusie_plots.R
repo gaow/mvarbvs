@@ -33,7 +33,8 @@ mvsusie_plot <-
   function (fit, pos, markers, chr, poslim, conditions,
             cs_colors = c("#1f78b4","#33a02c","#e31a1c","#ff7f00",
                           "#6a3d9a","#b15928","#a6cee3","#b2df8a",
-                          "#fb9a99","#fdbf6f","#cab2d6","#ffff99")) {
+                          "#fb9a99","#fdbf6f","#cab2d6","#ffff99",
+                          "gray","cyan")) {
 
   # Create a data frame containing the data used for plotting.
   pdat <- data.frame(pip = fit$pip,
@@ -128,7 +129,7 @@ mvsusie_plot <-
                             coef_sign = factor(coef_sign))
   levels(pdat_effects$cs) <- pdat_sentinel$marker
   levels(pdat_effects$coef_sign) <- c("-1","+1")
-  
+
   # Create the PIP plot.
   pip_plot <- ggplot(pdat,aes_string(x = "pos",y = "pip")) +
     geom_point(color = "darkblue",shape = 20,size = 1.25) +
