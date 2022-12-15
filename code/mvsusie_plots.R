@@ -155,7 +155,7 @@ mvsusie_plot <-
     scale_alpha_manual(values = c(1,0.8,0.6,0.4,0.1)) +
     scale_size(range = c(0.5,5)) +
     labs(x = "",y = "",fill = "sign",size = "size") +
-    guides(alpha = guide_legend(override.aes = list(shape=21,fill="black")),
+    guides(alpha = guide_legend(override.aes = list(shape=20,color="black")),
            size = guide_legend(override.aes = list(shape=20,color="black"))) +
     theme_cowplot(font_size = 9) +
     theme(axis.text.x = element_text(angle = 90,vjust = 0.5,hjust = 1),
