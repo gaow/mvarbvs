@@ -14,15 +14,15 @@ blood_cell_traits <-
     "Basophill_perc")
 
 # Read the seq_gene data.
-# seq_gene <- read_delim("../data/seq_gene.md.gz",delim = "\t",quote = "",
-#                     col_types = cols(chromosome = "c"))
-# class(seq_gene) <- "data.frame"
-# seq_gene <- subset(seq_gene,
-#                   group_label == "GRCh37.p5-Primary Assembly" &
-#                    feature_type == "GENE")
-# seq_gene <- transform(seq_gene,
-#                       chr_start = chr_start/1e6,
-#                       chr_stop = chr_stop/1e6)
+seq_gene <- read_delim("../data/seq_gene.md.gz",delim = "\t",quote = "",
+                      col_types = cols(chromosome = "c"))
+class(seq_gene) <- "data.frame"
+seq_gene <- subset(seq_gene,
+                   group_label == "GRCh37.p5-Primary Assembly" &
+                   feature_type == "GENE")
+seq_gene <- transform(seq_gene,
+                      chr_start = chr_start/1e6,
+                      chr_stop = chr_stop/1e6)
 
 # RUNX1 example.
 poslim <- c(36.15,36.55)
@@ -34,14 +34,18 @@ fit <- readRDS(paste0("../output/blood_cell_traits/mvsusie/",
 p1 <- mvsusie_plot(fit,pos = dat$meta$POS/1e6,markers = dat$meta$ID,chr = 21,
                    poslim = poslim,conditions = blood_cell_traits)
 p2 <- plot_gene_tracks(seq_gene,chr = 21,poslim = poslim,genes = "RUNX1")
-#
-# TO DO:
-#
-#   - Vary color and size of dots in effect plot according to effects.
-#
-#   - Flip the effect directions when needed.
-#
 print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,
                 nrow = 2,ncol = 2,align = "v",axis = "lr",
-                rel_heights = c(2,1),rel_widths = c(3,2)))
+                rel_heights = c(3,1),rel_widths = c(3,2)))
+ggsave("bloodcells_finemap_runx1_pips.pdf",
+       plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
+                 rel_heights = c(2,1)),
+       height = 3.25,width = 7)
+ggsave("bloodcells_finemap_runx1_effects.pdf",p1$effect_plot,
+       height = 3.25,width = 4)
+       
+                                        # TO DO:
+# - Flip signs of effects when needed to improve plot.
+
+

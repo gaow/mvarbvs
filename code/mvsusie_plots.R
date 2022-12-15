@@ -92,10 +92,17 @@ mvsusie_plot <-
                               lfsr   = rep(0,L),
                               marker = rep("",L),
                               stringsAsFactors = FALSE)
-  pdat_effects <- data.frame(trait  = rep(traits,times = L),
-                             cs     = rep(1:L,each = n),
-                             lfsr   = 0,
+  pdat_effects <- data.frame(trait     = rep(traits,times = L),
+                             cs        = rep(1:L,each = n),
+                             coef_sign = 0,
+                             coef_size = 0,
+                             lfsr      = 0,
                              stringsAsFactors = FALSE)
+  effects <- matrix(0,n,L)
+  fit$b1_rescaled <- fit$b1_rescaled[,-1,]
+  rownames(effects) <- traits
+  colnames(effects) <- 1:L
+  rownames(fit$b1_rescaled)        <- paste0("L",1:lmax)
   rownames(fit$single_effect_lfsr) <- paste0("L",1:lmax)
   colnames(fit$single_effect_lfsr) <- traits
   for (i in 1:L) {
@@ -103,19 +110,25 @@ mvsusie_plot <-
     j    <- fit$sets$cs[[l]]
     j    <- j[which.max(fit$pip[j])]
     rows <- which(pdat_effects$cs == i)
-    pdat_sentinel[i,"pos"]    <- pos[j]
-    pdat_sentinel[i,"pip"]    <- fit$pip[j]
-    pdat_sentinel[i,"marker"] <- markers[j]
-    pdat_effects[rows,"lfsr"] <- fit$single_effect_lfsr[l,]
+    b    <- fit$b1_rescaled[l,j,]
+    pdat_sentinel[i,"pos"]         <- pos[j]
+    pdat_sentinel[i,"pip"]         <- fit$pip[j]
+    pdat_sentinel[i,"marker"]      <- sprintf("%s (%d)",markers[j],i)
+    pdat_effects[rows,"coef_sign"] <- b > 0
+    pdat_effects[rows,"coef_size"] <- abs(b)
+    pdat_effects[rows,"lfsr"]      <- fit$single_effect_lfsr[l,]
+    effects[,i]                    <- b
   }
   if (!missing(conditions))
     traits <- conditions
   pdat_effects <- transform(pdat_effects,
-                            cs     = factor(cs),
-                            trait  = factor(trait,rev(traits)),
-                            lfsr   = cut(lfsr,c(-Inf,1e-15,1e-8,1e-4,0.1,Inf)))
+                            cs    = factor(cs),
+                            trait = factor(trait,rev(traits)),
+                            lfsr  = cut(lfsr,c(-Inf,1e-15,1e-8,1e-4,0.1,Inf)),
+                            coef_sign = factor(coef_sign))
   levels(pdat_effects$cs) <- pdat_sentinel$marker
-                            
+  levels(pdat_effects$coef_sign) <- c("-1","+1")
+  
   # Create the PIP plot.
   pip_plot <- ggplot(pdat,aes_string(x = "pos",y = "pip")) +
     geom_point(color = "darkblue",shape = 20,size = 1.25) +
@@ -127,23 +140,29 @@ mvsusie_plot <-
                     min.segment.length = 0) +
     xlim(poslim[1],poslim[2]) +
     scale_color_manual(values = cs_colors) +
-    guides(colour = guide_legend(override.aes = list(shape = 20,size = 1.5))) +
+    guides(color = guide_legend(override.aes = list(shape = 20,size = 1.5))) +
     labs(x = sprintf("chromosome %d position (Mb)",chr),
          y = "PIP",color = "CS") +
     theme_cowplot(font_size = 9)
 
   # Create the effect plot. 
   effect_plot <- ggplot(pdat_effects,
-                        aes_string(x = "cs",y = "trait",alpha = "lfsr")) +
-    geom_point(shape = 21,size = 4,stroke = 0.5,color = "white",
-               fill = "black") +
-    scale_alpha_manual(values = c(1,0.65,0.4,0.2,0.05)) +
-    labs(x = "",y = "") +
+                        aes_string(x = "cs",y = "trait",fill = "coef_sign",
+                                   size = "coef_size",alpha = "lfsr")) +
+    geom_point(shape = 21,stroke = 0.5,color = "white") +
+    scale_fill_manual(values = c("darkblue","red")) +
+    scale_alpha_manual(values = c(1,0.8,0.6,0.4,0.1)) +
+    scale_size(range = c(0.5,5)) +
+    labs(x = "",y = "",fill = "sign",size = "size") +
+    guides(alpha = guide_legend(override.aes = list(shape=21,fill="black")),
+           size = guide_legend(override.aes = list(shape=20,color="black"))) +
     theme_cowplot(font_size = 9) +
     theme(axis.text.x = element_text(angle = 90,vjust = 0.5,hjust = 1),
           panel.grid = element_line(color = "lightgray",linetype = "dotted",
                                     size = 0.3))
 
   # TO DO: Explain here what this code does.
-  return(list(pip_plot = pip_plot,effect_plot = effect_plot))
+  return(list(pip_plot     = pip_plot,
+              effect_plot  = effect_plot,
+              effects      = effects))
 }
