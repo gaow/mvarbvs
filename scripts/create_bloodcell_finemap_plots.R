@@ -39,12 +39,12 @@ print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,
                 nrow = 2,ncol = 2,align = "v",axis = "lr",
                 rel_heights = c(3,1),rel_widths = c(2,1)))
-ggsave("../plots/bloodcells_finemap_ext1_samd12_pips.pdf",
+ggsave("../plots/bloodcells_finemap_ext1_samd12_pips.eps",
        plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
                  rel_heights = c(2,1)),
        height = 2.75,width = 7)
-ggsave("../plots/bloodcells_finemap_ext1_samd12_effects.pdf",p1$effect_plot,
-       height = 3.25,width = 2.5)
+ggsave("../plots/bloodcells_finemap_ext1_samd12_effects.png",p1$effect_plot,
+       height = 3.25,width = 3,dpi = 300,bg = "white")
 
 # TNS3 example.
 poslim <- c(47.1,47.7)
@@ -60,12 +60,12 @@ print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,
                 nrow = 2,ncol = 2,align = "v",axis = "lr",
                 rel_heights = c(3,1),rel_widths = c(2,1)))
-ggsave("../plots/bloodcells_finemap_tns3_pips.pdf",
+ggsave("../plots/bloodcells_finemap_tns3_pips.eps",
        plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
                  rel_heights = c(2,1)),
        height = 2.75,width = 7)
-ggsave("../plots/bloodcells_finemap_tsn3_effects.pdf",p1$effect_plot,
-       height = 3.25,width = 2.75)
+ggsave("../plots/bloodcells_finemap_tsn3_effects.png",p1$effect_plot,
+       height = 3.25,width = 2.75,dpi = 300,bg = "white")
 
 # RUNX1 example.
 poslim <- c(36.15,36.55)
@@ -81,12 +81,12 @@ print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,
                 nrow = 2,ncol = 2,align = "v",axis = "lr",
                 rel_heights = c(3,1),rel_widths = c(3,2)))
-ggsave("../plots/bloodcells_finemap_runx1_pips.pdf",
+ggsave("../plots/bloodcells_finemap_runx1_pips.eps",
        plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
                  rel_heights = c(2,1)),
        height = 3.25,width = 7)
-ggsave("../plots/bloodcells_finemap_runx1_effects.pdf",p1$effect_plot,
-       height = 3.25,width = 4)
+ggsave("../plots/bloodcells_finemap_runx1_effects.png",p1$effect_plot,
+       height = 3.25,width = 4,dpi = 300,bg = "white")
 
 # ZFPM1-PIEZO1 example.
 poslim <- c(88.45,89)
@@ -106,9 +106,9 @@ print(plot_grid(p1$pip_plot,p1$effect_plot,
                 p2$plot,
                 nrow = 2,ncol = 2,align = "v",axis = "lr",
                 rel_heights = c(3,1),rel_widths = c(3,2)))
-ggsave("../plots/bloodcells_finemap_zfpm1_piezo1_pips.pdf",
+ggsave("../plots/bloodcells_finemap_zfpm1_piezo1_pips.eps",
        plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
                  rel_heights = c(2,1)),
        height = 3.25,width = 7)
-ggsave("../plots/bloodcells_finemap_zfpm1_piezo1_effects.pdf",p1$effect_plot,
-       height = 3.25,width = 4)
+ggsave("../plots/bloodcells_finemap_zfpm1_piezo1_effects.png",p1$effect_plot,
+       height = 3.25,width = 4,dpi = 300,bg = "white")
