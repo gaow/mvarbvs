@@ -1,4 +1,5 @@
-# TO DO: Explain here what this script is for, and how to use it.
+# Script to generate the plots for the main fine-mapping examples in
+# the paper.
 library(readr)
 library(ggplot2)
 library(ggrepel)
@@ -66,6 +67,8 @@ ggsave("../plots/bloodcells_finemap_tns3_pips.eps",
        height = 2.75,width = 7)
 ggsave("../plots/bloodcells_finemap_tsn3_effects.png",p1$effect_plot,
        height = 3.25,width = 2.75,dpi = 300,bg = "white")
+
+stop()
 
 # RUNX1 example.
 poslim <- c(36.15,36.55)

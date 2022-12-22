@@ -1,4 +1,5 @@
-# TO DO: Explain here what this function goes, and how to use it.
+# Plot the coding (transcribed) regions of the genes, and label the
+# genes.
 plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
   seq_gene <- subset(seq_gene,
                      chromosome == chr &
@@ -25,9 +26,10 @@ plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
   return(list(seq_gene = seq_gene,plot = p))
 }
 
-# TO DO: Explain here what this function does, and how to use it.
+# Create the PIP plot and accompanying effect plot showing the effect
+# estimates and significance of the effects for all the traits.
 #
-# Colors from colorbrewer2.org.
+# The colors from colorbrewer2.org.
 #
 mvsusie_plot <-
   function (fit, pos, markers, chr, poslim, conditions,
@@ -162,7 +164,8 @@ mvsusie_plot <-
           panel.grid = element_line(color = "lightgray",linetype = "dotted",
                                     size = 0.3))
 
-  # TO DO: Explain here what this code does.
+  # Output the (1) PIP plot, (2) effect plot and (3) the table of
+  # effect estimates.
   return(list(pip_plot     = pip_plot,
               effect_plot  = effect_plot,
               effects      = effects))
