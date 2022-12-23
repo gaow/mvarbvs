@@ -1,5 +1,9 @@
 # Script to generate the plots for the main fine-mapping examples in
 # the paper.
+#
+# TO DO NEXT: Figure out how to save plots for convenient editing in
+# Adobe Illustrator.
+#
 library(readr)
 library(ggplot2)
 library(ggrepel)
@@ -68,8 +72,6 @@ ggsave("../plots/bloodcells_finemap_tns3_pips.eps",
 ggsave("../plots/bloodcells_finemap_tsn3_effects.png",p1$effect_plot,
        height = 3.25,width = 2.75,dpi = 300,bg = "white")
 
-stop()
-
 # RUNX1 example.
 poslim <- c(36.15,36.55)
 dat <- readRDS(paste0("../output/blood_cell_traits/summary_stats/",
@@ -88,8 +90,10 @@ ggsave("../plots/bloodcells_finemap_runx1_pips.eps",
        plot_grid(p1$pip_plot,p2$plot,nrow = 2,ncol = 1,align = "v",axis = "lr",
                  rel_heights = c(2,1)),
        height = 3.25,width = 7)
-ggsave("../plots/bloodcells_finemap_runx1_effects.png",p1$effect_plot,
+ggsave("../plots/bloodcells_finemap_runx1_effects.pdf",p1$effect_plot,
        height = 3.25,width = 4,dpi = 300,bg = "white")
+
+stop()
 
 # ZFPM1-PIEZO1 example.
 poslim <- c(88.45,89)

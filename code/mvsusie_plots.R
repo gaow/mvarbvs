@@ -160,15 +160,18 @@ mvsusie_plot <-
                                    size = "coef_size",alpha = "lfsr")) +
     geom_point(shape = 21,stroke = 0.5,color = "white") +
     scale_fill_manual(values = c("darkblue","red"),drop = FALSE) +
-    scale_alpha_manual(values = c(1,0.85,0.6,0.45,0.05),drop = FALSE) +
+    scale_alpha_manual(values = c(0.95,0.8,0.65,0.5,0.05),drop = FALSE) +
     scale_size(range = c(1,5),
                breaks = unname(quantile(pdat_effects$coef_size,
                                         seq(0,1,length.out = 4)))) +
     labs(x = "",y = "",fill = "sign",size = "size") +
     guides(alpha = guide_legend(override.aes = list(shape = 21,color = "white",
                                                     fill = "black",size = 2)),
-           fill = guide_legend(override.aes = list(size = 2)),
-           size = guide_legend(override.aes = list(shape=20,color="black"))) +
+           fill = guide_legend(override.aes = list(size = 2,alpha = 0.95)),
+           size = guide_legend(override.aes = list(shape = 21,fill = "black",
+                                                   color = "white",
+                                                   stroke = 0.5,
+                                                   alpha = 0.95))) +
     theme_cowplot(font_size = 9) +
     theme(axis.text.x = element_text(angle = 90,vjust = 0.5,hjust = 1),
           panel.grid = element_line(color = "lightgray",linetype = "dotted",
