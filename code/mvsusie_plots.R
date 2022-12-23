@@ -33,6 +33,8 @@ plot_gene_tracks <- function (seq_gene, chr, poslim, genes) {
 #
 mvsusie_plot <-
   function (fit, pos, markers, chr, poslim, conditions,
+            lfsr_cutoff = 0.05,
+            lfsr_breaks = c(-Inf,1e-15,1e-8,1e-4,0.05,Inf),
             cs_colors = c("#1f78b4","#33a02c","#e31a1c","#ff7f00",
                           "#6a3d9a","#b15928","#a6cee3","#b2df8a",
                           "#fb9a99","#fdbf6f","#cab2d6","#ffff99",
@@ -127,11 +129,15 @@ mvsusie_plot <-
   pdat_effects <- transform(pdat_effects,
                             cs    = factor(cs),
                             trait = factor(trait,rev(traits)),
-                            lfsr  = cut(lfsr,c(-Inf,1e-15,1e-8,1e-4,0.1,Inf)),
                             coef_sign = factor(coef_sign))
   levels(pdat_effects$cs) <- pdat_sentinel$marker
   levels(pdat_effects$coef_sign) <- c("-1","+1")
 
+  # Remove from the effects plot any effects that don't meet the lfsr
+  # cutoff.
+  pdat_effects <- subset(pdat_effects,lfsr < lfsr_cutoff)
+  pdat_effects <- transform(pdat_effects,lfsr = cut(lfsr,lfsr_breaks))
+  
   # Create the PIP plot.
   pip_plot <- ggplot(pdat,aes_string(x = "pos",y = "pip")) +
     geom_point(color = "darkblue",shape = 20,size = 1.25) +
@@ -153,11 +159,15 @@ mvsusie_plot <-
                         aes_string(x = "cs",y = "trait",fill = "coef_sign",
                                    size = "coef_size",alpha = "lfsr")) +
     geom_point(shape = 21,stroke = 0.5,color = "white") +
-    scale_fill_manual(values = c("darkblue","red")) +
-    scale_alpha_manual(values = c(1,0.8,0.6,0.4,0.1)) +
-    scale_size(range = c(0.5,5)) +
+    scale_fill_manual(values = c("darkblue","red"),drop = FALSE) +
+    scale_alpha_manual(values = c(1,0.85,0.6,0.45,0.05),drop = FALSE) +
+    scale_size(range = c(1,5),
+               breaks = unname(quantile(pdat_effects$coef_size,
+                                        seq(0,1,length.out = 4)))) +
     labs(x = "",y = "",fill = "sign",size = "size") +
-    guides(alpha = guide_legend(override.aes = list(shape=20,color="black")),
+    guides(alpha = guide_legend(override.aes = list(shape = 21,color = "white",
+                                                    fill = "black",size = 2)),
+           fill = guide_legend(override.aes = list(size = 2)),
            size = guide_legend(override.aes = list(shape=20,color="black"))) +
     theme_cowplot(font_size = 9) +
     theme(axis.text.x = element_text(angle = 90,vjust = 0.5,hjust = 1),
