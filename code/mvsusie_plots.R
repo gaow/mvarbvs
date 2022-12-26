@@ -159,6 +159,7 @@ mvsusie_plot <-
                         aes_string(x = "cs",y = "trait",fill = "coef_sign",
                                    size = "coef_size",alpha = "lfsr")) +
     geom_point(shape = 21,stroke = 0.5,color = "white") +
+    scale_y_discrete(drop = FALSE) + 
     scale_fill_manual(values = c("darkblue","red"),drop = FALSE) +
     scale_alpha_manual(values = c(0.95,0.8,0.65,0.5,0.05),drop = FALSE) +
     scale_size(range = c(1,5),
