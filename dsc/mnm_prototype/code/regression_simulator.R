@@ -93,8 +93,10 @@ mash_sim = function(X, U, w, pve, is_pve_total=FALSE, n=NULL, residual=NULL,scal
     if (is.null(n) || n < 1) n = get_n_signal(n)
     R = nrow(U[[1]])
     if (R == 1) stop("This simulator is not meant for univariate data")
-    for (i in 2:length(U)) {
+    if(length(U) > 1){
+      for (i in 2:length(U)) {
         if (nrow(U[[i]])!=R) stop("Prior dimension are inconsistent in the given mixture")
+      }
     }
     effects = get_effects(ncol(X), R, n, U, w)
     b = effects$b
