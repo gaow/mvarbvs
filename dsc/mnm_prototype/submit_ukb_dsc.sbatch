@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #SBATCH --time=36:00:00
-#SBATCH --partition=broadwl
+#SBATCH --partition=mstephens
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
@@ -13,26 +13,16 @@
 module load R/4.1.0
 
 # Simulate the main DSC
-# dsc ukb_rss.dsc --target simulate_only -o output/ukb_rss_20220619 -s existing --host dsc_mnm.yml &> mvsusie_rss_ukb.log
+# dsc ukb_rss_main.dsc --target simulate_only -o output/ukb_rss_20220619 -s existing --host dsc_mnm.yml &> mvsusie_rss_ukb.log
 
 # Run the main DSC
-# dsc ukb_rss.dsc --host dsc_mnm.yml -o output/ukb_rss_20220619 -s existing &> mvsusie_rss_ukb.log
+# dsc ukb_rss_main.dsc --host dsc_mnm.yml -o output/ukb_rss_20220619 -s existing &> mvsusie_rss_cs_ukb.log
 
-# Run DSC for smaller number of traits 4
-# dsc ukb_rss.dsc --target simulate_small4_only --host dsc_mnm.yml -o output/ukb_rss_small4_20220619 -s existing &> mnm_rss_ukb_small4.log
+# Run DSC for smaller number of traits 2, indep signal
+# dsc ukb_rss_small.dsc --target simulate_small2_indep_only --host dsc_mnm.yml -o output/ukb_rss_small2_indep_20220619 -s existing -e ignore &> mnm_rss_ukb_small2_indep.log
+# dsc ukb_rss_small.dsc --target small2_indep_compare --host dsc_mnm.yml -o output/ukb_rss_small2_indep_20220619 -s existing -e ignore &> mnm_rss_ukb_small2_indep.log
 
-# Run DSC for smaller number of traits 2
-# dsc ukb_rss.dsc --target small2_compare --host dsc_mnm.yml -o output/ukb_rss_small2_20220619 -s existing -e ignore &> mnm_rss_ukb_small2.log
+# Run DSC for cafeh main simulation
+# dsc ukb_rss_main.dsc --target cafeh --host dsc_mnm.yml -o output/ukb_rss_20220619 -s existing &> cafeh_rss_cs_ukb.log
 
-# Run DSC for cafeh
-dsc ukb_rss.dsc --target cafeh --host dsc_mnm.yml -o output/ukb_rss_20220619 -s existing &> cafeh_rss_ukb.log
-
-# Run DSC for smaller number of traits 3
-# dsc ukb_rss.dsc --target simulate_small3_only --host dsc_mnm.yml -o output/ukb_rss_small3_20220619 -s existing --truncate &> mnm_rss_ukb_small3.log
-
-# Run DSC on smaller number of traits using MT-HESS
-# dsc ukb_rss.dsc --target full_data --host dsc_mnm.yml -o output/ukb_rss_small --truncate -s existing &> mnm_rss_ukb_small_fulldata.log
-
-# Run data generation step only to get data for ED estimate
-# dsc ukb_rss.dsc --host dsc_mnm.yml --target simulate_only -s existing -o output/ukb_rss &> mnm_rss_ukb.log
 

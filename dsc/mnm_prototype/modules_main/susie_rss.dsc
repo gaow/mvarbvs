@@ -6,3 +6,8 @@ susie_rss: susie_rss.R
   L: 10
   $fitted: res$fitted
   $posterior: res$posterior
+  
+susie_rss_cs: susie_rss_cs.R
+  ld: $ld
+  res: $fitted
+  $sets: sets

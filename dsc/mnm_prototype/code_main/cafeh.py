@@ -14,7 +14,7 @@ stderr_df = pd.read_csv(shat,sep='\t',index_col=0)
 n_df = pd.read_csv(n_file,sep='\t',index_col=0)
 cafeh = fit_cafeh_summary(LD_df, beta_df, stderr_df, n=n_df)
 
-cafeh.save(m_name + '.model', save_data=True)
+cafeh.save(m_name + '.model', save_data=True, save_ld=True)
 variant_report = summary_table(cafeh)
 variant_report.to_csv(m_name + '.result', sep='\t')
 

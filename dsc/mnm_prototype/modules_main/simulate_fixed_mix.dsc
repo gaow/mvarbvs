@@ -26,7 +26,6 @@ simulate_y_base: misc.R + regression_simulator.R + regression.R + \
               original_Y=Y, Y_sd=res$Y_sd, prior=res$prior, eff_mode = eff_mode)
   $sumstats: res$sumstats
   $suffstats: res$suff
-  $aaf: res$aaf
 
 artificial_mixture(simulate_y_base):
     eff_mode: "artificial_mixture_50"

@@ -76,3 +76,8 @@ mnm_rss_identity_corY(mnm_rss_base):
   prior: 'identity'
   resid_method: 'corY'
   
+mnm_rss_cs: mnm_rss_cs.R
+  ld: $ld
+  m: $result
+  $sets: sets
+  

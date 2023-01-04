@@ -1,15 +1,15 @@
 #!/usr/bin/env dsc
 
-%include modules/data_ukb
-%include modules/simulate_fixed_mix
-%include modules/mnm
-%include modules/mnm_rss
-%include modules/susie_rss
-%include modules/paintor
-%include modules/flashfm
-%include modules/cafeh
-%include modules/mthess
-%include modules/score
+%include modules_small/data_ukb
+%include modules_small/simulate_fixed_mix
+%include modules_small/mnm
+%include modules_small/mnm_rss
+%include modules_small/susie_rss
+%include modules_small/paintor
+%include modules_small/flashfm
+%include modules_small/cafeh
+%include modules_small/mthess
+%include modules_small/score
 
 DSC:
   define:
@@ -20,17 +20,14 @@ DSC:
     susie_uni: susie_rss
   run:
     default: data_ukb * simulate * (mnm_rss * mvsusie_scores, susie_uni * susie_scores)
-    cafeh: data_ukb * simulate * cafeh_prepare * cafeh * cafeh_scores
     small2_compare: data_ukb * artificial_mixture_ukb_small2 * ((mnm_rss_naive, mnm_rss_naive_corY, mnm_rss_naive_corZ) * mvsusie_scores, FLASHFMwithFINEMAP * flashfm_scores, PAINTOR, cafeh_prepare * cafeh * cafeh_scores)
     small2_indep_compare: data_ukb * artificial_mixture_ukb_small2_indep * ((mnm_rss_naive, mnm_rss_naive_corY, mnm_rss_naive_corZ) * mvsusie_scores, FLASHFMwithFINEMAP * flashfm_scores, PAINTOR, cafeh_prepare * cafeh * cafeh_scores)
     small4_compare: data_ukb * artificial_mixture_ukb_small4 * ((mnm_rss_naive, mnm_rss_naive_corY, mnm_rss_naive_corZ) * mvsusie_scores, PAINTOR)
-    full_data: data_ukb * artificial_mixture_ukb_small2_indep * mthess
     simulate_small2_only: data_ukb * artificial_mixture_ukb_small2
     simulate_small2_indep_only: data_ukb * artificial_mixture_ukb_small2_indep
-    simulate_small3_only: data_ukb * artificial_mixture_ukb_small3
     simulate_small4_only: data_ukb * artificial_mixture_ukb_small4
     simulate_only: data_ukb * simulate 
-  exec_path: code
+  exec_path: code_small
   output: output/ukb_rss
   global:
     data_file: /project2/mstephens/yuxin/ukb-bloodcells/regions1000_5000.txt
@@ -53,5 +50,3 @@ DSC:
     C: 2
     varY_file: '/project2/mstephens/yuxin/ukb-bloodcells/analysis_20220619/artificial_small2.Ycor.rds'
     nullz_file: /project2/mstephens/yuxin/ukb-bloodcells/analysis_20220619/artificial_mixture_2_indep_20220619_nullzcor.rds
-    # C: 2
-    # nullz_file: ~/GitHub/mvarbvs/dsc/mnm_prototype/output/ukb_rss_small/nullz_cor.rds

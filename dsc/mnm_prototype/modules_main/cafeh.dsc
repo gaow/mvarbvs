@@ -18,4 +18,10 @@ cafeh: cafeh.py
   $cafeh_trait_pip: trait_pip
   $cafeh_cs: credible_sets
   $cafeh_purity: purity
+  $cafeh_file: m_name
+  
+cafeh_cs: cafeh_cs.py
+  cafeh_file: $cafeh_file
+  $cs: sets
+  $purity: purity
   
