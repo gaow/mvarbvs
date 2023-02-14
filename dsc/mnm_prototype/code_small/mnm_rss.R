@@ -31,7 +31,8 @@ if (is.character(ld)) {
 
 m_init = mvsusieR::create_mixture_prior(mixture_prior = list(matrices=priorU$xUlist, weights=priorU$pi), 
                                  null_weight=priorU$null_weight, max_mixture_len=-1)
-result = mvsusieR::mvsusie_rss(Z, LD, N=suffstats$N, L=L, prior_variance=m_init, residual_variance=resid_Z, 
+result = mvsusieR::mvsusie_rss(Z, LD, N=suffstats$N, L=L,
+  prior_variance=m_init, residual_variance=resid_Z, 
                           compute_objective=T, estimate_prior_variance=T, estimate_prior_method='EM', 
                           precompute_covariances=T, n_thread=n_thread, max_iter=maxiter)
 result$cs_corr = susieR:::get_cs_correlation(result, Xcorr=LD)
