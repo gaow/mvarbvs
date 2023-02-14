@@ -59,3 +59,4 @@ p <- ggplot(CS_compare,aes(x = CSnumber,y = mvCSnumber,color = type)) +
     theme(legend.position = "none",
           title = element_text(size = 15))
 print(p)
+ggsave("susie_vs_mvsusie_num_cs.eps",p,height = 4,width = 4)
