@@ -50,13 +50,13 @@ p <- ggplot(CS_compare,aes(x = CSnumber,y = mvCSnumber,color = type)) +
   geom_point(size = 1) +
   scale_color_manual(values = c("#33cccc","pink","red","#cc66ff")) +
   geom_abline(slope = 1,intercept = 0,linetype = 2) +
-    geom_text(aes(label = trait),vjust = "inward",hjust = "inward",size = 2) +
-    labs(x = "SuSiE", y = "mvSuSiE") +
-    scale_x_continuous(limits = c(125,800),breaks = seq(0,2000,200)) +
-    scale_y_continuous(limits = c(125,1425),breaks = seq(0,2000,200)) +
-    coord_fixed() +
-    theme_cowplot(font_size = 12) +
-    theme(legend.position = "none",
-          title = element_text(size = 15))
+  geom_text(aes(label = trait),vjust = "inward",hjust = "inward",size = 2) +
+  labs(x = "SuSiE", y = "mvSuSiE") +
+  scale_x_continuous(limits = c(125,800),breaks = seq(0,2000,200)) +
+  scale_y_continuous(limits = c(125,1425),breaks = seq(0,2000,200)) +
+  coord_fixed() +
+  theme_cowplot(font_size = 12) +
+  theme(legend.position = "none",
+        title = element_text(size = 15))
 print(p)
-ggsave("susie_vs_mvsusie_num_cs.eps",p,height = 4,width = 4)
+ggsave("../plots/susie_vs_mvsusie_num_cs.eps",p,height = 4,width = 4)
