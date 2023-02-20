@@ -1,4 +1,5 @@
-# TO DO: Explain here what this script is for, and how to use it.
+# Short script to inspect the results in more detail for the
+# fine-mapping examples included in the main text.
 library(susieR)
 library(mvsusieR)
 susie <- readRDS("../output/blood_cell_traits/susie/EXT1_susie.rds")

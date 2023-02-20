@@ -1,7 +1,9 @@
-# TO DO: Explain here what this script does, and how to use it.
+# Short script to extract PLINK association analysis results for the
+# fine-mapping examples included in the main text.
 #
-# Directory on gardner:
-# /gpfs/data/stephens-lab/finemap-uk-biobank/data/raw/BloodCells/gwas_maf001_info6
+# Directory on gardner where I run this script:
+# /gpfs/data/stephens-lab/finemap-uk-biobank/data/raw/BloodCells/
+# gwas_maf001_info6
 #
 library(data.table)
 traits <- c("Basophill_perc","Eosinophill_perc","HLR_perc","Haemoglobin",
