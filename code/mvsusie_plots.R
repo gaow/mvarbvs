@@ -157,22 +157,22 @@ mvsusie_plot <-
   # Create the effect plot. 
   effect_plot <- ggplot(pdat_effects,
                         aes_string(x = "cs",y = "trait",fill = "coef_sign",
-                                   size = "coef_size",alpha = "lfsr")) +
+                                   size = "coef_size")) +
     geom_point(shape = 21,stroke = 0.5,color = "white") +
     scale_y_discrete(drop = FALSE) + 
     scale_fill_manual(values = c("darkblue","red"),drop = FALSE) +
-    scale_alpha_manual(values = c(0.95,0.8,0.65,0.5,0.05),drop = FALSE) +
+    # scale_alpha_manual(values = c(0.95,0.8,0.65,0.5,0.05),drop = FALSE) +
     scale_size(range = c(1,5),
                breaks = unname(quantile(pdat_effects$coef_size,
                                         seq(0,1,length.out = 4)))) +
     labs(x = "",y = "",fill = "sign",size = "size") +
-    guides(alpha = guide_legend(override.aes = list(shape = 21,color = "white",
-                                                    fill = "black",size = 2)),
-           fill = guide_legend(override.aes = list(size = 2,alpha = 0.95)),
+    guides(# alpha = guide_legend(override.aes = list(shape=21,color="white",
+           #                                          fill="black",size=2)),
+           fill = guide_legend(override.aes = list(size = 2)), # alpha = 0.95
            size = guide_legend(override.aes = list(shape = 21,fill = "black",
                                                    color = "white",
-                                                   stroke = 0.5,
-                                                   alpha = 0.95))) +
+                                                   stroke = 0.5))) +
+                                                   # alpha = 0.95
     theme_cowplot(font_size = 9) +
     theme(axis.text.x = element_text(angle = 90,vjust = 0.5,hjust = 1),
           panel.grid = element_line(color = "lightgray",linetype = "dotted",
