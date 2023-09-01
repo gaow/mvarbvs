@@ -22,10 +22,12 @@ library(cowplot)
 load("../output/blood_cell_traits/cs_barchart_data.RData")
 
 # Create the plot comparing mvsusie and cafeh cross-trait CSs.
-# scenario       <- "artificial_mixture_ukb"
-# scenario_title <- "Scenario a"
-scenario       <- "ukb_bloodcells_mixture"
-scenario_title <- "Scenario b"
+scenario       <- "artificial_mixture_ukb"
+scenario_title <- "Scenario a"
+outfile        <- "cs_barcharts_a.pdf"
+# scenario       <- "ukb_bloodcells_mixture"
+# scenario_title <- "Scenario b"
+# outfile        <- "cs_barcharts_b.pdf"
 mvsusie <-
   unlist(dat$mvsusie_scores.size[dat$method == "mnm_rss_ed_corZ+nullz" &
                                  dat$simulate == scenario])
@@ -68,5 +70,5 @@ p2 <- ggplot(pdat,aes(fill = method,x = size)) +
 cat("1-SNP CSs (trait-specific):\n")
 cat("susie:",sum(susie == 1)/length(susie),"\n")
 cat("mvsusie:",sum(mvsusie == 1)/length(mvsusie),"\n")
-
 print(plot_grid(p1,p2))
+ggsave(outfile,plot_grid(p1,p2),height = 2.5,width = 6.5)
