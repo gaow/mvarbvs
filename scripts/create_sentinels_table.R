@@ -18,16 +18,16 @@ mvsusie <- transform(mvsusie,
 susie   <- subset(susie,PIP > 0.9)
 mvsusie <- subset(mvsusie,PIP > 0.9)
 
-# Add a "susie" column to the "mvsusie" data frame,
-mvsusie$susie <- "no"
-rows <- which(is.element(mvsusie$ID,susie$ID))
-mvsusie[rows,"susie"] <- "yes"
-mvsusie$susie <- factor(mvsusie$susie)
+# Add a "susie_pip" column to the "mvsusie" data frame,
+mvsusie$susie_pip <- as.numeric(NA)
+rows1 <- which(is.element(susie$ID,mvsusie$ID))
+rows2 <- match(susie[rows1,"ID"],mvsusie$ID)
+mvsusie[rows2,"susie_pip"] <- susie[rows1,"PIP"]
 
 # Reorganize the columns and rows in the "mvsusie" data frame a bit.
-mvsusie <- mvsusie[,c("CHR","POS","ID","REF","ALT","maf","PIP","susie",
+mvsusie <- mvsusie[,c("CHR","POS","ID","REF","ALT","maf","PIP","susie_pip",
                       "Region","CS_trait")]
-names(mvsusie) <- c("chr","pos","id","ref","alt","maf","pip","susie",
+names(mvsusie) <- c("chr","pos","id","ref","alt","maf","pip","susie_pip",
                     "region","traits")
 rows <- order(mvsusie$chr,mvsusie$pos)
 mvsusie <- mvsusie[rows,]
@@ -35,7 +35,8 @@ rownames(mvsusie) <- NULL
 
 # Write the "mvsusie" data frame to a CSV file.
 mvsusie <- transform(mvsusie,
-                     maf = round(maf,digits = 4),
-                     pip = round(pip,digits = 4))
+                     maf       = format(maf,digits = 4),
+                     pip       = round(pip,digits = 4),
+                     susie_pip = round(susie_pip,digits = 4))
 write.csv(mvsusie,"blood_cell_traits_mvsusie_sentinels.csv",
           quote = FALSE,row.names = FALSE)
