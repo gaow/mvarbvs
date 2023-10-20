@@ -49,8 +49,6 @@ names(mvsusie) <- c("chr","pos","id","ref","alt","maf","pip","susie_pip",
 rows <- order(mvsusie$chr,mvsusie$pos)
 mvsusie <- mvsusie[rows,]
 rownames(mvsusie) <- NULL
-
-
     
 # Write the "mvsusie" data frame to a CSV file.
 mvsusie <- transform(mvsusie,
