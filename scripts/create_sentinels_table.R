@@ -85,7 +85,7 @@ mvsusie <- transform(mvsusie,
 write.csv(mvsusie,"blood_cell_traits_mvsusie_sentinels.csv",
           quote = FALSE,row.names = FALSE)
 
-write.table(subset(mvsusie,susie_pip > 0.9)["id"],"susie_snps.txt",
-            quote = FALSE,row.names = FALSE,col.names = FALSE)
-write.table(mvsusie["id"],"mvsusie_snps.txt",quote = FALSE,
-            row.names = FALSE,col.names = FALSE)
+# write.table(subset(mvsusie,susie_pip > 0.9)["id"],"susie_snps.txt",
+#             quote = FALSE,row.names = FALSE,col.names = FALSE)
+# write.table(mvsusie["id"],"mvsusie_snps.txt",quote = FALSE,
+#             row.names = FALSE,col.names = FALSE)
