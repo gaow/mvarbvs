@@ -19,10 +19,13 @@ susie   <- subset(susie,PIP > 0.9)
 mvsusie <- subset(mvsusie,PIP > 0.9)
 
 # Add a "susie_pip" column to the "mvsusie" data frame,
+susie <- transform(susie,ID = factor(ID))
+pip <- tapply(susie$PIP,susie$ID,max)
+ids <- names(pip)
 mvsusie$susie_pip <- as.numeric(NA)
-rows1 <- which(is.element(susie$ID,mvsusie$ID))
-rows2 <- match(susie[rows1,"ID"],mvsusie$ID)
-mvsusie[rows2,"susie_pip"] <- susie[rows1,"PIP"]
+rows1 <- which(is.element(ids,mvsusie$ID))
+rows2 <- match(ids[rows1],mvsusie$ID)
+mvsusie[rows2,"susie_pip"] <- pip[rows1]
 
 # Reorganize the columns and rows in the "mvsusie" data frame a bit.
 mvsusie <- mvsusie[,c("CHR","POS","ID","REF","ALT","maf","PIP","susie_pip",
