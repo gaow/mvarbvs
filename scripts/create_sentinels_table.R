@@ -66,7 +66,15 @@ names(mvsusie) <- c("chr","pos","id","ref","alt","maf","pip","susie_pip",
 rows <- order(mvsusie$chr,mvsusie$pos)
 mvsusie <- mvsusie[rows,]
 rownames(mvsusie) <- NULL
-    
+
+# Summarize the overlap of mvsusie sentinels vs. the other
+# fine-mapping results.
+cat("Total sentinel SNPs (PIP > 0.9):",nrow(mvsusie),"\n")
+cat("susie PIP > 0.9:",sum(mvsusie$susie_pip > 0.9,na.rm = TRUE),"\n")
+cat("Vuckovic et al PIP > 0.9",sum(mvsusie$vuckovic_pip > 0.9,na.rm = TRUE),
+    "\n")
+cat("Ulirsch et al PIP > 0.9",sum(mvsusie$ulirsch_pip > 0.9,na.rm = TRUE),"\n")
+
 # Write the "mvsusie" data frame to a CSV file.
 mvsusie <- transform(mvsusie,
                      maf          = format(maf,digits = 4),
@@ -76,3 +84,8 @@ mvsusie <- transform(mvsusie,
                      ulirsch_pip  = round(ulirsch_pip,digits = 4))
 write.csv(mvsusie,"blood_cell_traits_mvsusie_sentinels.csv",
           quote = FALSE,row.names = FALSE)
+
+write.table(subset(mvsusie,susie_pip > 0.9)["id"],"susie_snps.txt",
+            quote = FALSE,row.names = FALSE,col.names = FALSE)
+write.table(mvsusie["id"],"mvsusie_snps.txt",quote = FALSE,
+            row.names = FALSE,col.names = FALSE)
