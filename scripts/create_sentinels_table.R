@@ -17,8 +17,15 @@ mvsusie <- transform(mvsusie,
 
 # Read in the Vuckovic et al fine-mapping results (Supplementary Table
 # S5 of Vuckovic et al 2020).
-vuckovic <- read_excel("../output/blood_cell_traits/vuckovic_table_s5.xlsx")
+vuckovic <- read_excel("../data/vuckovic_table_s5.xlsx",col_names = TRUE)
 class(vuckovic) <- "data.frame"
+
+# Read in the Ulirsch et al fine-mapping results (Supplementary Table
+# 1 of Ulirsch et al 2019).
+ulirsch <- suppressWarnings(
+  read_excel("../data/ulirsch_supplementary_table_1.xlsx",
+             col_names = TRUE,skip = 2))
+class(ulirsch) <- "data.frame"
 
 # Select SNPs with a PIP of 0.9 or more.
 mvsusie <- subset(mvsusie,PIP > 0.9)
@@ -41,11 +48,21 @@ rows1 <- which(is.element(ids,mvsusie$ID))
 rows2 <- match(ids[rows1],mvsusie$ID)
 mvsusie[rows2,"vuckovic_pip"] <- pip[rows1]
 
+# Add an "ulirsch_pip" column to the "mvsusie" data frame.
+ulirsch <- subset(ulirsch,rsID != "NA")
+ulirsch <- transform(ulirsch,rsID = factor(rsID))
+pip <- tapply(ulirsch$PP,ulirsch$rsID,max)
+ids <- names(pip)
+mvsusie$ulirsch_pip <- as.numeric(NA)
+rows1 <- which(is.element(ids,mvsusie$ID))
+rows2 <- match(ids[rows1],mvsusie$ID)
+mvsusie[rows2,"ulirsch_pip"] <- pip[rows1]
+
 # Reorganize the columns and rows in the "mvsusie" data frame a bit.
 mvsusie <- mvsusie[,c("CHR","POS","ID","REF","ALT","maf","PIP","susie_pip",
-                      "vuckovic_pip","Region","CS_trait")]
+                      "vuckovic_pip","ulirsch_pip","Region","CS_trait")]
 names(mvsusie) <- c("chr","pos","id","ref","alt","maf","pip","susie_pip",
-                    "vuckovic_pip","region","traits")
+                    "vuckovic_pip","ulirsch_pip","region","traits")
 rows <- order(mvsusie$chr,mvsusie$pos)
 mvsusie <- mvsusie[rows,]
 rownames(mvsusie) <- NULL
@@ -55,6 +72,7 @@ mvsusie <- transform(mvsusie,
                      maf          = format(maf,digits = 4),
                      pip          = round(pip,digits = 4),
                      susie_pip    = round(susie_pip,digits = 4),
-                     vuckovic_pip = round(vuckovic_pip,digits = 4))
+                     vuckovic_pip = round(vuckovic_pip,digits = 4),
+                     ulirsch_pip  = round(ulirsch_pip,digits = 4))
 write.csv(mvsusie,"blood_cell_traits_mvsusie_sentinels.csv",
           quote = FALSE,row.names = FALSE)
