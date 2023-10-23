@@ -69,11 +69,20 @@ rownames(mvsusie) <- NULL
 
 # Summarize the overlap of mvsusie sentinels vs. the other
 # fine-mapping results.
-cat("Total sentinel SNPs (PIP > 0.9):",nrow(mvsusie),"\n")
-cat("susie PIP > 0.9:",sum(mvsusie$susie_pip > 0.9,na.rm = TRUE),"\n")
-cat("Vuckovic et al PIP > 0.9",sum(mvsusie$vuckovic_pip > 0.9,na.rm = TRUE),
-    "\n")
-cat("Ulirsch et al PIP > 0.9",sum(mvsusie$ulirsch_pip > 0.9,na.rm = TRUE),"\n")
+susie_sentinels <- subset(susie,PIP > 0.9)[,"ID"]
+susie_sentinels <- unique(susie_sentinels)
+cat("susie PIPs > 0.9:",length(susie_sentinels),"\n")
+cat("mvsusie PIPs > 0.9):",nrow(mvsusie),"\n")
+cat("Vuckovic et al PIPs > 0.9 (overlapping with mvsusie PIPs > 0.9):",
+    sum(mvsusie$vuckovic_pip > 0.9,na.rm = TRUE),"\n")
+cat("Ulirsch et al PIPs > 0.9 (overlapping with mvsusie PIPs > 0.9):",
+    sum(mvsusie$ulirsch_pip > 0.9,na.rm = TRUE),"\n")
+
+# Generate text files containing the "sentinels" (SNPs with PIPs > 0.9).
+write.table(data.frame(susie_sentinels),"susie_sentinels.txt",
+            quote = FALSE,row.names = FALSE,col.names = FALSE)
+write.table(mvsusie["id"],"mvsusie_sentinels.txt",quote = FALSE,
+            row.names = FALSE,col.names = FALSE)
 
 # Write the "mvsusie" data frame to a CSV file.
 mvsusie <- transform(mvsusie,
@@ -84,8 +93,3 @@ mvsusie <- transform(mvsusie,
                      ulirsch_pip  = round(ulirsch_pip,digits = 4))
 write.csv(mvsusie,"blood_cell_traits_mvsusie_sentinels.csv",
           quote = FALSE,row.names = FALSE)
-
-# write.table(subset(mvsusie,susie_pip > 0.9)["id"],"susie_snps.txt",
-#             quote = FALSE,row.names = FALSE,col.names = FALSE)
-# write.table(mvsusie["id"],"mvsusie_snps.txt",quote = FALSE,
-#             row.names = FALSE,col.names = FALSE)
