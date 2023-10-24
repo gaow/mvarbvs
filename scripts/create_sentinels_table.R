@@ -1,5 +1,7 @@
 # TO DO: Explain here what this script is for, and how to use it.
 library(readxl)
+library(ggplot2)
+library(cowplot)
 
 # Load the susie_rss and mvsusie_rss blood cell trait fine-mapping results.
 susie_outfile   <- file.path("../output/blood_cell_traits",
@@ -27,8 +29,8 @@ ulirsch <- suppressWarnings(
              col_names = TRUE,skip = 2))
 class(ulirsch) <- "data.frame"
 
-# Select SNPs with a PIP of 0.9 or more.
-mvsusie <- subset(mvsusie,PIP > 0.9)
+# Select SNPs with a PIP of 0.95 or more.
+mvsusie <- subset(mvsusie,PIP >= 0.95)
 
 # Add a "susie_pip" column to the "mvsusie" data frame,
 susie <- transform(susie,ID = factor(ID))
@@ -67,21 +69,21 @@ rows <- order(mvsusie$chr,mvsusie$pos)
 mvsusie <- mvsusie[rows,]
 rownames(mvsusie) <- NULL
 
-# Summarize the overlap of mvsusie sentinels vs. the other
+# Summarize the overlap of mvsusie 1-SNP CSs vs. the other
 # fine-mapping results.
-susie_sentinels <- subset(susie,PIP > 0.9)[,"ID"]
-susie_sentinels <- unique(susie_sentinels)
-cat("susie PIPs > 0.9:",length(susie_sentinels),"\n")
-cat("mvsusie PIPs > 0.9):",nrow(mvsusie),"\n")
-cat("Vuckovic et al PIPs > 0.9 (overlapping with mvsusie PIPs > 0.9):",
-    sum(mvsusie$vuckovic_pip > 0.9,na.rm = TRUE),"\n")
-cat("Ulirsch et al PIPs > 0.9 (overlapping with mvsusie PIPs > 0.9):",
-    sum(mvsusie$ulirsch_pip > 0.9,na.rm = TRUE),"\n")
+susie_cs1snp <- subset(susie,PIP >= 0.95)[,"ID"]
+susie_cs1snp <- unique(susie_cs1snp)
+cat("susie PIPs > 0.95:",length(susie_cs1snp),"\n")
+cat("mvsusie PIPs > 0.95:",nrow(mvsusie),"\n")
+cat("Vuckovic et al PIPs > 0.95 (overlapping with mvsusie PIPs > 0.95):",
+    sum(mvsusie$vuckovic_pip >= 0.95,na.rm = TRUE),"\n")
+cat("Ulirsch et al PIPs > 0.95 (overlapping with mvsusie PIPs > 0.95):",
+    sum(mvsusie$ulirsch_pip >= 0.95,na.rm = TRUE),"\n")
 
-# Generate text files containing the "sentinels" (SNPs with PIPs > 0.9).
-write.table(data.frame(susie_sentinels),"susie_sentinels.txt",
+# Generate text files containing the 1-CS SNPs.
+write.table(data.frame(susie_cs1snp),"susie_cs1snp.txt",
             quote = FALSE,row.names = FALSE,col.names = FALSE)
-write.table(mvsusie["id"],"mvsusie_sentinels.txt",quote = FALSE,
+write.table(mvsusie["id"],"mvsusie_cs1snp.txt",quote = FALSE,
             row.names = FALSE,col.names = FALSE)
 
 # Write the "mvsusie" data frame to a CSV file.
@@ -91,5 +93,18 @@ mvsusie <- transform(mvsusie,
                      susie_pip    = round(susie_pip,digits = 4),
                      vuckovic_pip = round(vuckovic_pip,digits = 4),
                      ulirsch_pip  = round(ulirsch_pip,digits = 4))
-write.csv(mvsusie,"blood_cell_traits_mvsusie_sentinels.csv",
+write.csv(mvsusie,"blood_cell_traits_mvsusie_cs1snp.csv",
           quote = FALSE,row.names = FALSE)
+
+# Add a column to the "mvsusie" data frame for the number of
+# significant traits.
+mvsusie <-
+  transform(mvsusie,
+            num_traits = sapply(strsplit(traits,"|",fixed = TRUE),length))
+
+# Get the median number of significant traits for 1-SNP CSs that were
+# also included in at least one susie CS.
+i <- which(!is.na(mvsusie$susie_pip))
+j <- which(is.na(mvsusie$susie_pip))
+print(median(mvsusie[i,"num_traits"]))
+print(median(mvsusie[j,"num_traits"]))
