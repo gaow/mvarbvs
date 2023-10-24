@@ -1,4 +1,5 @@
-# TO DO: Explain here what this script is for, and how to use it.
+# Script to generate text files containing information about the
+# mvSuSiE 1-SNP CSs.
 library(readxl)
 library(ggplot2)
 library(cowplot)
@@ -95,16 +96,3 @@ mvsusie <- transform(mvsusie,
                      ulirsch_pip  = round(ulirsch_pip,digits = 4))
 write.csv(mvsusie,"blood_cell_traits_mvsusie_cs1snp.csv",
           quote = FALSE,row.names = FALSE)
-
-# Add a column to the "mvsusie" data frame for the number of
-# significant traits.
-mvsusie <-
-  transform(mvsusie,
-            num_traits = sapply(strsplit(traits,"|",fixed = TRUE),length))
-
-# Get the median number of significant traits for 1-SNP CSs that were
-# also included in at least one susie CS.
-i <- which(!is.na(mvsusie$susie_pip))
-j <- which(is.na(mvsusie$susie_pip))
-print(median(mvsusie[i,"num_traits"]))
-print(median(mvsusie[j,"num_traits"]))
