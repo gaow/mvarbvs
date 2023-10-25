@@ -152,12 +152,14 @@ pdat <- transform(z_susie,
                   pval = pmin(pval,10))
 ggplot(pdat,aes(x = celltype,y = trait,fill = celltype,size = pval)) +
   geom_point(shape = 21,color = "white") +
-  scale_size(range = c(1,5),limits = c(threshold,10)) + 
+  scale_size(range = c(2,6),limits = c(threshold,10)) + 
   scale_fill_manual(values = celltype_colors,guide = "none") +
   guides(size = guide_legend(override.aes = list(shape = 21,fill = "black"))) +
   theme_cowplot(font_size = 9) +
   labs(x = "",y = "") +
-  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 0.5))
+  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 0.5),
+        panel.grid = element_line(color = "lightgray",size = 0.3,
+                                  linetype = "dotted"))
 ```
 
 For a point of comparison, we will use the gchromVAR results from the
