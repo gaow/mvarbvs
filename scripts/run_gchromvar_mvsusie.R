@@ -1,5 +1,5 @@
-# Perform a gchromVAR analysis of the SuSiE fine-mapping results for
-# the UK Biobank blood cell traits.
+# Perform a gchromVAR analysis of the mvSuSiE fine-mapping results for
+# UK Biobank blood cell traits.
 library(chromVAR)
 library(gchromVAR)
 library(BuenColors)
@@ -12,19 +12,19 @@ library(reshape2)
 # For reproducibility, set the seed.
 set.seed(1)
 
-# Load the susie_rss results. 
-susie_outfile   <- file.path("../output/blood_cell_traits",
-                             "susierss.notrem.CS_purity0.5.summary.csv.gz")
-susie <- read.csv(susie_outfile,header = TRUE,stringsAsFactors = FALSE)
-susie <- transform(susie,
-                   CHR    = factor(CHR,1:22),
-                   Region = factor(Region),
-                   trait  = factor(trait),
-                   REF    = factor(REF),
-                   ALT    = factor(ALT))
+# Load the mvsusie_rss results. 
+mvsusie_outfile <- paste0("../output/blood_cell_traits/",
+                          "LDoriginal.Ycor.mvsusierss.CS_purity0.5.",
+                          "CS_lfsr0.01.summary.csv.gz")
+mvsusie <- read.csv(mvsusie_outfile,header = TRUE,stringsAsFactors = FALSE)
+mvsusie <- transform(mvsusie,
+                     CHR    = factor(CHR,1:22),
+                     Region = factor(Region),
+                     REF    = factor(REF),
+                     ALT    = factor(ALT))
 
 # Limit to results with PIP > 0.01.
-susie <- subset(susie,PIP > 0.01)
+mvsusie <- subset(mvsusie,PIP > 0.01)
 
 # Build a set of consensus, equal-width peaks spanning the hematopoesis
 # phenotypes.
@@ -43,11 +43,17 @@ hema_dat <- SummarizedExperiment(assays = list(counts = counts),
                                  colData = DataFrame(names = colnames(counts)))
 hema_dat <- addGCBias(hema_dat,genome = BSgenome.Hsapiens.UCSC.hg19)
 
+
 ## Encode the fine-mapping results for each trait as a BED file.
-traits    <- levels(susie$trait)
+traits <- c("Basophill_perc","Eosinophill_perc","Haemoglobin","HLR_perc",
+            "Lymphocyte_perc","MCV","Monocyte_perc","MSCV","Neutrophill_perc",
+            "PDW","Platelet_count","Plateletcrit","RBC_count","RDW",
+            "Reticulocyte_perc","WBC_count")
+cs_traits <- lapply(strsplit(mvsusie$CS_trait,"|",fixed = TRUE),trimws)
 bed_files <- paste(traits,"bed",sep = ".")
 for (i in traits) {
-  dat  <- subset(susie,trait == i)
+  rows <- which(sapply(cs_traits,function (x) any(is.element(i,x))))
+  dat  <- mvsusie[rows,]
   dat  <- dat[c("CHR","POS","Region","PIP")]
   names(dat) <- c("chr","start","region","pip")
   rows <- order(dat$chr,dat$start)
@@ -62,19 +68,19 @@ for (i in traits) {
 }
 
 # Now we are ready to compute the weighted deviations using gchromVAR.
-susie_se   <- importBedScore(rowRanges(hema_dat),bed_files,colidx = 5)
-wdev_susie <- computeWeightedDeviations(hema_dat,susie_se)
+mvsusie_se   <- importBedScore(rowRanges(hema_dat),bed_files,colidx = 5)
+wdev_mvsusie <- computeWeightedDeviations(hema_dat,mvsusie_se)
 
 # Extract the z-scores and compute p-values.
-gchromvar_susie <- assays(wdev_susie)$z
-names(dimnames(gchromvar_susie)) <- c("trait","celltype")
-gchromvar_susie <- melt(gchromvar_susie)
-names(gchromvar_susie) <- c("trait","celltype","zscore")
-gchromvar_susie$pval <-
-  -log10(pnorm(gchromvar_susie$zscore,lower.tail = FALSE))
+gchromvar_mvsusie <- assays(wdev_mvsusie)$z
+names(dimnames(gchromvar_mvsusie)) <- c("trait","celltype")
+gchromvar_mvsusie <- melt(gchromvar_mvsusie)
+names(gchromvar_mvsusie) <- c("trait","celltype","zscore")
+gchromvar_mvsusie$pval <-
+  -log10(pnorm(gchromvar_mvsusie$zscore,lower.tail = FALSE))
 
 # Save the results as a CSV file.
-dat <- transform(gchromvar_susie,
+dat <- transform(gchromvar_mvsusie,
                  zscore = round(zscore,digits = 4),
                  pval   = round(pval,digits = 4))
-write.csv(dat,"gchromvar_susie.csv",quote = FALSE,row.names = FALSE)
+write.csv(dat,"gchromvar_mvsusie.csv",quote = FALSE,row.names = FALSE)
