@@ -19,16 +19,10 @@ knitr::opts_chunk$set(comment = "#",collapse = TRUE,results = "hold",
 Load the packages used in the analysis.
 
 ```{r load-pkgs, message=FALSE, warning=FALSE}
-library(chromVAR)
-library(gchromVAR)
 library(BuenColors)
-library(SummarizedExperiment)
-library(data.table)
-library(BiocParallel)
-library(BSgenome.Hsapiens.UCSC.hg19)
 library(ggplot2)
+library(ggrepel)
 library(cowplot)
-library(reshape2)
 ```
 
 For reproducibility, set the seed.
@@ -37,128 +31,30 @@ For reproducibility, set the seed.
 set.seed(1)
 ```
 
-Load the susie_rss blood cell trait fine-mapping results. Here we will
-limit to results with PIP > 0.01.
+These are the cell types in the hematopoesis hierarchy:
 
-```{r read-mvsusie-results}
-susie_outfile   <- file.path("../output/blood_cell_traits",
-                             "susierss.notrem.CS_purity0.5.summary.csv.gz")
-susie <- read.csv(susie_outfile,header = TRUE,stringsAsFactors = FALSE)
-susie <- transform(susie,
-                   CHR    = factor(CHR,1:22),
-                   Region = factor(Region),
-				   trait  = factor(trait),
-                   REF    = factor(REF),
-                   ALT    = factor(ALT))
-susie <- subset(susie,PIP > 0.01)
-```
-
-Build a set of consensus, equal-width peaks spanning the hematopoesis
-phenotypes.
-
-```{r create-ranged-summarized-experiment, message=FALSE}
-counts_file <- paste0(system.file("extdata/paper",package = "gchromVAR"),
-                      "/hemeCounts.tsv.gz")
-peaks_file <- paste0(system.file("extdata/paper",package = "gchromVAR"),
-                     "/hemePeaks.bed.gz")
-peaksdf <- data.frame(fread(paste0("zcat < ",peaks_file)))
-peaks <- makeGRangesFromDataFrame(peaksdf,
-                                  seqnames = "V1",
-                                  start.field = "V2",
-                                  end.field = "V3")
-counts <- data.matrix(fread(paste0("zcat < ", counts_file)))
-hema_dat <- SummarizedExperiment(assays = list(counts = counts),
-                                 rowData = peaks, 
-                                 colData = DataFrame(names = colnames(counts)))
-hema_dat <- addGCBias(hema_dat,genome = BSgenome.Hsapiens.UCSC.hg19)
-```
-
-Encode the fine-mapping results for each trait as a BED file.
-
-```{r write-bed}
-traits <- levels(susie$trait)
-bed_files <- paste(traits,"bed",sep = ".")
-for (i in traits) {
-  dat  <- subset(susie,trait == i)
-  dat  <- dat[c("CHR","POS","Region","PIP")]
-  names(dat) <- c("chr","start","region","pip")
-  rows <- order(dat$chr,dat$start)
-  dat  <- dat[rows,]
-  dat <- transform(dat,
-                   chr = paste0("chr",chr),
-                   end = start + 1)
-  dat <- dat[c("chr","start","end","region","pip")]
-  dat$pip <- format(dat$pip,digits = 4) 
-  write.table(dat,paste(i,"bed",sep = "."),quote = FALSE,sep = "\t",
-              row.names = FALSE,col.names = FALSE)
-}
-```
-
-Now we are ready to compute the weighted deviations using gchromVAR.
-
-```{r wdev-susie}
-susie_se <- importBedScore(rowRanges(hema_dat),bed_files,colidx = 5)
-wdev_susie <- computeWeightedDeviations(hema_dat,susie_se)
-```
-
-Extract the z-scores and compute p-values.
-
-```{r pval-susie}
-z_susie <- assays(wdev_susie)$z
-names(dimnames(z_susie)) <- c("trait","celltype")
-z_susie <- melt(z_susie)
-names(z_susie) <- c("trait","celltype","zscore")
-```
-
-Perform the lineage-specific enrichment tests:
-
-```{r enrichment-tests-susie}
-Ery   <- c("HSC","MPP","CMP","MEP","Ery")
-Meg   <- c("HSC","MPP","CMP","MEP","Mega")
-Mye   <- c("HSC","MPP","CMP","LMPP","GMP-A","GMP-B","GMP-C","Mono","mDC")
-Lymph <- c("HSC","MPP","LMPP","CLP","NK","pDC","CD4","CD8","B")
-z_susie$enrich  <-
-    (z_susie$trait == "Basophill_perc"    & z_susie$celltype %in% Mye) +
-    (z_susie$trait == "Eosinophill_perc"  & z_susie$celltype %in% Mye) + 
-    (z_susie$trait == "Neutrophill_perc"  & z_susie$celltype %in% Mye) +
-    (z_susie$trait == "Monocyte_perc"     & z_susie$celltype %in% Mye) +
-    (z_susie$trait == "WBC_count"      & z_susie$celltype %in% c(Mye,Lymph)) + 
-    (z_susie$trait == "Lymphocyte_perc"   & z_susie$celltype %in% Lymph) +
-    (z_susie$trait == "Platelet_count"    & z_susie$celltype %in% Meg) + 
-    (z_susie$trait == "PDW"               & z_susie$celltype %in% Meg) + 
-    (z_susie$trait == "Plateletcrit"      & z_susie$celltype %in% Meg) +
-    (z_susie$trait == "Haemoglobin"       & z_susie$celltype %in% Ery) +
-    (z_susie$trait == "RDW"               & z_susie$celltype %in% Ery) +
-    (z_susie$trait == "MCV"               & z_susie$celltype %in% Ery) +
-    (z_susie$trait == "RBC_count"         & z_susie$celltype %in% Ery) +
-    (z_susie$trait == "Reticulocyte_perc" & z_susie$celltype %in% Ery) +
-    (z_susie$trait == "HLR_perc"          & z_susie$celltype %in% Ery)
-z_susie$pval <- -log10(pnorm(z_susie$zscore,lower.tail = FALSE))
-```
-
-ADD TEXT HERE.
-
-```{r heatmap-susie, fig.height=3, fig.width=4}
-n <- nrow(z_susie)
-threshold <- (-log10(0.05/n))
+```{r celltypes}
 celltypes <- c("B","CD4","CD8","CLP","CMP","Ery","GMP-A","GMP-B","GMP-C",
                "HSC","LMPP","mDC","Mega","MEP","mono","MPP","NK","pDC")
 celltype_colors <- c(jdb_color_map(celltypes[1:11]),
                      c("yellow","hotpink"),
                      jdb_color_map(celltypes[14:18]))
-heatmap_colors <- c("#d7191c","#fdae61","#ffffbf","#abd9e9","#2c7bb6")
-pdat <- transform(z_susie,
-                  pval = pmin(pval,10))
-ggplot(pdat,aes(x = celltype,y = trait,fill = celltype,size = pval)) +
-  geom_point(shape = 21,color = "white") +
-  scale_size(range = c(2,6),limits = c(threshold,10)) + 
-  scale_fill_manual(values = celltype_colors,guide = "none") +
-  guides(size = guide_legend(override.aes = list(shape = 21,fill = "black"))) +
-  theme_cowplot(font_size = 9) +
-  labs(x = "",y = "") +
-  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 0.5),
-        panel.grid = element_line(color = "lightgray",size = 0.3,
-                                  linetype = "dotted"))
+names(celltype_colors) <- celltypes
+```
+
+Load the SuSiE and mvSuSiE gchomeVAR results:
+
+```{r read-susie-results}
+susie   <- read.csv("../output/blood_cell_traits/gchromvar_susie.csv",
+                    stringsAsFactors = FALSE)
+mvsusie <- read.csv("../output/blood_cell_traits/gchromvar_mvsusie.csv",
+                    stringsAsFactors = FALSE)
+susie   <- transform(susie,
+                     celltype = factor(celltype,celltypes),
+					 trait    = factor(trait))
+mvsusie <- transform(mvsusie,
+                     celltype = factor(celltype,celltypes),
+					 trait    = factor(trait))
 ```
 
 For a point of comparison, we will use the gchromVAR results from the
@@ -173,13 +69,56 @@ vuckovic <- read.table("../data/vuckovic_gchromVAR_zscores_ukbb_v2.txt",
                        sep = "\t",header = TRUE,stringsAsFactors = FALSE)
 vuckovic <- transform(vuckovic,
                       Celltype = factor(Celltype,celltypes),
-					  Trait = factor(Trait,vuckovic_traits),
-					  pval = pmin(pval,10))
+					  Trait = factor(Trait,vuckovic_traits))
+```
+
+ADD TEXT HERE.
+
+```{r mvsusie-vs-susie, fig.height=7, fig.width=8, warning=FALSE}
+p        <- vector("list",length(celltypes))
+names(p) <- celltypes
+for (i in celltypes) {
+  dat1 <- subset(susie,celltype == i)
+  dat2 <- subset(mvsusie,celltype == i)
+  pdat <- data.frame(trait   = as.character(dat1$trait),
+                     susie   = dat1$pval,
+                     mvsusie = dat2$pval,
+					 stringsAsFactors = FALSE)
+  p[[i]] <- ggplot(pdat,aes(x = susie,y = mvsusie,label = trait)) +
+    geom_point(shape = 20,color = celltype_colors[i]) +
+	geom_abline(intercept = 0,slope = 1,color = "black",linetype = "dotted") +
+    geom_text_repel(size = 2,segment.color = "darkgray",segment.size = 0.25,
+                    min.segment.length = 0) +
+    xlim(0,max(pdat[,2:3])) +
+	ylim(0,max(pdat[,2:3])) +
+	ggtitle(i) +
+    theme_cowplot(font_size = 9) +
+	theme(plot.title = element_text(size = 10,face = "plain"))
+}
+do.call(plot_grid,p)
+```
+
+ADD TEXT HERE.
+
+```{r heatmap-susie, fig.height=3, fig.width=4, eval=FALSE}
+n <- nrow(z_susie)
+threshold <- (-log10(0.05/n))
+pdat <- transform(z_susie,pval = pmin(pval,10))
+ggplot(pdat,aes(x = celltype,y = trait,fill = celltype,size = pval)) +
+  geom_point(shape = 21,color = "white") +
+  scale_size(range = c(2,6),limits = c(threshold,10)) + 
+  scale_fill_manual(values = celltype_colors,guide = "none") +
+  guides(size = guide_legend(override.aes = list(shape = 21,fill = "black"))) +
+  theme_cowplot(font_size = 9) +
+  labs(x = "",y = "") +
+  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 0.5),
+        panel.grid = element_line(color = "lightgray",size = 0.3,
+                                  linetype = "dotted"))
 ```
 
 This plot reproduces Fig. 3A from the Vuckovic *et al* paper:
 
-```{r heatmap-vuckovic, fig.height=3, fig.width=4}
+```{r heatmap-vuckovic, fig.height=3, fig.width=4, eval=FALSE}
 pdat <- transform(vuckovic,pval = pmin(pval,10))
 ggplot(vuckovic,aes(x = Celltype,y = Trait,fill = Celltype,size = pval)) +
   geom_point(shape = 21,color = "white") +
@@ -193,7 +132,7 @@ ggplot(vuckovic,aes(x = Celltype,y = Trait,fill = Celltype,size = pval)) +
 
 ADD TEXT HERE
 
-```{r}
+```{r, eval=FALSE}
 plot(subset(vuckovic,Trait == "wbc")$zscore,
      subset(z_susie,trait == "WBC_count")$zscore,
 	 pch = 20,xlab = "vuckovic et al",ylab = "susie")
