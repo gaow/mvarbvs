@@ -81,9 +81,18 @@ vuckovic <- transform(vuckovic,
 Shrink the *z*-scores using adaptive shrinkage:
 
 ```{r ashr-vuckovic}
-susie    <- transform(susie,   lfsr = -log10(ash(zscore,1)$result$lfsr))
-mvsusie  <- transform(mvsusie, lfsr = -log10(ash(zscore,1)$result$lfsr))
-vuckovic <- transform(vuckovic,lfsr = -log10(ash(zscore,1)$result$lfsr))
+ash1 <- ash(susie$zscore,1)
+ash2 <- ash(mvsusie$zscore,1)
+ash3 <- ash(vuckovic$zscore,1)
+susie    <- transform(susie,
+                      zscore = with(ash1$result,PosteriorMean/PosteriorSD),
+                      lfsr = -log10(ash1$result$lfsr))
+mvsusie  <- transform(mvsusie,
+                      zscore = with(ash2$result,PosteriorMean/PosteriorSD),
+                      lfsr = -log10(ash2$result$lfsr))
+vuckovic <- transform(vuckovic,
+                      zscore = with(ash3$result,PosteriorMean/PosteriorSD),
+                      lfsr = -log10(ash3$result$lfsr))
 ```
 
 This plot roughly reproduces Fig. 3A from the Vuckovic *et al* paper:
@@ -119,23 +128,43 @@ plot_grid(p1 + ggtitle("vuckovic et al"),
 		  rel_widths = c(87,100))
 ```
 
-```{r mvsusie-vs-susie, fig.height=7, fig.width=8, warning=FALSE}
+Compare the susie-based and mvsusie-based gchromVAR *z*-scores:
+
+```{r mvsusie-vs-susie, fig.height=3.25, fig.width=4, warning=FALSE}
+pdat <- data.frame(trait    = susie$trait,
+                   celltype = susie$celltype,
+				   susie    = susie$zscore,
+                   mvsusie  = mvsusie$zscore)
+z <- c(susie$zscore,mvsusie$zscore)
+ggplot(pdat,aes(x = susie,y = mvsusie,color = celltype,label = trait)) +
+  geom_point(shape = 20,size = 1.75) +
+  geom_abline(intercept = 0,slope = 1,color = "black",linetype = "dotted") +
+  geom_text_repel(size = 2,segment.color = "darkgray",segment.size = 0.25,
+                  min.segment.length = 0) +
+  scale_color_manual(values = celltype_colors) +
+  xlim(min(z),max(z)) +
+  ylim(min(z),max(z)) +
+  theme_cowplot(font_size = 10)
+```
+
+The same comparison, broken down by cell type:
+
+```{r mvsusie-vs-susie-2, fig.height=7, fig.width=8, warning=FALSE}
 p        <- vector("list",length(celltypes))
 names(p) <- celltypes
 for (i in celltypes) {
   dat1 <- subset(susie,celltype == i)
   dat2 <- subset(mvsusie,celltype == i)
+  z    <- c(dat1$z,dat2$z)
   pdat <- data.frame(trait   = as.character(dat1$trait),
-                     susie   = dat1$pval,
-                     mvsusie = dat2$pval,
+                     susie   = dat1$zscore,
+                     mvsusie = dat2$zscore,
 					 stringsAsFactors = FALSE)
   p[[i]] <- ggplot(pdat,aes(x = susie,y = mvsusie,label = trait)) +
     geom_point(shape = 20,color = celltype_colors[i]) +
 	geom_abline(intercept = 0,slope = 1,color = "black",linetype = "dotted") +
-    geom_text_repel(size = 2,segment.color = "darkgray",segment.size = 0.25,
-                    min.segment.length = 0) +
-    xlim(0,max(pdat[,2:3])) +
-	ylim(0,max(pdat[,2:3])) +
+    xlim(min(z),max(z)) +
+	ylim(min(z),max(z)) +
 	ggtitle(i) +
     theme_cowplot(font_size = 9) +
 	theme(plot.title = element_text(size = 10,face = "plain"))
@@ -143,33 +172,43 @@ for (i in celltypes) {
 do.call(plot_grid,p)
 ```
 
-ADD TEXT HERE
+Validation of the mvsusie-based gchromVAR analysis by comparing the
+*z*-scores for the 6 traits that were common to the mvsusie-based
+analysis and the Vuckovic *et al* analysis:
 
-```{r, eval=FALSE}
-plot(subset(vuckovic,Trait == "wbc")$zscore,
-     subset(z_susie,trait == "WBC_count")$zscore,
-	 pch = 20,xlab = "vuckovic et al",ylab = "susie")
-abline(a = 0,b = 1,lty = "dashed",col = "deepskyblue")	 
-plot(subset(vuckovic,Trait == "plt")$zscore,
-     subset(z_susie,trait == "Platelet_count")$zscore,
-	 pch = 20,xlab = "vuckovic et al",ylab = "susie")
-abline(a = 0,b = 1,lty = "dashed",col = "deepskyblue")	 
-plot(subset(vuckovic,Trait == "rbc")$zscore,
-     subset(z_susie,trait == "RBC_count")$zscore,
-	 pch = 20,xlab = "vuckovic et al",ylab = "susie")
-abline(a = 0,b = 1,lty = "dashed",col = "deepskyblue")	 
-plot(subset(vuckovic,Trait == "hgb")$zscore,
-     subset(z_susie,trait == "Haemoglobin")$zscore,
-	 pch = 20,xlab = "vuckovic et al",ylab = "susie")
-abline(a = 0,b = 1,lty = "dashed",col = "deepskyblue")	 
-plot(subset(vuckovic,Trait == "mcv")$zscore,
-     subset(z_susie,trait == "MCV")$zscore,
-	 pch = 20,xlab = "vuckovic et al",ylab = "susie")
-abline(a = 0,b = 1,lty = "dashed",col = "deepskyblue")	 
-plot(subset(vuckovic,Trait == "pct")$zscore,
-     subset(z_susie,trait == "Plateletcrit")$zscore,
-	 pch = 20,xlab = "vuckovic et al",ylab = "susie")
-abline(a = 0,b = 1,lty = "dashed",col = "deepskyblue")	 
+```{r mvsusie-vs-vuckovic, fig.width=6, fig.height=4}
+create_scatterplot <- function (z1, z2, title) {
+  pdat <- data.frame(z1 = z1,z2 = z2)
+  z    <- c(z1,z2)
+  return(ggplot(pdat,aes(x = z1,y = z2)) +
+    geom_point(shape = 20) +
+	geom_abline(intercept = 0,slope = 1,color = "magenta",
+	            linetype = "dotted") +
+	xlim(min(z),max(z)) +
+	ylim(min(z),max(z)) +
+	labs(x = "vuckovic et al",y = "mvsusie",title = title) +
+	theme_cowplot(font_size = 9) +
+	theme(plot.title = element_text(size = 9,face = "plain")))
+}
+p1 <- create_scatterplot(subset(vuckovic,Trait == "wbc")$zscore,
+                         subset(mvsusie,trait == "WBC_count")$zscore,
+						 "WBC count")
+p2 <- create_scatterplot(subset(vuckovic,Trait == "plt")$zscore,
+                         subset(mvsusie,trait == "Platelet_count")$zscore,
+						 "platelet count")
+p3 <- create_scatterplot(subset(vuckovic,Trait == "rbc")$zscore,
+                         subset(mvsusie,trait == "RBC_count")$zscore,
+						 "RBC count")
+p4 <- create_scatterplot(subset(vuckovic,Trait == "hgb")$zscore,
+                         subset(mvsusie,trait == "Haemoglobin")$zscore,
+						 "Haemoglobin")
+p5 <- create_scatterplot(subset(vuckovic,Trait == "mcv")$zscore,
+                         subset(mvsusie,trait == "MCV")$zscore,
+						 "MCV")
+p6 <- create_scatterplot(subset(vuckovic,Trait == "pct")$zscore,
+                         subset(mvsusie,trait == "Plateletcrit")$zscore,
+						 "Platelet crit.")
+plot_grid(p1,p2,p3,p4,p5,p6,nrow = 2,ncol = 3)
 ```
 
 This last code chunk is a record of the exact versions of the R
