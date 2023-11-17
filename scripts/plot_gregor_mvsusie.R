@@ -1,12 +1,13 @@
 # TO DO: Explain here what this script is for, and how to use it.
 library(ggplot2)
 library(cowplot)
-traits <- c("crosstrait",
-            "RBC","HGB","MCV","RDW","MSCV",          # mature red blood cell
+library(ggrepel)
+traits <- c("RBC","HGB","MCV","RDW","MSCV",          # mature red blood cell
             "Reticulocyte_perc","HLR_perc",          # immature red blood cell
             "Platelet_count","Plateletcrit","PDW",   # platelet
             "WBC","Lymphocyte_perc","Monocyte_perc", # white blood cell
-            "Neutrophill_perc","Eosinophill_perc","Basophill_perc")
+            "Neutrophill_perc","Eosinophill_perc","Basophill_perc",
+            "crosstrait")
 
 # Repeat for each trait.
 n <- length(traits)
@@ -30,11 +31,27 @@ for (trait in traits) {
   # mvsusie estimates.
   pdat <- data.frame(bed     = susie$Bed_File,
                      susie   = susie$odds,
-                     mvsusie = mvsusie$odds)
+                     mvsusie = mvsusie$odds,
+                     stringsAsFactors = FALSE)
+  rows <- which(with(pdat,is.finite(susie) & is.finite(mvsusie)))
+  pdat <- pdat[rows,]
+  x <- c(pdat$susie,pdat$mvsusie)
+  rows <- which(with(pdat,!(mvsusie > 5 & mvsusie/susie > 2)))
+  pdat[rows,"bed"] <- ""
   scatterplots[[trait]] <-
-    ggplot(pdat,aes(x = susie,y = mvsusie)) +
-      geom_point() +
+    ggplot(pdat,aes(x = susie,y = mvsusie,label = bed)) +
+      geom_point(shape = 20,color = "black",size = 1) +
       geom_abline(intercept = 0,slope = 1,color = "magenta",
                   linetype = "dotted") +
-      theme_cowplot(font_size = 10)
+      geom_text_repel(color = "royalblue",max.overlaps = Inf,size = 1.75) +
+      xlim(c(0,max(x))) +
+      ylim(c(0,max(x))) +
+      ggtitle(trait) +
+      theme_cowplot(font_size = 8) +
+          theme(plot.title = element_text(face = "plain",size = 8))
 }
+
+# Show the scatterplots and generate a PDF of the scatterplots.
+print(do.call("plot_grid",c(scatterplots,list(nrow = 5,ncol = 4))))
+# TO DO.
+
