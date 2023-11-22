@@ -228,7 +228,30 @@ for (trait in traits) {
 }</code></pre>
 <p>ADD TEXT HERE.</p>
 <pre class="r"><code>annotations &lt;- unlist(annotations)
-odds_ratios &lt;- subset(odds_ratios,is.element(bed,annotations))</code></pre>
+odds_ratios &lt;- subset(odds_ratios,is.element(bed,annotations))
+odds_ratios &lt;- transform(odds_ratios,
+                         bed    = factor(bed,rev(annotations)),
+                         trait  = factor(trait,traits),
+                         method = factor(method,c(&quot;susie&quot;,&quot;mvsusie&quot;)))</code></pre>
+<p>ADD TEXT HERE.</p>
+<pre class="r"><code>ggplot(subset(odds_ratios,trait == &quot;crosstrait&quot;),
+       aes(x = oddsratio,y = bed,color = method)) +
+  geom_point() +
+  scale_color_manual(values = c(&quot;dodgerblue&quot;,&quot;red&quot;)) +
+  labs(y = &quot;&quot;) +
+  theme_cowplot(font_size = 9) +
+  theme(panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))</code></pre>
+<p><img src="gregor_files/figure-html/unnamed-chunk-3-1.png" width="540" style="display: block; margin: auto;" /></p>
+<p>ADD TEXT HERE.</p>
+<pre class="r"><code>ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
+  geom_point() +
+  scale_color_manual(values = c(&quot;dodgerblue&quot;,&quot;red&quot;)) +
+  labs(y = &quot;&quot;) +
+  theme_cowplot(font_size = 7) +
+  facet_wrap(vars(trait)) +
+  theme(strip.background = element_blank(),
+        panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))</code></pre>
+<p><img src="gregor_files/figure-html/unnamed-chunk-4-1.png" width="960" style="display: block; margin: auto;" /></p>
 
 
 

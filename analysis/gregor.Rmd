@@ -92,4 +92,33 @@ ADD TEXT HERE.
 ```{r}
 annotations <- unlist(annotations)
 odds_ratios <- subset(odds_ratios,is.element(bed,annotations))
+odds_ratios <- transform(odds_ratios,
+                         bed    = factor(bed,rev(annotations)),
+                         trait  = factor(trait,traits),
+						 method = factor(method,c("susie","mvsusie")))
+```
+
+ADD TEXT HERE.
+
+```{r, fig.height=3.75, fig.width=4.5}
+ggplot(subset(odds_ratios,trait == "crosstrait"),
+       aes(x = oddsratio,y = bed,color = method)) +
+  geom_point() +
+  scale_color_manual(values = c("dodgerblue","red")) +
+  labs(y = "") +
+  theme_cowplot(font_size = 9) +
+  theme(panel.grid.major.y = element_line(color = "gray",size = 0.3))
+```
+
+ADD TEXT HERE.
+
+```{r, fig.height=8, fig.width=8}
+ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
+  geom_point() +
+  scale_color_manual(values = c("dodgerblue","red")) +
+  labs(y = "") +
+  theme_cowplot(font_size = 7) +
+  facet_wrap(vars(trait)) +
+  theme(strip.background = element_blank(),
+        panel.grid.major.y = element_line(color = "gray",size = 0.3))
 ```
