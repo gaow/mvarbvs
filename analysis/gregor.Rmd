@@ -1,0 +1,95 @@
+---
+title: Gregor functional enrichment analysis
+author: Peter Carbonetto
+date: November 22, 2023
+output:
+  html_document:
+    theme: readable
+    lib_dir: site_libs
+    self_contained: no
+---
+
+*Add text here.*
+
+See [here](https://github.com/gaow/mvarbvs/blob/master/analysis/20231106_GREGOR_functional_enrichment.ipynb) for more details about how these results were obtained.
+
+```{r knitr-opts, include=FALSE}
+knitr::opts_chunk$set(comment = "#",collapse = TRUE,results = "hold",
+                      fig.align = "center",dpi = 120)
+```
+
+Load the packages used in this analysis.
+
+```{r load-pkgs, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(cowplot)
+```
+
+ADD TEXT HERE.
+
+```{r traits}
+traits <- c("RBC","HGB","MCV","RDW","MSCV",          # mature red blood cell
+            "Reticulocyte_perc","HLR_perc",          # immature red blood cell
+            "Platelet_count","Plateletcrit","PDW",   # platelet
+            "WBC","Lymphocyte_perc","Monocyte_perc", # white blood cell
+            "Neutrophill_perc","Eosinophill_perc","Basophill_perc",
+            "crosstrait")
+```
+
+ADD TEXT HERE.
+
+```{r annotations}
+annotations <- list(
+  "transcription factor binding sites" =
+    c("TFBS_ENCODE.bed","FOSL2.bed","FOXO1_DeMayo.bed","NR2F2.bed",
+	  "PLZF.bed","POLII_DeMayo.bed","PGR-A_Bagchi.bed","PGR-B_Bagchi.bed",
+	  "PGR_Demayo.bed"),
+  "enhancer promoter regions" =
+    c("Enhancer_Andersson.bed","Enhancer_Hoffman.bed",
+      "PromoterFlanking_Hoffman.bed","Promoter_UCSC.bed",
+	  "Promoter_UCSC.hg38.bed","Repressed_Hoffman.bed",
+	  "SuperEnhancer_Hnisz.bed", "TSS_Hoffman.bed",
+	  "WeakEnhancer_Hoffman.bed","fantomFetalBrainCage.gt10.bed",
+	  "fantomFetalBrainCage.eq0.bed"),
+  "eqtls data" =
+    c("eQTL_0.05_FDR.bed","eQTL_0.1_FDR.bed","eur_ld_breakpoints.bed"),
+  "genomic structural elements" =
+    c("Coding_UCSC.bed","Intron_UCSC.bed","UTR_3_UCSC.bed","UTR_5_UCSC.bed"))
+```
+
+ADD TEXT HERE.
+
+```{r}
+odds_ratios <- NULL
+for (trait in traits) {
+  susie_file <- paste("../output/blood_cell_traits/gregor/SuSiE",trait,
+                      "positive_cs.index_gregor_output_StatisticSummaryFile",
+                      "fisher.txt",sep = "_")
+  mvsusie_file <- paste("../output/blood_cell_traits/gregor/mvSuSiE",trait,
+                        "positive_cs.index_gregor_output_StatisticSummaryFile",
+                        "fisher.txt",sep = "_")
+  susie   <- read.table(susie_file,sep = " ",header = TRUE,
+                        stringsAsFactors = FALSE)
+  mvsusie <- read.table(mvsusie_file,sep = " ",header = TRUE,
+                        stringsAsFactors = FALSE)
+  odds_ratios <- 
+    rbind(odds_ratios,
+	      data.frame(bed       = susie$Bed_File,
+	                 trait     = trait,
+	                 method    = "susie",
+					 oddsratio = susie$odds,
+					 stringsAsFactors = FALSE),
+		  data.frame(bed       = mvsusie$Bed_File,
+		             trait     = trait,
+  		             method    = "mvsusie",
+		             oddsratio = mvsusie$odds,
+		  stringsAsFactors = FALSE))
+}
+```
+
+ADD TEXT HERE.
+
+```{r}
+annotations <- unlist(annotations)
+odds_ratios <- subset(odds_ratios,is.element(bed,annotations))
+```
