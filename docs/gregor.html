@@ -11,9 +11,9 @@
 
 <meta name="author" content="Peter Carbonetto" />
 
-<meta name="date" content="2023-11-22" />
+<meta name="date" content="2023-11-23" />
 
-<title>Gregor functional enrichment analysis</title>
+<title>GREGOR functional enrichment analysis of SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell traits</title>
 
 <script src="site_libs/header-attrs-2.21/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -162,28 +162,30 @@ pre code {
 
 
 
-<h1 class="title toc-ignore">Gregor functional enrichment analysis</h1>
+<h1 class="title toc-ignore">GREGOR functional enrichment analysis of
+SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell
+traits</h1>
 <h4 class="author">Peter Carbonetto</h4>
-<h4 class="date">November 22, 2023</h4>
+<h4 class="date">November 23, 2023</h4>
 
 </div>
 
 
-<p><em>Add text here.</em></p>
-<p>See <a
-href="https://github.com/gaow/mvarbvs/blob/master/analysis/20231106_GREGOR_functional_enrichment.ipynb">here</a>
-for more details about how these results were obtained.</p>
+<p>Here we generate some plots for the paper from the GREGOR functional
+enrichment analysis performed <a
+href="https://github.com/gaow/mvarbvs/blob/master/analysis/20231106_GREGOR_functional_enrichment.ipynb">here</a>.</p>
 <p>Load the packages used in this analysis.</p>
 <pre class="r"><code>library(ggplot2)
 library(cowplot)</code></pre>
-<p>ADD TEXT HERE.</p>
+<p>These are the blood cell traits.</p>
 <pre class="r"><code>traits &lt;- c(&quot;RBC&quot;,&quot;HGB&quot;,&quot;MCV&quot;,&quot;RDW&quot;,&quot;MSCV&quot;,          # mature red blood cell
             &quot;Reticulocyte_perc&quot;,&quot;HLR_perc&quot;,          # immature red blood cell
             &quot;Platelet_count&quot;,&quot;Plateletcrit&quot;,&quot;PDW&quot;,   # platelet
             &quot;WBC&quot;,&quot;Lymphocyte_perc&quot;,&quot;Monocyte_perc&quot;, # white blood cell
             &quot;Neutrophill_perc&quot;,&quot;Eosinophill_perc&quot;,&quot;Basophill_perc&quot;,
             &quot;crosstrait&quot;)</code></pre>
-<p>ADD TEXT HERE.</p>
+<p>These are the SNP annotations we will show the enrichment results
+for.</p>
 <pre class="r"><code>annotations &lt;- list(
   &quot;transcription factor binding sites&quot; =
     c(&quot;TFBS_ENCODE.bed&quot;,&quot;FOSL2.bed&quot;,&quot;FOXO1_DeMayo.bed&quot;,&quot;NR2F2.bed&quot;,
@@ -200,7 +202,8 @@ library(cowplot)</code></pre>
     c(&quot;eQTL_0.05_FDR.bed&quot;,&quot;eQTL_0.1_FDR.bed&quot;,&quot;eur_ld_breakpoints.bed&quot;),
   &quot;genomic structural elements&quot; =
     c(&quot;Coding_UCSC.bed&quot;,&quot;Intron_UCSC.bed&quot;,&quot;UTR_3_UCSC.bed&quot;,&quot;UTR_5_UCSC.bed&quot;))</code></pre>
-<p>ADD TEXT HERE.</p>
+<p>Import the SuSiE-based and mvSuSiE-based enrichment results from the
+files and combine into a single data frame.</p>
 <pre class="r"><code>odds_ratios &lt;- NULL
 for (trait in traits) {
   susie_file &lt;- paste(&quot;../output/blood_cell_traits/gregor/SuSiE&quot;,trait,
@@ -226,14 +229,15 @@ for (trait in traits) {
                      oddsratio = mvsusie$odds,
           stringsAsFactors = FALSE))
 }</code></pre>
-<p>ADD TEXT HERE.</p>
+<p>Prepare the data frame for ggplot2.</p>
 <pre class="r"><code>annotations &lt;- unlist(annotations)
 odds_ratios &lt;- subset(odds_ratios,is.element(bed,annotations))
 odds_ratios &lt;- transform(odds_ratios,
                          bed    = factor(bed,rev(annotations)),
                          trait  = factor(trait,traits),
                          method = factor(method,c(&quot;susie&quot;,&quot;mvsusie&quot;)))</code></pre>
-<p>ADD TEXT HERE.</p>
+<p>This first plot shows the “cross-trait” SuSiE and mvSuSiE enrichment
+results:</p>
 <pre class="r"><code>ggplot(subset(odds_ratios,trait == &quot;crosstrait&quot;),
        aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
@@ -241,8 +245,8 @@ odds_ratios &lt;- transform(odds_ratios,
   labs(y = &quot;&quot;) +
   theme_cowplot(font_size = 9) +
   theme(panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))</code></pre>
-<p><img src="gregor_files/figure-html/unnamed-chunk-3-1.png" width="540" style="display: block; margin: auto;" /></p>
-<p>ADD TEXT HERE.</p>
+<p><img src="gregor_files/figure-html/plot-crosstrait-1.png" width="540" style="display: block; margin: auto;" /></p>
+<p>Next we show the enrichment results for all traits:</p>
 <pre class="r"><code>ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c(&quot;dodgerblue&quot;,&quot;red&quot;)) +
@@ -251,7 +255,7 @@ odds_ratios &lt;- transform(odds_ratios,
   facet_wrap(vars(trait)) +
   theme(strip.background = element_blank(),
         panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))</code></pre>
-<p><img src="gregor_files/figure-html/unnamed-chunk-4-1.png" width="960" style="display: block; margin: auto;" /></p>
+<p><img src="gregor_files/figure-html/plot-all-traits-1.png" width="960" style="display: block; margin: auto;" /></p>
 
 
 

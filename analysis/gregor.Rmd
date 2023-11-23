@@ -1,7 +1,7 @@
 ---
-title: Gregor functional enrichment analysis of SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell traits
+title: GREGOR functional enrichment analysis of SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell traits
 author: Peter Carbonetto
-date: November 22, 2023
+date: November 23, 2023
 output:
   html_document:
     theme: readable
@@ -9,9 +9,7 @@ output:
     self_contained: no
 ---
 
-*Add text here.*
-
-See [here](https://github.com/gaow/mvarbvs/blob/master/analysis/20231106_GREGOR_functional_enrichment.ipynb) for more details about how these results were obtained.
+Here we generate some plots for the paper from the GREGOR functional enrichment analysis performed [here](https://github.com/gaow/mvarbvs/blob/master/analysis/20231106_GREGOR_functional_enrichment.ipynb).
 
 ```{r knitr-opts, include=FALSE}
 knitr::opts_chunk$set(comment = "#",collapse = TRUE,results = "hold",
@@ -25,7 +23,7 @@ library(ggplot2)
 library(cowplot)
 ```
 
-ADD TEXT HERE.
+These are the blood cell traits.
 
 ```{r traits}
 traits <- c("RBC","HGB","MCV","RDW","MSCV",          # mature red blood cell
@@ -36,7 +34,7 @@ traits <- c("RBC","HGB","MCV","RDW","MSCV",          # mature red blood cell
             "crosstrait")
 ```
 
-ADD TEXT HERE.
+These are the SNP annotations we will show the enrichment results for.
 
 ```{r annotations}
 annotations <- list(
@@ -57,9 +55,10 @@ annotations <- list(
     c("Coding_UCSC.bed","Intron_UCSC.bed","UTR_3_UCSC.bed","UTR_5_UCSC.bed"))
 ```
 
-ADD TEXT HERE.
+Import the SuSiE-based and mvSuSiE-based enrichment results from the
+files and combine into a single data frame.
 
-```{r}
+```{r import-results}
 odds_ratios <- NULL
 for (trait in traits) {
   susie_file <- paste("../output/blood_cell_traits/gregor/SuSiE",trait,
@@ -87,9 +86,9 @@ for (trait in traits) {
 }
 ```
 
-ADD TEXT HERE.
+Prepare the data frame for ggplot2.
 
-```{r}
+```{r prepare-results}
 annotations <- unlist(annotations)
 odds_ratios <- subset(odds_ratios,is.element(bed,annotations))
 odds_ratios <- transform(odds_ratios,
@@ -98,9 +97,10 @@ odds_ratios <- transform(odds_ratios,
 						 method = factor(method,c("susie","mvsusie")))
 ```
 
-ADD TEXT HERE.
+This first plot shows the "cross-trait" SuSiE and mvSuSiE enrichment
+results:
 
-```{r, fig.height=3.75, fig.width=4.5}
+```{r plot-crosstrait, fig.height=3.75, fig.width=4.5}
 ggplot(subset(odds_ratios,trait == "crosstrait"),
        aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
@@ -110,9 +110,9 @@ ggplot(subset(odds_ratios,trait == "crosstrait"),
   theme(panel.grid.major.y = element_line(color = "gray",size = 0.3))
 ```
 
-ADD TEXT HERE.
+Next we show the enrichment results for all traits:
 
-```{r, fig.height=8, fig.width=8}
+```{r plot-all-traits, fig.height=9.5, fig.width=8}
 ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c("dodgerblue","red")) +
