@@ -1,7 +1,7 @@
 ---
 title: gchromVAR analysis of SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell traits
 author: Peter Carbonetto
-date: October 25, 2023
+date: November 23, 2023
 output:
   html_document:
     theme: readable
@@ -49,11 +49,16 @@ names(celltype_colors) <- celltypes
 Load the SuSiE and mvSuSiE gchomeVAR results:
 
 ```{r read-susie-results}
+# susie_traits <- rev(
+#   c("Lymphocyte_perc","Neutrophill_perc","Monocyte_perc","Eosinophill_perc",
+#     "Basophill_perc","WBC_count","PDW","Platelet_count","Plateletcrit",
+# 	"Reticulocyte_perc","RDW","MSCV","HLR_perc","Haemoglobin","MCV",
+# 	"RBC_count"))
 susie_traits <- rev(
-  c("Lymphocyte_perc","Neutrophill_perc","Monocyte_perc","Eosinophill_perc",
-    "Basophill_perc","WBC_count","PDW","Platelet_count","Plateletcrit",
-	"Reticulocyte_perc","RDW","MSCV","HLR_perc","Haemoglobin","MCV",
-	"RBC_count"))
+  c("RBC_count","Haemoglobin","MCV","RDW","MSCV","Reticulocyte_perc",
+    "HLR_perc","Platelet_count","Plateletcrit","PDW","WBC_count",
+	"Lymphocyte_perc","Monocyte_perc","Neutrophill_perc",
+    "Eosinophill_perc","Basophill_perc"))
 susie <- read.csv("../output/blood_cell_traits/gchromvar/gchromvar_susie.csv",
                   stringsAsFactors = FALSE)
 mvsusie <- read.csv("../output/blood_cell_traits/gchromvar/gchromvar_mvsusie.csv",
@@ -148,6 +153,23 @@ ggplot(pdat,aes(x = susie,y = mvsusie,color = celltype,label = trait)) +
   xlim(min(z),max(z)) +
   ylim(min(z),max(z)) +
   theme_cowplot(font_size = 10)
+```
+
+Let's perform this same comparison, plotted in a different way:
+
+```{r, fig.height=3.25, fig.width=4, warning=FALSE}
+p3 <- ggplot(mvsusie,aes(x = celltype,y = trait,fill = celltype,size = lfsr)) +
+  geom_point(shape = 21,color = "white") +
+  scale_size(range = c(1,7),limits = c(2,10)) +
+  scale_fill_manual(values = celltype_colors,guide = "none") +
+  guides(size = guide_legend(override.aes = list(shape = 21,fill = "black"))) +
+  geom_point(data = susie,
+             mapping = aes(x = celltype,y = trait,size = lfsr),
+			 inherit.aes = FALSE,color = "black",shape = 21) +
+  theme_cowplot(font_size = 9) +
+  labs(x = "",y = "") +
+  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 0.5))
+p3
 ```
 
 The same comparison, broken down by cell type:

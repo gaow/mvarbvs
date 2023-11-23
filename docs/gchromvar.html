@@ -11,7 +11,7 @@
 
 <meta name="author" content="Peter Carbonetto" />
 
-<meta name="date" content="2023-10-25" />
+<meta name="date" content="2023-11-23" />
 
 <title>gchromVAR analysis of SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell traits</title>
 
@@ -165,7 +165,7 @@ pre code {
 <h1 class="title toc-ignore">gchromVAR analysis of SuSiE and mvSuSiE
 fine-mapping results for UK Biobank blood cell traits</h1>
 <h4 class="author">Peter Carbonetto</h4>
-<h4 class="date">October 25, 2023</h4>
+<h4 class="date">November 23, 2023</h4>
 
 </div>
 
@@ -192,14 +192,19 @@ celltype_colors &lt;- c(jdb_color_map(celltypes[1:11]),
                      jdb_color_map(celltypes[14:18]))
 names(celltype_colors) &lt;- celltypes</code></pre>
 <p>Load the SuSiE and mvSuSiE gchomeVAR results:</p>
-<pre class="r"><code>susie_traits &lt;- rev(
-  c(&quot;Lymphocyte_perc&quot;,&quot;Neutrophill_perc&quot;,&quot;Monocyte_perc&quot;,&quot;Eosinophill_perc&quot;,
-    &quot;Basophill_perc&quot;,&quot;WBC_count&quot;,&quot;PDW&quot;,&quot;Platelet_count&quot;,&quot;Plateletcrit&quot;,
-    &quot;Reticulocyte_perc&quot;,&quot;RDW&quot;,&quot;MSCV&quot;,&quot;HLR_perc&quot;,&quot;Haemoglobin&quot;,&quot;MCV&quot;,
-    &quot;RBC_count&quot;))
-susie   &lt;- read.csv(&quot;../output/blood_cell_traits/gchromvar_susie.csv&quot;,
-                    stringsAsFactors = FALSE)
-mvsusie &lt;- read.csv(&quot;../output/blood_cell_traits/gchromvar_mvsusie.csv&quot;,
+<pre class="r"><code># susie_traits &lt;- rev(
+#   c(&quot;Lymphocyte_perc&quot;,&quot;Neutrophill_perc&quot;,&quot;Monocyte_perc&quot;,&quot;Eosinophill_perc&quot;,
+#     &quot;Basophill_perc&quot;,&quot;WBC_count&quot;,&quot;PDW&quot;,&quot;Platelet_count&quot;,&quot;Plateletcrit&quot;,
+#   &quot;Reticulocyte_perc&quot;,&quot;RDW&quot;,&quot;MSCV&quot;,&quot;HLR_perc&quot;,&quot;Haemoglobin&quot;,&quot;MCV&quot;,
+#   &quot;RBC_count&quot;))
+susie_traits &lt;- rev(
+  c(&quot;RBC_count&quot;,&quot;Haemoglobin&quot;,&quot;MCV&quot;,&quot;RDW&quot;,&quot;MSCV&quot;,&quot;Reticulocyte_perc&quot;,
+    &quot;HLR_perc&quot;,&quot;Platelet_count&quot;,&quot;Plateletcrit&quot;,&quot;PDW&quot;,&quot;WBC_count&quot;,
+    &quot;Lymphocyte_perc&quot;,&quot;Monocyte_perc&quot;,&quot;Neutrophill_perc&quot;,
+    &quot;Eosinophill_perc&quot;,&quot;Basophill_perc&quot;))
+susie &lt;- read.csv(&quot;../output/blood_cell_traits/gchromvar/gchromvar_susie.csv&quot;,
+                  stringsAsFactors = FALSE)
+mvsusie &lt;- read.csv(&quot;../output/blood_cell_traits/gchromvar/gchromvar_mvsusie.csv&quot;,
                     stringsAsFactors = FALSE)
 susie   &lt;- transform(susie,
                      celltype = factor(celltype,celltypes),
@@ -277,6 +282,20 @@ ggplot(pdat,aes(x = susie,y = mvsusie,color = celltype,label = trait)) +
   ylim(min(z),max(z)) +
   theme_cowplot(font_size = 10)</code></pre>
 <p><img src="gchromvar_files/figure-html/mvsusie-vs-susie-1.png" width="480" style="display: block; margin: auto;" /></p>
+<p>Let’s perform this same comparison, plotted in a different way:</p>
+<pre class="r"><code>p3 &lt;- ggplot(mvsusie,aes(x = celltype,y = trait,fill = celltype,size = lfsr)) +
+  geom_point(shape = 21,color = &quot;white&quot;) +
+  scale_size(range = c(1,7),limits = c(2,10)) +
+  scale_fill_manual(values = celltype_colors,guide = &quot;none&quot;) +
+  guides(size = guide_legend(override.aes = list(shape = 21,fill = &quot;black&quot;))) +
+  geom_point(data = susie,
+             mapping = aes(x = celltype,y = trait,size = lfsr),
+             inherit.aes = FALSE,color = &quot;black&quot;,shape = 21) +
+  theme_cowplot(font_size = 9) +
+  labs(x = &quot;&quot;,y = &quot;&quot;) +
+  theme(axis.text.x = element_text(angle = 90,hjust = 1,vjust = 0.5))
+p3</code></pre>
+<p><img src="gchromvar_files/figure-html/unnamed-chunk-1-1.png" width="480" style="display: block; margin: auto;" /></p>
 <p>The same comparison, broken down by cell type:</p>
 <pre class="r"><code>p        &lt;- vector(&quot;list&quot;,length(celltypes))
 names(p) &lt;- celltypes
@@ -354,8 +373,8 @@ analysis):</p>
 # [1] stats     graphics  grDevices utils     datasets  methods   base     
 # 
 # other attached packages:
-# [1] ashr_2.2-57      cowplot_1.1.1    ggrepel_0.9.1    BuenColors_0.5.6
-# [5] ggplot2_3.3.6    MASS_7.3-51.4   
+# [1] cowplot_1.1.1    ggrepel_0.9.1    BuenColors_0.5.6 ggplot2_3.3.6   
+# [5] MASS_7.3-51.4    ashr_2.2-57     
 # 
 # loaded via a namespace (and not attached):
 #  [1] tidyselect_1.1.1  xfun_0.36         bslib_0.3.1       purrr_0.3.4      
