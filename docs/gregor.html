@@ -188,18 +188,15 @@ library(cowplot)</code></pre>
 for.</p>
 <pre class="r"><code>annotations &lt;- list(
   &quot;transcription factor binding sites&quot; =
-    c(&quot;TFBS_ENCODE.bed&quot;,&quot;FOSL2.bed&quot;,&quot;FOXO1_DeMayo.bed&quot;,&quot;NR2F2.bed&quot;,
-      &quot;PLZF.bed&quot;,&quot;POLII_DeMayo.bed&quot;,&quot;PGR-A_Bagchi.bed&quot;,&quot;PGR-B_Bagchi.bed&quot;,
-      &quot;PGR_Demayo.bed&quot;),
+    c(&quot;TFBS_ENCODE.bed&quot;,&quot;FOSL2.bed&quot;,&quot;FOXO1_DeMayo.bed&quot;,
+      &quot;NR2F2.bed&quot;,&quot;PLZF.bed&quot;,&quot;POLII_DeMayo.bed&quot;),
   &quot;enhancer promoter regions&quot; =
     c(&quot;Enhancer_Andersson.bed&quot;,&quot;Enhancer_Hoffman.bed&quot;,
       &quot;PromoterFlanking_Hoffman.bed&quot;,&quot;Promoter_UCSC.bed&quot;,
-      &quot;Promoter_UCSC.hg38.bed&quot;,&quot;Repressed_Hoffman.bed&quot;,
-      &quot;SuperEnhancer_Hnisz.bed&quot;, &quot;TSS_Hoffman.bed&quot;,
-      &quot;WeakEnhancer_Hoffman.bed&quot;,&quot;fantomFetalBrainCage.gt10.bed&quot;,
-      &quot;fantomFetalBrainCage.eq0.bed&quot;),
+      &quot;SuperEnhancer_Hnisz.bed&quot;,&quot;TSS_Hoffman.bed&quot;,
+      &quot;WeakEnhancer_Hoffman.bed&quot;),
   &quot;eqtls data&quot; =
-    c(&quot;eQTL_0.05_FDR.bed&quot;,&quot;eQTL_0.1_FDR.bed&quot;,&quot;eur_ld_breakpoints.bed&quot;),
+    c(&quot;eQTL_0.05_FDR.bed&quot;,&quot;eQTL_0.1_FDR.bed&quot;),
   &quot;genomic structural elements&quot; =
     c(&quot;Coding_UCSC.bed&quot;,&quot;Intron_UCSC.bed&quot;,&quot;UTR_3_UCSC.bed&quot;,&quot;UTR_5_UCSC.bed&quot;))</code></pre>
 <p>Import the SuSiE-based and mvSuSiE-based enrichment results from the
@@ -230,7 +227,16 @@ for (trait in traits) {
           stringsAsFactors = FALSE))
 }</code></pre>
 <p>Prepare the data frame for ggplot2.</p>
-<pre class="r"><code>annotations &lt;- unlist(annotations)
+<pre class="r"><code>n &lt;- length(annotations)
+for (i in 1:n) {
+  x &lt;- subset(odds_ratios,
+              method == &quot;mvsusie&quot; &amp;
+              trait == &quot;crosstrait&quot; &amp;
+              is.element(bed,annotations[[i]]))
+  rows &lt;- order(x$oddsratio,decreasing = TRUE)
+  annotations[[i]] &lt;- x[rows,&quot;bed&quot;]
+}
+annotations &lt;- unlist(annotations)
 odds_ratios &lt;- subset(odds_ratios,is.element(bed,annotations))
 odds_ratios &lt;- transform(odds_ratios,
                          bed    = factor(bed,rev(annotations)),
@@ -238,23 +244,25 @@ odds_ratios &lt;- transform(odds_ratios,
                          method = factor(method,c(&quot;susie&quot;,&quot;mvsusie&quot;)))</code></pre>
 <p>This first plot shows the “cross-trait” SuSiE and mvSuSiE enrichment
 results:</p>
-<pre class="r"><code>ggplot(subset(odds_ratios,trait == &quot;crosstrait&quot;),
+<pre class="r"><code>p1 &lt;- ggplot(subset(odds_ratios,trait == &quot;crosstrait&quot;),
        aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c(&quot;dodgerblue&quot;,&quot;red&quot;)) +
   labs(y = &quot;&quot;) +
   theme_cowplot(font_size = 9) +
-  theme(panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))</code></pre>
+  theme(panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))
+p1</code></pre>
 <p><img src="gregor_files/figure-html/plot-crosstrait-1.png" width="540" style="display: block; margin: auto;" /></p>
 <p>Next we show the enrichment results for all traits:</p>
-<pre class="r"><code>ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
+<pre class="r"><code>p2 &lt;- ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c(&quot;dodgerblue&quot;,&quot;red&quot;)) +
   labs(y = &quot;&quot;) +
   theme_cowplot(font_size = 7) +
   facet_wrap(vars(trait)) +
   theme(strip.background = element_blank(),
-        panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))</code></pre>
+        panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))
+p2</code></pre>
 <p><img src="gregor_files/figure-html/plot-all-traits-1.png" width="960" style="display: block; margin: auto;" /></p>
 
 

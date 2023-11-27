@@ -39,18 +39,15 @@ These are the SNP annotations we will show the enrichment results for.
 ```{r annotations}
 annotations <- list(
   "transcription factor binding sites" =
-    c("TFBS_ENCODE.bed","FOSL2.bed","FOXO1_DeMayo.bed","NR2F2.bed",
-	  "PLZF.bed","POLII_DeMayo.bed","PGR-A_Bagchi.bed","PGR-B_Bagchi.bed",
-	  "PGR_Demayo.bed"),
+    c("TFBS_ENCODE.bed","FOSL2.bed","FOXO1_DeMayo.bed",
+	  "NR2F2.bed","PLZF.bed","POLII_DeMayo.bed"),
   "enhancer promoter regions" =
     c("Enhancer_Andersson.bed","Enhancer_Hoffman.bed",
       "PromoterFlanking_Hoffman.bed","Promoter_UCSC.bed",
-	  "Promoter_UCSC.hg38.bed","Repressed_Hoffman.bed",
-	  "SuperEnhancer_Hnisz.bed", "TSS_Hoffman.bed",
-	  "WeakEnhancer_Hoffman.bed","fantomFetalBrainCage.gt10.bed",
-	  "fantomFetalBrainCage.eq0.bed"),
+	  "SuperEnhancer_Hnisz.bed","TSS_Hoffman.bed",
+	  "WeakEnhancer_Hoffman.bed"),
   "eqtls data" =
-    c("eQTL_0.05_FDR.bed","eQTL_0.1_FDR.bed","eur_ld_breakpoints.bed"),
+    c("eQTL_0.05_FDR.bed","eQTL_0.1_FDR.bed"),
   "genomic structural elements" =
     c("Coding_UCSC.bed","Intron_UCSC.bed","UTR_3_UCSC.bed","UTR_5_UCSC.bed"))
 ```
@@ -89,6 +86,15 @@ for (trait in traits) {
 Prepare the data frame for ggplot2.
 
 ```{r prepare-results}
+n <- length(annotations)
+for (i in 1:n) {
+  x <- subset(odds_ratios,
+              method == "mvsusie" &
+			  trait == "crosstrait" &
+              is.element(bed,annotations[[i]]))
+  rows <- order(x$oddsratio,decreasing = TRUE)
+  annotations[[i]] <- x[rows,"bed"]
+}
 annotations <- unlist(annotations)
 odds_ratios <- subset(odds_ratios,is.element(bed,annotations))
 odds_ratios <- transform(odds_ratios,
@@ -100,20 +106,21 @@ odds_ratios <- transform(odds_ratios,
 This first plot shows the "cross-trait" SuSiE and mvSuSiE enrichment
 results:
 
-```{r plot-crosstrait, fig.height=3.75, fig.width=4.5}
-ggplot(subset(odds_ratios,trait == "crosstrait"),
+```{r plot-crosstrait, fig.height=3.5, fig.width=4.5}
+p1 <- ggplot(subset(odds_ratios,trait == "crosstrait"),
        aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c("dodgerblue","red")) +
   labs(y = "") +
   theme_cowplot(font_size = 9) +
   theme(panel.grid.major.y = element_line(color = "gray",size = 0.3))
+p1
 ```
 
 Next we show the enrichment results for all traits:
 
-```{r plot-all-traits, fig.height=9.5, fig.width=8}
-ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
+```{r plot-all-traits, fig.height=9, fig.width=8}
+p2 <- ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c("dodgerblue","red")) +
   labs(y = "") +
@@ -121,4 +128,10 @@ ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
   facet_wrap(vars(trait)) +
   theme(strip.background = element_blank(),
         panel.grid.major.y = element_line(color = "gray",size = 0.3))
+p2
+```
+
+
+```{r ggsave, include=FALSE}
+ggsave("../plots/gregor_global.eps",p1,height = 3.5,width = 4.25)
 ```
