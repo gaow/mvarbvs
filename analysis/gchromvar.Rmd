@@ -174,6 +174,14 @@ p3
 
 ```{r ggsave-mvsusie-vs-susie, include=FALSE}
 ggsave("../plots/gchromvar_mvsusie_vs_susie.eps",p3,height = 3.25,width = 4.25)
+write.csv(transform(susie[c("trait","celltype","zscore","lfsr")],
+                    zscore = round(zscore,digits = 4),
+					lfsr   = round(lfsr,digits = 4)),
+          "gchromvar_susie_ash.csv",quote = FALSE,row.names = FALSE)
+write.csv(transform(mvsusie[c("trait","celltype","zscore","lfsr")],
+                    zscore = round(zscore,digits = 4),
+					lfsr   = round(lfsr,digits = 4)),
+          "gchromvar_mvsusie_ash.csv",quote = FALSE,row.names = FALSE)
 ```
 
 The same comparison, broken down by cell type:

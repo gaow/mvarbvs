@@ -43,7 +43,6 @@ hema_dat <- SummarizedExperiment(assays = list(counts = counts),
                                  colData = DataFrame(names = colnames(counts)))
 hema_dat <- addGCBias(hema_dat,genome = BSgenome.Hsapiens.UCSC.hg19)
 
-
 ## Encode the fine-mapping results for each trait as a BED file.
 traits <- c("Basophill_perc","Eosinophill_perc","Haemoglobin","HLR_perc",
             "Lymphocyte_perc","MCV","Monocyte_perc","MSCV","Neutrophill_perc",
