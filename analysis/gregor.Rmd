@@ -1,7 +1,7 @@
 ---
 title: GREGOR functional enrichment analysis of SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell traits
 author: Peter Carbonetto
-date: November 23, 2023
+date: December 7, 2023
 output:
   html_document:
     theme: readable
@@ -74,12 +74,18 @@ for (trait in traits) {
 	                 trait     = trait,
 	                 method    = "susie",
 					 oddsratio = susie$odds,
+					 low       = susie$low,
+					 high      = susie$high,
+					 pvalue    = susie$PValue,
 					 stringsAsFactors = FALSE),
 		  data.frame(bed       = mvsusie$Bed_File,
 		             trait     = trait,
   		             method    = "mvsusie",
 		             oddsratio = mvsusie$odds,
-		  stringsAsFactors = FALSE))
+					 low       = mvsusie$low,
+					 high      = mvsusie$high,
+					 pvalue    = mvsusie$PValue,
+					 stringsAsFactors = FALSE))
 }
 ```
 
@@ -101,6 +107,21 @@ odds_ratios <- transform(odds_ratios,
                          bed    = factor(bed,rev(annotations)),
                          trait  = factor(trait,traits),
 						 method = factor(method,c("susie","mvsusie")))
+```
+
+Create a table containing the GREGOR enrichment results for the paper:
+
+```{r write-table}
+dat1 <- subset(odds_ratios,method == "susie")
+dat2 <- subset(odds_ratios,method == "mvsusie")
+dat1 <- dat1[c("bed","trait","oddsratio","low","high","pvalue")]
+dat2 <- dat2[c("oddsratio","low","high","pvalue")]
+names(dat1) <-
+  c("bed","trait","oddsratio.susie","low.susie","high.susie","pvalue.susie")
+names(dat2) <-
+  c("oddsratio.mvsusie","low.mvsusie","high.mvsusie","pvalue.mvsusie")
+out_table <- cbind(dat1,dat2)
+write.csv(out_table,"gregor.csv",quote = FALSE,row.names = FALSE)
 ```
 
 This first plot shows the "cross-trait" SuSiE and mvSuSiE enrichment
