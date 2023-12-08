@@ -11,7 +11,7 @@
 
 <meta name="author" content="Peter Carbonetto" />
 
-<meta name="date" content="2023-11-23" />
+<meta name="date" content="2023-12-07" />
 
 <title>GREGOR functional enrichment analysis of SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell traits</title>
 
@@ -166,7 +166,7 @@ pre code {
 SuSiE and mvSuSiE fine-mapping results for UK Biobank blood cell
 traits</h1>
 <h4 class="author">Peter Carbonetto</h4>
-<h4 class="date">November 23, 2023</h4>
+<h4 class="date">December 7, 2023</h4>
 
 </div>
 
@@ -219,12 +219,18 @@ for (trait in traits) {
                      trait     = trait,
                      method    = &quot;susie&quot;,
                      oddsratio = susie$odds,
+                     low       = susie$low,
+                     high      = susie$high,
+                     pvalue    = susie$p_fisher,
                      stringsAsFactors = FALSE),
           data.frame(bed       = mvsusie$Bed_File,
                      trait     = trait,
                      method    = &quot;mvsusie&quot;,
                      oddsratio = mvsusie$odds,
-          stringsAsFactors = FALSE))
+                     low       = mvsusie$low,
+                     high      = mvsusie$high,
+                     pvalue    = mvsusie$p_fisher,
+                     stringsAsFactors = FALSE))
 }</code></pre>
 <p>Prepare the data frame for ggplot2.</p>
 <pre class="r"><code>n &lt;- length(annotations)
@@ -242,12 +248,26 @@ odds_ratios &lt;- transform(odds_ratios,
                          bed    = factor(bed,rev(annotations)),
                          trait  = factor(trait,traits),
                          method = factor(method,c(&quot;susie&quot;,&quot;mvsusie&quot;)))</code></pre>
+<p>Create a table containing the GREGOR enrichment results for the
+paper:</p>
+<pre class="r"><code>dat1 &lt;- subset(odds_ratios,method == &quot;susie&quot;)
+dat2 &lt;- subset(odds_ratios,method == &quot;mvsusie&quot;)
+dat1 &lt;- dat1[c(&quot;bed&quot;,&quot;trait&quot;,&quot;oddsratio&quot;,&quot;low&quot;,&quot;high&quot;,&quot;pvalue&quot;)]
+dat2 &lt;- dat2[c(&quot;oddsratio&quot;,&quot;low&quot;,&quot;high&quot;,&quot;pvalue&quot;)]
+names(dat1) &lt;-
+  c(&quot;bed&quot;,&quot;trait&quot;,&quot;oddsratio.susie&quot;,&quot;low.susie&quot;,&quot;high.susie&quot;,&quot;pvalue.susie&quot;)
+names(dat2) &lt;-
+  c(&quot;oddsratio.mvsusie&quot;,&quot;low.mvsusie&quot;,&quot;high.mvsusie&quot;,&quot;pvalue.mvsusie&quot;)
+out_table &lt;- cbind(dat1,dat2)
+write.csv(out_table,&quot;gregor.csv&quot;,quote = FALSE,row.names = FALSE)</code></pre>
 <p>This first plot shows the “cross-trait” SuSiE and mvSuSiE enrichment
 results:</p>
 <pre class="r"><code>p1 &lt;- ggplot(subset(odds_ratios,trait == &quot;crosstrait&quot;),
        aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c(&quot;dodgerblue&quot;,&quot;red&quot;)) +
+  scale_x_continuous(limits = c(0,12),breaks = c(0,1,2.5,5,7.5,10)) +
+  geom_vline(xintercept = 1,linetype = &quot;dotted&quot;) +
   labs(y = &quot;&quot;) +
   theme_cowplot(font_size = 9) +
   theme(panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))
@@ -257,9 +277,11 @@ p1</code></pre>
 <pre class="r"><code>p2 &lt;- ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c(&quot;dodgerblue&quot;,&quot;red&quot;)) +
+  scale_x_continuous(limits = c(0,34),breaks = c(0,1,10,20,30)) +
+  geom_vline(xintercept = 1,linetype = &quot;dotted&quot;) +
   labs(y = &quot;&quot;) +
   theme_cowplot(font_size = 7) +
-  facet_wrap(vars(trait)) +
+  facet_wrap(vars(trait),nrow = 3,ncol = 6) +
   theme(strip.background = element_blank(),
         panel.grid.major.y = element_line(color = &quot;gray&quot;,size = 0.3))
 p2</code></pre>

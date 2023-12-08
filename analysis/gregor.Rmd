@@ -132,6 +132,8 @@ p1 <- ggplot(subset(odds_ratios,trait == "crosstrait"),
        aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c("dodgerblue","red")) +
+  scale_x_continuous(limits = c(0,12),breaks = c(0,1,2.5,5,7.5,10)) +
+  geom_vline(xintercept = 1,linetype = "dotted") +
   labs(y = "") +
   theme_cowplot(font_size = 9) +
   theme(panel.grid.major.y = element_line(color = "gray",size = 0.3))
@@ -140,19 +142,21 @@ p1
 
 Next we show the enrichment results for all traits:
 
-```{r plot-all-traits, fig.height=9, fig.width=8}
+```{r plot-all-traits, fig.height=6, fig.width=8}
 p2 <- ggplot(odds_ratios,aes(x = oddsratio,y = bed,color = method)) +
   geom_point() +
   scale_color_manual(values = c("dodgerblue","red")) +
+  scale_x_continuous(limits = c(0,34),breaks = c(0,1,10,20,30)) +
+  geom_vline(xintercept = 1,linetype = "dotted") +
   labs(y = "") +
   theme_cowplot(font_size = 7) +
-  facet_wrap(vars(trait)) +
+  facet_wrap(vars(trait),nrow = 3,ncol = 6) +
   theme(strip.background = element_blank(),
         panel.grid.major.y = element_line(color = "gray",size = 0.3))
 p2
 ```
 
-
 ```{r ggsave, include=FALSE}
-ggsave("../plots/gregor_global.eps",p1,height = 3.5,width = 4.25)
+ggsave("../plots/gregor_global.eps",p1,height = 3.5,width = 4.5)
+ggsave("../plots/gregor_by_trait.eps",p2,height = 5.5,width = 8)
 ```
